@@ -11,7 +11,7 @@ import {
   TbMessageReport, TbCalendar, TbHexagonLetterV, TbHexagonLetterM, TbClipboardText, TbZoomExclamation,
   TbFileAnalytics, TbListDetails, TbCalendarTime,
   TbAlertTriangle,
-  TbAlertCircle,
+  TbAlertCircle, TbHexagonLetterC, TbHexagonLetterI, TbHexagonLetterO,
   TbDatabasePlus,
   TbCalendarPlus,
   TbDeviceImacDollar
@@ -64,6 +64,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
   const [SubKegiatanOpd, setSubKegiatanOpd] = useState<boolean | null>(null);
   // PERENCANAAN PEMDA
   const [PerencanaanKota, setPerencanaanKota] = useState<boolean | null>(null);
+  const [IsuStrategisPemda, setIsuStrategisPemda] = useState<boolean | null>(null);
   const [TematikKota, setTematikKota] = useState<boolean | null>(null);
   const [SubTematik, setSubTematik] = useState<boolean | null>(null);
   const [KotaPohonKinerjaKota, setKotaPohonKinerjaKota] = useState<boolean | null>(null);
@@ -120,7 +121,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
   const [TujuanOpdView, setTujuanOpdView] = useState<boolean | null>(null);
   const [SasaranOpdView, setSasaranOpdView] = useState<boolean | null>(null);
   const [IkuOpdView, setIkuOpdView] = useState<boolean | null>(null);
-  
+
 
   const [ManajemenResiko, setManajemenResiko] = useState<boolean | null>(null);
   const [Inovasi, setInovasi] = useState<boolean | null>(null);
@@ -4528,12 +4529,44 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               {/* SUB MENU PERENCANAAN PEMDA */}
               {User?.roles != 'reviewer' ?
                 <div className={`transition-all duration-300 ease-in-out ${PerencanaanKota ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                  <Link href="/tematikpemda">
+                  {/* <Link href="/tematikpemda">
                     <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${TematikKota ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbArrowUpFromArc className="text-xl" />
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Tematik Pemda</span>
                     </li>
-                  </Link>
+                  </Link> */}
+                  {/* LABEL Isu Strategis Pemda */}
+                  <li
+                    className={`flex justify-between items-center font-medium gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
+                    onClick={() => setIsuStrategisPemda(IsuStrategisPemda ? false : true)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <TbArrowUpFromArc className="text-xl" />
+                      <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Isu Strategis</span>
+                    </div>
+                    <TbChevronRight className={`transition-all duration-200 ease-in-out ${IsuStrategisPemda ? "rotate-90" : ""}`} />
+                  </li>
+                  {/* SUB MENU Isu Strategis Pemda */}
+                  <div className={`transition-all duration-300 ease-in-out ${IsuStrategisPemda ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                    <Link href="/CSF">
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${Visi ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                        <TbHexagonLetterC className="text-xl" />
+                        <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>CSF</span>
+                      </li>
+                    </Link>
+                    <Link href="/outcome">
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${Misi ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                        <TbHexagonLetterO className="text-xl" />
+                        <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Outcome</span>
+                      </li>
+                    </Link>
+                    <Link href="/intermediate">
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${TujuanPemda ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                        <TbHexagonLetterI className="text-xl" />
+                        <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Intermediate</span>
+                      </li>
+                    </Link>
+                  </div>
                   <Link href="/pohonkinerjapemda">
                     <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${KotaPohonKinerjaKota ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbBinaryTree className="text-xl" />
