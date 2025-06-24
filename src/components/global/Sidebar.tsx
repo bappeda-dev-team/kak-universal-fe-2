@@ -22,6 +22,7 @@ import Link from 'next/link';
 import "@/app/globals.css";
 import { logout, getUser } from '../lib/Cookie';
 import { BrandingProvider, useBrandingContext } from '@/context/BrandingContext';
+import { Inter } from 'next/font/google';
 
 interface SidebarProps {
   isOpen: boolean | null;
@@ -65,6 +66,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
   // PERENCANAAN PEMDA
   const [PerencanaanKota, setPerencanaanKota] = useState<boolean | null>(null);
   const [IsuStrategisPemda, setIsuStrategisPemda] = useState<boolean | null>(null);
+  const [CSF, setCSF] = useState<boolean | null>(null);
+  const [Outcome, setOutcome] = useState<boolean | null>(null);
+  const [Intermediate, setIntermediate] = useState<boolean | null>(null);
   const [TematikKota, setTematikKota] = useState<boolean | null>(null);
   const [SubTematik, setSubTematik] = useState<boolean | null>(null);
   const [KotaPohonKinerjaKota, setKotaPohonKinerjaKota] = useState<boolean | null>(null);
@@ -147,6 +151,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       // setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -180,6 +185,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -232,6 +240,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -266,6 +275,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -317,6 +329,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -351,6 +364,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -402,6 +418,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -436,6 +453,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -487,6 +507,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -521,6 +542,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -572,6 +596,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -606,6 +631,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -658,6 +686,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(true);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -692,6 +721,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -743,6 +775,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(true);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -777,6 +810,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -828,6 +864,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(true);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -862,6 +899,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -913,6 +953,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(true);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -947,6 +988,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -998,6 +1042,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(true);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1032,6 +1077,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -1083,6 +1131,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1117,6 +1166,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -1168,6 +1220,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1202,6 +1255,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -1253,6 +1309,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1287,6 +1344,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -1338,6 +1398,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1372,6 +1433,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(true);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -1425,6 +1489,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1459,6 +1524,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(true);
       // RPJMD
       setVisi(false);
@@ -1511,6 +1579,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1545,6 +1614,279 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(true);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/CSF" || url == '/CSF/tambah' || url == `/CSF/${id}`) {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(true);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(true);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/outcome" || url == '/outcome/tambah' || url == `/outcome/${id}`) {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(true);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(true);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/intermediate" || url == '/intermediate/tambah' || url == `/intermediate/${id}`) {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(true);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(true);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -1597,6 +1939,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
       setRPJMD(true);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1631,6 +1974,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(true);
@@ -1683,6 +2029,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
       setRPJMD(true);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1717,6 +2064,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -1769,6 +2119,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
       setRPJMD(true);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1803,6 +2154,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -1855,6 +2209,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
       setRPJMD(true);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1889,6 +2244,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -1941,6 +2299,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
       setRPJMD(true);
       // admin_opd
       setPerencanaanOPD(false);
@@ -1975,6 +2334,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2028,6 +2390,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(true);
@@ -2062,6 +2425,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2114,6 +2480,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(true);
@@ -2148,6 +2515,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2200,6 +2570,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(true);
@@ -2234,6 +2605,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2286,6 +2660,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(true);
@@ -2320,6 +2695,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2372,6 +2750,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(true);
@@ -2406,6 +2785,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2458,6 +2840,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(true);
@@ -2492,6 +2875,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2544,6 +2930,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -2578,6 +2965,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2644,6 +3034,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterUser(false);
       setPerencanaanKota(false);
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setSubTematik(false);
       setKotaPohonKinerjaKota(false);
       setOpdDiTematik(false);
@@ -2692,6 +3085,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterUser(false);
       setPerencanaanKota(false);
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setSubTematik(false);
       setKotaPohonKinerjaKota(false);
       setOpdDiTematik(false);
@@ -2740,6 +3136,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterUser(false);
       setPerencanaanKota(false);
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setSubTematik(false);
       setKotaPohonKinerjaKota(false);
       setOpdDiTematik(false);
@@ -2788,6 +3187,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterUser(false);
       setPerencanaanKota(false);
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setSubTematik(false);
       setKotaPohonKinerjaKota(false);
       setOpdDiTematik(false);
@@ -2822,6 +3224,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(true);
@@ -2856,6 +3259,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2908,6 +3314,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(true);
@@ -2942,6 +3349,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -2994,6 +3404,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(true);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -3028,6 +3439,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -3086,6 +3500,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -3120,6 +3535,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -3172,6 +3590,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -3206,6 +3625,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -3271,6 +3693,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       setMasterUser(false);
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setSubTematik(false);
       setPerencanaanKota(false);
       setPerencanaanOPD(false);
@@ -3321,6 +3746,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       setMasterUser(false);
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setSubTematik(false);
       setPerencanaanKota(true);
       setPerencanaanOPD(false);
@@ -3370,6 +3798,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       setMasterUser(false);
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setSubTematik(false);
       setPerencanaanKota(true);
       setPerencanaanOPD(false);
@@ -3419,6 +3850,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       setMasterUser(false);
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setSubTematik(false);
       setOpdDiTematik(false);
       setPerencanaanKota(true);
@@ -3453,6 +3887,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -3487,6 +3922,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -3539,6 +3977,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -3573,6 +4012,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -3625,6 +4067,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -3659,6 +4102,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -3711,6 +4157,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -3745,6 +4192,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -3797,6 +4247,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -3831,6 +4282,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -3883,6 +4337,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -3917,6 +4372,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -3969,6 +4427,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -4003,6 +4462,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -4055,6 +4517,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -4089,6 +4552,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -4141,6 +4607,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -4175,6 +4642,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -4227,6 +4697,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMasterOpd(false);
       setMasterProgramKegiatan(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       // admin_opd
       setPerencanaanOPD(false);
@@ -4261,6 +4732,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterRole(false);
       // perencanaan pemda
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
       setKotaPohonKinerjaKota(false);
       // RPJMD
       setVisi(false);
@@ -4549,19 +5023,19 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   {/* SUB MENU Isu Strategis Pemda */}
                   <div className={`transition-all duration-300 ease-in-out ${IsuStrategisPemda ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
                     <Link href="/CSF">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${Visi ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${CSF ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbHexagonLetterC className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>CSF</span>
                       </li>
                     </Link>
                     <Link href="/outcome">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${Misi ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${Outcome ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbHexagonLetterO className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Outcome</span>
                       </li>
                     </Link>
                     <Link href="/intermediate">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${TujuanPemda ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${Intermediate ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbHexagonLetterI className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Intermediate</span>
                       </li>

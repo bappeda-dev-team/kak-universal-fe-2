@@ -10,26 +10,12 @@ import { getToken } from "@/components/lib/Cookie";
 
 interface tematik {
     id: number;
-    parent: number;
-    pernyataan_kondisi_strategis: string;
-    alasan_sebagai_kondisi_strategis: string;
-    data_terukur_pendukung_pernyataan: string;
+    intermediate_outcome: string;
+    penyebab_permasalahan: string;
+    data_terukur_terkait_csf: string;
     kondisi_terukur_yang_diharapkan: string;
-    kondisi_yang_ingin_diwujudkan: string;
-    tema: string;
-    keterangan: string;
-    indikator: indikator[]; 
+    kondisi_yang_diperlukan: string;
 }
-interface indikator {
-    id_indikator: string;
-    nama_indikator: string;
-    targets: target[];
-}
-type target = {
-    id_target: string;
-    target: string;
-    satuan: string;
-};
 
 const Table = () => {
 
@@ -138,15 +124,11 @@ const Table = () => {
                     <thead>
                         <tr className="bg-sky-700 text-white">
                             <th className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Peryataan kondisi strategis</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Alasan Sebagai Kondisi Strategis</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Data Terukur Pendukung Pernyataan</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Terukur Yang Diharapkan </th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Yang Ingin Diwujudkan</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Tema</th>
-                            <th className="border-l border-b px-6 py-3 min-w-[200px]">Keterangan</th>
-                            <th className="border-l border-b px-6 py-3 min-w-[200px]">Indikator</th>
-                            <th className="border-l border-b px-6 py-3 min-w-[200px]">Target/Satuan</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Intermediate Outcome</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Faktor yang Berpengaruh Terhadap Capaian Outcome/Penyebab Permasalahan (CSF)</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Data Terukur Terkait CSF</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Terukur Yang Diharapkan</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Yang Diperlukan Untuk Mencapai Outcome (initial Outcome/Output)</th>
                             <th className="border-l border-b px-6 py-3 min-w-[100px]">Aksi</th>
                         </tr>
                     </thead>
@@ -161,37 +143,14 @@ const Table = () => {
                         Tematik.map((data, index) => (
                         <tr key={data.id}>
                             <td className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.pernyataan_kondisi_strategis || "-"}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.alasan_sebagai_kondisi_strategis || "-"}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.data_terukur_pendukung_pernyataan || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.intermediate_outcome || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.penyebab_permasalahan || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.data_terukur_terkait_csf || "-"}</td>
                             <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_terukur_yang_diharapkan || "-"}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_yang_ingin_diwujudkan || "-"}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.tema || "-"}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.keterangan ? data.keterangan : "-"}</td>
-                            {data.indikator ?
-                                <>
-                                    <td className="border-r border-b px-6 py-4 text-center">
-                                        {data.indikator.map((item: indikator) => (
-                                            <p key={item.id_indikator}>{item.nama_indikator}</p>
-                                        ))}
-                                    </td>
-                                    <td className="border-r border-b px-6 py-4 text-center">
-                                        {data.indikator.map((item: indikator) => (
-                                            item.targets.map((t: target) => (
-                                                <p key={t.id_target}>{t.target} / {t.satuan}</p>
-                                            ))
-                                        ))}
-                                    </td>
-                                </> 
-                            :
-                            <>
-                                <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                <td className="border-r border-b px-6 py-4 text-center">-</td>
-                            </>
-                            }
+                            <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_yang_diperlukan || "-"}</td>
                             <td className="border-r border-b px-6 py-4">
                                 <div className="flex flex-col jutify-center items-center gap-2">
-                                    <ButtonGreen className="w-full" halaman_url={`/CSF/${data.id}`}>Edit</ButtonGreen>
+                                    <ButtonGreen className="w-full" halaman_url={`/intermediate/${data.id}`}>Edit</ButtonGreen>
                                     <ButtonRed 
                                         className="w-full"
                                         onClick={() => {
