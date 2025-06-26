@@ -562,7 +562,7 @@ export const FormEditCSF = () => {
             nama_pohon: data.nama_pohon || '',
             keterangan: data.keterangan || '',
             tahun: TahunOption.find(opt => opt.value === data.tahun?.toString()) || undefined,
-            indikator: data.indikator?.map((item) => ({
+            indikator: data.indikator?.map((item: indikator) => ({
               nama_indikator: item.nama_indikator || '',
               targets: item.targets.map((t) => ({
                 target: t.target || '',
