@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['cdnkk.zeabur.app'],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'cdnkk.zeabur.app',
+                pathname: '**'
+            }
+        ]
     },
     output: "standalone",
 };
