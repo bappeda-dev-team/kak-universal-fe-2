@@ -82,7 +82,7 @@ export const FormCSF = () => {
       alasan_sebagai_kondisi_strategis: data.alasan_sebagai_kondisi_strategis,
       data_terukur_pendukung_pernyataan: data.data_terukur_pendukung_pernyataan,
       kondisi_terukur_yang_diharapkan: data.kondisi_terukur_yang_diharapkan,
-      kondisi_yang_ingin_diwujudkan: data.kondisi_yang_ingin_diwujudkan,
+      kondisi_yang_ingin_diwujudkan: data.kondisi_yang_ingin_diwujudkan || "-",
       nama_pohon: data.nama_pohon,
       Keterangan: data.keterangan,
       jenis_pohon: "Tematik",
@@ -242,7 +242,7 @@ export const FormCSF = () => {
               )}
             />
           </div>
-          <div className="flex flex-col py-3">
+          {/* <div className="flex flex-col py-3">
             <label
               className="uppercase text-xs font-bold text-gray-700 my-2"
               htmlFor="kondisi_yang_ingin_diwujudkan"
@@ -269,18 +269,18 @@ export const FormCSF = () => {
                 </>
               )}
             />
-          </div>
+          </div> */}
           <div className="flex flex-col py-3">
             <label
               className="uppercase text-xs font-bold text-gray-700 my-2"
               htmlFor="nama_pohon"
             >
-              Nama Tema :
+              Kondisi Yang Ingin Diwujudkan :
             </label>
             <Controller
               name="nama_pohon"
               control={control}
-              rules={{ required: "Nama Tema harus terisi" }}
+              rules={{ required: "Kondisi yang ingin diwujudkan harus terisi" }}
               render={({ field }) => (
                 <>
                   <input
@@ -558,7 +558,7 @@ export const FormEditCSF = () => {
             alasan_sebagai_kondisi_strategis: data.alasan_sebagai_kondisi_strategis || '',
             data_terukur_pendukung_pernyataan: data.data_terukur_pendukung_pernyataan || '',
             kondisi_terukur_yang_diharapkan: data.kondisi_terukur_yang_diharapkan || '',
-            kondisi_yang_ingin_diwujudkan: data.kondisi_yang_ingin_diwujudkan || '',
+            kondisi_yang_ingin_diwujudkan: "-",
             nama_pohon: data.nama_pohon || '',
             keterangan: data.keterangan || '',
             tahun: TahunOption.find(opt => opt.value === data.tahun?.toString()) || undefined,
@@ -589,7 +589,7 @@ export const FormEditCSF = () => {
       alasan_sebagai_kondisi_strategis: data.alasan_sebagai_kondisi_strategis,
       data_terukur_pendukung_pernyataan: data.data_terukur_pendukung_pernyataan,
       kondisi_terukur_yang_diharapkan: data.kondisi_terukur_yang_diharapkan,
-      kondisi_yang_ingin_diwujudkan: data.kondisi_yang_ingin_diwujudkan,
+      kondisi_yang_ingin_diwujudkan: "-",
       nama_pohon: data.nama_pohon,
       jenis_pohon: "Tematik",
       level_pohon: 0,
@@ -771,7 +771,7 @@ export const FormEditCSF = () => {
                 )}
               />
             </div>
-            <div className="flex flex-col py-3">
+            {/* <div className="flex flex-col py-3">
               <label
                 className="uppercase text-xs font-bold text-gray-700 my-2"
                 htmlFor="kondisi_yang_ingin_diwujudkan"
@@ -798,18 +798,18 @@ export const FormEditCSF = () => {
                   </>
                 )}
               />
-            </div>
+            </div> */}
             <div className="flex flex-col py-3">
               <label
                 className="uppercase text-xs font-bold text-gray-700 my-2"
                 htmlFor="nama_pohon"
               >
-                Nama Tematik :
+                Kondisi Yang Ingin Diwujudkan :
               </label>
               <Controller
                 name="nama_pohon"
                 control={control}
-                rules={{ required: "Nama Tematik harus terisi" }}
+                rules={{ required: "Kondisi yang ingin diwujudkan harus terisi" }}
                 render={({ field }) => (
                   <>
                     <input

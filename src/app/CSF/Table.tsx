@@ -144,7 +144,6 @@ const Table = () => {
               <th className="border-r border-b px-6 py-3 min-w-[200px]">Data Terukur Pendukung Pernyataan</th>
               <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Terukur Yang Diharapkan </th>
               <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Yang Ingin Diwujudkan</th>
-              <th className="border-r border-b px-6 py-3 min-w-[200px]">Tema</th>
               <th className="border-l border-b px-6 py-3 min-w-[200px]">Keterangan</th>
               <th className="border-l border-b px-6 py-3 min-w-[200px]">Indikator</th>
               <th className="border-l border-b px-6 py-3 min-w-[200px]">Target/Satuan</th>
@@ -166,7 +165,6 @@ const Table = () => {
                   <td className="border-r border-b px-6 py-4 text-center">{data.alasan_sebagai_kondisi_strategis || "-"}</td>
                   <td className="border-r border-b px-6 py-4 text-center">{data.data_terukur_pendukung_pernyataan || "-"}</td>
                   <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_terukur_yang_diharapkan || "-"}</td>
-                  <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_yang_ingin_diwujudkan || "-"}</td>
                   <td className="border-r border-b px-6 py-4 text-center">{data.tema || "-"}</td>
                   <td className="border-r border-b px-6 py-4 text-center">{data.keterangan ? data.keterangan : "-"}</td>
                   {data.indikator ?
