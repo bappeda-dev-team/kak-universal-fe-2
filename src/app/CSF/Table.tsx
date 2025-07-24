@@ -16,7 +16,7 @@ interface tematik {
     data_terukur_pendukung_pernyataan: string;
     kondisi_terukur_yang_diharapkan: string;
     kondisi_yang_ingin_diwujudkan: string;
-    tema: string;
+    nama_pohon: string;
     keterangan: string;
     indikator: indikator[];
 }
@@ -82,6 +82,7 @@ const Table = () => {
                 } else {
                     setDataNull(false);
                     setTematik(data);
+                    console.log(data);
                 }
                 setTematik(data);
             } catch (err) {
@@ -165,7 +166,7 @@ const Table = () => {
                                     <td className="border-r border-b px-6 py-4 text-center">{data.alasan_sebagai_kondisi_strategis || "-"}</td>
                                     <td className="border-r border-b px-6 py-4 text-center">{data.data_terukur_pendukung_pernyataan || "-"}</td>
                                     <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_terukur_yang_diharapkan || "-"}</td>
-                                    <td className="border-r border-b px-6 py-4 text-center">{data.tema || "-"}</td>
+                                    <td className="border-r border-b px-6 py-4 text-center">{data.nama_pohon || "-"}</td>
                                     <td className="border-r border-b px-6 py-4 text-center">{data.keterangan ? data.keterangan : "-"}</td>
                                     {data.indikator ?
                                         <>
