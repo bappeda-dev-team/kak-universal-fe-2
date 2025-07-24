@@ -10,6 +10,7 @@ import { getToken } from "@/components/lib/Cookie";
 
 interface tematik {
     id: number;
+    pohon_id: number;
     parent: number;
     pernyataan_kondisi_strategis: string;
     alasan_sebagai_kondisi_strategis: string;
@@ -145,9 +146,9 @@ const Table = () => {
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Data Terukur Pendukung Pernyataan</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Terukur Yang Diharapkan </th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Yang Ingin Diwujudkan</th>
-                            <th className="border-l border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                             <th className="border-l border-b px-6 py-3 min-w-[200px]">Indikator</th>
                             <th className="border-l border-b px-6 py-3 min-w-[200px]">Target/Satuan</th>
+                            <th className="border-l border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                             <th className="border-l border-b px-6 py-3 min-w-[100px]">Aksi</th>
                         </tr>
                     </thead>
@@ -167,7 +168,6 @@ const Table = () => {
                                     <td className="border-r border-b px-6 py-4 text-center">{data.data_terukur_pendukung_pernyataan || "-"}</td>
                                     <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_terukur_yang_diharapkan || "-"}</td>
                                     <td className="border-r border-b px-6 py-4 text-center">{data.nama_pohon || "-"}</td>
-                                    <td className="border-r border-b px-6 py-4 text-center">{data.keterangan ? data.keterangan : "-"}</td>
                                     {data.indikator ?
                                         <>
                                             <td className="border-r border-b px-6 py-4 text-center">
@@ -189,9 +189,10 @@ const Table = () => {
                                             <td className="border-r border-b px-6 py-4 text-center">-</td>
                                         </>
                                     }
+                                    <td className="border-r border-b px-6 py-4 text-center">{data.keterangan ? data.keterangan : "-"}</td>
                                     <td className="border-r border-b px-6 py-4">
                                         <div className="flex flex-col jutify-center items-center gap-2">
-                                            <ButtonGreen className="w-full" halaman_url={`/CSF/${data.id}`}>Edit</ButtonGreen>
+                                            <ButtonGreen className="w-full" halaman_url={`/CSF/${data.pohon_id}`}>Edit</ButtonGreen>
                                             <ButtonRed
                                                 className="w-full"
                                                 onClick={() => {
