@@ -1,7 +1,17 @@
 'use client'
 
-import { createContext, useContext } from "react"
+import { createContext, useContext } from "react";
+import { useState, useEffect } from "react";
+import { getUser, getOpdTahun } from "@/components/lib/Cookie";
 
+interface OptionType {
+  value: number;
+  label: string;
+}
+interface OptionTypeString {
+  value: string;
+  label: string;
+}
 interface BrandingContextType {
   title: string;
   clientName: string;
@@ -10,6 +20,9 @@ interface BrandingContextType {
     title: string;
     client: string;
     logo: string;
+    tahun: OptionType | null | undefined;
+    opd: OptionTypeString | null | undefined;
+    user: any;
   }
 }
 
@@ -22,8 +35,49 @@ const BrandingContext = createContext<BrandingContextType | undefined>(undefined
 
 export function BrandingProvider({ children }: Readonly<{ children: React.ReactNode; }>) {
 
+  const [Tahun, setTahun] = useState<OptionType | null>(null);
+  const [SelectedOpd, setSelectedOpd] = useState<OptionTypeString | null>(null);
+  const [User, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const data = getOpdTahun();
+    const fetchUser = getUser();
+    if (data) {
+      if (data.tahun) {
+        const valueTahun = {
+          value: data.tahun.value,
+          label: data.tahun.label
+        }
+        setTahun(valueTahun);
+      }
+      if (data.opd) {
+        const valueOpd = {
+          value: data.opd.value,
+          label: data.opd.label
+        }
+        setSelectedOpd(valueOpd);
+      }
+      if (fetchUser) {
+        setUser(fetchUser.user);
+      }
+    }
+  }, [])
+
   return (
-    <BrandingContext.Provider value={{ title: appName, clientName: clientName, logo: logo, branding: { title: appName, client: clientName, logo: logo } }}>
+    <BrandingContext.Provider 
+      value={{ 
+        title: appName, 
+        clientName: clientName, 
+        logo: logo, 
+        branding: { 
+          title: appName, 
+          client: clientName, 
+          logo: logo, 
+          tahun: Tahun,
+          opd: SelectedOpd,
+          user: User
+          } 
+      }}>
       {children}
     </BrandingContext.Provider>
   );

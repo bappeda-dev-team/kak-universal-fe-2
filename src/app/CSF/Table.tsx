@@ -83,7 +83,7 @@ const Table = () => {
                 } else {
                     setDataNull(false);
                     setTematik(data);
-                    console.log(data);
+                    // console.log(data);
                 }
                 setTematik(data);
             } catch (err) {

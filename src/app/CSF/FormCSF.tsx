@@ -8,6 +8,7 @@ import { AlertNotification } from "@/components/global/Alert";
 import { useParams, useRouter } from "next/navigation";
 import Select from 'react-select';
 import { getToken } from "@/components/lib/Cookie";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 interface OptionTypeString {
   value: string;
@@ -98,7 +99,7 @@ export const FormCSF = () => {
         })),
       }),
     };
-    console.log(formData);
+    // console.log(formData);
     try {
       setProses(true);
       const response = await fetch(`${API_URL}/pohon_kinerja_admin/create`, {
@@ -508,6 +509,7 @@ export const FormEditCSF = () => {
   const router = useRouter();
   const { id } = useParams();
   const token = getToken();
+  const {branding} = useBrandingContext();
 
   const TahunOption = [
     { label: "Tahun 2019", value: "2019" },
@@ -548,7 +550,7 @@ export const FormEditCSF = () => {
           setIdNull(true);
         } else {
           const data = result.data;
-          console.log('data api:', data)
+          // console.log('data api:', data)
           if (data.pohon_id) {
             setIdPokin(data.pohon_id);
           }
@@ -561,7 +563,11 @@ export const FormEditCSF = () => {
             kondisi_yang_ingin_diwujudkan: "-",
             nama_pohon: data.nama_pohon || '',
             keterangan: data.keterangan || '',
-            tahun: TahunOption.find(opt => opt.value === data.tahun?.toString()) || undefined,
+            // tahun: TahunOption.find(opt => opt.value === data.tahun?.toString()) || undefined,
+            tahun: {
+              value: String(branding?.tahun?.value),
+              label: branding?.tahun?.label
+            },
             indikator: data.indikator?.map((item: indikator) => ({
               nama_indikator: item.nama_indikator || '',
               targets: item.targets.map((t) => ({
@@ -605,7 +611,7 @@ export const FormEditCSF = () => {
         })),
       }),
     };
-    console.log(formData);
+    // console.log(formData);
     try {
       setProses(true);
       const response = await fetch(`${API_URL}/pohon_kinerja_admin/update/${IdPokin}`, {
@@ -886,7 +892,6 @@ export const FormEditCSF = () => {
                     <Select
                       {...field}
                       placeholder="Masukkan tahun"
-                      value={Tahun}
                       options={TahunOption}
                       isSearchable
                       isClearable
