@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { ButtonRed, ButtonGreen } from "@/components/global/Button";
+import { ButtonSky, ButtonRed, ButtonGreen } from "@/components/global/Button";
 import { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
@@ -202,10 +202,10 @@ const Table = () => {
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Terukur Yang DiHarapkan/Seharusnya</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Outcome Yang Ingin Diwujudkan</th>
-                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Faktor yang Berpengaruh Terhadap Capaian Outcome/Penyebab Permasalahan(CSF)</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Faktor yang Berpengaruh Terhadap Capaian Outcome/Penyebab Permasalahan (CSF)</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Data Terukur Terkait CSF</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Aksi</th>
-                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Yang Diperlukan Untuk Mencapai Outcome/Mengatasi Permasalahan (Intermediate Outcome)</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Yang Diperlukan Untuk Mencapai Outcome (Intermediate Outcome)</th>
                             <th colSpan={3} className="border-r border-b px-6 py-3 min-w-[200px]">Intermediate Outcome</th>
                         </tr>
                         <tr className="bg-orange-700 text-white">
@@ -217,17 +217,17 @@ const Table = () => {
                     <tbody>
                         {DataNull ? (
                             <tr>
-                                <td className="px-6 py-3 uppercase" colSpan={13}>
+                                <td className="px-6 py-3 uppercase text-center" colSpan={10}>
                                     Data Kosong / Belum Ditambahkan
                                 </td>
                             </tr>
                         ) : (
                             CSF.map((data: CSF, index: number) => {
                                 const outcomeList = GabunganOutcome.filter(go => go.parent === data.id);
-                                const rowSpan = Math.max(outcomeList.length, 1); // minimal 1 baris
+                                const rowSpan = Math.max(outcomeList.length, 1);
 
                                 return (
-                                    <>
+                                    <React.Fragment key={data.id || index}>
                                         {outcomeList.length > 0 ? (
                                             outcomeList.map((ol: any, subIndex: number) => (
                                                 <tr key={`${data.id}-${subIndex}`}>
@@ -236,70 +236,80 @@ const Table = () => {
                                                             <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
                                                             <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">{data.nama_pohon || "-"}</td>
                                                             <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">
-                                                                {data.indikator && data.indikator.length > 0 ? (
+                                                                {data.indikator?.length > 0 ? (
                                                                     data.indikator.map((i: indikator, i_index: number) => (
-                                                                        <p key={i_index}>{i.nama_indikator || "-"}</p>
+                                                                        <div key={i_index}>{i.nama_indikator}</div>
                                                                     ))
                                                                 ) : (
-                                                                    <p>tidak ada indikator</p>
+                                                                    <div>-</div>
                                                                 )}
                                                             </td>
                                                         </>
                                                     )}
 
-                                                    {/* Baris anak Outcome */}
+                                                    {/* Baris Outcome */}
                                                     <td className="border-r border-b px-6 py-4 text-center">{ol.faktor_berpengaruh || "-"}</td>
                                                     <td className="border-r border-b px-6 py-4 text-center">{ol.data_terukur || "-"}</td>
                                                     <td className="border-r border-b px-6 py-4">
-                                                        <div className="flex flex-col jutify-center items-center gap-2">
-                                                            <ButtonGreen className="w-full" halaman_url={`/outcome/tambah/${data.pohon_id}`}>Edit</ButtonGreen>
-                                                            <ButtonRed
-                                                                className="w-full"
-                                                                onClick={() => {
-                                                                    AlertQuestion("Hapus?", "Hapus Data Outcome yang dipilih?", "question", "Hapus", "Batal").then((result) => {
-                                                                        if (result.isConfirmed) {
-                                                                            // hapusOutcome(ol.id);
-                                                                        }
-                                                                    });
-                                                                }}
-                                                            >
-                                                                Hapus
-                                                            </ButtonRed>
+                                                        <div className="flex flex-col justify-center items-center gap-2">
+                                                            {ol.id_outcome === null ? (
+                                                                <ButtonSky className="w-full" halaman_url={`/outcome/tambah/${data.pohon_id}`}>Input Outcome</ButtonSky>
+                                                            ) : (
+                                                                <>
+                                                                    <ButtonGreen className="w-full" halaman_url={`/outcome/tambah/${data.pohon_id}`}>Edit</ButtonGreen>
+                                                                    <ButtonRed
+                                                                        className="w-full"
+                                                                        onClick={() => {
+                                                                            AlertQuestion("Hapus?", "Hapus Data Outcome yang dipilih?", "question", "Hapus", "Batal").then((result) => {
+                                                                                if (result.isConfirmed) {
+                                                                                    // hapusOutcome(ol.id);
+                                                                                }
+                                                                            });
+                                                                        }}
+                                                                    >
+                                                                        Hapus
+                                                                    </ButtonRed>
+                                                                </>
+                                                            )}
                                                         </div>
                                                     </td>
-                                                    <td className="border-r border-b px-6 py-4 text-center">{ol.tema}</td>
+                                                    <td className="border-r border-b px-6 py-4 text-center">{ol.tema || "-"}</td>
                                                     <td className="border-r border-b px-6 py-4 text-center">
                                                         {ol.indikator?.length > 0 ? (
                                                             ol.indikator.map((i: indikator, i_index: number) => (
-                                                                <p key={i_index}>{i.nama_indikator || "-"}</p>
+                                                                <div key={i_index}>{i.nama_indikator || "-"}</div>
                                                             ))
                                                         ) : (
-                                                            <p>tidak ada indikator</p>
+                                                            "-"
                                                         )}
                                                     </td>
-                                                    <td className="border-r border-b px-6 py-4 text-center">-</td>
+                                                    <td className="border-r border-b px-6 py-4 text-center">
+                                                        {ol.indikator?.[0]?.targets?.map((t: any, t_index: number) => (
+                                                            <div key={t_index}>{t.target || "-"} / {t.satuan || "-"}</div>
+                                                        )) || "-"}
+                                                    </td>
+                                                    <td className="border-r border-b px-6 py-4 text-center">{ol.keterangan || "-"}</td>
                                                 </tr>
                                             ))
                                         ) : (
-                                            // Jika tidak ada outcome sama sekali, tetap render row parent + 1 row kosong
-                                            <tr key={data.id}>
+                                            <tr key={`empty-${data.id}`}>
                                                 <td className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
                                                 <td className="border-r border-b px-6 py-4 text-center">{data.nama_pohon || "-"}</td>
                                                 <td className="border-r border-b px-6 py-4 text-center">
                                                     {data.indikator?.length > 0 ? (
                                                         data.indikator.map((i: indikator, i_index: number) => (
-                                                            <p key={i_index}>{i.nama_indikator || "-"}</p>
+                                                            <div key={i_index}>{i.nama_indikator}</div>
                                                         ))
                                                     ) : (
-                                                        <p>tidak ada indikator</p>
+                                                        <div>-</div>
                                                     )}
                                                 </td>
-                                                <td colSpan={6} className="border-r border-b px-6 py-4 text-center text-gray-400 italic">
+                                                <td colSpan={7} className="border-b px-6 py-4 text-center italic text-gray-400">
                                                     Tidak ada Outcome
                                                 </td>
                                             </tr>
                                         )}
-                                    </>
+                                    </React.Fragment>
                                 );
                             })
                         )}
@@ -322,20 +332,24 @@ function gabungData(subs: any, outcomes: any) {
         if (outcomeEntry) {
             hasil.push({
                 id: sub.id,
+                id_outcome: outcomeEntry.id,
                 parent: sub.parent,
                 faktor_berpengaruh: outcomeEntry.faktor_berpengaruh,
                 data_terukur: outcomeEntry.data_terukur,
                 tema: sub.tema,
                 indikator: sub.indikator,
+                keterangan: sub.keterangan
             })
         } else {
             hasil.push({
                 id: sub.id,
+                id_outcome: null,
                 parent: sub.parent,
                 faktor_berpengaruh: "-",
                 data_terukur: "-",
                 tema: sub.tema,
                 indikator: sub.indikator,
+                keterangan: sub.keterangan
             })
         }
     });
