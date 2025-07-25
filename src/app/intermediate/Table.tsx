@@ -8,155 +8,129 @@ import { getOpdTahun } from "@/components/lib/Cookie";
 import { TahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 
-interface tematik {
+interface Intermediate {
     id: number;
+    id_pohon: number;
+    sub_tema: string;
     intermediate_outcome: string;
-    penyebab_permasalahan: string;
-    data_terukur_terkait_csf: string;
-    kondisi_terukur_yang_diharapkan: string;
-    kondisi_yang_diperlukan: string;
+    sub_sub_tema: Intermediate;
+}
+
+interface Intermediate {
+    id: number;
+    nama_pohon: string;
+    indikator: string;
+    target: string;
+    satuan: string;
+    faktor_yang_berpengaruh: string;
+    data_terukur: string;
+    kondisi_terukur: string;
+    initial_outcome: Initial;
+}
+interface Initial {
+    id: number;
+    nama_pohon: string;
+    indikator: string;
+    target: string;
+    satuan: string;
+    keterangan: string;
 }
 
 const Table = () => {
 
-    const [Tematik, setTematik] = useState<tematik[]>([]);
-    const [Loading, setLoading] = useState<boolean | null>(null);
-    const [Error, setError] = useState<boolean | null>(null);
-    const [DataNull, setDataNull] = useState<boolean | null>(null);
-    const [Tahun, setTahun] = useState<any>(null);
-    const [SelectedOpd, setSelectedOpd] = useState<any>(null);
-    const token = getToken();
-    
-    useEffect(() => {
-        const data = getOpdTahun();
-        if(data.tahun){
-            const tahun = {
-                value: data.tahun.value,
-                label: data.tahun.label,
-            }
-            setTahun(tahun);
-        }
-        if(data.opd){
-            const opd = {
-                value: data.opd.value,
-                label: data.opd.label,
-            }
-            setSelectedOpd(opd);
-        }
-    },[]);
-    
-    useEffect(() => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const fetchTematik = async() => {
-            setLoading(true)
-            try{
-                const response = await fetch(`${API_URL}/pohon_kinerja_admin/findall/${Tahun?.value}`, {
-                    headers: {
-                      Authorization: `${token}`,
-                      'Content-Type': 'application/json',
-                    },
-                });
-                const result = await response.json();
-                const data = result.data.tematiks;
-                if(data == null){
-                    setDataNull(true);
-                    setTematik([]);
-                } else if(data.code == 500){
-                    setError(true);
-                    setTematik([]);
-                } else {
-                    setDataNull(false);
-                    setTematik(data);
+
+    // if(Loading){
+    //     return (    
+    //         <div className="border p-5 rounded-xl shadow-xl">
+    //             <LoadingClip className="mx-5 py-5"/>
+    //         </div>
+    //     );
+    // } else if(Error){
+    //     return (
+    //         <div className="border p-5 rounded-xl shadow-xl">
+    //             <h1 className="text-red-500 mx-5 py-5">Reload Halaman, Periksa koneksi internet atau database server</h1>
+    //         </div>
+    //     )
+    // } else if(Tahun?.value == undefined){
+    //     return <TahunNull />
+    // }
+
+    const Data: any = [
+        {
+            "id" : 1,
+            "id_pohon" : 1,
+            "sub_tema" : "sub tema 1/investasi",
+            "intermediate_outcome" : "indikator sub tema 1",
+            "sub_sub_tema" : {
+                "id" : 2,
+                "nama_pohon" : "sub sub tema 1",
+                "indikator" : "indikator sub sub tema 1",
+                "target" : "target sub sub tema 1",
+                "satuan" : "satuan sub sub tema 1",
+                "faktor_yang_berpengaruh" : "input 1",
+                "data_terukur" : "input 2",
+                "kondisi_terukur" : "sasaran strategic pemda 1",
+                "initial_outcome" : {
+                    "indikator" : "indikator sasaran 1",
+                    "target" : "target sasaran 1",
+                    "satuan" : "satuan sasaran 1",
+                    "keterangan" : "keterangan sasaran 1"
                 }
-                setTematik(data);
-            } catch(err){
-                setError(true);
-                console.error(err)
-            } finally{
-                setLoading(false);
             }
         }
-        if(Tahun?.value != undefined){   
-            fetchTematik();
-        }
-    }, [Tahun, token]);
-
-    const hapusTematik = async(id: any) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try{
-            const response = await fetch(`${API_URL}/pohon_kinerja_admin/delete/${id}`, {
-                method: "DELETE",
-                headers: {
-                  Authorization: `${token}`,
-                  'Content-Type': 'application/json',
-                },
-            })
-            if(!response.ok){
-                alert("cant fetch data")
-            }
-            setTematik(Tematik.filter((data) => (data.id !== id)))
-            AlertNotification("Berhasil", "Data lembaga Berhasil Dihapus", "success", 1000);
-        } catch(err){
-            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
-        }
-    };
-
-    if(Loading){
-        return (    
-            <div className="border p-5 rounded-xl shadow-xl">
-                <LoadingClip className="mx-5 py-5"/>
-            </div>
-        );
-    } else if(Error){
-        return (
-            <div className="border p-5 rounded-xl shadow-xl">
-                <h1 className="text-red-500 mx-5 py-5">Reload Halaman, Periksa koneksi internet atau database server</h1>
-            </div>
-        )
-    } else if(Tahun?.value == undefined){
-        return <TahunNull />
-    }
+    ]
 
     return(
         <>
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
                     <thead>
-                        <tr className="bg-sky-700 text-white">
-                            <th className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Intermediate Outcome</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Faktor yang Berpengaruh Terhadap Capaian Outcome/Penyebab Permasalahan (CSF)</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Data Terukur Terkait CSF</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Terukur Yang Diharapkan</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi Yang Diperlukan Untuk Mencapai Outcome (initial Outcome/Output)</th>
-                            <th className="border-l border-b px-6 py-3 min-w-[100px]">Aksi</th>
+                        <tr className="bg-red-400 text-white">
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Sub Tema</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Intermediate Outcome</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Sub Sub Tema</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator Sub Sub Tema</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Target / Satuan</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Faktor yang berpengaruh terhadap capaian outcome/penyebab permasalahan (CSF)</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Data Terukur Terkait CSF</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Aksi</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Kondisi terukur yang di harapkan / seharusnya</th>
+                            <th colSpan={3} className="border-r border-b px-6 py-3 min-w-[200px]">Initial Outcome</th>
+                        </tr>
+                        <tr className="bg-red-600 text-white">
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Target / Satuan</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {DataNull ? 
+                    {/* {DataNull ? 
                             <tr>
                                 <td className="px-6 py-3 uppercase" colSpan={13}>
                                     Data Kosong / Belum Ditambahkan
                                 </td>
                             </tr>
-                        :
-                        Tematik.map((data, index) => (
-                        <tr key={data.id}>
+                        : */}
+                        {Data.map((data: Intermediate, index: number) => (
+                        <tr key={data.id || index}>
                             <td className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_tema || "-"}</td>
                             <td className="border-r border-b px-6 py-4 text-center">{data.intermediate_outcome || "-"}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.penyebab_permasalahan || "-"}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.data_terukur_terkait_csf || "-"}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_terukur_yang_diharapkan || "-"}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_yang_diperlukan || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_sub_tema.nama_pohon || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_sub_tema.indikator || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_sub_tema.target || "-"} / {data.sub_sub_tema.satuan || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_sub_tema.faktor_yang_berpengaruh || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_sub_tema.data_terukur || "-"}</td>
                             <td className="border-r border-b px-6 py-4">
                                 <div className="flex flex-col jutify-center items-center gap-2">
-                                    <ButtonGreen className="w-full" halaman_url={`/intermediate/${data.id}`}>Edit</ButtonGreen>
+                                    <ButtonGreen className="w-full">Edit</ButtonGreen>
                                     <ButtonRed 
                                         className="w-full"
                                         onClick={() => {
-                                            AlertQuestion("Hapus?", "Hapus tematik pemda yang dipilih?", "question", "Hapus", "Batal").then((result) => {
+                                            AlertQuestion("Hapus?", "Hapus Data Intermediate yang dipilih?", "question", "Hapus", "Batal").then((result) => {
                                                 if(result.isConfirmed){
-                                                    hapusTematik(data.id);
+                                                    
                                                 }
                                             });
                                         }}
@@ -165,6 +139,10 @@ const Table = () => {
                                     </ButtonRed>
                                 </div>
                             </td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_sub_tema.kondisi_terukur || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_sub_tema.initial_outcome.indikator || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_sub_tema.initial_outcome.target || "-"} / {data.sub_sub_tema.initial_outcome.satuan || "-"}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.sub_sub_tema.initial_outcome.keterangan || "-"}</td>
                         </tr>
                         ))
                     }
