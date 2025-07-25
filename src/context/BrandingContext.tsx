@@ -29,6 +29,9 @@ interface BrandingContextType {
 const appName = process.env.NEXT_PUBLIC_APP_NAME || "";
 const clientName = process.env.NEXT_PUBLIC_CLIENT_NAME || "";
 const logo = process.env.NEXT_PUBLIC_LOGO_URL || "";
+const api_perencanaan = process.env.NEXT_PUBLIC_API_URL || "";
+const api_csf = process.env.NEXT_PUBLIC_API_URL_CSF || "";
+const api_permasalahan = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN || "";
 
 // context
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined);

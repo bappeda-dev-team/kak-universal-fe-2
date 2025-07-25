@@ -21,6 +21,12 @@ interface OptionType {
 }
 interface FormValue {
     id: number;
+    peryataan_kondisi?: string;
+    alasan_kondisi?: string;
+    data_pendukung?: string;
+    data_terukur?: string;
+    penyebab_permasalahan?: string;
+    isu_strategis?: string;
     parent: string;
     nama_pohon: string;
     jenis_pohon: string;
@@ -40,14 +46,6 @@ type target = {
     target: string;
     satuan: string;
 };
-interface form {
-    formId: number;
-    onSave: [
-        { data: any },
-        { id: number }
-    ];
-    onCancle: () => void;
-}
 
 export const FormPohonPemda: React.FC<{
     formId: number;
@@ -165,6 +163,13 @@ export const FormPohonPemda: React.FC<{
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const formData = {
             //key : value
+            ...(level === 0 && {
+                penyebab_permasalahan: data.penyebab_permasalahan,
+                data_terukur: data.data_terukur,
+            }),
+            ...(level === 1 && {
+                penyebab_permasalahan: data.penyebab_permasalahan,
+            }),
             nama_pohon: data.nama_pohon,
             Keterangan: data.keterangan,
             jenis_pohon: level === 0 ? "Sub Tematik" :
@@ -191,7 +196,7 @@ export const FormPohonPemda: React.FC<{
                         satuan: t.satuan,
                     })),
                 })),
-            }),
+            })
         };
         // console.log(formData);
         try {
@@ -236,13 +241,13 @@ export const FormPohonPemda: React.FC<{
                     <div className="tf-nc tf flex flex-col w-[600px] rounded-lg shadow-lg shadow-slate-500 form-pohon">
                         <div className="flex pt-3 justify-center font-bold text-lg uppercase border my-3 py-3 border-black rounded-lg">
                             {level == 0 &&
-                                <h1>Tambah SubTematik</h1>
+                                <h1>Tambah Sub Tematik</h1>
                             }
                             {level == 1 &&
-                                <h1>Tambah SubSubTematik</h1>
+                                <h1>Tambah Sub Sub Tematik</h1>
                             }
                             {level == 2 &&
-                                <h1>Tambah SuperSubTematik</h1>
+                                <h1>Tambah Super Sub Tematik</h1>
                             }
                             {level == 3 &&
                                 <h1>Tambah Strategic Pemda</h1>
@@ -259,6 +264,58 @@ export const FormPohonPemda: React.FC<{
                                 onSubmit={handleSubmit(onSubmit)}
                                 className='w-full'
                             >
+                                {/* {(level === 0 || level === 1) &&
+                                    <div className="flex flex-col py-3">
+                                        <label
+                                            className="uppercase text-xs font-bold text-gray-700 my-2"
+                                            htmlFor="penyebab_permasalahan"
+                                        >
+                                            Penyebab Permasalahan (CSF)
+                                        </label>
+                                        <Controller
+                                            name="penyebab_permasalahan"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <input
+                                                    {...field}
+                                                    className="border px-4 py-2 rounded-lg"
+                                                    id="penyebab_permasalahan"
+                                                    type="text"
+                                                    placeholder="masukkan faktor yang berpengaruh terhadap capaian outcome"
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                }
+                                {level === 0 &&
+                                    <div className="flex flex-col py-3">
+                                        <label
+                                            className="uppercase text-xs font-bold text-gray-700 my-2"
+                                            htmlFor="data_terukur"
+                                        >
+                                            Data Terukur Terkait (CSF)
+                                        </label>
+                                        <Controller
+                                            name="data_terukur"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <input
+                                                    {...field}
+                                                    className="border px-4 py-2 rounded-lg"
+                                                    id="data_terukur"
+                                                    type="text"
+                                                    placeholder="masukkan Data Terukur Terkait CSF"
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                } */}
                                 <div className="flex flex-col py-3">
                                     <label
                                         className="uppercase text-xs font-bold text-gray-700 my-2"
@@ -345,51 +402,7 @@ export const FormPohonPemda: React.FC<{
                                         />
                                     </div>
                                 }
-                                {pokin === 'opd' &&
-                                    <div className="flex flex-col py-3">
-                                        <label
-                                            className="uppercase text-xs font-bold text-gray-700 my-2"
-                                            htmlFor="pelaksana"
-                                        >
-                                            Pelaksana
-                                        </label>
-                                        <Controller
-                                            name="pelaksana"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <>
-                                                    <Select
-                                                        {...field}
-                                                        placeholder="Pilih Pelaksana (bisa lebih dari satu)"
-                                                        value={Pelaksana}
-                                                        options={PelaksanaOption}
-                                                        isLoading={isLoading}
-                                                        isSearchable
-                                                        isClearable
-                                                        isMulti
-                                                        onMenuOpen={() => {
-                                                            if (PelaksanaOption.length === 0) {
-                                                                fetchPelaksana();
-                                                            }
-                                                        }}
-                                                        onChange={(option) => {
-                                                            field.onChange(option || []);
-                                                            setPelaksana(option as OptionTypeString[]);
-                                                        }}
-                                                        styles={{
-                                                            control: (baseStyles) => ({
-                                                                ...baseStyles,
-                                                                borderRadius: '8px',
-                                                                textAlign: 'start',
-                                                            })
-                                                        }}
-                                                    />
-                                                </>
-                                            )}
-                                        />
-                                    </div>
-                                }
-                                <label className="uppercase text-base font-bold text-gray-700 my-2">
+                                <label className="uppercase text-base font-bold text-sky-700 my-2">
                                     {
                                         level == 0 ?
                                             <h1>Indikator Sub Tematik :</h1>
@@ -413,7 +426,7 @@ export const FormPohonPemda: React.FC<{
                                     }
                                 </label>
                                 {fields.map((field, index) => (
-                                    <div key={index} className="flex flex-col my-2 py-2 px-5 border rounded-lg">
+                                    <div key={index} className="flex flex-col my-2 py-2 px-5 border border-sky-700 rounded-lg">
                                         <Controller
                                             name={`indikator.${index}.nama_indikator`}
                                             control={control}
@@ -655,7 +668,7 @@ export const FormAmbilPohon: React.FC<{
         }
     };
     const handleTurunan = () => {
-        if(Turunan){
+        if (Turunan) {
             setTurunan(false);
         } else {
             setTurunan(true);
@@ -877,7 +890,7 @@ export const FormEditPohon: React.FC<{
     onCancel: () => void
     pokin: 'pemda' | 'opd';
     EditBerhasil: (data: any) => void;
-}> = ({ id, level, formId, EditBerhasil, onCancel, pokin }) => {
+}> = ({ id, level, EditBerhasil, onCancel, pokin }) => {
 
     const {
         control,
@@ -923,7 +936,7 @@ export const FormEditPohon: React.FC<{
 
     const { fields, append, remove, replace } = useFieldArray({
         control,
-        name: "indikator",
+        name: "indikator"
     });
 
     const fetchOpd = async () => {
@@ -1050,6 +1063,13 @@ export const FormEditPohon: React.FC<{
         })) || [];
         const formData = {
             //key : value
+            ...(level === 1 && {
+                penyebab_permasalahan: data.penyebab_permasalahan,
+                data_terukur: data.data_terukur,
+            }),
+            ...(level === 2 && {
+                penyebab_permasalahan: data.penyebab_permasalahan,
+            }),
             nama_pohon: data.nama_pohon,
             Keterangan: data.keterangan,
             jenis_pohon: level === 0 ? "Tematik" :
@@ -1121,7 +1141,7 @@ export const FormEditPohon: React.FC<{
                         <h1>Edit Tematik </h1>
                     }
                     {level == 1 &&
-                        <h1>Edit Sub Tematik </h1>
+                        <h1>Edit Sub Tematik</h1>
                     }
                     {level == 2 &&
                         <h1>Edit Sub Sub Tematik </h1>
@@ -1144,6 +1164,58 @@ export const FormEditPohon: React.FC<{
                         onSubmit={handleSubmit(onSubmit)}
                         className='w-full'
                     >
+                        {/* {(level === 2 || level === 1) &&
+                            <div className="flex flex-col py-3">
+                                <label
+                                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                                    htmlFor="penyebab_permasalahan"
+                                >
+                                    Penyebab Permasalahan (CSF)
+                                </label>
+                                <Controller
+                                    name="penyebab_permasalahan"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <input
+                                            {...field}
+                                            className="border px-4 py-2 rounded-lg"
+                                            id="penyebab_permasalahan"
+                                            type="text"
+                                            placeholder="masukkan faktor yang berpengaruh terhadap capaian outcome"
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        }
+                        {level === 1 &&
+                            <div className="flex flex-col py-3">
+                                <label
+                                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                                    htmlFor="data_terukur"
+                                >
+                                    Data Terukur Terkait (CSF)
+                                </label>
+                                <Controller
+                                    name="data_terukur"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <input
+                                            {...field}
+                                            className="border px-4 py-2 rounded-lg"
+                                            id="data_terukur"
+                                            type="text"
+                                            placeholder="masukkan Data Terukur Terkait CSF"
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        } */}
                         <div className="flex flex-col py-3">
                             <label
                                 className="uppercase text-xs font-bold text-gray-700 my-2"
@@ -1233,51 +1305,7 @@ export const FormEditPohon: React.FC<{
                                 />
                             </div>
                         }
-                        {pokin === 'opd' &&
-                            <div className="flex flex-col py-3">
-                                <label
-                                    className="uppercase text-xs font-bold text-gray-700 my-2"
-                                    htmlFor="pelaksana"
-                                >
-                                    Pelaksana
-                                </label>
-                                <Controller
-                                    name="pelaksana"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <>
-                                            <Select
-                                                {...field}
-                                                placeholder="Pilih Pelaksana (bisa lebih dari satu)"
-                                                value={Pelaksana}
-                                                options={PelaksanaOption}
-                                                isLoading={isLoading}
-                                                isSearchable
-                                                isClearable
-                                                isMulti
-                                                onMenuOpen={() => {
-                                                    if (PelaksanaOption.length === 0) {
-                                                        fetchPelaksana();
-                                                    }
-                                                }}
-                                                onChange={(option) => {
-                                                    field.onChange(option || []);
-                                                    setPelaksana(option as OptionTypeString[]);
-                                                }}
-                                                styles={{
-                                                    control: (baseStyles) => ({
-                                                        ...baseStyles,
-                                                        borderRadius: '8px',
-                                                        textAlign: 'start',
-                                                    })
-                                                }}
-                                            />
-                                        </>
-                                    )}
-                                />
-                            </div>
-                        }
-                        <label className="uppercase text-base font-bold text-gray-700 my-2">
+                        <label className="uppercase text-base font-bold text-sky-700 my-2">
                             {
                                 level == 0 ?
                                     <h1>Indikator Tematik :</h1>
@@ -1307,7 +1335,7 @@ export const FormEditPohon: React.FC<{
                             }
                         </label>
                         {fields.map((field, index) => (
-                            <div key={index} className="flex flex-col my-2 py-2 px-5 border rounded-lg">
+                            <div key={index} className="flex flex-col my-2 py-2 px-5 border border-sky-700 rounded-lg">
                                 <Controller
                                     name={`indikator.${index}.nama_indikator`}
                                     control={control}

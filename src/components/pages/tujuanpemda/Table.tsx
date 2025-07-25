@@ -288,8 +288,8 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                                                         </td>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-6 h-[150px]" rowSpan={item.indikator !== null ? item.indikator.length + 1 : 2}>
                                                             {item.visi || "-"}
-                                                            {/* /
-                                                            {item.misi || "-"} */}
+                                                            /
+                                                            {item.misi || "-"}
                                                         </td>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-6" rowSpan={item.indikator !== null ? item.indikator.length + 1 : 2}>
                                                             <div className="flex flex-col justify-center items-center gap-2">

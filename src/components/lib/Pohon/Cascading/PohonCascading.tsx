@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { TbTrashX, TbUsersPlus, TbEye, TbPrinter } from 'react-icons/tb';
 import { ButtonSky, ButtonGreenBorder, ButtonBlackBorder } from '@/components/global/Button';
 import { AlertNotification, AlertQuestion } from '@/components/global/Alert';
-import { FormCascading, FormEditCascading } from './FormCascading';
+import { FormEditCascading } from './FormCascading';
 import { getToken, getUser } from '../../Cookie';
 import { ModalCetak } from '@/components/pages/Pohon/ModalCetak';
 
@@ -204,16 +204,6 @@ export const PohonCascading: React.FC<pohon> = ({ tema, deleteTrigger, show_all,
                         set_show_all={() => set_show_all()}
                     />
                 ))}
-                {formList.map((formId) => (
-                    <FormCascading
-                        level={tema.level_pohon}
-                        id={tema.id}
-                        key={formId}
-                        formId={formId}
-                        pokin={'opd'}
-                        onCancel={() => setFormList(formList.filter((id) => id !== formId))}
-                    />
-                ))}
             </ul>
             <ModalCetak
                 jenis='cascading'
@@ -392,18 +382,6 @@ export const PohonCascadingEdited: React.FC<pohon> = ({ tema, deleteTrigger }) =
                             }
                         </div>
                     </div>
-                    <ul style={{ display: Show ? '' : 'none' }}>
-                        {formList.map((formId) => (
-                            <FormCascading
-                                level={tema.level_pohon}
-                                id={tema.id}
-                                key={formId}
-                                formId={formId}
-                                pokin={'opd'}
-                                onCancel={() => setFormList(formList.filter((id) => id !== formId))}
-                            />
-                        ))}
-                    </ul>
                 </>
             }
         </li>

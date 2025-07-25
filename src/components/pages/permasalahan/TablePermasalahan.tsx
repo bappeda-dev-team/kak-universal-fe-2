@@ -1,11 +1,13 @@
 'use client'
 
-import { ButtonSkyBorder, ButtonBlackBorder, ButtonRedBorder, ButtonBlack, ButtonGreenBorder } from "@/components/global/Button";
+import { ButtonSkyBorder, ButtonBlack } from "@/components/global/Button";
 import React, { useState, useEffect } from "react";
 import { LoadingSync } from "@/components/global/Loading";
-import { TbPencil, TbCheckbox, TbCircleX, TbDeviceFloppy } from "react-icons/tb";
+import { TbPencil, TbCheckbox } from "react-icons/tb";
 import { AlertQuestion } from "@/components/global/Alert";
 import { getToken } from "@/components/lib/Cookie";
+import { FormPermasalahan } from "./FormPermasalahan";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 interface Table {
     kode_opd: string;
@@ -14,24 +16,30 @@ interface Table {
 
 interface Pohon {
     id: number;
+    id_permasalahan: number;
     parent: number;
     nama_pohon: string;
     level_pohon: number;
-    is_active: boolean;
+    perangkat_daerah: {
+        kode_opd: string;
+        nama_opd: string;
+    }
+    jenis_masalah: string;
+    is_permasalahan: boolean;
     childs: Pohon[]
 }
 interface Childs {
-    id: number;
-    nama_pohon: string;
-    level_pohon: number;
+    data?: Pohon;
     rowSpan: number;
     editing?: () => void;
 }
 
 export const TablePermasalahan: React.FC<Table> = ({ kode_opd, tahun }) => {
 
-    const [Pohon, setPohon] = useState<Pohon[]>([]);
+    const { branding } = useBrandingContext();
+    const api_permasalahan = branding.api_permasalahan;
 
+    const [Pohon, setPohon] = useState<Pohon[]>([]);
     const [DataNull, setDataNull] = useState<boolean>(false);
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
@@ -39,13 +47,13 @@ export const TablePermasalahan: React.FC<Table> = ({ kode_opd, tahun }) => {
     const token = getToken();
 
     useEffect(() => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchPohon = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/pohon_kinerja_opd/findall/${kode_opd}/${tahun}`, {
+                const response = await fetch(`${api_permasalahan}/permasalahan/${kode_opd}/${tahun}`, {
                     headers: {
-                        'Authorization': `${token}`
+                        // 'Authorization': `${token}`
+                        'Content-Type': 'application/json',
                     }
                 });
                 const result = await response.json();
@@ -71,7 +79,7 @@ export const TablePermasalahan: React.FC<Table> = ({ kode_opd, tahun }) => {
             }
         }
         fetchPohon();
-    }, [kode_opd, tahun, token]);
+    }, [kode_opd, tahun, token, FetchTrigger]);
 
     if (Loading) {
         return (
@@ -132,40 +140,34 @@ export const TablePermasalahan: React.FC<Table> = ({ kode_opd, tahun }) => {
                                     <tr>
                                         <td rowSpan={p.childs ? calculatedTotalRow2 + 1 : 2} className="border-x border-b border-black px-3 py-4 text-center">{index + 1}</td>
                                         <Childs
-                                            id={p.id}
-                                            nama_pohon={p.nama_pohon}
-                                            level_pohon={p.level_pohon}
+                                            data={p}
                                             rowSpan={p.childs ? calculatedTotalRow2 + 1 : 2}
                                         />
                                     </tr>
                                     {/* TACTICAL */}
                                     {!p.childs ?
                                         <tr>
-                                            <td colSpan={4} className="p-6 font-semibold bg-yellow-400 border border-black text-white">tidak ada anak pohon</td>
+                                            <td colSpan={4} className="p-6 font-semibold border border-black text-red-400">tidak ada anak pohon</td>
                                         </tr>
                                         :
                                         p.childs.map((t: Pohon, sub_index: number) => (
                                             <React.Fragment key={t.id || sub_index}>
                                                 <tr>
                                                     <Childs
-                                                        id={t.id}
-                                                        nama_pohon={t.nama_pohon}
-                                                        level_pohon={t.level_pohon}
+                                                        data={t}
                                                         rowSpan={t.childs ? t.childs.length + 1 : 2}
                                                     />
                                                 </tr>
                                                 {/* OPERATIONAL */}
                                                 {!t.childs ?
                                                     <tr>
-                                                        <td colSpan={2} className="p-6 font-semibold bg-yellow-400 border border-black text-white">tidak ada anak pohon</td>
+                                                        <td colSpan={2} className="p-6 font-semibold border border-black text-red-400">tidak ada anak pohon</td>
                                                     </tr>
                                                     :
                                                     t.childs.map((o: Pohon, subsub_index: number) => (
                                                         <tr key={o.id || subsub_index}>
                                                             <Childs
-                                                                id={o.id}
-                                                                nama_pohon={o.nama_pohon}
-                                                                level_pohon={o.level_pohon}
+                                                                data={o}
                                                                 rowSpan={1}
                                                             />
                                                         </tr>
@@ -185,26 +187,28 @@ export const TablePermasalahan: React.FC<Table> = ({ kode_opd, tahun }) => {
 
 }
 
-export const Childs: React.FC<Childs> = ({ id, nama_pohon, rowSpan, level_pohon }) => {
+export const Childs: React.FC<Childs> = ({ data, rowSpan }) => {
 
     const [Edit, setEdit] = useState<boolean>(false);
+    const [JenisForm, setJenisForm] = useState<"baru" | "edit" | "">("");
 
-    const handleEdit = () => {
+    const handleEdit = (jenis: "baru" | "edit" | "") => {
         if (Edit) {
             setEdit(false);
+            setJenisForm("");
         } else {
             setEdit(true);
+            setJenisForm(jenis);
         }
     }
 
     if (Edit) {
         return (
             <FormPermasalahan
-                id={id}
-                nama_pohon={nama_pohon}
+                data={data}
                 rowSpan={rowSpan}
-                editing={handleEdit}
-                level_pohon={level_pohon}
+                editing={() => handleEdit("")}
+                jenis={JenisForm}
             />
         )
     } else {
@@ -213,18 +217,31 @@ export const Childs: React.FC<Childs> = ({ id, nama_pohon, rowSpan, level_pohon 
                 <td
                     rowSpan={rowSpan}
                     className={`border-r border-b border-black px-6 py-4 
-                        ${level_pohon === 4 && 'bg-red-300'}
-                        ${level_pohon === 5 && 'bg-blue-200'}
-                        ${level_pohon === 6 && 'bg-green-200'}
+                        ${data?.level_pohon === 4 && 'bg-red-300'}
+                        ${data?.level_pohon === 5 && 'bg-blue-200'}
+                        ${data?.level_pohon === 6 && 'bg-emerald-200'}
                     `}
                 >
-                    {nama_pohon} - {rowSpan}
+                    {data?.nama_pohon || "-"} {data?.id_permasalahan}
                 </td>
-                <td rowSpan={rowSpan} className="border-r border-b border-black px-6 py-4 max-w-[150px]">
+                <td
+                    rowSpan={rowSpan}
+                    className={`border-r border-b border-black px-6 py-4 max-w-[150px]
+                        ${data?.level_pohon === 4 && 'bg-red-300'}
+                        ${data?.level_pohon === 5 && 'bg-blue-200'}
+                        ${data?.level_pohon === 6 && 'bg-emerald-200'}
+                    `}
+                >
                     <div className="flex flex-col justify-center items-center gap-2">
                         <ButtonSkyBorder
                             className="w-full"
-                            onClick={handleEdit}
+                            onClick={() => {
+                                if (data?.id_permasalahan === 0) {
+                                    handleEdit("baru");
+                                } else {
+                                    handleEdit("edit");
+                                }
+                            }}
                         >
                             <TbPencil className="mr-1" />
                             Edit
@@ -246,31 +263,4 @@ export const Childs: React.FC<Childs> = ({ id, nama_pohon, rowSpan, level_pohon 
             </React.Fragment>
         )
     }
-}
-
-export const FormPermasalahan: React.FC<Childs> = ({ id, nama_pohon, rowSpan, level_pohon, editing }) => {
-    return (
-        <React.Fragment>
-            <td rowSpan={rowSpan} colSpan={2} className="border-r border-b border-black px-6 py-4">
-                <div className="p-3 border rounded-lg mb-3">
-                    {nama_pohon}
-                </div>
-                <div className="flex justify-center items-center gap-2">
-                    <ButtonRedBorder className="w-full"
-                        onClick={editing}
-                    >
-                        <TbCircleX className="mr-1" />
-                        Batal
-                    </ButtonRedBorder>
-                    <ButtonGreenBorder
-                        className="w-full"
-                        onClick={editing}
-                    >
-                        <TbDeviceFloppy className="mr-1" />
-                        Simpan
-                    </ButtonGreenBorder>
-                </div>
-            </td>
-        </React.Fragment>
-    )
 }
