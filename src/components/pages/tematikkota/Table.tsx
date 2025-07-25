@@ -134,9 +134,9 @@ const Table = () => {
                         <tr className="bg-[#99CEF5] text-white">
                             <th className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Tema</th>
-                            <th className="border-l border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                             <th className="border-l border-b px-6 py-3 min-w-[200px]">Indikator</th>
                             <th className="border-l border-b px-6 py-3 min-w-[200px]">Target/Satuan</th>
+                            <th className="border-l border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                             <th className="border-l border-b px-6 py-3 min-w-[100px]">Aksi</th>
                         </tr>
                     </thead>
@@ -152,7 +152,6 @@ const Table = () => {
                         <tr key={data.id}>
                             <td className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
                             <td className="border-r border-b px-6 py-4 text-center">{data.tema}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.keterangan ? data.keterangan : "-"}</td>
                             {data.indikator ?
                                 <>
                                     <td className="border-r border-b px-6 py-4 text-center">
@@ -174,6 +173,7 @@ const Table = () => {
                                 <td className="border-r border-b px-6 py-4 text-center">-</td>
                             </>
                             }
+                            <td className="border-r border-b px-6 py-4 text-center">{data.keterangan ? data.keterangan : "-"}</td>
                             <td className="border-r border-b px-6 py-4">
                                 <div className="flex flex-col jutify-center items-center gap-2">
                                     <ButtonGreen className="w-full" halaman_url={`/tematikpemda/${data.id}`}>Edit</ButtonGreen>

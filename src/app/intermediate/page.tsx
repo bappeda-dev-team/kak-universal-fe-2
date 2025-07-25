@@ -3,7 +3,7 @@
 import { ButtonSky } from "@/components/global/Button";
 import { FiHome } from "react-icons/fi";
 import { TbCirclePlus } from "react-icons/tb";
-import Table from "./table";
+import Table from "./Table";
 import { getOpdTahun } from "@/components/lib/Cookie";
 import { useState, useEffect } from "react";
 
@@ -27,7 +27,6 @@ const Intermediate = () => {
             <div className="flex items-center">
                 <a href="/" className="mr-1"><FiHome /></a>
                 <p className="mr-1">/ Perencanaan Pemda</p>
-                <p className="mr-1">/ Isu Strategis</p>
                 <p className="mr-1">/ Intermediate</p>
             </div>
             <div className="mt-3 rounded-xl shadow-lg border">
@@ -35,6 +34,15 @@ const Intermediate = () => {
                     <div className="flex flex-wrap items-end">
                         <h1 className="uppercase font-bold">Intermediate</h1>
                         <h1 className="uppercase font-bold ml-1">{Tahun ? Tahun?.label : ""}</h1>
+                    </div>
+                    <div className="flex flex-col">
+                        <ButtonSky 
+                            className="flex items-center justify-center"
+                            halaman_url='/intermediate/tambah'
+                        >
+                            <TbCirclePlus className="mr-1"/>
+                            Tambah Data
+                        </ButtonSky>
                     </div>
                 </div>
                 <Table />

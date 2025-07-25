@@ -3,7 +3,7 @@
 import { ButtonSky } from "@/components/global/Button";
 import { FiHome } from "react-icons/fi";
 import { TbCirclePlus } from "react-icons/tb";
-import { Table } from "./table";
+import Table from "./Table";
 import { getOpdTahun } from "@/components/lib/Cookie";
 import { useState, useEffect } from "react";
 
@@ -38,7 +38,7 @@ const TematikPemda = () => {
                     <div className="flex flex-col">
                         <ButtonSky 
                             className="flex items-center justify-center"
-                            halaman_url='/tematikpemda/tambah'
+                            halaman_url='/CSF/tambah'
                         >
                             <TbCirclePlus className="mr-1"/>
                             Tambah Data

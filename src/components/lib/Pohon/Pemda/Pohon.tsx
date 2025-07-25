@@ -477,10 +477,10 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                     {user != 'reviewer' &&
                                         <div
                                             className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white border-black hide-on-capture
-                                ${tema.jenis_pohon === "Strategic" && 'border-white'}
-                                ${tema.jenis_pohon === "Tactical" && 'border-white'}
-                                ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && 'border-white'}
-                            `}
+                                                ${tema.jenis_pohon === "Strategic" && 'border-white'}
+                                                ${tema.jenis_pohon === "Tactical" && 'border-white'}
+                                                ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && 'border-white'}
+                                            `}
                                         >
                                             <React.Fragment>
                                                 {!['Strategic', 'Tactical', 'Operational', 'Operational N'].includes(tema.jenis_pohon) &&
@@ -498,16 +498,16 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                                         Cetak
                                                     </ButtonSky>
                                                 }
-                                                {tema.jenis_pohon === 'Tematik' &&
+                                                {tema.level_pohon === 0 &&
                                                     <>
                                                         <button
                                                             className={`border px-3 py-1 rounded-lg flex jutify-center items-center gap-1
-                                                        ${tema.is_active === false ?
-                                                                    'border-green-500 text-green-500 hover:bg-green-500 hover:text-white'
-                                                                    :
-                                                                    'border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
-                                                                }    
-                                                    `}
+                                                                ${tema.is_active === false ?
+                                                                            'border-green-500 text-green-500 hover:bg-green-500 hover:text-white'
+                                                                            :
+                                                                            'border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
+                                                                        }    
+                                                            `}
                                                             onClick={() => {
                                                                 AlertQuestion(`${tema.is_active === true ? 'NON AKTIFKAN' : 'AKTIFKAN'}`, `${tema.is_active === false ? 'Aktifkan tematik?' : 'non aktifkan tematik'}`, "question", `${tema.is_active === false ? 'Aktifkan' : 'Non Aktifkan'}`, "Batal").then((result) => {
                                                                     if (result.isConfirmed) {
@@ -519,13 +519,15 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                                             {tema.is_active === false ? <TbCheck /> : <TbX />}
                                                             {tema.is_active === false ? 'Aktifkan tematik' : 'Non Aktifkan tematik'}
                                                         </button>
-                                                        <ButtonBlack
-                                                            className='flex justify-center items-center gap-1'
-                                                            onClick={() => setIsClone(true)}
-                                                        >
-                                                            <TbCopy />
-                                                            Clone
-                                                        </ButtonBlack>
+                                                        {tema.is_active === true &&
+                                                            <ButtonBlack
+                                                                className='flex justify-center items-center gap-1'
+                                                                onClick={() => setIsClone(true)}
+                                                            >
+                                                                <TbCopy />
+                                                                Clone
+                                                            </ButtonBlack>
+                                                        }
                                                         <ModalClone
                                                             jenis="pemda"
                                                             isOpen={IsClone}
@@ -538,7 +540,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                                     </>
                                                 }
                                             </React.Fragment>
-                                            {tema.jenis_pohon !== 'Tematik' &&
+                                            {tema.level_pohon !== 0 &&
                                                 <ButtonRedBorder
                                                     onClick={() => {
                                                         AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {

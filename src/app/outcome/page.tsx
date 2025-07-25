@@ -3,7 +3,7 @@
 import { ButtonSky } from "@/components/global/Button";
 import { FiHome } from "react-icons/fi";
 import { TbCirclePlus } from "react-icons/tb";
-import Table from "./table";
+import Table from "./Table";
 import { getOpdTahun } from "@/components/lib/Cookie";
 import { useState, useEffect } from "react";
 
@@ -13,21 +13,20 @@ const Outcome = () => {
 
     useEffect(() => {
         const data = getOpdTahun();
-        if(data.tahun){
+        if (data.tahun) {
             const tahun = {
                 value: data.tahun.value,
                 label: data.tahun.label,
             }
             setTahun(tahun);
         }
-    },[]);
+    }, []);
 
-    return(
+    return (
         <>
             <div className="flex items-center">
                 <a href="/" className="mr-1"><FiHome /></a>
                 <p className="mr-1">/ Perencanaan Pemda</p>
-                <p className="mr-1">/ Isu Strategis</p>
                 <p className="mr-1">/ Outcome</p>
             </div>
             <div className="mt-3 rounded-xl shadow-lg border">
