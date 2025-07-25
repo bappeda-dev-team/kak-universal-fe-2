@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { ButtonRed, ButtonGreen } from "@/components/global/Button";
 import { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
@@ -60,24 +61,6 @@ const Table = () => {
     const token = getToken();
     const { branding } = useBrandingContext();
 
-    const Data: any = [
-        {
-            "id": 1,
-            "id_pohon": 1,
-            "kondisi_terukur": "isu strategis 1 / tema 1",
-            "outcome_yang_ingin_diwujudkan": "indikator tema 1",
-            "faktor_berpengaruh": "input faktor 1",
-            "data_terukur": "data permasalahan 1",
-            "kondisi_yang_diperlukan": "subtema 1/investasi",
-            "intermediate_outcome": {
-                "indikator": "indikator sub tema 1",
-                "target": "target sub tema 1",
-                "satuan": "satuan sub tema 1",
-                "keterangan": "keterangan sub tema 1"
-            }
-        }
-    ]
-
     const [CSF, setCSF] = useState<CSF[]>([]);
     const [Sub, setSub] = useState<any[]>([]);
     const [GabunganOutcome, setGabunganOutcome] = useState<any[]>([]);
@@ -92,7 +75,6 @@ const Table = () => {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
-                        'X-API_Key': 'RAHASIA'
                     },
                 });
                 const result = await response.json();
@@ -187,17 +169,13 @@ const Table = () => {
             fetchSubTematik();
         }
     }, [Tahun, token, branding]);
-    
-    useEffect(() => {
-        if(Sub.length === 0 && Outcome.length === 0 && branding?.tahun === undefined ){
-            console.log("kosong");
-        } else {
-            const test = gabungData(Sub, Outcome);
-            setGabunganOutcome(test);
-            console.log('hasil >>>', test);
-        }
-    }, [branding, Sub, Outcome]);
 
+    useEffect(() => {
+        if (!Sub || !Outcome) return;
+
+        const gabungan = gabungData(Sub, Outcome);
+        setGabunganOutcome(gabungan);
+    }, [branding, Sub, Outcome]);
 
     if (Loading) {
         return (
@@ -237,70 +215,94 @@ const Table = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {DataNull ?
+                        {DataNull ? (
                             <tr>
                                 <td className="px-6 py-3 uppercase" colSpan={13}>
                                     Data Kosong / Belum Ditambahkan
                                 </td>
                             </tr>
-                            :
+                        ) : (
                             CSF.map((data: CSF, index: number) => {
-                                const outcomeList = GabunganOutcome.filter(go => go.parent === data.parent);
-                                return(
+                                const outcomeList = GabunganOutcome.filter(go => go.parent === data.id);
+                                const rowSpan = Math.max(outcomeList.length, 1); // minimal 1 baris
+
+                                return (
                                     <>
-                                        <tr key={data.id || index}>
-                                            <td className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
-                                            <td className="border-r border-b px-6 py-4 text-center">{data.nama_pohon || "-"}</td>
-                                            {data.indikator ?
+                                        {outcomeList.length > 0 ? (
+                                            outcomeList.map((ol: any, subIndex: number) => (
+                                                <tr key={`${data.id}-${subIndex}`}>
+                                                    {subIndex === 0 && (
+                                                        <>
+                                                            <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
+                                                            <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">{data.nama_pohon || "-"}</td>
+                                                            <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">
+                                                                {data.indikator && data.indikator.length > 0 ? (
+                                                                    data.indikator.map((i: indikator, i_index: number) => (
+                                                                        <p key={i_index}>{i.nama_indikator || "-"}</p>
+                                                                    ))
+                                                                ) : (
+                                                                    <p>tidak ada indikator</p>
+                                                                )}
+                                                            </td>
+                                                        </>
+                                                    )}
+
+                                                    {/* Baris anak Outcome */}
+                                                    <td className="border-r border-b px-6 py-4 text-center">{ol.faktor_berpengaruh || "-"}</td>
+                                                    <td className="border-r border-b px-6 py-4 text-center">{ol.data_terukur || "-"}</td>
+                                                    <td className="border-r border-b px-6 py-4">
+                                                        <div className="flex flex-col jutify-center items-center gap-2">
+                                                            <ButtonGreen className="w-full" halaman_url={`/outcome/tambah/${data.pohon_id}`}>Edit</ButtonGreen>
+                                                            <ButtonRed
+                                                                className="w-full"
+                                                                onClick={() => {
+                                                                    AlertQuestion("Hapus?", "Hapus Data Outcome yang dipilih?", "question", "Hapus", "Batal").then((result) => {
+                                                                        if (result.isConfirmed) {
+                                                                            // hapusOutcome(ol.id);
+                                                                        }
+                                                                    });
+                                                                }}
+                                                            >
+                                                                Hapus
+                                                            </ButtonRed>
+                                                        </div>
+                                                    </td>
+                                                    <td className="border-r border-b px-6 py-4 text-center">{ol.tema}</td>
+                                                    <td className="border-r border-b px-6 py-4 text-center">
+                                                        {ol.indikator?.length > 0 ? (
+                                                            ol.indikator.map((i: indikator, i_index: number) => (
+                                                                <p key={i_index}>{i.nama_indikator || "-"}</p>
+                                                            ))
+                                                        ) : (
+                                                            <p>tidak ada indikator</p>
+                                                        )}
+                                                    </td>
+                                                    <td className="border-r border-b px-6 py-4 text-center">-</td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            // Jika tidak ada outcome sama sekali, tetap render row parent + 1 row kosong
+                                            <tr key={data.id}>
+                                                <td className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
+                                                <td className="border-r border-b px-6 py-4 text-center">{data.nama_pohon || "-"}</td>
                                                 <td className="border-r border-b px-6 py-4 text-center">
-                                                    {data.indikator.map((i: indikator, i_index: number) => (
-                                                        <p key={i_index}>{i.nama_indikator || "-"}</p>
-                                                    ))}
+                                                    {data.indikator?.length > 0 ? (
+                                                        data.indikator.map((i: indikator, i_index: number) => (
+                                                            <p key={i_index}>{i.nama_indikator || "-"}</p>
+                                                        ))
+                                                    ) : (
+                                                        <p>tidak ada indikator</p>
+                                                    )}
                                                 </td>
-                                                :
-                                                <td className="border-r border-b px-6 py-4 text-center">tidak ada indikator</td>
-                                            }
-                                        </tr>
-                                        {outcomeList.map((ol: any, subIndex: number) => (
-                                            <tr key={ol.id || subIndex}>
-                                                <td className="border-r border-b px-6 py-4 text-center text-red-400">{ol.faktor_berpengaruh || "-"}</td>
-                                                <td className="border-r border-b px-6 py-4 text-center text-red-400">{ol.data_terukur || "-"}</td>
-                                                <td className="border-r border-b px-6 py-4">
-                                                    <div className="flex flex-col jutify-center items-center gap-2">
-                                                        <ButtonGreen className="w-full" halaman_url={`/outcome/tambah/${data.pohon_id}`}>Edit</ButtonGreen>
-                                                        <ButtonRed
-                                                            className="w-full"
-                                                            onClick={() => {
-                                                                AlertQuestion("Hapus?", "Hapus Data Outcome yang dipilih?", "question", "Hapus", "Batal").then((result) => {
-                                                                    if (result.isConfirmed) {
-                                                                        // hapusTematik(data.id);
-                                                                    }
-                                                                });
-                                                            }}
-                                                        >
-                                                            Hapus
-                                                        </ButtonRed>
-                                                    </div>
+                                                <td colSpan={6} className="border-r border-b px-6 py-4 text-center text-gray-400 italic">
+                                                    Tidak ada Outcome
                                                 </td>
-                                                {/* <td className="border-r border-b px-6 py-4 text-center">{data.kondisi_yang_diperlukan || "-"}</td>
-                                                {data.intermediate_outcome ?
-                                                    <>
-                                                        <td className="border-r border-b px-6 py-4 text-center">{data.intermediate_outcome.indikator || "-"}</td>
-                                                        <td className="border-r border-b px-6 py-4 text-center">{data.intermediate_outcome.target || "-"} / {data.intermediate_outcome.satuan || "-"}</td>
-                                                        <td className="border-r border-b px-6 py-4 text-center">{data.intermediate_outcome.keterangan || "-"}</td>
-                                                    </>
-                                                    :
-                                                    <>
-                                                        <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                                        <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                                        <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                                    </>
-                                                } */}
                                             </tr>
-                                        ))}
+                                        )}
                                     </>
-                                )})
-                            }
+                                );
+                            })
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -312,12 +314,11 @@ export default Table;
 
 function gabungData(subs: any, outcomes: any) {
     const hasil: any = [];
-    console.log("hasil subs", subs);
     subs.forEach((sub: any) => {
         const outcomeEntry = outcomes.find(
-            ((outcome : any) => outcome.pohon_id == sub.id 
-            && outcome.parent_id == sub.parent))
-        
+            ((outcome: any) => outcome.pohon_id == sub.id
+                && outcome.parent_id == sub.parent))
+
         if (outcomeEntry) {
             hasil.push({
                 id: sub.id,
