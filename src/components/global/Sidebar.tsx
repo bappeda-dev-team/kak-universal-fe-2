@@ -9,17 +9,20 @@ import {
   TbBuildingEstate, TbFileChart, TbFileDots, TbFileCode, TbFileCode2, TbUsers, TbArrowUpFromArc,
   TbUser, TbHexagonLetterR, TbBinaryTree2, TbTarget, TbMapPin, TbChartBar, TbCalendarShare,
   TbMessageReport, TbCalendar, TbHexagonLetterV, TbHexagonLetterM, TbClipboardText, TbZoomExclamation,
-  TbFileAnalytics, TbListDetails, TbCalendarTime, TbAlertTriangle,
-  TbAlertCircle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar, TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI,
-  TbBuildingCottage,
-  TbCalendarStar
+  TbFileAnalytics, TbListDetails, TbCalendarTime,
+  TbAlertTriangle,
+  TbAlertCircle, TbHexagonLetterC, TbHexagonLetterI, TbHexagonLetterO,
+  TbDatabasePlus,
+  TbCalendarPlus,
+  TbDeviceImacDollar
 } from "react-icons/tb";
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
 import "@/app/globals.css";
 import { logout, getUser } from '../lib/Cookie';
-import { useBrandingContext } from '@/context/BrandingContext';
+import { BrandingProvider, useBrandingContext } from '@/context/BrandingContext';
+import { Inter } from 'next/font/google';
 
 interface SidebarProps {
   isOpen: boolean | null;
@@ -40,24 +43,3796 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
   const [DataMaster, setDataMaster] = useState<boolean | null>(null);
   const [DataMasterOpd, setDataMasterOpd] = useState<boolean | null>(null);
   const [PerencanaanKota, setPerencanaanKota] = useState<boolean | null>(null);
+  const [IsuStrategisPemda, setIsuStrategisPemda] = useState<boolean | null>(null);
+  const [CSF, setCSF] = useState<boolean | null>(null);
+  const [Outcome, setOutcome] = useState<boolean | null>(null);
+  const [Intermediate, setIntermediate] = useState<boolean | null>(null);
+  const [TematikKota, setTematikKota] = useState<boolean | null>(null);
+  const [SubTematik, setSubTematik] = useState<boolean | null>(null);
+  const [KotaPohonKinerjaKota, setKotaPohonKinerjaKota] = useState<boolean | null>(null);
+  const [RPJMD, setRPJMD] = useState<boolean | null>(null);
+  const [Visi, setVisi] = useState<boolean | null>(null);
+  const [Misi, setMisi] = useState<boolean | null>(null);
+  const [TujuanPemda, setTujuanPemda] = useState<boolean | null>(null);
+  const [SasaranPemda, setSasaranPemda] = useState<boolean | null>(null);
+  const [IKU, setIKU] = useState<boolean | null>(null);
+  // PERENCANAAN OPD
   const [PerencanaanOPD, setPerencanaanOPD] = useState<boolean | null>(null);
   const [Perencanaan, setPerencanaan] = useState<boolean | null>(null);
   const [Laporan, setLaporan] = useState<boolean | null>(null);
-  // SUB MENU
-  const [MasterProgramKegiatan, setMasterProgramKegiatan] = useState<boolean | null>(null);
-  const [TematikKota, setTematikKota] = useState<boolean | null>(null);
-  const [RPJMD, setRPJMD] = useState<boolean | null>(null);
-  const [RKPD, setRKPD] = useState<boolean | null>(null);
-  const [Renstra, setRenstra] = useState<boolean | null>(null);
-  const [Renja, setRenja] = useState<boolean | null>(null);
-  const [UsulanLaporan, setUsulanLaporan] = useState<boolean | null>(null);
+  // LABEL LAPORAN USULAN
+  const [LaporanUsulan, setLaporanUsulan] = useState<boolean | null>(null);
+  // LAPORAN USULAN
+  const [LaporanMusrenbang, setLaporanMusrenbang] = useState<boolean | null>(null);
+  const [LaporanPokokPikiran, setLaporanPokokPikiran] = useState<boolean | null>(null);
+  const [LaporanMandatori, setLaporanMandatori] = useState<boolean | null>(null);
+  const [LaporanInisiatif, setLaporanInisiatif] = useState<boolean | null>(null);
+  const [SPIP, setSPIP] = useState<boolean | null>(null);
+  // LABEL LAPORAN REVIEW POKIN
   const [Review, setReview] = useState<boolean | null>(null);
+  // LAPORAN REVIEW POKIN
+  const [ReviewPemda, setReviewPemda] = useState<boolean | null>(null);
+  const [ReviewOpd, setReviewOpd] = useState<boolean | null>(null);
+  // LABEL RENSTRA OPD
   const [RenstraView, setRenstraView] = useState<boolean | null>(null);
+  // RENSTRA OPD
+  const [TujuanOpdView, setTujuanOpdView] = useState<boolean | null>(null);
+  const [SasaranOpdView, setSasaranOpdView] = useState<boolean | null>(null);
+  const [IkuOpdView, setIkuOpdView] = useState<boolean | null>(null);
+
+
+  const [ManajemenResiko, setManajemenResiko] = useState<boolean | null>(null);
+  const [Inovasi, setInovasi] = useState<boolean | null>(null);
+  const [OpdDiTematik, setOpdDiTematik] = useState<boolean | null>(null);
+  const [RencanaKinerjaKAK, setRencanaKinerjaKAK] = useState<boolean | null>(null);
+  const [RincianBelanja, setRincianBelanja] = useState<boolean | null>(null);
+  const [LaporanRincianBelanja, setLaporanRincianBelanja] = useState<boolean | null>(null);
+  const [LaporanRenstra, setLaporanRenstra] = useState<boolean>(false);
+  const [LaporanCascadingOpd, setLaporanCascadingOpd] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUser = getUser();
     if (fetchUser) {
       setUser(fetchUser.user);
+    }
+  }, [])
+
+  useEffect(() => {
+    if (url == "/") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      // setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(true);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    //DATA MASTER
+    if (url == "/DataMaster/masteropd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(true);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/kelompokanggaran") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(true);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterpegawai") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(true);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterperiode") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(true);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterusulan") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(true);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    //Master Program Kegiatan
+    if (url == "/DataMaster/masterprogramkegiatan/bidangurusan") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(true);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(true);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterprogramkegiatan/kegiatan") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(true);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(true);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterprogramkegiatan/program") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(true);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(true);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterprogramkegiatan/subkegiatan") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(true);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(true);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterprogramkegiatan/urusan") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(true);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(true);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterjabatan") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(true);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterlembaga") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(true);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masteruser") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(true);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/DataMaster/masterrole") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(true);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    //PERENCANAAN KOTA
+    if (url == "/pohonkinerjapemda") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(true);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/tematikpemda") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(true);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/CSF" || url == '/CSF/tambah' || url == `/CSF/${id}`) {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(true);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(true);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/outcome" || url == '/outcome/tambah' || url == `/outcome/${id}`) {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(true);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(true);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/intermediate" || url == '/intermediate/tambah' || url == `/intermediate/${id}`) {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(true);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(true);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/visi") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
+      setRPJMD(true);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(true);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/misi") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
+      setRPJMD(true);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(true);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/tujuanpemda") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
+      setRPJMD(true);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(true);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/sasaranpemda") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
+      setRPJMD(true);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(true);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/ikupemda") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(true);
+      setIsuStrategisPemda(false);
+      setRPJMD(true);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(true);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      //Renstra
+      setRencanaAksiOpd(false);
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    //PERENCANAAN OPD
+    if (url == "/tujuanopd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(true);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(true);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/sasaranopd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(true);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(true);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/ikuopd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(true);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/rencanaaksiopd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(true);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/permasalahanopd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(true);
+      setPermasalahan(true);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/isustrategis") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(true);
+      setPermasalahan(false);
+      setIsuStrategis(true);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/subkegiatanopd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(true);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(true);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/MasterUsulan/mastermusrenbang") {
+      setDashboard(false);
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterProgramKegiatan(false);
+      setMasterBidangUrusan(false);
+      setMasterKegiatan(false);
+      setMasterProgram(false);
+      setMasterSubKegiatan(false);
+      setMasterUrusan(false);
+      setMasterJabatan(false);
+      setMasterLembaga(false);
+      setMasterRole(false);
+      setMasterUser(false);
+      setPerencanaanKota(false);
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setSubTematik(false);
+      setKotaPohonKinerjaKota(false);
+      setOpdDiTematik(false);
+      setPerencanaanOPD(true);
+      setMasterUsulanOpd(true);
+      setRincianBelanja(false);
+      setMasterUsulanMusrenbang(true);
+      setMasterUsulanMandatori(false);
+      setMasterUsulanPokir(false);
+      setMasterUsulanInisiatif(false);
+      setTujuanOpd(false);
+      setPohonKinerjaOpd(false);
+      setUserOpd(false);
+      setLaporan(false);
+      setUsulanLaporan(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+      setMusrenbang(false);
+      setPokokPikiran(false);
+      setMandatori(false);
+      setManajemenResiko(false);
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setPohonCascadingOpd(false);
+    }
+    if (url == "/MasterUsulan/masterpokokpikiran") {
+      setDashboard(false);
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterProgramKegiatan(false);
+      setMasterBidangUrusan(false);
+      setMasterKegiatan(false);
+      setMasterProgram(false);
+      setMasterSubKegiatan(false);
+      setMasterUrusan(false);
+      setMasterJabatan(false);
+      setMasterLembaga(false);
+      setMasterRole(false);
+      setMasterUser(false);
+      setPerencanaanKota(false);
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setSubTematik(false);
+      setKotaPohonKinerjaKota(false);
+      setOpdDiTematik(false);
+      setPerencanaanOPD(true);
+      setMasterUsulanOpd(true);
+      setRincianBelanja(false);
+      setMasterUsulanMusrenbang(false);
+      setMasterUsulanMandatori(false);
+      setMasterUsulanPokir(true);
+      setMasterUsulanInisiatif(false);
+      setTujuanOpd(false);
+      setPohonKinerjaOpd(false);
+      setUserOpd(false);
+      setLaporan(false);
+      setUsulanLaporan(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+      setMusrenbang(false);
+      setPokokPikiran(false);
+      setMandatori(false);
+      setManajemenResiko(false);
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setPohonCascadingOpd(false);
+    }
+    if (url == "/MasterUsulan/mastermandatori") {
+      setDashboard(false);
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterProgramKegiatan(false);
+      setMasterBidangUrusan(false);
+      setMasterKegiatan(false);
+      setMasterProgram(false);
+      setMasterSubKegiatan(false);
+      setMasterUrusan(false);
+      setMasterJabatan(false);
+      setMasterLembaga(false);
+      setMasterRole(false);
+      setMasterUser(false);
+      setPerencanaanKota(false);
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setSubTematik(false);
+      setKotaPohonKinerjaKota(false);
+      setOpdDiTematik(false);
+      setPerencanaanOPD(true);
+      setMasterUsulanOpd(true);
+      setRincianBelanja(false);
+      setMasterUsulanMusrenbang(false);
+      setMasterUsulanMandatori(true);
+      setMasterUsulanPokir(false);
+      setMasterUsulanInisiatif(false);
+      setTujuanOpd(false);
+      setPohonKinerjaOpd(false);
+      setUserOpd(false);
+      setLaporan(false);
+      setUsulanLaporan(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+      setMusrenbang(false);
+      setPokokPikiran(false);
+      setMandatori(false);
+      setManajemenResiko(false);
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setPohonCascadingOpd(false);
+    }
+    if (url == "/MasterUsulan/masterinisiatif") {
+      setDashboard(false);
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterProgramKegiatan(false);
+      setMasterBidangUrusan(false);
+      setMasterKegiatan(false);
+      setMasterProgram(false);
+      setMasterSubKegiatan(false);
+      setMasterUrusan(false);
+      setMasterJabatan(false);
+      setMasterLembaga(false);
+      setMasterRole(false);
+      setMasterUser(false);
+      setPerencanaanKota(false);
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setSubTematik(false);
+      setKotaPohonKinerjaKota(false);
+      setOpdDiTematik(false);
+      setPerencanaanOPD(true);
+      setMasterUsulanOpd(true);
+      setRincianBelanja(false);
+      setMasterUsulanMusrenbang(false);
+      setMasterUsulanMandatori(false);
+      setMasterUsulanPokir(false);
+      setMasterUsulanInisiatif(true);
+      setTujuanOpd(false);
+      setPohonKinerjaOpd(false);
+      setUserOpd(false);
+      setLaporan(false);
+      setUsulanLaporan(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+      setMusrenbang(false);
+      setPokokPikiran(false);
+      setMandatori(false);
+      setManajemenResiko(false);
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setPohonCascadingOpd(false);
+    }
+    if (url == "/pohonkinerjaopd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(true);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/pohoncascadingopd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(true);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/useropd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(true);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (
+      url == "/rencanakinerja" ||
+      url == `/rencanakinerja/${id}/edit` ||
+      url == `/rencanakinerja/${id}/tambah` ||
+      url == `/rencanakinerja/manual_ik/${id}` ||
+      url == `/rencanakinerja/${id}`
+    ) {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(true);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(true);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/rincianbelanja") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(true);
+      setUsulanLaporan(false);
+      setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setPerencanaanManajemenResiko(false);
+      setRincianBelanja(true);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+    }
+    if (url == "/musrenbang") {
+      setDashboard(false);
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterProgramKegiatan(false);
+      setMasterBidangUrusan(false);
+      setMasterKegiatan(false);
+      setMasterProgram(false);
+      setMasterSubKegiatan(false);
+      setMasterUrusan(false);
+      setMasterJabatan(false);
+      setMasterLembaga(false);
+      setMasterRole(false);
+      setMasterUser(false);
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setSubTematik(false);
+      setPerencanaanKota(false);
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setMasterUsulanMusrenbang(false);
+      setMasterUsulanMandatori(false);
+      setOpdDiTematik(false);
+      setMasterUsulanPokir(false);
+      setMasterUsulanInisiatif(false);
+      setRincianBelanja(false);
+      setTujuanOpd(false);
+      setPohonKinerjaOpd(false);
+      setUserOpd(false);
+      setPerencanaan(true);
+      setUsulanLaporan(true);
+      setMusrenbang(true);
+      setPokokPikiran(false);
+      setMandatori(false);
+      setInisiatif(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+      setManajemenResiko(false);
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setPohonCascadingOpd(false);
+      setLaporan(false);
+    }
+    if (url == "/pokokpikiran") {
+      setDashboard(false);
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterProgramKegiatan(false);
+      setMasterBidangUrusan(false);
+      setMasterKegiatan(false);
+      setMasterProgram(false);
+      setMasterSubKegiatan(false);
+      setMasterUrusan(false);
+      setMasterJabatan(false);
+      setMasterLembaga(false);
+      setMasterRole(false);
+      setMasterUser(false);
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setSubTematik(false);
+      setPerencanaanKota(true);
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setMasterUsulanMusrenbang(false);
+      setMasterUsulanMandatori(false);
+      setMasterUsulanPokir(false);
+      setMasterUsulanInisiatif(false);
+      setOpdDiTematik(false);
+      setTujuanOpd(false);
+      setPohonKinerjaOpd(false);
+      setRincianBelanja(false);
+      setUserOpd(false);
+      setPerencanaan(true);
+      setUsulanLaporan(true);
+      setMusrenbang(false);
+      setPokokPikiran(true);
+      setMandatori(false);
+      setInisiatif(false);
+      setPohonCascading(false);
+      setPohonCascadingOpd(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+      setManajemenResiko(false);
+      setRencanaKinerja(false);
+    }
+    if (url == "/mandatori") {
+      setDashboard(false);
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterProgramKegiatan(false);
+      setMasterBidangUrusan(false);
+      setMasterKegiatan(false);
+      setMasterProgram(false);
+      setMasterSubKegiatan(false);
+      setMasterUrusan(false);
+      setMasterJabatan(false);
+      setMasterLembaga(false);
+      setMasterRole(false);
+      setMasterUser(false);
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setSubTematik(false);
+      setPerencanaanKota(true);
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setMasterUsulanMusrenbang(false);
+      setMasterUsulanMandatori(false);
+      setMasterUsulanPokir(false);
+      setMasterUsulanInisiatif(false);
+      setOpdDiTematik(false);
+      setTujuanOpd(false);
+      setPohonKinerjaOpd(false);
+      setRincianBelanja(false);
+      setUserOpd(false);
+      setUsulanLaporan(true);
+      setPerencanaan(true);
+      setMusrenbang(false);
+      setPokokPikiran(false);
+      setMandatori(true);
+      setInisiatif(false);
+      setPohonCascading(false);
+      setPohonCascadingOpd(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+      setManajemenResiko(false);
+      setRencanaKinerja(false);
+    }
+    if (url == "/manajemenresiko") {
+      setDashboard(false);
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterProgramKegiatan(false);
+      setMasterBidangUrusan(false);
+      setMasterKegiatan(false);
+      setMasterProgram(false);
+      setMasterSubKegiatan(false);
+      setMasterUrusan(false);
+      setMasterJabatan(false);
+      setMasterLembaga(false);
+      setMasterRole(false);
+      setMasterUser(false);
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setSubTematik(false);
+      setOpdDiTematik(false);
+      setPerencanaanKota(true);
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setMasterUsulanMusrenbang(false);
+      setMasterUsulanMandatori(false);
+      setMasterUsulanPokir(false);
+      setMasterUsulanInisiatif(false);
+      setTujuanOpd(false);
+      setPohonKinerjaOpd(false);
+      setUserOpd(false);
+      setUsulanLaporan(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
+      setRencanaKinerja(false);
+      setRincianBelanja(false);
+      setMusrenbang(false);
+      setPokokPikiran(false);
+      setMandatori(false);
+      setManajemenResiko(true);
+      setPohonCascading(false);
+      setPohonCascadingOpd(false);
     }
   }, [])
 
@@ -69,15 +3844,88 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(true);
       setDataMasterOpd(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
       setPerencanaanOPD(false);
-      setLaporan(false);
-      // sub menu
-      setMasterProgramKegiatan(false);
-    }
-    if (
-      url.startsWith("/DataMaster/masterprogramkegiatan")
-    ) {
-      setMasterProgramKegiatan(true);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(true);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(true);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
     }
     //DATA MASTER OPD
     if (
@@ -87,8 +3935,88 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(false);
       setDataMasterOpd(true);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
       setPerencanaanOPD(false);
-      setLaporan(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(true);
+      setLaporanUsulan(false);
+      setReview(true);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(true);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
     }
     //PERENCANAAN KOTA
     if (
@@ -103,21 +4031,73 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
     ) {
       setDataMaster(false);
       setDataMasterOpd(false);
-      setPerencanaanKota(true);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
       setPerencanaanOPD(false);
       setLaporan(false);
       // sub menu
       setRPJMD(false);
       setRKPD(false);
       setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(true);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
     }
-    if (
-      url === "/CSF" ||
-      url === "/outcome" ||
-      url === "/intermediate"
-    ) {
-      // sub menu
-      setTematikKota(true);
+    if (url == "/tujuanopdview") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       setRKPD(false);
     }
@@ -131,15 +4111,111 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       // sub menu
       setRPJMD(true);
       setTematikKota(false);
-      setRKPD(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(true);
+      setTujuanOpdView(true);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
     }
-    if (
-      url.startsWith("/RKPD")
-    ) {
-      // sub menu
+    if (url == "/sasaranopdview") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
       setRPJMD(false);
       setTematikKota(false);
-      setRKPD(true);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(true);
+      setTujuanOpdView(false);
+      setSasaranOpdView(true);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
     }
     //PERENCANAAN OPD
     if (
@@ -154,28 +4230,178 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(false);
       setDataMasterOpd(false);
       setPerencanaanKota(false);
-      setPerencanaanOPD(true);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
       setPerencanaan(false);
-      setLaporan(false);
-      // sub menu
-      setRenstra(false);
-      setRenja(false);
+      setUsulanLaporan(false);
+      setLaporan(true);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(true);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(true);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
     }
-    if(
-      url === "/permasalahanopd" ||
-      url === "/isustrategisopd" ||
-      url === "/tujuanopd" ||
-      url === "/sasaranopd" ||
-      url === "/ikuopd"
-    ) {
-      setRenstra(true);
-      setRenja(false);
-    }
-    if(
-      url.startsWith("/renja")
-    ) {
+    if (url == "/laporanrenstra") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
       setRenstra(false);
-      setRenja(true);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(true);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(true);
+      setLaporanCascadingOpd(false);
     }
     //PERENCANAAN ASN
     if (
@@ -192,9 +4418,83 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(false);
       setDataMasterOpd(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
       setPerencanaanOPD(false);
       setPerencanaan(true);
       setLaporan(false);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(true);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(false);
     }
     if (
       url === "/musrenbang" ||
@@ -220,24 +4520,164 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setDataMaster(false);
       setDataMasterOpd(false);
       setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
       setPerencanaanOPD(false);
       setPerencanaan(false);
       setLaporan(true);
-    }
-    if (
-      url === "/reviewpemda" ||
-      url === "/reviewopd"
-      ) {
-      setReview(true);
+      setLaporanUsulan(false);
+      setReview(false);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
       setRenstraView(false);
     }
-    if (
-      url === "/tujuanopdview" ||
-      url === "/sasaranopdview" ||
-      url === "/ikuopdview"
-      ) {
+    if (url == "/laporancascadingopd") {
+      // SLIDE MENU
+      // super_admin
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setMasterProgramKegiatan(false);
+      setPerencanaanKota(false);
+      setIsuStrategisPemda(false);
+      setRPJMD(false);
+      // admin_opd
+      setPerencanaanOPD(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      setRenstra(false);
+      // asn
+      setPerencanaan(false);
+      setUsulanLaporan(false);
+      setLaporan(true);
+      setLaporanUsulan(false);
       setReview(false);
-      setRenstraView(true);
+
+      // HALAMAN
+      setDashboard(false);
+      // data master
+      setMasterOPD(false);
+      setKelompokAnggaran(false);
+      setMasterPegawai(false);
+      setMasterPeriode(false);
+      setLevelPohon(false);
+      setMasterJabatan(false);
+      setMasterUsulanPemda(false);
+      // masterprogramkegiatan
+      setMasterUrusan(false);
+      setMasterBidangUrusan(false);
+      setMasterProgram(false);
+      setMasterKegiatan(false);
+      setMasterSubKegiatan(false);
+      setMasterLembaga(false);
+      setMasterUser(false);
+      setMasterRole(false);
+      // perencanaan pemda
+      setTematikKota(false);
+      setCSF(false);
+      setOutcome(false);
+      setIntermediate(false);
+      setKotaPohonKinerjaKota(false);
+      // RPJMD
+      setVisi(false);
+      setMisi(false);
+      setTujuanPemda(false);
+      setSasaranPemda(false);
+      setIKU(false);
+      // perencanaan opd
+      setPohonKinerjaOpd(false);
+      setPohonCascadingOpd(false);
+      setPermasalahanOpd(false);
+      setPermasalahan(false);
+      setIsuStrategis(false);
+      setUserOpd(false);
+      setRencanaAksiOpd(false);
+      //Renstra
+      setTujuanOpd(false);
+      setSasaranOpd(false);
+      setIKUOpd(false);
+      setSubKegiatanOpd(false);
+      setMasterUsulanOpd(false);
+      //perencanaan asn
+      setRencanaKinerja(false);
+      setPohonCascading(false);
+      setRincianBelanja(false);
+      setPerencanaanManajemenResiko(false);
+      //laporan
+      setOpdDiTematik(false);
+      setReviewPemda(false);
+      setReviewOpd(false);
+      setLaporanMusrenbang(false);
+      setLaporanPokokPikiran(false);
+      setLaporanMandatori(false);
+      setLaporanInisiatif(false);
+      setRenstraView(false);
+      setTujuanOpdView(false);
+      setSasaranOpdView(false);
+      setIkuOpdView(false);
+      setManajemenResiko(false);
+      setInovasi(false);
+      setRencanaKinerjaKAK(false);
+      setLaporanRincianBelanja(false)
+      setLaporanRenstra(false);
+      setLaporanCascadingOpd(true);
     }
   }, [url, id]);
 
@@ -459,39 +4899,39 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               {/* SUB MENU PERENCANAAN PEMDA */}
               {User?.roles != 'reviewer' ?
                 <div className={`transition-all duration-300 ease-in-out ${PerencanaanKota ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                  <Link href="/tematikpemda">
-                    <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/pohonkinerjapemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                      <TbBinaryTree className="text-xl" />
-                      <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Tematik</span>
+                  {/* <Link href="/tematikpemda">
+                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${TematikKota ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <TbArrowUpFromArc className="text-xl" />
+                      <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Tematik Pemda</span>
                     </li>
-                  </Link>
-                  {/* LABEL TEMATIK (CSF, Outcome, intermediate) */}
-                  {/* <li
+                  </Link> */}
+                  {/* LABEL Isu Strategis Pemda */}
+                  <li
                     className={`flex justify-between items-center font-medium gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
-                    onClick={() => setTematikKota(TematikKota ? false : true)}
+                    onClick={() => setIsuStrategisPemda(IsuStrategisPemda ? false : true)}
                   >
                     <div className="flex items-center gap-2">
-                      <TbCalendarShare className="text-xl" />
-                      <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Isu Stategis</span>
+                      <TbArrowUpFromArc className="text-xl" />
+                      <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Isu Strategis</span>
                     </div>
-                    <TbChevronRight className={`transition-all duration-200 ease-in-out ${TematikKota ? "rotate-90" : ""}`} />
-                  </li> */}
-                  {/* SUB MENU TEMATIK (CSF, Outcome, Intermediate) */}
-                  <div className={`transition-all duration-300 ease-in-out ${TematikKota ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                    <TbChevronRight className={`transition-all duration-200 ease-in-out ${IsuStrategisPemda ? "rotate-90" : ""}`} />
+                  </li>
+                  {/* SUB MENU Isu Strategis Pemda */}
+                  <div className={`transition-all duration-300 ease-in-out ${IsuStrategisPemda ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
                     <Link href="/CSF">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/CSF" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${CSF ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbHexagonLetterC className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>CSF</span>
                       </li>
                     </Link>
                     <Link href="/outcome">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/outcome" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${Outcome ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbHexagonLetterO className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Outcome</span>
                       </li>
                     </Link>
                     <Link href="/intermediate">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/intermediate" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${Intermediate ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbHexagonLetterI className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Intermediate</span>
                       </li>
@@ -611,6 +5051,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
           {/* SUB MENU PERENCANAAN OPD */}
           {(User?.roles == 'super_admin' || User?.roles == 'admin_opd') ?
             <div className={`transition-all duration-300 ease-in-out ${PerencanaanOPD ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+              <Link href="/pohonkinerjapemda">
+                <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${KotaPohonKinerjaKota ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbBinaryTree className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Pohon Kinerja Pemda</span>
+                </li>
+              </Link>
               <Link href="/pohonkinerjaopd">
                 <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/pohonkinerjaopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbBinaryTree className="text-xl" />

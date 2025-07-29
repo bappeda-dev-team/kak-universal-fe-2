@@ -1,8 +1,8 @@
 'use client'
 
-import { createContext, useContext } from "react"
-import { getOpdTahun, getUser } from "@/components/lib/Cookie";
+import { createContext, useContext } from "react";
 import { useState, useEffect } from "react";
+import { getUser, getOpdTahun } from "@/components/lib/Cookie";
 
 interface OptionType {
   value: number;
@@ -12,7 +12,6 @@ interface OptionTypeString {
   value: string;
   label: string;
 }
-
 interface BrandingContextType {
   title: string;
   clientName: string;
@@ -21,9 +20,6 @@ interface BrandingContextType {
     title: string;
     client: string;
     logo: string;
-    api_perencanaan: string;
-    api_permasalahan: string;
-    api_csf: string;
     tahun: OptionType | null | undefined;
     opd: OptionTypeString | null | undefined;
     user: any;
@@ -71,25 +67,20 @@ export function BrandingProvider({ children }: Readonly<{ children: React.ReactN
   }, [])
 
   return (
-    <BrandingContext.Provider
-      value={{
-        title: appName,
-        clientName: clientName,
-        logo: logo,
-        branding: {
-          title: appName,
-          client: clientName,
-          logo: logo,
-          api_perencanaan: api_perencanaan,
-          api_csf: api_csf,
-          api_permasalahan: api_permasalahan,
+    <BrandingContext.Provider 
+      value={{ 
+        title: appName, 
+        clientName: clientName, 
+        logo: logo, 
+        branding: { 
+          title: appName, 
+          client: clientName, 
+          logo: logo, 
           tahun: Tahun,
           opd: SelectedOpd,
           user: User
-
-        }
-      }}
-    >
+          } 
+      }}>
       {children}
     </BrandingContext.Provider>
   );
