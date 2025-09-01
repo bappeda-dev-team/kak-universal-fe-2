@@ -332,7 +332,7 @@ export const FormPohonPemda: React.FC<{
                                     />
                                 </div>
                                 {/* TAGGING */}
-                                {level > 3 &&
+                                {level > 2 &&
                                 <>
                                     <label className="uppercase text-xs font-bold text-gray-700 my-2">
                                         Tagging :
@@ -1338,7 +1338,7 @@ export const FormEditPohon: React.FC<{
                             />
                         </div>
                         {/* TAGGING */}
-                        {level > 3 &&
+                        {level > 2 &&
                         <>
                             <label className="uppercase text-xs font-bold text-gray-700 my-2">
                                 Tagging :
