@@ -244,7 +244,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                         satuan: jd.satuan
                     })),
                 })),
-                id_permasalahan: p.id_permasalahan?.value,
+                permasalahan_opd_id: p.id_permasalahan?.value,
             }))
         };
         const getBody = () => {

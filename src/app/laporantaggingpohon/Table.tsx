@@ -38,7 +38,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
             setLoading(true)
             const API_URL_TAGGING = process.env.NEXT_PUBLIC_API_URL_TAGGING;
             try {
-                const response = await fetch(`${API_URL_TAGGING}/tagging_pokin?nama_tagging=${encodeURIComponent(NamaTagging)}&tahun=${tahun}`, {
+                const response = await fetch(`${API_URL_TAGGING}/laporan/tagging_pokin?nama_tagging=${encodeURIComponent(NamaTagging)}&tahun=${tahun}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
 
     if (Loading) {
         return (
-            <div className="border p-5 rounded-xl shadow-xl">
+            <div className="border p-5 rounded-xl shadow-xl w-full">
                 <LoadingClip className="mx-5 py-5" />
             </div>
         );
