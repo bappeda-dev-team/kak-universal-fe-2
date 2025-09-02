@@ -85,14 +85,14 @@ const IsuStrategis = () => {
             )
         }
     } else if(User?.roles != "super_admin"){
-        if(branding?.tahun?.value){
+        if(branding?.tahun?.value == undefined){
             return(
                 <TahunNull />
             )
         }
     } else if(User?.roles != "super_admin" || User?.roles != "admin_opd" || User?.roles != 'reviewer'){
         return(
-            <h1>Forbidden Access for {User?.roles || "this role"}</h1>
+            <h1>403 Forbidden Access for {User?.roles || "this role"}</h1>
         )
     }
 
