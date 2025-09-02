@@ -46,8 +46,6 @@ const PohonTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
     const [User, setUser] = useState<any>(null);
     const [Tahun, setTahun] = useState<any>(null);
 
-    const containerRef = useRef<HTMLDivElement | null>(null);
-
     useEffect(() => {
         const fetchUser = getUser();
         const data = getOpdTahun();
@@ -66,9 +64,16 @@ const PohonTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
     useEffect(() => {
         const fetchTematikKab = async () => {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
+            const API_URL_CASCADING_PEMDA = process.env.NEXT_PUBLIC_API_URL_CASCADING_PEMDA;
             setLoading(true);
             try {
-                const response = await fetch(`${API_URL}/pohon_kinerja_admin/tematik/${id}`, {
+                let url = "";
+                if(jenis === "pemda"){
+                    url = `${API_URL}/pohon_kinerja_admin/tematik/${id}`;
+                } else if(jenis === "laporan"){
+                    url = `${API_URL_CASCADING_PEMDA}/laporan/cascading_pemda?tematikId=2464`;
+                }
+                const response = await fetch(`${url}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -78,8 +83,13 @@ const PohonTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
                     throw new Error('terdapat kesalahan di koneksi backend');
                 }
                 const result = await response.json();
-                const data = result?.data || [];
-                setPokin(data);
+                if(jenis === "pemda"){
+                    const data = result?.data || [];
+                    setPokin(data);
+                } else if(jenis === "laporan"){
+                    const data = result?.data[0];
+                    setPokin(data);
+                }
             } catch (err) {
                 setError('gagal mendapatkan data, terdapat kesalahan backend/server saat mengambil data pohon kinerja tematik');
             } finally {

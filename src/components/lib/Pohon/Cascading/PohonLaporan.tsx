@@ -29,6 +29,7 @@ interface rencana_kinerja {
     kode_subkegiatan: string;
     nama_subkegiatan: string;
     anggaran: number;
+    pagu: number;
     indikator_subkegiatan: indikator[]; // Secara eksplisit null
     kode_kegiatan: string;
     nama_kegiatan: string;
@@ -52,24 +53,20 @@ interface program {
     nama_program: string;
     indikator: indikator[];
 }
-interface TableTujuanSasaran {
-    table: "tujuan" | "sasaran" | "";
-    jenis: string;
+interface Periode {
+  tahun_awal: string;
+  tahun_akhir: string;
+  jenis_periode: string;
 }
-interface TablePelaksana {
-    pelaksana: rencana_kinerja[];
-    jenis: string;
-    tipe: string;
-}
-interface TableIndikator {
-    indikator: indikator[];
-    jenis: string;
-}
-interface IndikatorKosong {
-    jenis: string;
-}
-interface PelaksanaKosong {
-    jenis: string;
+interface TujuanSasaranPemda {
+  id_tujuan_pemda: number;
+  tematik_id: number;
+  tujuan_pemda: string;
+  id_sasaran_pemda: number;
+  subtema_id: number;
+  sasaran_pemda: string;
+  periode_id: number;
+  periode: Periode;
 }
 
 export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) => {
@@ -118,9 +115,9 @@ export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) 
                     `}
                 >
                     {tema.jenis_pohon === 'Operational N' ?
-                        <h1>Operational {tema.level_pohon - 6}  </h1>
+                        <h1>Operational {tema.level_pohon - 6} {tema.id_pohon}</h1>
                         :
-                        <h1>{tema.jenis_pohon} </h1>
+                        <h1>{tema.jenis_pohon} {tema.id_pohon}</h1>
                     }
                 </div>
                 {/* BODY */}
@@ -129,7 +126,7 @@ export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) 
                     <div className="mt-3">
                         <Pagu
                             jenis={tema.jenis_pohon}
-                            anggaran={tema.total_anggaran || tema.pagu_anggaran || '0'}
+                            anggaran={tema.total_anggaran || tema.pagu_anggaran || tema.pagu|| '0'}
                         />
                     </div>
                     {tema.program &&
@@ -187,8 +184,12 @@ export const TablePohonLaporan = (props: any) => {
 
     const nama_pohon = props.item.nama_pohon;
     const tema = props.item.tema;
+    const tujuan_pemda = props.item.tujuan_pemda;
+    const sasaran_pemda = props.item.sasaran_pemda;
+    const urusan_pokin = props.item.urusan_pokin;
     const jenis = props.item.jenis_pohon;
-    const pelaksana = props.item.rencana_kinerja;
+    const rekin = props.item.rencana_kinerja;
+    const pelaksana = props.item.pelaksana;
     const indikator = props.item.indikator;
     const tipe = props.tipe;
 
@@ -241,18 +242,35 @@ export const TablePohonLaporan = (props: any) => {
                 </tbody>
             </table>
             {(jenis !== "Tematik" && jenis !== "Sub Tematik" && jenis !== "Sub Sub Tematik" && jenis !== "Super Sub Tematik") ?
-                (pelaksana ?
-                    <TablePelaksana jenis={jenis} pelaksana={pelaksana} tipe={tipe}/>
+                (
+                    (rekin || pelaksana) ?
+                    <TablePelaksana jenis={jenis} pelaksana={rekin || pelaksana} tipe={tipe}/>
                     :
                     <PelaksanaKosong jenis={jenis}/>
                 )
                 :
                 <>
                     {jenis === "Tematik" &&
-                        <TableTujuanSasaran table='tujuan' jenis={jenis}/>
+                        (tujuan_pemda ? 
+                            tujuan_pemda.map((tp: any, index: number) => (
+                                <React.Fragment key={index}>
+                                    <TableTujuanSasaran table='tujuan' data={tp}/>
+                                </React.Fragment>
+                            ))
+                            :
+                            <TableTujuanSasaranKosong table='tujuan' jenis={jenis}/>
+                        )
                     }
                     {(jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik") &&
-                        <TableTujuanSasaran table='sasaran' jenis={jenis}/>
+                        (sasaran_pemda ? 
+                            sasaran_pemda.map((sp: any, index: number) => (
+                                <React.Fragment key={index}>
+                                    <TableTujuanSasaran table='sasaran' data={sp}/>
+                                </React.Fragment>
+                            ))
+                            :
+                            <TableTujuanSasaranKosong table='sasaran' jenis={jenis}/>
+                        )
                     }
                 </>
             }
@@ -384,6 +402,10 @@ export const ProgramKegiatan: React.FC<ProgramKegiatan> = ({ jenis, tipe, progra
         </div>
     )
 }
+interface TableIndikator {
+    indikator: indikator[];
+    jenis: string;
+}
 export const TableIndikator: React.FC<TableIndikator> = ({ jenis, indikator }) => {
     return(
         indikator.map((data: indikator, index: number) => (
@@ -458,6 +480,9 @@ export const TableIndikator: React.FC<TableIndikator> = ({ jenis, indikator }) =
         ))
     )
 }
+interface IndikatorKosong {
+    jenis: string;
+}
 export const IndikatorKosong: React.FC<IndikatorKosong> = ({ jenis }) => {
     return(
         <>
@@ -520,6 +545,9 @@ export const IndikatorKosong: React.FC<IndikatorKosong> = ({ jenis }) => {
         </>
     )
 }
+interface PelaksanaKosong {
+    jenis: string;
+}
 export const PelaksanaKosong: React.FC<PelaksanaKosong> = ({ jenis }) => {
     return (
         <table className='mt-2'>
@@ -559,6 +587,11 @@ export const PelaksanaKosong: React.FC<PelaksanaKosong> = ({ jenis }) => {
             </tbody>
         </table>
     )
+}
+interface TablePelaksana {
+    pelaksana: rencana_kinerja[];
+    jenis: string;
+    tipe: string;
 }
 export const TablePelaksana: React.FC<TablePelaksana> = ({ jenis, pelaksana, tipe }) => {
 
@@ -708,7 +741,7 @@ export const TablePelaksana: React.FC<TablePelaksana> = ({ jenis, pelaksana, tip
                                     <td
                                         className={`min-w-[300px] border px-2 py-3 bg-white text-start border-green-500`}
                                     >
-                                        Rp. {formatRupiah(item.anggaran)}
+                                        Rp. {formatRupiah(item.anggaran || item.pagu)}
                                     </td>
                                 </tr>
                                 <tr>
@@ -791,7 +824,44 @@ export const TablePelaksana: React.FC<TablePelaksana> = ({ jenis, pelaksana, tip
         ))
     )
 }
-export const TableTujuanSasaran: React.FC<TableTujuanSasaran> = ({ table, jenis }) => {
+interface TableTujuanSasaran {
+    table: "tujuan" | "sasaran" | "";
+    data: TujuanSasaranPemda;
+}
+export const TableTujuanSasaran: React.FC<TableTujuanSasaran> = ({ table, data }) => {
+    return(
+        <table className='mt-2'>
+            <tbody>
+               <tr>
+                    <td
+                        className={`min-w-[100px] border px-2 py-1 bg-white border-black text-start rounded-l-lg`}
+                    >
+                        {table === "tujuan" ? 
+                            <p>Tujuan Pemda</p>
+                            :
+                            <p>Sasaran Pemda</p>
+                        }
+                    </td>
+                    <td
+                        className={`min-w-[300px] border px-2 py-3 bg-white border-black text-start`}
+                    >
+                        {table === "tujuan" ? 
+                            <p>{data.tujuan_pemda || "-"}</p>
+                            :
+                            <p>{data.sasaran_pemda || "-"}</p>
+                        }
+                    </td>
+                </tr>
+                {/* <IndikatorKosong jenis={jenis}/> */}
+            </tbody>
+        </table>
+    )
+}
+interface TableTujuanSasaranKosong {
+    table: "tujuan" | "sasaran" | "";
+    jenis: string;
+}
+export const TableTujuanSasaranKosong: React.FC<TableTujuanSasaranKosong> = ({ table, jenis }) => {
     return(
         <table className='mt-2'>
             <tbody>
@@ -808,7 +878,7 @@ export const TableTujuanSasaran: React.FC<TableTujuanSasaran> = ({ table, jenis 
                     <td
                         className={`min-w-[300px] border px-2 py-3 bg-white border-black text-start rounded-r-lg italic text-red-300`}
                     >
-                        data dalam perbaikan
+                        -
                     </td>
                 </tr>
                 <IndikatorKosong jenis={jenis}/>
