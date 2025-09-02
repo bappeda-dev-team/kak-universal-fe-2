@@ -71,7 +71,7 @@ const PohonTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
                 if(jenis === "pemda"){
                     url = `${API_URL}/pohon_kinerja_admin/tematik/${id}`;
                 } else if(jenis === "laporan"){
-                    url = `${API_URL_CASCADING_PEMDA}/laporan/cascading_pemda?tematikId=2464`;
+                    url = `${API_URL_CASCADING_PEMDA}/laporan/cascading_pemda?tematikId=${id}`;
                 }
                 const response = await fetch(`${url}`, {
                     headers: {
