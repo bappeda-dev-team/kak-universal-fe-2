@@ -199,8 +199,8 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
         const API_URL = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN;
         const formDataNew = {
             //key : value
-            nama_opd: branding?.opd?.label,
-            kode_opd: branding?.opd?.value,
+            nama_opd: User?.roles == "super_admin" ? branding?.opd?.label : User?.nama_opd,
+            kode_opd: User?.roles == "super_admin" ? branding?.opd?.value : User?.kode_opd,
             kode_bidang_urusan: data.kode_bidang_urusan?.value,
             nama_bidang_urusan: data.kode_bidang_urusan?.nama_bidang_urusan,
             tahun_awal: Periode.tahun_awal,

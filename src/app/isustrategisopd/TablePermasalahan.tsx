@@ -120,7 +120,7 @@ const TablePermasalahan: React.FC<table> = ({ tahun, kode_opd }) => {
                                     {index + 1}
                                 </td>
                                 <td className="border-r border-b border-orange-500 px-6 py-4">
-                                    {data.nama_pohon || "-"} {data.id_permasalahan}
+                                    {data.nama_pohon || "-"}
                                 </td>
                                 <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
                                     {data.jenis_masalah || "-"}
