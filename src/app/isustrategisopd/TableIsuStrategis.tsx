@@ -73,24 +73,24 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
         }
     }, [branding, tahun_akhir, tahun_awal, FetchTrigger]);
 
-    const hapusIsu = async(id: number) => {
+    const hapusIsu = async (id: number) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN;
-        try{
+        try {
             const response = await fetch(`${API_URL}/isu_strategis/${id}`, {
                 method: "DELETE",
                 headers: {
-                    'Content-Type' : 'application/json'
+                    'Content-Type': 'application/json'
                 }
             });
             const result = await response.json();
-            if(result.code === 200 || result.code == 201){
+            if (result.code === 200 || result.code == 201) {
                 setIsu(Isu.filter((data) => (data.id !== id)))
                 AlertNotification("Berhasil", `Berhasil menghapus data isu strategis`, "success");
             } else {
                 AlertNotification("Gagal", `${result.data}`, "error");
                 console.log(result.data);
             }
-        } catch(err){
+        } catch (err) {
             console.error(err);
         }
     }
@@ -152,71 +152,84 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                                 </td>
                             </tr>
                             :
-                            Isu.map((i: IsuStrategis, index: number) => (
-                                <React.Fragment key={index}>
-                                    <tr>
-                                        <td rowSpan={i.permasalahan_opd ? i.permasalahan_opd.length + 1 : 2} className="border-x border-b border-emerald-500 py-4 px-3 text-center">{index + 1}</td>
-                                        <td rowSpan={i.permasalahan_opd ? i.permasalahan_opd.length + 1 : 2} className="border-r border-b border-emerald-500 px-6 py-4">{i.kode_bidang_urusan || "no code"} - {i.nama_bidang_urusan || "-"}</td>
-                                        <td rowSpan={i.permasalahan_opd ? i.permasalahan_opd.length + 1 : 2} className="border-r border-b border-emerald-500 px-6 py-4">{i.isu_strategis || "-"}</td>
-                                        <td rowSpan={i.permasalahan_opd ? i.permasalahan_opd.length + 1 : 2} className="border-r border-b border-emerald-500 px-6 py-4">
-                                            <div className="flex flex-col jutify-center items-center gap-2">
-                                                <ButtonSkyBorder
-                                                    className="flex items-center gap-1 w-full"
-                                                    onClick={() => handleModal("edit", i)}
-                                                >
-                                                    <TbPencil />
-                                                    Edit
-                                                </ButtonSkyBorder>
-                                                <ButtonRedBorder
-                                                    className="flex items-center gap-1 w-full"
-                                                    onClick={() => {
-                                                        AlertQuestion("Hapus?", "Data Isu Strategis akan di hapus?", "question", "Hapus", "Batal").then((result) => {
-                                                            if (result.isConfirmed) {
-                                                                hapusIsu(i.id);
-                                                            }
-                                                        });
-                                                    }}
-                                                >
-                                                    <TbTrash />
-                                                    Hapus
-                                                </ButtonRedBorder>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {!i.permasalahan_opd || i.permasalahan_opd.length === 0 ?
+                            Isu.map((i: IsuStrategis, index: number) => {
+
+                                const TotalRow = i.permasalahan_opd?.reduce((total, item) => total + (item.data_dukung.length == 0 ? 1 : item.data_dukung.length), 0) + i.permasalahan_opd?.length + 1;
+                                
+                                return (
+                                    <React.Fragment key={index}>
                                         <tr>
-                                            <td colSpan={15} className="border-r border-b border-emerald-500 px-6 py-4 text-red-400 italic">Permasalahan belum di tambahkan</td>
+                                            <td rowSpan={i.permasalahan_opd ? TotalRow : 2} className="border-x border-b border-emerald-500 py-4 px-3 text-center">{index + 1}</td>
+                                            <td rowSpan={i.permasalahan_opd ? TotalRow : 2} className="border-r border-b border-emerald-500 px-6 py-4">{i.kode_bidang_urusan || "no code"} - {i.nama_bidang_urusan || "-"}</td>
+                                            <td rowSpan={i.permasalahan_opd ? TotalRow : 2} className="border-r border-b border-emerald-500 px-6 py-4">{i.isu_strategis || "-"}</td>
+                                            <td rowSpan={i.permasalahan_opd ? TotalRow : 2} className="border-r border-b border-emerald-500 px-6 py-4">
+                                                <div className="flex flex-col jutify-center items-center gap-2">
+                                                    <ButtonSkyBorder
+                                                        className="flex items-center gap-1 w-full"
+                                                        onClick={() => handleModal("edit", i)}
+                                                    >
+                                                        <TbPencil />
+                                                        Edit
+                                                    </ButtonSkyBorder>
+                                                    <ButtonRedBorder
+                                                        className="flex items-center gap-1 w-full"
+                                                        onClick={() => {
+                                                            AlertQuestion("Hapus?", "Data Isu Strategis akan di hapus?", "question", "Hapus", "Batal").then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    hapusIsu(i.id);
+                                                                }
+                                                            });
+                                                        }}
+                                                    >
+                                                        <TbTrash />
+                                                        Hapus
+                                                    </ButtonRedBorder>
+                                                </div>
+                                            </td>
                                         </tr>
-                                        :
-                                        i.permasalahan_opd.map((p: PermasalahanOpd, sub_index: number) => (
-                                            <tr key={sub_index}>
-                                                <td className="border-r border-b border-emerald-500 px-6 py-4">{p.masalah || "-"}</td>
-                                                {p.data_dukung.map((dd: DataDukung, dd_index) => (
-                                                    <React.Fragment key={dd_index}>
-                                                        <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.data_dukung || "-"}</td>
-                                                        <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.narasi_data_dukung || "-"}</td>
-                                                        {dd.jumlah_data.length === 0 ? 
-                                                            tahun_list.map((tl: any, tl_index: number) => (
-                                                                <React.Fragment key={tl_index}>
-                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
-                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
-                                                                </React.Fragment>
-                                                            ))
-                                                        :
-                                                            dd.jumlah_data.map((d: TargetJumlahData, d_index: number) => (
-                                                                <React.Fragment key={d_index}>
-                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.jumlah_data || "-"}</td>
-                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.satuan || "-"}</td>
-                                                                </React.Fragment>
+                                        {!i.permasalahan_opd || i.permasalahan_opd.length === 0 ?
+                                            <tr>
+                                                <td colSpan={15} className="border-r border-b border-emerald-500 px-6 py-4 bg-red-400 text-white italic">Permasalahan belum di tambahkan</td>
+                                            </tr>
+                                            :
+                                            i.permasalahan_opd.map((p: PermasalahanOpd, sub_index: number) => (
+                                                <React.Fragment key={sub_index}>
+                                                    <tr>
+                                                        <td rowSpan={p.data_dukung ? p.data_dukung.length + 1 : 2} className="border-r border-b border-emerald-500 px-6 py-4">{p.masalah || "-"}</td>
+                                                    </tr>
+                                                        {(p.data_dukung.length === 0 || !p.data_dukung) ?
+                                                            <tr>
+                                                                <td colSpan={14} className="border-r border-b border-emerald-500 px-6 py-4 text-red-400 italic">Data Dukung belum di tambahkan</td>
+                                                            </tr>
+                                                            :
+                                                            p.data_dukung.map((dd: DataDukung, dd_index) => (
+                                                                <tr key={dd_index}>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.data_dukung || "-"}</td>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.narasi_data_dukung || "-"}</td>
+                                                                    {dd.jumlah_data.length === 0 ?
+                                                                        tahun_list.map((tl: any, tl_index: number) => (
+                                                                            <React.Fragment key={tl_index}>
+                                                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
+                                                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
+                                                                            </React.Fragment>
+                                                                        ))
+                                                                        :
+                                                                        dd.jumlah_data.map((d: TargetJumlahData, d_index: number) => (
+                                                                            <React.Fragment key={d_index}>
+                                                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.jumlah_data || "-"}</td>
+                                                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.satuan || "-"}</td>
+                                                                            </React.Fragment>
+                                                                        ))
+                                                                    }
+                                                                </tr>
                                                             ))
                                                         }
-                                                    </React.Fragment>
-                                                ))}
-                                            </tr>
-                                        ))
-                                    }
-                                </React.Fragment>
-                            ))
+                                                </React.Fragment>
+                                            ))
+                                        }
+                                    </React.Fragment>
+                                )
+                            })
                         }
                     </tbody>
                 </table>
