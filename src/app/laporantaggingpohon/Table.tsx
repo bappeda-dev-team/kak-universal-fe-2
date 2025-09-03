@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { TbCircleCheckFilled } from "react-icons/tb";
 
@@ -16,6 +16,30 @@ interface PohonKinerja {
     nama_opd: string;
     jenis_pohon: string;
     keterangan_tagging: string;
+    status: string;
+    pelaksanas: Pelaksana[];
+}
+interface RencanaKinerja {
+    id_rekin: string;
+    rencana_kinerja: string;
+    nama_pelaksana: string;
+    nip_pelaksana: string;
+    kode_subkegiatan: string;
+    nama_subkegiatan: string;
+    pagu: number;
+    keterangan: string;
+    tahapan_pelaksanaan: {
+        tw_1: number,
+        tw_2: number,
+        tw_3: number,
+        tw_4: number,
+    };
+}
+
+interface Pelaksana {
+    nama_pelaksana: string;
+    nip_pelaksana: string;
+    rencana_kinerjas: RencanaKinerja[];
 }
 
 interface TaggingData {
@@ -26,13 +50,13 @@ interface TaggingData {
 
 export const Table: React.FC<Table> = ({ tahun }) => {
 
-    
+
     const [DataTagging, setDataTagging] = useState<TaggingData | null>(null);
-    
+
     const [NamaTagging, setNamaTagging] = useState<string>('');
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
-    
+
     useEffect(() => {
         const fetchDataTagging = async () => {
             setLoading(true)
@@ -144,27 +168,67 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                     </td>
                                 </tr>
                                 :
-                                DataTagging?.pohon_kinerjas.map((p: PohonKinerja, index: number) => (
-                                    <tr className="hover:bg-emerald-50" key={index}>
-                                        <td className="border-r border-b px-6 py-4">{index + 1}</td>
-                                        <td className="border-r border-b px-6 py-4">{p.keterangan_tagging || "-"}</td>
-                                        <td className="border-r border-b px-6 py-4">{p.nama_opd || "-"}</td>
-                                        <td className="border-r border-b px-6 py-4">
-                                            <p>{p.nama_pohon || "-"} </p>
-                                            <p className="font-semibold">({p.id_pohon || "-"})</p>
-                                        </td>
-                                        <td className="border-r border-b px-6 py-4">{p.jenis_pohon || "-"}</td>
-                                        <td className="border-r border-b px-6 py-4">-</td>
-                                        <td className="border-r border-b px-6 py-4">-</td>
-                                        <td className="border-r border-b px-6 py-4">-</td>
-                                        <td className="border-r border-b px-6 py-4">-</td>
-                                        <td className="border-r border-b px-6 py-4">-</td>
-                                        <td className="border-r border-b px-6 py-4">-</td>
-                                        <td className="border-r border-b px-6 py-4">-</td>
-                                        <td className="border-r border-b px-6 py-4">-</td>
-                                        <td className="border-r border-b px-6 py-4">-</td>
-                                    </tr>
-                                ))
+                                DataTagging?.pohon_kinerjas.map((p: PohonKinerja, index: number) => {
+
+                                    const TotalRow = p.pelaksanas?.reduce((total, item) => total + (item.rencana_kinerjas.length == 0 ? 1 : item.rencana_kinerjas.length), 0) + p.pelaksanas?.length + 1;
+                                    
+                                    return(
+                                        <React.Fragment key={index}>
+                                            <tr>
+                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{index + 1}</td>
+                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.keterangan_tagging || "-"}</td>
+                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.nama_opd || "-"}</td>
+                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">
+                                                    <p>{p.nama_pohon || "-"} </p>
+                                                    <p className="font-semibold">({p.id_pohon || "-"})</p>
+                                                </td>
+                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.jenis_pohon || "-"}</td>
+                                            </tr>
+                                            {p.pelaksanas ?
+                                                p.pelaksanas.map((p: Pelaksana, sub_index: number) => (
+                                                    <React.Fragment key={sub_index}>
+                                                        <tr>
+                                                            <td rowSpan={p.rencana_kinerjas ? p.rencana_kinerjas.length + 1 : 2} className="border-r border-b px-6 py-4">
+                                                                <div className="flex flex-col">
+                                                                    <p className="border-b mb-2">{p.nama_pelaksana || "-"}</p>
+                                                                    <p>{p.nip_pelaksana || "-"}</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {p.rencana_kinerjas ?
+                                                            p.rencana_kinerjas.map((rk: RencanaKinerja, subs_index: number) => (
+                                                                <tr key={subs_index}>
+                                                                    <td key={index} className="border-r border-b px-6 py-4 h-[200px]">{rk.rencana_kinerja || "-"}</td>
+                                                                    {rk.kode_subkegiatan ? 
+                                                                    <>
+                                                                        <td className="border-r border-b px-6 py-4 h-[200px]">({rk.kode_subkegiatan || 0}) {rk.nama_subkegiatan || "-"}</td>
+                                                                        <td className="border-r border-b px-6 py-4 h-[200px]">{rk.pagu || "-"}</td>
+                                                                    </>
+                                                                    :
+                                                                        <td colSpan={2} className="border-r border-b px-6 py-4 bg-red-400 text-white italic h-[200px]">*Sub Kegiatan Belum Di Pilih</td>
+                                                                    }
+                                                                    <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_1 || 0}</td>
+                                                                    <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_2 || 0}</td>
+                                                                    <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_3 || 0}</td>
+                                                                    <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_4 || 0}</td>
+                                                                    <td className="border-r border-b px-6 py-4 h-[200px]">{rk.keterangan || "-"}</td>
+                                                                </tr>
+                                                            )) 
+                                                        :
+                                                            <tr>
+                                                                <td colSpan={8} className="border-r border-b px-6 py-4 italic bg-red-400 text-white">*Rencana Kinerja belum di buat</td>
+                                                            </tr>
+                                                        }
+                                                    </React.Fragment>
+                                                ))
+                                                :
+                                                <tr>
+                                                    <td colSpan={9} className="border-r border-b px-6 py-4 italic bg-red-400 text-white">*Pelaksana belum di tambahkan</td>
+                                                </tr>
+                                            }
+                                        </React.Fragment>
+                                    )
+                                })
                             }
                         </tbody>
                     </table>
