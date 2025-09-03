@@ -241,14 +241,18 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                 :
                 Data.map((data: Sasaran) => {
                     const isShown = Show[data.tematik_id] || false;
-
+                    const isActiveTematik = data?.subtematik[0]?.is_active;
                     return (
                         <div className="flex flex-col m-2" key={data.tematik_id}>
                             <div
                                 className={`flex justify-between border items-center p-5 rounded-xl text-emerald-500 cursor-pointer border-emerald-500 hover:bg-emerald-500 hover:text-white ${isShown ? "bg-emerald-500 text-white" : ""}`}
                                 onClick={() => handleShow(data.tematik_id)}
                             >
-                                <h1 className="font-semibold">Tematik - {data.nama_tematik}</h1>
+                                {isActiveTematik ? 
+                                    <h1 className="font-semibold">Tematik - {data.nama_tematik}</h1>
+                                    :
+                                    <h1 className="font-semibold text-red-400">Tematik - {data.nama_tematik} - NON AKTIF</h1>
+                                }
                                 <div className="flex items-center">
                                     <TbArrowBadgeDownFilled className={`transition-all duration-200 ease-in-out text-3xl ${isShown ? "" : "-rotate-90"}`} />
                                 </div>
