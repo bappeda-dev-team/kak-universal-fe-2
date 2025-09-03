@@ -43,6 +43,7 @@ interface SubTematik {
     nama_subtematik: string;
     jenis_pohon: string;
     level_pohon: number;
+    is_active: boolean;
     sasaran_pemda: SasaranPemda[];
 }
 
@@ -305,16 +306,30 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                                                                     <p>{item.nama_subtematik}</p>
                                                                     <div className="flex flex-col justify-between gap-2 h-full">
                                                                         <p className="uppercase text-emerald-500 text-xs">{item.jenis_pohon}</p>
-                                                                        <button
-                                                                            className="flex justify-between gap-1 rounded-full p-1 bg-sky-500 text-white border border-sky-500 hover:bg-white hover:text-sky-500 hover:border hover:border-sky-500"
-                                                                            onClick={() => handleModalNewSasaran(item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
-                                                                        >
-                                                                            <div className="flex gap-1">
-                                                                                <TbCirclePlus />
-                                                                                <p className="text-xs">Tambah Sasaran Baru</p>
-                                                                            </div>
-                                                                            <TbArrowBadgeDownFilled className="-rotate-90" />
-                                                                        </button>
+                                                                        {item.is_active === false ? 
+                                                                                <button
+                                                                                    className="flex justify-between gap-1 rounded-full p-1 bg-red-500 text-white cursor-not-allowed"
+                                                                                    onClick={() => handleModalNewSasaran(item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
+                                                                                    disabled
+                                                                                >
+                                                                                    <div className="flex gap-1">
+                                                                                        <TbCirclePlus />
+                                                                                        <p className="text-xs">Tematik NON-AKTIF</p>
+                                                                                    </div>
+                                                                                    <TbArrowBadgeDownFilled className="-rotate-90" />
+                                                                                </button>
+                                                                        :
+                                                                            <button
+                                                                                className="flex justify-between gap-1 rounded-full p-1 bg-sky-500 text-white border border-sky-500 hover:bg-white hover:text-sky-500 hover:border hover:border-sky-500"
+                                                                                onClick={() => handleModalNewSasaran(item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
+                                                                            >
+                                                                                <div className="flex gap-1">
+                                                                                    <TbCirclePlus />
+                                                                                    <p className="text-xs">Tambah Sasaran Baru</p>
+                                                                                </div>
+                                                                                <TbArrowBadgeDownFilled className="-rotate-90" />
+                                                                            </button>
+                                                                        }
                                                                     </div>
                                                                 </td>
                                                             </tr>
