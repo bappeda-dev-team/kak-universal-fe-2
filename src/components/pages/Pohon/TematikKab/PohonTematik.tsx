@@ -99,7 +99,7 @@ const PohonTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
         if (id != undefined) {
             fetchTematikKab();
         }
-    }, [id, token, Deleted]);
+    }, [id, token, Deleted, jenis]);
 
     if (error) {
         return (
