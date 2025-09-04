@@ -290,6 +290,7 @@ export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }
         const fetchCSF = async () => {
             const API_URL = process.env.NEXT_PUBLIC_API_URL_CSF;
             setLoading(true);
+            setErrorCSF(false);
             try {
                 const response = await fetch(`${API_URL}/csf/${data.id}`, {
                     headers: {
@@ -307,7 +308,8 @@ export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }
                     setErrorCSF(true);
                 }
             } catch (err) {
-                console.error(err)
+                console.error(err);
+                setErrorCSF(true);
             } finally {
                 setLoading(false);
             }
@@ -363,7 +365,7 @@ export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }
                 :
                 DataCSF ?
                     // DATA CSF ADA
-                    DataCSF.map((csf: CSF, index: number) => (
+                    (DataCSF.map((csf: CSF, index: number) => (
                         <React.Fragment key={index}>
                             <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">{csf.pernyataan_kondisi_strategis || "-"}</td>
                             {/* ALASAN */}
@@ -409,10 +411,10 @@ export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }
                                 </div>
                             </td>
                         </React.Fragment>
-                    ))
+                    )))
                     :
-                    // DATA CSF TIDAK ADA
-                    ErrorCSF ?
+                    // DATA CSF TIDAK ADA / ERROR
+                    (ErrorCSF ?
                         <td rowSpan={rowSpan} colSpan={4} className="border-r border-b bg-blue-100 px-6 py-4 text-center text-red-300 italic">*Error saat memuat data CSF</td>
                         :
                         <>
@@ -429,6 +431,7 @@ export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }
                                 </div>
                             </td>
                         </>
+                    )
             }
             <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">{data.tema || "-"} ({data.id})</td>
             {data.indikator ?
