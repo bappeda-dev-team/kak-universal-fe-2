@@ -4,58 +4,58 @@ import React, { useState, useEffect } from "react"
 
 const test = () => {
 
-  // const [ArrayGabungan, setArrayGabungan] = useState<any[]>([]);
+//   const [ArrayGabungan, setArrayGabungan] = useState<any[]>([]);
 
-  // const Array1 = [
-  //   { "id": 1, "nama": "myko", "umur": 20 },
-  //   { "id": 2, "nama": "akbar", "umur": 30 },
-  //   { "id": 3, "nama": "Yonta", "umur": 25 }
-  // ]
+//   const Array1 = [
+//     { "id": 1, "nama": "myko", "umur": 20 },
+//     { "id": 2, "nama": "akbar", "umur": 30 },
+//     { "id": 3, "nama": "Yonta", "umur": 25 }
+//   ]
 
-  // const Array2 = [
-  //   { "id": 1, "hoby": "Music" },
-  //   { "id": 2, "hoby": "Video" },
-  //   { "id": 4, "hoby": "Gaming" }
-  // ]
+//   const Array2 = [
+//     { "id": 1, "hoby": "Music" },
+//     { "id": 2, "hoby": "Video" },
+//     { "id": 4, "hoby": "Gaming" }
+//   ]
 
-  // useEffect(() => {
-  //   if (Array1 && Array2) {
-  //     // const dataGabungan = GabungDataCara1(Array1, Array2);
-  //     const dataGabungan = GabungDataCara2(Array1, Array2);
-  //     setArrayGabungan(dataGabungan);
-  //   }
-  // }, []);
+//   useEffect(() => {
+//     if (Array1 && Array2) {
+//       // const dataGabungan = GabungDataCara1(Array1, Array2);
+//       const dataGabungan = GabungDataCara2(Array1, Array2);
+//       setArrayGabungan(dataGabungan);
+//     }
+//   }, []);
 
   return (
     <>
-      {/* <p>contoh penggabungan array</p>
-      <table>
-        <thead>
-          <tr>
-            <th className="border px-3 py-2">no</th>
-            <th className="border px-3 py-2">nama</th>
-            <th className="border px-3 py-2">umur</th>
-            <th className="border px-3 py-2">hoby</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ArrayGabungan.map((item: any, index: number) => (
-            <tr key={item.id}>
-              <td className="border px-3 py-2">{index + 1}</td>
-              <td className="border px-3 py-2">{item.nama}</td>
-              <td className="border px-3 py-2">{item.umur}</td>
-              <td className="border px-3 py-2">{item.hoby || "-"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table> */}
+       {/* <p>contoh penggabungan array</p>
+       <table>
+         <thead>
+           <tr>
+             <th className="border px-3 py-2">no</th>
+             <th className="border px-3 py-2">nama</th>
+             <th className="border px-3 py-2">umur</th>
+             <th className="border px-3 py-2">hoby</th>
+           </tr>
+         </thead>
+         <tbody>
+           {ArrayGabungan.map((item: any, index: number) => (
+             <tr key={item.id}>
+               <td className="border px-3 py-2">{index + 1}</td>
+               <td className="border px-3 py-2">{item.nama}</td>
+               <td className="border px-3 py-2">{item.umur}</td>
+               <td className="border px-3 py-2">{item.hoby || "-"}</td>
+             </tr>
+           ))}
+         </tbody>
+       </table> */}
     </>
   )
 }
 
 export default test;
 
-// penggabungan data dimana hanya array1 & array2 yang memiliki id yang sama
+// // penggabungan data dimana hanya array1 & array2 yang memiliki id yang sama
 // function GabungDataCara1(array1: any, array2: any) {
 //   const hasil: any = [];
 //   array1.forEach((item1: any) => {
