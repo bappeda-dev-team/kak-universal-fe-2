@@ -12,25 +12,43 @@ interface tematik {
     id: number;
     parent: number;
     tema: string;
+    is_active: boolean;
+    keterangan: string;
+    indikator: indikator[];
+}
+interface CSF {
+    id: number;
+    pohon_id: number;
+    pernyataan_kondisi_strategis: string | null;
+    tahun: string;
+    alasan_kondisi: AlasanKondisi[];
+}
+interface TypeDataGabungan {
+    id: number;
+    pohon_id: number;
+    pernyataan_kondisi_strategis: string | null;
+    tahun: string;
+    alasan_kondisi: AlasanKondisi[];
+    parent: number;
+    tema: string;
+    is_active: boolean;
     keterangan: string;
     indikator: indikator[];
 }
 interface DataTerukur {
     id: number;
+    alasan_kondisi_id: number;
     data_terukur: string;
+    created_at: string;
+    updated_at: string;
 }
-
 interface AlasanKondisi {
     id: number;
+    csf_id: number;
     alasan_kondisi_strategis: string;
     data_terukur: DataTerukur[];
-}
-
-interface CSF {
-    id: number;
-    pohon_id: number;
-    pernyataan_kondisi_strategis: string;
-    alasan_kondisi: AlasanKondisi[];
+    created_at: string;
+    updated_at: string;
 }
 interface indikator {
     id_indikator: string;
@@ -49,15 +67,20 @@ interface Table {
 export const Table: React.FC<Table> = ({ tahun }) => {
 
     const [Tematik, setTematik] = useState<tematik[]>([]);
+    const [CSF, setCSF] = useState<CSF[]>([]);
+    const [Data, setData] = useState<tematik[] | CSF[]>([]);
     const [Loading, setLoading] = useState<boolean | null>(null);
+    const [LoadingCSF, setLoadingCSF] = useState<boolean | null>(null);
     const [Error, setError] = useState<boolean | null>(null);
     const [DataNull, setDataNull] = useState<boolean | null>(null);
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const token = getToken();
 
+    // FETCH DATA PERTAMA TEMATIK & CSF
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const API_URL_CSF = process.env.NEXT_PUBLIC_API_URL_CSF;
         const fetchTematik = async () => {
             setLoading(true)
             try {
@@ -87,10 +110,48 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                 setLoading(false);
             }
         }
+        const fetchCSF = async () => {
+            setLoadingCSF(true)
+            try {
+                const response = await fetch(`${API_URL_CSF}/csf/${tahun}`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                const data = result.data;
+                if (data == null) {
+                    setDataNull(true);
+                    setCSF([]);
+                } else if (data.code == 500) {
+                    setError(true);
+                    setCSF([]);
+                } else {
+                    setDataNull(false);
+                    setCSF(data);
+                }
+                setCSF(data);
+            } catch (err) {
+                setError(true);
+                console.error(err)
+            } finally {
+                setLoadingCSF(false);
+            }
+        }
         if (tahun != undefined) {
             fetchTematik();
+            fetchCSF();
         }
     }, [tahun, token, FetchTrigger]);
+    // FETCH DATA KEDUA PENGGABUNGAN ARRAY
+    useEffect(() => {
+        if (Tematik && CSF) {
+            const dataGabungan = GabunganData(CSF, Tematik);
+            setData(dataGabungan);
+            console.log("final", dataGabungan);
+        }
+    }, [Tematik, CSF]);
 
     const hapusTematik = async (id: any) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -116,7 +177,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
     };
 
 
-    if (Loading) {
+    if (Loading || LoadingCSF) {
         return (
             <div className="border p-5 rounded-xl shadow-xl">
                 <LoadingClip className="mx-5 py-5" />
@@ -149,22 +210,27 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {DataNull ?
+                        {(DataNull || !Data.length) ?
                             <tr>
                                 <td className="px-6 py-3 uppercase" colSpan={13}>
                                     Data Kosong / Belum Ditambahkan
                                 </td>
                             </tr>
                             :
-                            Tematik.map((data, index: number) => (
+                            Data.map((data: any, index: number) => (
                                 <React.Fragment key={data.id}>
                                     <tr>
-                                        <td rowSpan={data.indikator ? data.indikator.length : 1}
+                                        <td rowSpan={"indikator" in data ? data.indikator?.length : 1}
                                             className="border-r border-b bg-blue-100 border-white px-6 py-4 text-center"
                                         >
                                             {index + 1}
                                         </td>
-                                        <TableTematik data={data} rowSpan={data.indikator ? data.indikator.length : 1} onDelete={() => hapusTematik(data.id)} />
+                                        <TableTematik 
+                                            data={data} 
+                                            rowSpan={"indikator" in data ? data.indikator?.length : 1} 
+                                            onDelete={() => hapusTematik(data.id)} 
+                                            fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                        />
                                     </tr>
                                 </React.Fragment>
                             ))
@@ -270,53 +336,19 @@ export const AksiCsf: React.FC<AksiCSF> = ({ buttonDelete, onDelete, onEdit }) =
     )
 }
 interface TableTematik {
-    data: tematik;
+    data: TypeDataGabungan;
     rowSpan?: number;
     onDelete: () => void;
+    fetchTrigger: () => void;
 }
-export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }) => {
-
-    const [Loading, setLoading] = useState<boolean>(false);
-    const [DataCSF, setDataCSF] = useState<any[]>([]);
-    const [ErrorCSF, setErrorCSF] = useState<boolean>(false);
-    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete, fetchTrigger }) => {
 
     const [ModalOpen, setModalOpen] = useState<boolean>(false);
     const [JenisModal, setJenisModal] = useState<string>("");
-    const [DataToEdit, setDataToEdit] = useState<any>(null);
-    const [DataTematik, setDataTematik] = useState<tematik | null>(null);
+    const [DataToEdit, setDataToEdit] = useState<tematik | CSF | null>(null);
 
-    useEffect(() => {
-        const fetchCSF = async () => {
-            const API_URL = process.env.NEXT_PUBLIC_API_URL_CSF;
-            setLoading(true);
-            setErrorCSF(false);
-            try {
-                const response = await fetch(`${API_URL}/csf/${data.id}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                const result = await response.json();
-                if (result.code === 200 || result.code === 201) {
-                    console.log(result.data);
-                    setDataCSF(result.data);
-                    setErrorCSF(false);
-                } else {
-                    console.log(result.data);
-                    setDataCSF([]);
-                    setErrorCSF(true);
-                }
-            } catch (err) {
-                console.error(err);
-                setErrorCSF(true);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchCSF();
-    }, [data, FetchTrigger]);
-
+    const kondisi_strategis = "pernyataan_kondisi_strategis" in data;
+    
     const hapusCsf = async (id: any) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL_CSF;
         try {
@@ -333,111 +365,94 @@ export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }
                 console.error(result);
             } else {
                 AlertNotification("Berhasil", "Data CSF Berhasil dihapus", "success", 1000);
-                setFetchTrigger((prev) => !prev);
+                fetchTrigger();
             }
         } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
         }
     };
-    const handleModal = (jenis: string, tematik: tematik | null, data?: any) => {
+    const handleModal = (jenis: string, data: tematik | CSF | null) => {
         if (ModalOpen) {
             setModalOpen(false);
             setJenisModal("");
             setDataToEdit(null);
-            setDataTematik(null);
         } else {
             setModalOpen(true);
             setJenisModal(jenis);
             setDataToEdit(data);
-            setDataTematik(tematik);
         }
     }
 
     return (
         <React.Fragment>
-            {Loading ?
-                <td rowSpan={rowSpan} colSpan={5} className="border-r border-b px-6 py-4 text-center">
-                    <div className="flex items-center gap-1">
-                        <LoadingButtonClip2 />
-                        Memuat data CSF
-                    </div>
-                </td>
-                :
-                DataCSF ?
-                    // DATA CSF ADA
-                    (DataCSF.map((csf: CSF, index: number) => (
-                        <React.Fragment key={index}>
-                            <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">{csf.pernyataan_kondisi_strategis || "-"}</td>
-                            {/* ALASAN */}
-                            {csf.alasan_kondisi ?
-                                csf.alasan_kondisi.map((ak: AlasanKondisi, sub_index: number) => (
-                                    <React.Fragment key={sub_index}>
-                                        <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">{ak.alasan_kondisi_strategis || "_"}</td>
-                                        {ak.data_terukur.map((dt: DataTerukur, sub_sub_index: number) => (
-                                            <React.Fragment key={sub_sub_index}>
-                                                <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">{dt.data_terukur || "-"}</td>
-                                            </React.Fragment>
-                                        ))}
-                                    </React.Fragment>
-                                ))
-                                :
-                                <>
-                                    <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">-</td>
-                                    <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">-</td>
-                                </>
-                            }
-                            <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">
-                                <div className="flex flex-col justify-center items-center gap-2">
-                                    <ButtonGreenBorder
-                                        className="flex items-center gap-1 w-full"
-                                        onClick={() => handleModal("edit", data, csf)}
-                                    >
-                                        <TbPencil />
-                                        CSF
-                                    </ButtonGreenBorder>
-                                    <ButtonRedBorder
-                                        className="flex items-center gap-1 w-full"
-                                        onClick={() => {
-                                            AlertQuestion("Hapus?", "Hapus CSF yang dipilih?", "question", "Hapus", "Batal").then((result) => {
-                                                if (result.isConfirmed) {
-                                                    hapusCsf(csf.id);
-                                                }
-                                            });
-                                        }}
-                                    >
-                                        <TbTrash />
-                                        Hapus
-                                    </ButtonRedBorder>
-                                </div>
-                            </td>
-                        </React.Fragment>
-                    )))
-                    :
-                    // DATA CSF TIDAK ADA / ERROR
-                    (ErrorCSF ?
-                        <td rowSpan={rowSpan} colSpan={4} className="border-r border-b bg-blue-100 px-6 py-4 text-center text-red-300 italic">*Error saat memuat data CSF</td>
-                        :
-                        <>
-                            <td rowSpan={rowSpan} colSpan={3} className="border-r border-b bg-blue-100 px-6 py-4 text-center italic">CSF Kosong / belum di tambahkan</td>
-                            <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">
-                                <div className="flex flex-col justify-center items-center gap-2">
-                                    <ButtonGreenBorder
-                                        className="flex items-center gap-1 w-full"
-                                        onClick={() => handleModal("baru", data)}
-                                    >
-                                        <TbPencil />
-                                        CSF
-                                    </ButtonGreenBorder>
-                                </div>
-                            </td>
-                        </>
-                    )
+            {data.pernyataan_kondisi_strategis === null ?      
+                <>
+                    <td rowSpan={rowSpan} colSpan={3} className="border-r border-b bg-blue-100 px-6 py-4 text-center italic text-red-400">CSF Kosong / belum di tambahkan</td>
+                    <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">
+                        <div className="flex flex-col justify-center items-center gap-2">
+                            <ButtonGreenBorder
+                                className="flex items-center gap-1 w-full"
+                                onClick={() => handleModal("baru", data)}
+                            >
+                                <TbPencil />
+                                CSF
+                            </ButtonGreenBorder>
+                        </div>
+                    </td>
+                </>
+            :
+                // DATA CSF ADA
+                    <React.Fragment>
+                        <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">{data.pernyataan_kondisi_strategis || "-"}</td>
+                        {/* ALASAN */}
+                        {data.alasan_kondisi?.length > 0 ?
+                            data.alasan_kondisi.map((ak: AlasanKondisi, sub_index: number) => (
+                                <React.Fragment key={sub_index}>
+                                    <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">{ak.alasan_kondisi_strategis || "_"}</td>
+                                    {ak.data_terukur.map((dt: DataTerukur, sub_sub_index: number) => (
+                                        <React.Fragment key={sub_sub_index}>
+                                            <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">{dt.data_terukur || "-"}</td>
+                                        </React.Fragment>
+                                    ))}
+                                </React.Fragment>
+                            ))
+                            :
+                            <>
+                                <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">-</td>
+                                <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">-</td>
+                            </>
+                        }
+                        <td rowSpan={rowSpan} className="border-r bg-blue-100 border-b px-6 py-4 text-center">
+                            <div className="flex flex-col justify-center items-center gap-2">
+                                <ButtonGreenBorder
+                                    className="flex items-center gap-1 w-full"
+                                    onClick={() => handleModal("edit", data)}
+                                >
+                                    <TbPencil />
+                                    CSF
+                                </ButtonGreenBorder>
+                                <ButtonRedBorder
+                                    className="flex items-center gap-1 w-full"
+                                    onClick={() => {
+                                        AlertQuestion("Hapus?", "Hapus CSF yang dipilih?", "question", "Hapus", "Batal").then((result) => {
+                                            if (result.isConfirmed) {
+                                                hapusCsf(data.id);
+                                            }
+                                        });
+                                    }}
+                                >
+                                    <TbTrash />
+                                    Hapus
+                                </ButtonRedBorder>
+                            </div>
+                        </td>
+                    </React.Fragment>
             }
-            <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">{data.tema || "-"} ({data.id})</td>
+            <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">{data.tema ||  "-"}</td>
             {data.indikator ?
                 <>
                     <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">
-                        {data.indikator.map((item: indikator) => (
+                        {data.indikator?.map((item: indikator) => (
                             <p
                                 key={item.id_indikator}
                                 className={`${data.indikator.length > 1 && "border-b"} py-3`}
@@ -447,13 +462,13 @@ export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }
                         ))}
                     </td>
                     <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">
-                        {data.indikator.map((item: indikator) => (
+                        {data.indikator?.map((item: indikator) => (
                             item.targets.map((t: target) => (
                                 <p
                                     key={t.id_target}
                                     className={`${data.indikator.length > 1 && "border-b"} py-3`}
                                 >
-                                    {t.target} / {t.satuan}
+                                    {t.target || "-"} / {t.satuan || "-"}
                                 </p>
                             ))
                         ))}
@@ -465,7 +480,7 @@ export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }
                     <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">-</td>
                 </>
             }
-            <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">{data.keterangan ? data.keterangan : "-"}</td>
+            <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 text-center">{"keterangan" in data ? data.keterangan : "-"}</td>
             <td rowSpan={rowSpan} className="border-r border-b px-6 py-4">
                 <div className="flex flex-col jutify-center items-center gap-2">
                     <ButtonGreenBorder
@@ -495,13 +510,39 @@ export const TableTematik: React.FC<TableTematik> = ({ data, rowSpan, onDelete }
                 <ModalCSF
                     isOpen={ModalOpen}
                     onClose={() => handleModal("", null)}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
+                    onSuccess={fetchTrigger}
                     jenis={JenisModal}
                     data={DataToEdit}
-                    tematik={DataTematik}
                 />
             }
         </React.Fragment>
     )
+}
+
+export function GabunganData(csf: CSF[], tematik: tematik[]) {
+    const array1 = new Map(tematik.map((t: tematik) => [t.id, t]));
+    const hasil = csf.map((c: CSF) => {
+        const ArrayGabungan = array1.get(c.pohon_id);
+        return { ...c, ...(ArrayGabungan ?? {})}
+    });
+
+    tematik.forEach((t: tematik) => {
+        const gabungan = hasil.some((g: CSF) => g.pohon_id === t.id);
+        if (!gabungan) {
+            hasil.push({
+                id: t.id,
+                tema: t.tema,
+                parent: t.parent,
+                indikator: t.indikator,
+                is_active: t.is_active,
+                keterangan: t.keterangan,
+                pohon_id: 0,
+                pernyataan_kondisi_strategis: null,
+                tahun: "",
+                alasan_kondisi: [],
+            });
+        }
+    });
+    return hasil;
 }
 

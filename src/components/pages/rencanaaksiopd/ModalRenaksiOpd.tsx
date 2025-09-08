@@ -87,10 +87,10 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
 
     useEffect(() => {
         const fetchDetailRenaksiOpd = async () => {
-            const API_URL_2 = process.env.NEXT_PUBLIC_API_URL_2;
+            const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
             try {
                 setLoadingDetail(true);
-                const response = await fetch(`${API_URL_2}/renaksi-opd/detail/${id}`, {
+                const response = await fetch(`${API_URL_RENAKSI_OPD}/renaksi-opd/detail/${id}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
     }
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const API_URL_2 = process.env.NEXT_PUBLIC_API_URL_2;
+        const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
         const formDataNew = {
             //key : value
             sasaranopd_id: id_sasaran,
@@ -181,7 +181,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
                 url = '';
             }
             setProses(true);
-            const response = await fetch(`${API_URL_2}/${url}`, {
+            const response = await fetch(`${API_URL_RENAKSI_OPD}/${url}`, {
                 method: metode === 'lama' ? "PUT" : "POST",
                 headers: {
                     Authorization: `${token}`,

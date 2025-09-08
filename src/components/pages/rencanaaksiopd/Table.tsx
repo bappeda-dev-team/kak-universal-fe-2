@@ -94,11 +94,11 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
     const token = getToken();
 
     useEffect(() => {
-        const API_URL_2 = process.env.NEXT_PUBLIC_API_URL_2;
+        const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
         const fetchSasaran = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${API_URL_2}/sasaran_opd/all/${kode_opd}/${tahun}`, {
+                const response = await fetch(`${API_URL_RENAKSI_OPD}/sasaran_opd/all/${kode_opd}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -241,10 +241,10 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
     }
 
     const hapusRenaksiOpd = async (id: number) => {
-        const API_URL_2 = process.env.NEXT_PUBLIC_API_URL_2;
+        const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
         // console.log(id);
         try {
-            const response = await fetch(`${API_URL_2}/rencana-aksi-opd/delete/${id}`, {
+            const response = await fetch(`${API_URL_RENAKSI_OPD}/rencana-aksi-opd/delete/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `${token}`,
@@ -262,10 +262,10 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
         }
     };
     const syncRenaksiOpd = async (id: string) => {
-        const API_URL_2 = process.env.NEXT_PUBLIC_API_URL_2;
+        const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
         // console.log(id);
         try {
-            const response = await fetch(`${API_URL_2}/rencana-aksi-opd/sync_jadwal/${id}`, {
+            const response = await fetch(`${API_URL_RENAKSI_OPD}/rencana-aksi-opd/sync_jadwal/${id}`, {
                 method: "POST",
                 headers: {
                     Authorization: `${token}`,
@@ -286,11 +286,11 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
     };
 
     useEffect(() => {
-        const API_URL_2 = process.env.NEXT_PUBLIC_API_URL_2;
+        const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
         const fetchRekinById = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${API_URL_2}/rencana-aksi-opd/${id}/${tahun}`, {
+                const response = await fetch(`${API_URL_RENAKSI_OPD}/rencana-aksi-opd/${id}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',

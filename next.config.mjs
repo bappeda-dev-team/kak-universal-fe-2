@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['cdnkk.zeabur.app'],
+        domains: ['logo.kertaskerja.cc'],
     },
     output: "standalone",
 };
