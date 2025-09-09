@@ -1,95 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import { TbEye, TbPrinter } from 'react-icons/tb';
+import { useEffect, useState } from 'react';
+import { TbTrashX, TbUsersPlus, TbEye, TbPrinter, TbCircleCheckFilled } from 'react-icons/tb';
 import { ButtonSky, ButtonGreenBorder, ButtonBlackBorder } from '@/components/global/Button';
+import { AlertNotification, AlertQuestion } from '@/components/global/Alert';
+import { FormEditCascading } from './FormCascading';
+import { getToken, getUser } from '../../Cookie';
 import { ModalCetak } from '@/components/pages/Pohon/ModalCetak';
-import { ModalIndikator } from '@/components/pages/Pohon/ModalIndikator';
 
 interface pohon {
     tema: any;
+    deleteTrigger: () => void;
     show_all?: boolean;
     set_show_all: () => void;
 }
-interface ProgramKegiatan {
-    jenis: string;
-    tipe: string;
-    program?: program[];
-    kegiatan?: kegiatan[];
-    urusan?: urusan[];
-    bidang_urusan?: bidangUrusan[];
-    kode?: string;
-    indikator?: indikator[];
-}
-interface rencana_kinerja {
-    id_rencana_kinerja: string;
-    id_pohon: number;
-    nama_pohon: string;
-    nama_rencana_kinerja: string;
-    tahun: string; // Tahun dalam JSON adalah string
-    indikator: indikator[]; // Array yang berisi objek IndikatorItem
-    pegawai_id: string;
-    nama_pegawai: string;
-    kode_subkegiatan: string;
-    nama_subkegiatan: string;
-    anggaran: number;
-    pagu: number;
-    indikator_subkegiatan: indikator[]; // Secara eksplisit null
-    kode_kegiatan: string;
-    nama_kegiatan: string;
-    indikator_kegiatan: indikator[]; // Secara eksplisit null
-}
-interface indikator {
-    id_indikator: string;
-    id_rekin: string;
-    kode: string;
-    nama_indikator: string;
-    targets: target[];
-}
-interface target {
-    id_target: string;
-    indikator_id: string;
-    target: string;
-    satuan: string;
-}
-interface program {
-    kode_program: string;
-    nama_program: string;
-    indikator: indikator[];
-}
-interface kegiatan {
-    kode_kegiatan: string;
-    nama_kegiatan: string;
-    indikator: indikator[];
-}
-interface urusan {
-    kode_urusan: string;
-    nama_urusan: string;
-}
-interface bidangUrusan {
-    kode_bidang_urusan: string;
-    nama_bidang_urusan: string;
-}
-interface Periode {
-    tahun_awal: string;
-    tahun_akhir: string;
-    jenis_periode: string;
-}
-interface TujuanSasaranPemda {
-    id_tujuan_pemda: number;
-    tematik_id: number;
-    tujuan_pemda: string;
-    id_sasaran_pemda: number;
-    subtema_id: number;
-    sasaran_pemda: string;
-    periode_id: number;
-    periode: Periode;
+interface Tagging {
+    nama_tagging: string;
+    keterangan_tagging: string;
 }
 
-export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) => {
+export const PohonCascading: React.FC<pohon> = ({ tema, deleteTrigger, show_all, set_show_all }) => {
 
     const [childPohons, setChildPohons] = useState(tema.childs || []);
+    const [formList, setFormList] = useState<number[]>([]); // List of form IDs
 
     const [IsCetak, setIsCetak] = useState<boolean>(false);
+    const [edit, setEdit] = useState<boolean>(false);
     const [Show, setShow] = useState<boolean>(false);
+    const [Edited, setEdited] = useState<any | null>(null);
+    const [User, setUser] = useState<any>(null);
+    const token = getToken();
+
+    useEffect(() => {
+        const fetchUser = getUser();
+        if (fetchUser) {
+            setUser(fetchUser.user);
+        }
+    }, []);
 
     useEffect(() => {
         if (show_all) {
@@ -100,120 +45,172 @@ export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) 
         }
     }, [show_all, Show, set_show_all]);
 
+    const handleEditSuccess = (data: any) => {
+        setEdited(data);
+        setEdit(false);
+    };
     const handleShow = () => {
         setShow((prev) => !prev);
     }
+    const hapusPelaksana = async (id: any) => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        try {
+            const response = await fetch(`${API_URL}/pohon_kinerja_opd/delete_pelaksana/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            })
+            if (!response.ok) {
+                alert("cant fetch data")
+            }
+            AlertNotification("Berhasil", "Pelaksana Berhasil Dihapus", "success", 1000);
+            deleteTrigger();
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
+            console.error(err);
+        }
+    };
 
     return (
         <li>
-            <div
-                className={`tf-nc tf flex flex-col w-[600px] rounded-lg shadow-lg
-                    ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Sub Tematik") && 'shadow-slate-500'}
-                    ${(tema.jenis_pohon === "Strategic Pemda" || tema.jenis_pohon === "Tactical Pemda" || tema.jenis_pohon === "Operational Pemda") && 'shadow-slate-500'}
-                    ${tema.jenis_pohon === "Strategic" && 'shadow-red-500 bg-red-700'}
-                    ${tema.jenis_pohon === "Tactical" && 'shadow-blue-500 bg-blue-500'}
-                    ${tema.jenis_pohon === "Operational" && 'shadow-green-500 bg-green-500'}
-                    ${(tema.jenis_pohon === "Operational N") && 'shadow-green-500'}
-                    ${(tema.jenis_pohon === "Strategic Crosscutting" || tema.jenis_pohon === "Tactical Crosscutting" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohon === "Operational N Crosscutting") && 'shadow-yellow-700 bg-yellow-700'}
-                `}
-            >
-                {/* HEADER */}
-                <div
-                    className={`flex pt-3 justify-center font-bold text-lg uppercase border my-3 py-3 rounded-lg bg-white
-                        ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Sub Tematik") && 'border-black'}
-                        ${tema.jenis_pohon === "Strategic Pemda" && 'border-red-700 text-white bg-gradient-to-r from-[#CA3636] from-40% to-[#BD04A1]'}
-                        ${tema.jenis_pohon === "Tactical Pemda" && 'border-blue-500 text-white bg-gradient-to-r from-[#3673CA] from-40% to-[#08D2FB]'}
-                        ${tema.jenis_pohon === "Operational Pemda" && 'border-green-500 text-white bg-gradient-to-r from-[#007982] from-40% to-[#2DCB06]'}
-                        ${(tema.jenis_pohon === "Strategic" || tema.jenis_pohon === "Strategic Crosscutting") && 'border-red-500 text-red-700'}
-                        ${(tema.jenis_pohon === "Tactical" || tema.jenis_pohon === "Tactical Crosscutting") && 'border-blue-500 text-blue-500'}
-                        ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohon === "Operational N" || tema.jenis_pohon === "Operational N Crosscutting") && 'border-green-500 text-green-500'}
+            {edit ?
+                <FormEditCascading
+                    level={tema.level_pohon}
+                    id={tema.id}
+                    key={tema.id}
+                    formId={tema.id}
+                    pokin={'opd'}
+                    onCancel={() => setEdit(false)}
+                    EditBerhasil={handleEditSuccess}
+                />
+                :
+                <>
+                    <div
+                        className={`tf-nc tf flex flex-col w-[600px] rounded-lg shadow-lg
+                        ${tema.jenis_pohon === "Strategic Pemda" && 'shadow-slate-500'}
+                        ${tema.jenis_pohon === "Tactical Pemda" && 'shadow-slate-500'}
+                        ${tema.jenis_pohon === "OperationalPemda" && 'shadow-slate-500'}
+                        ${tema.jenis_pohon === "Strategic" && 'shadow-red-500 bg-red-700'}
+                        ${tema.jenis_pohon === "Tactical" && 'shadow-blue-500 bg-blue-500'}
+                        ${tema.jenis_pohon === "Operational" && 'shadow-green-500 bg-green-500'}
+                        ${(tema.jenis_pohon === "Operational N") && 'shadow-green-500'}
+                        ${(tema.jenis_pohon === "Strategic Crosscutting" || tema.jenis_pohon === "Tactical Crosscutting" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohon === "Operational N Crosscutting") && 'shadow-yellow-700 bg-yellow-700'}
                     `}
-                >
-                    {tema.jenis_pohon === 'Operational N' ?
-                        <h1>Operational {tema.level_pohon - 6} {tema.id_pohon}</h1>
-                        :
-                        <h1>{tema.jenis_pohon} {tema.id_pohon}</h1>
-                    }
-                </div>
-                {/* BODY */}
-                <div className="flex flex-col justify-center my-3">
-                    <TablePohonLaporan item={tema} tipe="non-cetak" />
-                    <div className="mt-3">
-                        <Pagu
-                            jenis={tema.jenis_pohon}
-                            anggaran={tema.total_anggaran || tema.pagu_anggaran || tema.pagu || '0'}
-                        />
-                    </div>
-                    {tema.urusan_pokin &&
-                        <div className="mt-5">
-                            <ProgramKegiatan
-                                jenis={tema.jenis_pohon}
-                                tipe="non-cetak"
-                                urusan={tema.urusan_pokin}
-                            />
-                        </div>
-                    }
-                    {tema.bidang_urusan_pokin &&
-                        <div className="mt-5">
-                            <ProgramKegiatan
-                                jenis={tema.jenis_pohon}
-                                tipe="non-cetak"
-                                bidang_urusan={tema.bidang_urusan_pokin}
-                            />
-                        </div>
-                    }
-                    {(tema.program_pokin) &&
-                        <div className="mt-5">
-                            <ProgramKegiatan
-                                jenis={tema.jenis_pohon}
-                                tipe="non-cetak"
-                                program={tema.program_pokin}
-                            />
-                        </div>
-                    }
-                    {(tema.kegiatan_pokin) &&
-                        <div className="mt-5">
-                            <ProgramKegiatan
-                                jenis={tema.jenis_pohon}
-                                tipe="non-cetak"
-                                kegiatan={tema.kegiatan_pokin}
-                            />
-                        </div>
-                    }
-                </div>
-                {/* BUTTON ACTION TAMPILKAN DAN PELAKSANA*/}
-                <div
-                    className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white hide-on-capture
-                        ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Sub Tematik") && "border-black"}
-                        ${(tema.jenis_pohon === "Strategic Pemda" || tema.jenis_pohon === "Tactical Pemda" || tema.jenis_pohon === "Operational Pemda") && 'border-black'}
-                    `}
-                >
-                    <ButtonSky className='flex items-center gap-1' onClick={() => setIsCetak(true)}>
-                        <TbPrinter />
-                        Cetak
-                    </ButtonSky>
-                    <ButtonBlackBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-gradient-to-r rounded-lg hide-on-capture`}
-                        onClick={handleShow}
                     >
-                        <TbEye className='mr-1' />
-                        {Show ? 'Sembunyikan' : 'Tampilkan'}
-                    </ButtonBlackBorder>
-                </div>
-            </div>
+                        {/* HEADER */}
+                        <div
+                            className={`flex pt-3 justify-center font-bold text-lg uppercase border my-3 py-3 rounded-lg bg-white
+                            ${tema.jenis_pohon === "Strategic Pemda" && 'border-red-700 text-white bg-gradient-to-r from-[#CA3636] from-40% to-[#BD04A1]'}
+                            ${tema.jenis_pohon === "Tactical Pemda" && 'border-blue-500 text-white bg-gradient-to-r from-[#3673CA] from-40% to-[#08D2FB]'}
+                            ${tema.jenis_pohon === "Operational Pemda" && 'border-green-500 text-white bg-gradient-to-r from-[#007982] from-40% to-[#2DCB06]'}
+                            ${(tema.jenis_pohon === "Strategic" || tema.jenis_pohon === "Strategic Crosscutting") && 'border-red-500 text-red-700'}
+                            ${(tema.jenis_pohon === "Tactical" || tema.jenis_pohon === "Tactical Crosscutting") && 'border-blue-500 text-blue-500'}
+                            ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohon === "Operational N" || tema.jenis_pohon === "Operational N Crosscutting") && 'border-green-500 text-green-500'}
+                        `}
+                        >
+                            {tema.jenis_pohon === 'Operational N' ?
+                                <h1>Operational {tema.level_pohon - 6}  </h1>
+                                :
+                                <h1>{tema.jenis_pohon} </h1>
+                            }
+                        </div>
+                        {/* BODY */}
+                        <div className="flex justify-center my-3">
+                            {Edited ?
+                                <TablePohonEdited item={Edited} hapusPelaksana={hapusPelaksana} user={User?.roles} />
+                                :
+                                <TablePohon item={tema} hapusPelaksana={hapusPelaksana} user={User?.roles} />
+                            }
+                        </div>
+                        {/* BUTTON ACTION TAMPILKAN DAN PELAKSANA*/}
+                        <div
+                            className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white hide-on-capture
+                                ${tema.jenis_pohon === "Strategic Pemda" && 'border-black'}
+                                ${tema.jenis_pohon === "Tactical Pemda" && 'border-black'}
+                                ${tema.jenis_pohon === "Operational Pemda" && 'border-black'}
+                                `}
+                        >
+                            <ButtonSky className='flex items-center gap-1' onClick={() => setIsCetak(true)}>
+                                <TbPrinter />
+                                Cetak
+                            </ButtonSky>
+                            <ButtonBlackBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-gradient-to-r rounded-lg hide-on-capture`}
+                                onClick={handleShow}
+                            >
+                                <TbEye className='mr-1' />
+                                {Show ? 'Sembunyikan' : 'Tampilkan'}
+                            </ButtonBlackBorder>
+                            {/* BUTTON PELAKSANA SUPER ADMIN, ADMIN OPD, ASN LEVEL 1 */}
+                            {(User?.roles == 'super_admin' || User?.roles == 'admin_opd' || User?.roles == 'level_1') &&
+                                <ButtonGreenBorder onClick={() => setEdit(true)}>
+                                    <TbUsersPlus className="mr-1" />
+                                    Pelaksana
+                                </ButtonGreenBorder>
+                            }
+                            {/* BUTTON PELAKSANA ASN LEVEL 2 */}
+                            {(User?.roles == 'level_2' &&
+                                (
+                                    tema.jenis_pohon === 'Tactical' ||
+                                    tema.jenis_pohon === 'Tactical Pemda' ||
+                                    tema.jenis_pohon === 'Tactical Crosscutting' ||
+                                    tema.jenis_pohon === 'Operational' ||
+                                    tema.jenis_pohon === 'Operational Pemda' ||
+                                    tema.jenis_pohon === 'Operational Crosscutting' ||
+                                    tema.jenis_pohon === 'Operational N' ||
+                                    tema.jenis_pohon === 'Operational N Pemda' ||
+                                    tema.jenis_pohon === 'Operational N Crosscutting'
+                                )) &&
+                                <ButtonGreenBorder onClick={() => setEdit(true)}>
+                                    <TbUsersPlus className="mr-1" />
+                                    Pelaksana
+                                </ButtonGreenBorder>
+                            }
+                            {/* BUTTON PELAKSANA ASN LEVEL 3 */}
+                            {(User?.roles == 'level_3' &&
+                                (
+                                    tema.jenis_pohon === 'Operational' ||
+                                    tema.jenis_pohon === 'Operational Pemda' ||
+                                    tema.jenis_pohon === 'Operational Crosscutting' ||
+                                    tema.jenis_pohon === 'Operational N' ||
+                                    tema.jenis_pohon === 'Operational N Pemda' ||
+                                    tema.jenis_pohon === 'Operational N Crosscutting'
+                                )) &&
+                                <ButtonGreenBorder onClick={() => setEdit(true)}>
+                                    <TbUsersPlus className="mr-1" />
+                                    Pelaksana
+                                </ButtonGreenBorder>
+                            }
+                            {/* BUTTON PELAKSANA ASN LEVEL 4 */}
+                            {(User?.roles == 'level_4' &&
+                                (
+                                    tema.jenis_pohon === 'Operational N' ||
+                                    tema.jenis_pohon === 'Operational N Pemda' ||
+                                    tema.jenis_pohon === 'Operational N Crosscutting'
+                                )) &&
+                                <ButtonGreenBorder onClick={() => setEdit(true)}>
+                                    <TbUsersPlus className="mr-1" />
+                                    Pelaksana
+                                </ButtonGreenBorder>
+                            }
+                        </div>
+                    </div>
+                </>
+            }
             <ul style={{ display: Show ? '' : 'none' }}>
-                {childPohons.map((dahan: any, index: number) => (
-                    <React.Fragment key={index}>
-                        <PohonLaporan
-                            tema={dahan}
-                            key={index}
-                            show_all={show_all}
-                            set_show_all={() => set_show_all()}
-                        />
-                    </React.Fragment>
+                {childPohons.map((dahan: any, index: any) => (
+                    <PohonCascading
+                        tema={dahan}
+                        key={index}
+                        deleteTrigger={deleteTrigger}
+                        show_all={show_all}
+                        set_show_all={() => set_show_all()}
+                    />
                 ))}
             </ul>
             <ModalCetak
-                jenis='laporan'
+                jenis='cascading'
                 onClose={() => setIsCetak(false)}
                 isOpen={IsCetak}
                 pohon={tema}
@@ -221,39 +218,214 @@ export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) 
         </li>
     )
 }
+export const PohonCascadingEdited: React.FC<pohon> = ({ tema, deleteTrigger }) => {
 
-export const TablePohonLaporan = (props: any) => {
+    const [formList, setFormList] = useState<number[]>([]); // List of form IDs
+    const [edit, setEdit] = useState<boolean>(false);
+    const [Show, setShow] = useState<boolean>(false);
+    const [Edited, setEdited] = useState<any | null>(null);
+    const [User, setUser] = useState<any>(null);
+    const token = getToken();
 
-    const nama_pohon = props.item.nama_pohon;
-    const tema = props.item.tema;
-    const tujuan_pemda = props.item.tujuan_pemda;
-    const sasaran_pemda = props.item.sasaran_pemda;
-    const urusan_pokin = props.item.urusan_pokin;
+    useEffect(() => {
+        const fetchUser = getUser();
+        if (fetchUser) {
+            setUser(fetchUser.user);
+        }
+    }, [])
+
+    // Adds a new form entry
+    const newChild = () => {
+        setFormList([...formList, Date.now()]); // Using unique IDs
+    };
+    const handleEditSuccess = (data: any) => {
+        setEdited(data);
+        setEdit(false);
+    };
+    const handleShow = () => {
+        setShow((prev) => !prev);
+    }
+
+    const hapusPelaksana = async (id: any) => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        try {
+            const response = await fetch(`${API_URL}/pohon_kinerja_opd/delete_pelaksana/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            })
+            if (!response.ok) {
+                alert("cant fetch data")
+            }
+            AlertNotification("Berhasil", "Pelaksana Berhasil Dihapus", "success", 1000);
+            deleteTrigger();
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
+            console.error(err);
+        }
+    };
+
+    return (
+        <li>
+            {edit ?
+                <FormEditCascading
+                    level={tema.level_pohon}
+                    id={tema.id}
+                    key={tema.id}
+                    formId={tema.id}
+                    pokin={'opd'}
+                    onCancel={() => setEdit(false)}
+                    EditBerhasil={handleEditSuccess}
+                />
+                :
+                <>
+                    <div
+                        className={`tf-nc tf flex flex-col w-[600px] rounded-lg shadow-lg
+                        ${tema.jenis_pohon === "Strategic Pemda" && 'shadow-slate-500'}
+                        ${tema.jenis_pohon === "Tactical Pemda" && 'shadow-slate-500'}
+                        ${tema.jenis_pohon === "OperationalPemda" && 'shadow-slate-500'}
+                        ${tema.jenis_pohon === "Strategic" && 'shadow-red-500 bg-red-700'}
+                        ${tema.jenis_pohon === "Tactical" && 'shadow-blue-500 bg-blue-500'}
+                        ${tema.jenis_pohon === "Operational" && 'shadow-green-500 bg-green-500'}
+                        ${(tema.jenis_pohon === "Operational N") && 'shadow-green-500'}
+                        ${(tema.jenis_pohon === "Strategic Crosscutting" || tema.jenis_pohon === "Tactical Crosscutting" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohon === "Operational N Crosscutting") && 'shadow-yellow-700 bg-yellow-700'}
+                    `}
+                    >
+                        {/* HEADER */}
+                        <div
+                            className={`flex pt-3 justify-center font-bold text-lg uppercase border my-3 py-3 rounded-lg bg-white
+                            ${tema.jenis_pohon === "Strategic Pemda" && 'border-red-700 text-white bg-gradient-to-r from-[#CA3636] from-40% to-[#BD04A1]'}
+                            ${tema.jenis_pohon === "Tactical Pemda" && 'border-blue-500 text-white bg-gradient-to-r from-[#3673CA] from-40% to-[#08D2FB]'}
+                            ${tema.jenis_pohon === "Operational Pemda" && 'border-green-500 text-white bg-gradient-to-r from-[#007982] from-40% to-[#2DCB06]'}
+                            ${(tema.jenis_pohon === "Strategic" || tema.jenis_pohon === "Strategic Crosscutting") && 'border-red-500 text-red-700'}
+                            ${(tema.jenis_pohon === "Tactical" || tema.jenis_pohon === "Tactical Crosscutting") && 'border-blue-500 text-blue-500'}
+                            ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohon === "Operational N" || tema.jenis_pohon === "Operational N Crosscutting") && 'border-green-500 text-green-500'}
+                        `}
+                        >
+                            {tema.jenis_pohon === 'Operational N' ?
+                                <h1>Operational {tema.level_pohon - 6}  </h1>
+                                :
+                                <h1>{tema.jenis_pohon}</h1>
+                            }
+                        </div>
+                        {/* BODY */}
+                        <div className="flex justify-center my-3">
+                            {Edited ?
+                                <TablePohonEdited item={Edited} hapusPelaksana={hapusPelaksana} user={User?.roles} />
+                                :
+                                <TablePohon item={tema} hapusPelaksana={hapusPelaksana} user={User?.roles} />
+                            }
+                        </div>
+                        {/* BUTTON ACTION TAMPILKAN DAN PELAKSANA*/}
+                        <div
+                            className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white hide-on-capture
+                                ${tema.jenis_pohon === "Strategic Pemda" && 'border-black'}
+                                ${tema.jenis_pohon === "Tactical Pemda" && 'border-black'}
+                                ${tema.jenis_pohon === "Operational Pemda" && 'border-black'}
+                                `}
+                        >
+                            <ButtonBlackBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-gradient-to-r rounded-lg hide-on-capture`}
+                                onClick={handleShow}
+                            >
+                                <TbEye className='mr-1' />
+                                {Show ? 'Sembunyikan' : 'Tampilkan'}
+                            </ButtonBlackBorder>
+                            {/* BUTTON PELAKSANA SUPER ADMIN, ADMIN OPD, ASN LEVEL 1 */}
+                            {(User?.roles == 'super_admin' || User?.roles == 'admin_opd' || User?.roles == 'level_1') &&
+                                <ButtonGreenBorder onClick={() => setEdit(true)}>
+                                    <TbUsersPlus className="mr-1" />
+                                    Pelaksana
+                                </ButtonGreenBorder>
+                            }
+                            {/* BUTTON PELAKSANA ASN LEVEL 2 */}
+                            {(User?.roles == 'level_2' &&
+                                (
+                                    tema.jenis_pohon === 'Tactical' ||
+                                    tema.jenis_pohon === 'Tactical Pemda' ||
+                                    tema.jenis_pohon === 'Tactical Crosscutting' ||
+                                    tema.jenis_pohon === 'Operational' ||
+                                    tema.jenis_pohon === 'Operational Pemda' ||
+                                    tema.jenis_pohon === 'Operational Crosscutting' ||
+                                    tema.jenis_pohon === 'Operational N' ||
+                                    tema.jenis_pohon === 'Operational N Pemda' ||
+                                    tema.jenis_pohon === 'Operational N Crosscutting'
+                                )) &&
+                                <ButtonGreenBorder onClick={() => setEdit(true)}>
+                                    <TbUsersPlus className="mr-1" />
+                                    Pelaksana
+                                </ButtonGreenBorder>
+                            }
+                            {/* BUTTON PELAKSANA ASN LEVEL 3 */}
+                            {(User?.roles == 'level_3' &&
+                                (
+                                    tema.jenis_pohon === 'Operational' ||
+                                    tema.jenis_pohon === 'Operational Pemda' ||
+                                    tema.jenis_pohon === 'Operational Crosscutting' ||
+                                    tema.jenis_pohon === 'Operational N' ||
+                                    tema.jenis_pohon === 'Operational N Pemda' ||
+                                    tema.jenis_pohon === 'Operational N Crosscutting'
+                                )) &&
+                                <ButtonGreenBorder onClick={() => setEdit(true)}>
+                                    <TbUsersPlus className="mr-1" />
+                                    Pelaksana
+                                </ButtonGreenBorder>
+                            }
+                            {/* BUTTON PELAKSANA ASN LEVEL 4 */}
+                            {(User?.roles == 'level_4' &&
+                                (
+                                    tema.jenis_pohon === 'Operational N' ||
+                                    tema.jenis_pohon === 'Operational N Pemda' ||
+                                    tema.jenis_pohon === 'Operational N Crosscutting'
+                                )) &&
+                                <ButtonGreenBorder onClick={() => setEdit(true)}>
+                                    <TbUsersPlus className="mr-1" />
+                                    Pelaksana
+                                </ButtonGreenBorder>
+                            }
+                        </div>
+                    </div>
+                </>
+            }
+        </li>
+    )
+}
+
+export const TablePohon = (props: any) => {
+
+    const { item, hapusPelaksana, user } = props;
+    const tema = props.item.nama_pohon;
+    const tagging = props.item.tagging;
     const jenis = props.item.jenis_pohon;
-    const rekin = props.item.rencana_kinerja;
     const pelaksana = props.item.pelaksana;
-    const indikator = props.item.indikator;
-    const tipe = props.tipe;
-
 
     return (
         <div className="flex flex-col w-full">
+            {/* TAGGING */}
+            {tagging &&
+                tagging.map((tg: Tagging, tag_index: number) => (
+                    <div key={tag_index} className="flex flex-col gap-1 w-full px-3 py-1 border border-yellow-400 rounded-lg bg-white mb-2">
+                        <div className='flex items-center gap-1'>
+                            <h1 className='text-emerald-500'><TbCircleCheckFilled /></h1>
+                            <h1 className='font-semibold'>{tg.nama_tagging || "-"}</h1>
+                        </div>
+                        <h1 className="p-1 text-slate-600 text-start">{tg.keterangan_tagging || ""}</h1>
+                    </div>
+                ))
+            }
             <table className='mb-2'>
                 <tbody>
                     <tr>
                         <td
                             className={`min-w-[100px] border px-2 py-3 bg-white text-start rounded-l-lg
-                                ${jenis === "Strategic" && "border-red-700"}
-                                ${jenis === "Tactical" && "border-blue-500"}
-                                ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                ${(
-                                    jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                    jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"
-                                }
-                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
-                            `}
+                            ${jenis === "Strategic" && "border-red-700"}
+                            ${jenis === "Tactical" && "border-blue-500"}
+                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
+                            ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
+                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
+                        `}
                         >
-                            {(jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik") && "Tema"}
                             {(jenis === 'Strategic' || jenis === 'Strategic Pemda' || jenis === 'Strategic Crosscutting') && 'Strategic'}
                             {(jenis === 'Tactical' || jenis === 'Tactical Pemda' || jenis === 'Tactical Crosscutting') && 'Tactical'}
                             {(jenis === 'Operational' || jenis === 'Operational Pemda' || jenis === 'Operational Crosscutting') && 'Operational'}
@@ -261,686 +433,265 @@ export const TablePohonLaporan = (props: any) => {
                         </td>
                         <td
                             className={`min-w-[300px] border px-2 py-3 bg-white text-start rounded-r-lg
+                            ${jenis === "Strategic" && "border-red-700"}
+                            ${jenis === "Tactical" && "border-blue-500"}
+                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
+                            ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
+                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
+                        `}
+                        >
+                            {tema ? tema : "-"}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table className='mt-2'>
+                <tbody >
+                    {pelaksana ?
+                        pelaksana.length > 1 ?
+                            pelaksana.map((item: any, index: number) => (
+                                <tr key={item.id_pelaksana}>
+                                    <td
+                                        className={`min-w-[100px] border px-2 py-1 bg-white text-start rounded-l-lg
+                                        ${jenis === "Strategic" && "border-red-700"}
+                                        ${jenis === "Tactical" && "border-blue-500"}
+                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
+                                        ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
+                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
+                                    `}
+                                    >
+                                        Pelaksana {index + 1}
+                                    </td>
+                                    <td
+                                        className={`min-w-[300px] border px-2 py-3 bg-white text-start
+                                        ${jenis === "Strategic" && "border-red-700"}
+                                        ${jenis === "Tactical" && "border-blue-500"}
+                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
+                                        ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
+                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
+                                    `}
+                                    >
+                                        {item.nama_pegawai}
+                                    </td>
+                                </tr>
+                            ))
+                            :
+                            pelaksana.map((data: any) => (
+                                <tr key={data.id_pelaksana}>
+                                    <td
+                                        className={`min-w-[100px] border px-2 py-1 bg-white text-start rounded-l-lg
+                                        ${jenis === "Strategic" && "border-red-700"}
+                                        ${jenis === "Tactical" && "border-blue-500"}
+                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
+                                        ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
+                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}   
+                                    `}
+                                    >
+                                        Pelaksana
+                                    </td>
+                                    <td
+                                        className={`min-w-[300px] border px-2 py-3 bg-white text-start
+                                        ${jenis === "Strategic" && "border-red-700"}
+                                        ${jenis === "Tactical" && "border-blue-500"}
+                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
+                                        ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
+                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"} 
+                                    `}
+                                    >
+                                        {data.nama_pegawai}
+                                    </td>
+                                </tr>
+                            ))
+                        :
+                        <tr>
+                            <td
+                                className={`min-w-[100px] border px-2 py-1 bg-white text-start rounded-l-lg
                                 ${jenis === "Strategic" && "border-red-700"}
                                 ${jenis === "Tactical" && "border-blue-500"}
                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                ${(
-                                    jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                    jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"
-                                }
-                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
+                                ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
+                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}   
                             `}
-                        >
-                            {tema ? tema : nama_pohon ? nama_pohon : "-"}
-                        </td>
-                    </tr>
-                    {(jenis === "Tematik" || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik") &&
-                        (indikator ?
-                            <TableIndikator indikator={indikator} jenis={jenis} />
-                            :
-                            <IndikatorKosong jenis={jenis} />
-                        )
-                    }
-                </tbody>
-            </table>
-            {(jenis !== "Tematik" && jenis !== "Sub Tematik" && jenis !== "Sub Sub Tematik" && jenis !== "Super Sub Tematik") ?
-                (
-                    (rekin || pelaksana) ?
-                        <TablePelaksana jenis={jenis} pelaksana={rekin || pelaksana} tipe={tipe} />
-                        :
-                        <PelaksanaKosong jenis={jenis} />
-                )
-                :
-                <>
-                    {jenis === "Tematik" &&
-                        (tujuan_pemda ?
-                            tujuan_pemda.map((tp: any, index: number) => (
-                                <React.Fragment key={index}>
-                                    <TableTujuanSasaran table='tujuan' data={tp} />
-                                </React.Fragment>
-                            ))
-                            :
-                            <TableTujuanSasaranKosong table='tujuan' jenis={jenis} />
-                        )
-                    }
-                    {(jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik") &&
-                        (sasaran_pemda ?
-                            sasaran_pemda.map((sp: any, index: number) => (
-                                <React.Fragment key={index}>
-                                    <TableTujuanSasaran table='sasaran' data={sp} />
-                                </React.Fragment>
-                            ))
-                            :
-                            <TableTujuanSasaranKosong table='sasaran' jenis={jenis} />
-                        )
-                    }
-                </>
-            }
-        </div>
-    )
-}
-export const Pagu: React.FC<{ jenis: string, anggaran: number }> = ({ jenis, anggaran }) => {
-
-    function formatRupiah(angka: number) {
-        if (typeof angka !== 'number') {
-            return String(angka); // Jika bukan angka, kembalikan sebagai string
-        }
-        return angka.toLocaleString('id-ID'); // 'id-ID' untuk format Indonesia
-    }
-
-    return (
-        <div className="flex flex-col w-full">
-            <table>
-                <tbody>
-                    <tr>
-                        <td className={`flex items-center justify-center gap-2 px-2 py-3 rounded-lg bg-white
-                                ${(
-                                jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                jenis === 'Strategic Pemda' || jenis === 'Tactical Pemda' || jenis === 'Operational Pemda'
-                            ) && 'border border-black'}
-                                ${jenis === 'Operational N' && 'border border-green-500'}
-                                `}>
-                            <p>Pagu : </p>
-                            <div className={`py-1 px-3 rounded-lg
-                                ${(jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik") && 'border border-black'}
-                                ${(jenis === 'Strategic Pemda' || jenis === 'Strategic') && 'text-white bg-red-600'}    
-                                ${(jenis === 'Tactical Pemda' || jenis === 'Tactical') && 'text-white bg-blue-500'}
-                                ${(jenis === 'Operational Pemda' || jenis === 'Operational') && 'text-white bg-green-500'}
-                                ${jenis === 'Operational N' && 'text-black border border-green-500'}
-                            `}>
-                                Rp. {formatRupiah(anggaran)}
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    )
-}
-export const ProgramKegiatan: React.FC<ProgramKegiatan> = ({ jenis, tipe, urusan, bidang_urusan, program, kegiatan, kode, indikator }) => {
-
-    const [ModalCekIndikator, setModalCekIndikator] = useState<boolean>(false);
-    const [DataIndikator, setDataIndikator] = useState<indikator[]>([]);
-    const [Isi, setIsi] = useState<string>('');
-
-    const handleModalIndikator = (data: indikator[], isi: string) => {
-        if (ModalCekIndikator) {
-            setModalCekIndikator(false);
-            setDataIndikator([]);
-            setIsi('')
-        } else {
-            setModalCekIndikator(true);
-            setDataIndikator(data);
-            setIsi(isi);
-        }
-    }
-
-    return (
-        <div className="flex flex-col w-full">
-            <table>
-                <thead>
-                    <tr>
-                        <td className={`flex items-center justify-center rounded-t-lg py-2
-                            ${(
-                                jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                jenis === 'Strategic Pemda' || jenis === 'Tactical Pemda' || jenis === 'Operational Pemda')
-                            && 'border border-black'}    
-                            ${jenis === 'Strategic' && 'border-b border-red-700 bg-white'}    
-                            ${jenis === 'Tactical' && 'border-b border-blue-500 bg-white'}    
-                            ${jenis === 'Operational' && 'border-b border-green-500 bg-white'}  
-                            ${jenis === 'Operational N' && 'border border-green-500 bg-white'}  
-                        `}>
-                            {(jenis === 'Strategic' || jenis === 'Strategic Pemda') && 'Bidang Urusan'}
-                            {(jenis === 'Tactical' || jenis === 'Tactical Pemda') && 'Program'}
-                            {(jenis === 'Operational' || jenis === 'Operational Pemda' || jenis === 'Operational N') && 'Kegiatan'}
-                            {jenis === 'Tematik' && 'Urusan'}
-                            {(jenis === 'Sub Tematik' || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik") && 'Bidang Urusan'}
-                        </td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td className={`flex flex-col gap-4 min-w-[300px] px-4 py-3 bg-white border-x border-b border-black rounded-b-lg
-                            ${(jenis === 'Strategic Pemda' || jenis === 'Tactical Pemda' || jenis === 'Operational Pemda') && 'border-x border-b border-black rounded-b-lg'}    
-                            ${(jenis === 'Strategic' || jenis === 'Tactical' || jenis === 'Operational') && 'rounded-b-lg'}
-                            ${jenis === 'Operational N' && 'border-x border-b border-green-500 rounded-b-lg'}    
-                        `}>
-                            {(jenis === 'Operational' || jenis === 'Operational Pemda' || jenis === 'Operational N') &&
-                                kegiatan?.map((p: kegiatan, p_index) => (
-                                    <React.Fragment key={p_index}>
-                                        <p className='text-center'>{p.nama_kegiatan} ({p.kode_kegiatan})</p>
-                                    </React.Fragment>
-                                ))
-                            }
-                            {(jenis === "Tactical" || jenis === "Tactical Pemda") &&
-                                program?.map((p: program, p_index) => (
-                                    <React.Fragment key={p_index}>
-                                        <p className='text-center'>{p.nama_program} ({p.kode_program})</p>
-                                    </React.Fragment>
-                                ))
-                            }
-                            {(jenis === "Strategic" || jenis === "Strategic Pemda") &&
-                                bidang_urusan?.map((p: bidangUrusan, p_index) => (
-                                    <React.Fragment key={p_index}>
-                                        <p className='text-center'>{p.nama_bidang_urusan} ({p.kode_bidang_urusan})</p>
-                                    </React.Fragment>
-                                ))
-                            }
-                            {(jenis === "Tematik") &&
-                                urusan?.map((p: urusan, p_index) => (
-                                    <React.Fragment key={p_index}>
-                                        <p className='text-center'>{p.nama_urusan} ({p.kode_urusan})</p>
-                                        {/* {tipe === 'non-cetak' &&
-                                            <ButtonGreenBorder
-                                                className='flex items-center gap-1'
-                                                onClick={() => handleModalIndikator(p.indikator ? p.indikator : [], `${p.nama_program} - (${p.kode_program})`)}
-                                            >
-                                                <TbEye />
-                                                Tampilkan indikator
-                                            </ButtonGreenBorder>
-                                        } */}
-                                    </React.Fragment>
-                                ))
-                            }
-                            {(jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik") &&
-                                bidang_urusan?.map((p: bidangUrusan, p_index) => (
-                                    <React.Fragment key={p_index}>
-                                        <p className='text-center'>{p.nama_bidang_urusan} ({p.kode_bidang_urusan})</p>
-                                        {/* {tipe === 'non-cetak' &&
-                                            <ButtonGreenBorder
-                                                className='flex items-center gap-1'
-                                                onClick={() => handleModalIndikator(p.indikator ? p.indikator : [], `${p.nama_program} - (${p.kode_program})`)}
-                                            >
-                                                <TbEye />
-                                                Tampilkan indikator
-                                            </ButtonGreenBorder>
-                                        } */}
-                                    </React.Fragment>
-                                ))
-                            }
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <ModalIndikator
-                isOpen={ModalCekIndikator}
-                onClose={() => handleModalIndikator([], '')}
-                data={DataIndikator}
-                isi={Isi}
-            />
-        </div>
-    )
-}
-interface TableIndikator {
-    indikator: indikator[];
-    jenis: string;
-}
-export const TableIndikator: React.FC<TableIndikator> = ({ jenis, indikator }) => {
-    return (
-        indikator.map((data: indikator, index: number) => (
-            <React.Fragment key={data.id_indikator}>
-                <tr>
-                    <td
-                        className={`min-w-[100px] border px-2 py-3 bg-white text-start
-                        ${(
-                                jenis === "Tematik" || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda"
-                            ) && "border-black"}
-                        ${jenis === "Strategic" && "border-red-700"}
-                        ${jenis === "Tactical" && "border-blue-500"}
-                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                    `}
-                    >
-                        {indikator.length > 1 ?
-                            <p>Indikator {index + 1}</p>
-                            :
-                            <p>Indikator</p>
-                        }
-                    </td>
-                    <td
-                        className={`min-w-[300px] border px-2 py-3 bg-white text-start
-                        ${(
-                                jenis === "Tematik" || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda"
-                            ) && "border-black"}
-                        ${jenis === "Strategic" && "border-red-700"}
-                        ${jenis === "Tactical" && "border-blue-500"}
-                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                    `}
-                    >
-                        {data.nama_indikator ? data.nama_indikator : "-"}
-                    </td>
-                </tr>
-                {data.targets.map((data: target) => (
-                    <tr key={data.id_target}>
-                        <td
-                            className={`min-w-[100px] border px-2 py-3 bg-white text-start
-                            ${(
-                                    jenis === "Tematik" || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                    jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda"
-                                ) && "border-black"}
-                            ${jenis === "Strategic" && "border-red-700"}
-                            ${jenis === "Tactical" && "border-blue-500"}
-                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}  
-                        `}
-                        >
-                            {indikator.length > 1 ?
-                                <p>Target/Satuan {index + 1}</p>
-                                :
-                                <p>Target/Satuan</p>
-                            }
-                        </td>
-                        <td
-                            className={`min-w-[300px] border px-2 py-3 bg-white text-start
-                            ${(
-                                    jenis === "Tematik" || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                    jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda"
-                                ) && "border-black"}
-                            ${jenis === "Strategic" && "border-red-700"}
-                            ${jenis === "Tactical" && "border-blue-500"}
-                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
-                        `}
-                        >
-                            {data.target ? data.target : "-"} / {data.satuan ? data.satuan : "-"}
-                        </td>
-                    </tr>
-                ))}
-            </React.Fragment>
-        ))
-    )
-}
-interface IndikatorKosong {
-    jenis: string;
-}
-export const IndikatorKosong: React.FC<IndikatorKosong> = ({ jenis }) => {
-    return (
-        <>
-            <tr>
-                <td
-                    className={`min-w-[100px] border px-2 py-3 bg-white text-start
-                        ${(
-                            jenis === "Tematik" || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                            jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda"
-                        ) && "border-black"}
-                        ${jenis === "Strategic" && "border-red-700"}
-                        ${jenis === "Tactical" && "border-blue-500"}
-                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                    `}
-                >
-                    Indikator
-                </td>
-                <td
-                    className={`min-w-[300px] border px-2 py-3 bg-white text-start
-                        ${(
-                            jenis === "Tematik" || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                            jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda"
-                        ) && "border-black"}
-                        ${jenis === "Strategic" && "border-red-700"}
-                        ${jenis === "Tactical" && "border-blue-500"}
-                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                    `}
-                >
-                    -
-                </td>
-            </tr>
-            <tr>
-                <td
-                    className={`min-w-[100px] border px-2 py-3 bg-white text-start
-                        ${(
-                            jenis === "Tematik" || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                            jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda"
-                        ) && "border-black"}
-                        ${jenis === "Strategic" && "border-red-700"}
-                        ${jenis === "Tactical" && "border-blue-500"}
-                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
-                    `}
-                >
-                    Target/Satuan
-                </td>
-                <td
-                    className={`min-w-[300px] border px-2 py-3 bg-white text-start
-                        ${(
-                            jenis === "Tematik" || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                            jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda"
-                        ) && "border-black"}
-                        ${jenis === "Strategic" && "border-red-700"}
-                        ${jenis === "Tactical" && "border-blue-500"}
-                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}  
-                    `}
-                >
-                    -
-                </td>
-            </tr>
-        </>
-    )
-}
-interface PelaksanaKosong {
-    jenis: string;
-}
-export const PelaksanaKosong: React.FC<PelaksanaKosong> = ({ jenis }) => {
-    return (
-        <table className='mt-2'>
-            <tbody>
-                <tr>
-                    <td
-                        className={`min-w-[100px] border px-2 py-1 bg-white text-start rounded-l-lg
-                                        ${jenis === "Strategic" && "border-red-700"}
-                                        ${jenis === "Tactical" && "border-blue-500"}
-                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                        ${(
-                                jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda")
-                            && "border-black"
-                            }
-                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}   
-                                    `}
-                    >
-                        Pelaksana
-                    </td>
-                    <td
-                        className={`min-w-[300px] border px-2 py-3 bg-white text-start rounded-r-lg italic text-red-300
-                                        ${jenis === "Strategic" && "border-red-700"}
-                                        ${jenis === "Tactical" && "border-blue-500"}
-                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                        ${(
-                                jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda")
-                            && "border-black"
-                            }
-                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}  
-                                    `}
-                    >
-                        pelaksana belum di tambahkan di cascading
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    )
-}
-interface TablePelaksana {
-    pelaksana: rencana_kinerja[];
-    jenis: string;
-    tipe: string;
-}
-export const TablePelaksana: React.FC<TablePelaksana> = ({ jenis, pelaksana, tipe }) => {
-
-    const [ModalCekIndikator, setModalCekIndikator] = useState<boolean>(false);
-    const [Isi, setIsi] = useState<string>('');
-    const [DataIndikator, setDataIndikator] = useState<indikator[]>([]);
-
-
-    function formatRupiah(angka: number) {
-        if (typeof angka !== 'number') {
-            return String(angka); // Jika bukan angka, kembalikan sebagai string
-        }
-        return angka.toLocaleString('id-ID'); // 'id-ID' untuk format Indonesia
-    }
-
-    const handleModalIndikator = (data: indikator[], isi: string) => {
-        if (ModalCekIndikator) {
-            setModalCekIndikator(false);
-            setDataIndikator([]);
-            setIsi(isi);
-        } else {
-            setModalCekIndikator(true);
-            setDataIndikator(data);
-            setIsi(isi);
-        }
-    }
-
-    return (
-        pelaksana.map((item: rencana_kinerja, index: number) => (
-            <React.Fragment key={index}>
-                <table className='mt-2'>
-                    <tbody className='rounded-lg'>
-                        <tr>
-                            <td
-                                className={`min-w-[100px] border px-2 py-1 bg-white text-start rounded-tl-lg
-                                    ${jenis === "Strategic" && "border-red-700"}
-                                    ${jenis === "Tactical" && "border-blue-500"}
-                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                    ${(
-                                        jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                        jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"
-                                    }
-                                    ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}   
-                                `}
-                            >
-                                {pelaksana.length > 1 ?
-                                    <span>Rencana Kinerja {index + 1}</span>
-                                    :
-                                    <span>Rencana Kinerja</span>
-                                }
-                            </td>
-                            <td
-                                className={`min-w-[300px] border px-2 py-3 bg-white text-start rounded-tr-lg
-                                    ${jenis === "Strategic" && "border-red-700"}
-                                    ${jenis === "Tactical" && "border-blue-500"}
-                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                    ${(
-                                        jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                        jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"
-                                    }
-                                    ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"} 
-                                `}
-                            >
-                                {item.nama_rencana_kinerja || '-'}
-                            </td>
-                        </tr>
-                        {item.indikator &&
-                            item.indikator.map((i: indikator, i_index: number) => (
-                                <React.Fragment key={i.id_indikator || i_index}>
-                                    <tr>
-                                        <td
-                                            className={`min-w-[100px] border px-2 py-1 bg-white text-start
-                                                ${jenis === "Strategic" && "border-red-700"}
-                                                ${jenis === "Tactical" && "border-blue-500"}
-                                                ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                                ${(
-                                                    jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                                    jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda")
-                                                && "border-black"
-                                                }
-                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}   
-                                            `}
-                                        >
-                                            Indikator {item.indikator.length > 1 && `ke ${i_index + 1}`}
-                                        </td>
-                                        <td
-                                            className={`min-w-[300px] border px-2 py-3 bg-white text-start
-                                                ${jenis === "Strategic" && "border-red-700"}
-                                                ${jenis === "Tactical" && "border-blue-500"}
-                                                ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                                ${(
-                                                    jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                                    jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda")
-                                                && "border-black"
-                                                }
-                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"} 
-                                            `}
-                                        >
-                                            {i.nama_indikator || "-"}
-                                        </td>
-                                    </tr>
-                                    {i.targets.map((t: target, t_index: number) => (
-                                        <tr key={t_index}>
-                                            <td
-                                                className={`min-w-[100px] border px-2 py-1 bg-white text-start
-                                                    ${jenis === "Strategic" && "border-red-700"}
-                                                    ${jenis === "Tactical" && "border-blue-500"}
-                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                                    ${(
-                                                        jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                                        jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda")
-                                                    && "border-black"
-                                                    }
-                                                    ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}   
-                                                `}
-                                            >
-                                                Target / Satuan
-                                            </td>
-                                            <td
-                                                className={`min-w-[300px] border px-2 py-3 bg-white text-start
-                                                    ${jenis === "Strategic" && "border-red-700"}
-                                                    ${jenis === "Tactical" && "border-blue-500"}
-                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                                    ${(
-                                                        jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                                        jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda")
-                                                    && "border-black"
-                                                    }
-                                                    ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"} 
-                                                `}
-                                            >
-                                                {t.target || "-"} / {t.satuan || "-"}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </React.Fragment>
-                            ))
-                        }
-                        {((jenis === 'Operational' || jenis === 'Operational Pemda') && item.nama_rencana_kinerja) &&
-                            <React.Fragment>
-                                <tr>
-                                    <td
-                                        className={`min-w-[100px] border px-2 py-1 bg-white text-start border-green-500`}
-                                    >
-                                        Anggaran
-                                    </td>
-                                    <td
-                                        className={`min-w-[300px] border px-2 py-3 bg-white text-start border-green-500`}
-                                    >
-                                        Rp. {formatRupiah(item.anggaran || item.pagu)}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td
-                                        className={`min-w-[100px] border px-2 py-1 bg-white text-start border-green-500`}
-                                    >
-                                        Sub Kegiatan
-                                    </td>
-                                    <td
-                                        className={`min-w-[300px] max-w-[400px] items-center border px-2 py-3 bg-white text-start border-green-500`}
-                                    >
-                                        <div className="flex flex-col gap-2">
-                                            <p>({item.kode_subkegiatan || "belum di tambahkan"}) {item.nama_subkegiatan || ""}</p>
-                                            {(tipe === 'non-cetak' && item.kode_subkegiatan) &&
-                                                <ButtonBlackBorder
-                                                    className='flex items-center gap-1'
-                                                    onClick={() => handleModalIndikator(item.indikator_subkegiatan === null ? [] : item.indikator_subkegiatan, `${item.nama_subkegiatan} - ${item.kode_subkegiatan}`)}
-                                                >
-                                                    <TbEye />
-                                                    cek indikator
-                                                </ButtonBlackBorder>
-                                            }
-                                        </div>
-                                    </td>
-                                </tr>
-                            </React.Fragment>
-                        }
-                        <tr>
-                            <td
-                                className={`min-w-[100px] border px-2 py-1 bg-white text-start rounded-bl-lg
-                                    ${jenis === "Strategic" && "border-red-700"}
-                                    ${jenis === "Tactical" && "border-blue-500"}
-                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                    ${(
-                                        jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                        jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda")
-                                    && "border-black"
-                                    }
-                                    ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
-                                `}
                             >
                                 Pelaksana
                             </td>
                             <td
-                                className={`min-w-[300px] border px-2 py-3 bg-white text-start rounded-br-lg
-                                    ${jenis === "Strategic" && "border-red-700"}
-                                    ${jenis === "Tactical" && "border-blue-500"}
-                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
-                                    ${(
-                                        jenis === 'Tematik' || jenis === "Sub Tematik" || jenis === "Sub Sub Tematik" || jenis === "Super Sub Tematik" ||
-                                        jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda")
-                                    && "border-black"
-                                    }
-                                    ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
-                                `}
+                                className={`min-w-[300px] border px-2 py-3 bg-white text-start rounded-r-lg
+                                ${jenis === "Strategic" && "border-red-700"}
+                                ${jenis === "Tactical" && "border-blue-500"}
+                                ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
+                                ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
+                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}  
+                            `}
                             >
-                                {item.nama_pegawai}
+                                -
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-                <ModalIndikator
-                    isOpen={ModalCekIndikator}
-                    data={DataIndikator}
-                    onClose={() => handleModalIndikator([], '')}
-                    isi={Isi}
-                />
-            </React.Fragment>
-        ))
+                    }
+                </tbody>
+            </table>
+        </div>
     )
 }
-interface TableTujuanSasaran {
-    table: "tujuan" | "sasaran" | "";
-    data: TujuanSasaranPemda;
-}
-export const TableTujuanSasaran: React.FC<TableTujuanSasaran> = ({ table, data }) => {
+export const TablePohonEdited = (props: any) => {
+    const { item, hapusPelaksana, user } = props;
+    const tagging = props.item.tagging;
+    const tema = props.item.nama_pohon;
+    const jenis = props.item.jenis_pohon;
+    const pelaksana = props.item.pelaksana;
     return (
-        <table className='mt-2'>
-            <tbody>
-                <tr>
-                    <td
-                        className={`min-w-[100px] border px-2 py-1 bg-white border-black text-start rounded-l-lg`}
-                    >
-                        {table === "tujuan" ?
-                            <p>Tujuan Pemda</p>
+        <div className="flex flex-col w-full">
+            {/* TAGGING */}
+            {tagging &&
+                tagging.map((tg: Tagging, tag_index: number) => (
+                    <div key={tag_index} className="flex flex-col gap-1 w-full px-3 py-1 border border-yellow-400 rounded-lg bg-white mb-2">
+                        <div className='flex items-center gap-1'>
+                            <h1 className='text-emerald-500'><TbCircleCheckFilled /></h1>
+                            <h1 className='font-semibold'>{tg.nama_tagging || "-"}</h1>
+                        </div>
+                        <h1 className="p-1 text-slate-600 text-start">{tg.keterangan_tagging || ""}</h1>
+                    </div>
+                ))
+            }
+            <table className='mb-2'>
+                <tbody>
+                    <tr>
+                        <td
+                            className={`min-w-[100px] border px-2 py-3 bg-white text-start rounded-l-lg
+                            ${(jenis === "Strategic" || jenis === "Strategic Crosscutting") && "border-red-700"}
+                            ${(jenis === "Tactical" || jenis === "Tactical Crosscutting") && "border-blue-500"}
+                            ${(jenis === "Operational" || jenis == "Operational N" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-green-500"}
+                            ${jenis === "Strategic Pemda" && "border-black"}
+                            ${jenis === "Tactical Pemda" && "border-black"}
+                            ${jenis === "Operational Pemda" && "border-black"}
+                        `}
+                        >
+                            {(jenis === 'Strategic' || jenis === 'Strategic Pemda' || jenis === "Strategic Crosscutting") && 'Strategic'}
+                            {(jenis === 'Tactical' || jenis === 'Tactical Pemda' || jenis === 'Tactical Crosscutting') && 'Tactical'}
+                            {(jenis === 'Operational' || jenis === 'Operational Pemda' || jenis === "Operational Crosscutting") && 'Operational'}
+                            {(jenis === 'Operational N' || jenis === 'Operational N Crosscutting') && 'Operational N'}
+                        </td>
+                        <td
+                            className={`min-w-[300px] border px-2 py-3 bg-white text-start rounded-r-lg
+                            ${(jenis === "Strategic" || jenis === "Strategic Crosscutting") && "border-red-700"}
+                            ${(jenis === "Tactical" || jenis === "Tactical Crosscutting") && "border-blue-500"}
+                            ${(jenis === "Operational" || jenis == "Operational N" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-green-500"}
+                            ${jenis === "Strategic Pemda" && "border-black"}
+                            ${jenis === "Tactical Pemda" && "border-black"}
+                            ${jenis === "Operational Pemda" && "border-black"}
+                        `}
+                        >
+                            {tema ? tema : "-"}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table className='mt-2'>
+                <tbody >
+                    {pelaksana ?
+                        pelaksana.length > 1 ?
+                            pelaksana.map((item: any, index: number) => (
+                                <tr key={item.id_pelaksana}>
+                                    <td
+                                        className={`min-w-[100px] border px-2 py-1 bg-white text-start rounded-l-lg
+                                        ${(jenis === "Strategic" || jenis === "Strategic Crosscutting") && "border-red-700"}
+                                        ${(jenis === "Tactical" || jenis === "Tactical Crosscutting") && "border-blue-500"}
+                                        ${(jenis === "Operational" || jenis == "Operational N" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-green-500"}
+                                        ${jenis === "Strategic Pemda" && "border-black"}
+                                        ${jenis === "Tactical Pemda" && "border-black"}
+                                        ${jenis === "Operational Pemda" && "border-black"}    
+                                    `}
+                                    >
+                                        Pelaksana {index + 1}
+                                    </td>
+                                    <td
+                                        className={`min-w-[300px] border px-2 py-3 bg-white text-start
+                                        ${(jenis === "Strategic" || jenis === "Strategic Crosscutting") && "border-red-700"}
+                                        ${(jenis === "Tactical" || jenis === "Tactical Crosscutting") && "border-blue-500"}
+                                        ${(jenis === "Operational" || jenis == "Operational N" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-green-500"}
+                                        ${jenis === "Strategic Pemda" && "border-black"}
+                                        ${jenis === "Tactical Pemda" && "border-black"}
+                                        ${jenis === "Operational Pemda" && "border-black"}    
+                                    `}
+                                    >
+                                        {item.nama_pegawai}
+                                    </td>
+                                </tr>
+                            ))
                             :
-                            <p>Sasaran Pemda</p>
-                        }
-                    </td>
-                    <td
-                        className={`min-w-[300px] border px-2 py-3 bg-white border-black text-start`}
-                    >
-                        {table === "tujuan" ?
-                            <p>{data.tujuan_pemda || "-"}</p>
-                            :
-                            <p>{data.sasaran_pemda || "-"}</p>
-                        }
-                    </td>
-                </tr>
-                {/* <IndikatorKosong jenis={jenis}/> */}
-            </tbody>
-        </table>
+                            pelaksana.map((data: any) => (
+                                <tr key={data.id_pelaksana}>
+                                    <td
+                                        className={`min-w-[100px] border px-2 py-1 bg-white text-start rounded-l-lg
+                                    ${(jenis === "Strategic" || jenis === "Strategic Crosscutting") && "border-red-700"}
+                                    ${(jenis === "Tactical" || jenis === "Tactical Crosscutting") && "border-blue-500"}
+                                    ${(jenis === "Operational" || jenis == "Operational N" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-green-500"}
+                                    ${jenis === "Strategic Pemda" && "border-black"}
+                                    ${jenis === "Tactical Pemda" && "border-black"}
+                                    ${jenis === "Operational Pemda" && "border-black"}    
+                                `}
+                                    >
+                                        Pelaksana
+                                    </td>
+                                    <td
+                                        className={`min-w-[300px] border px-2 py-3 bg-white text-start
+                                    ${(jenis === "Strategic" || jenis === "Strategic Crosscutting") && "border-red-700"}
+                                    ${(jenis === "Tactical" || jenis === "Tactical Crosscutting") && "border-blue-500"}
+                                    ${(jenis === "Operational" || jenis == "Operational N" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-green-500"}
+                                    ${jenis === "Strategic Pemda" && "border-black"}
+                                    ${jenis === "Tactical Pemda" && "border-black"}
+                                    ${jenis === "Operational Pemda" && "border-black"}    
+                                `}
+                                    >
+                                        {data.nama_pegawai}
+                                    </td>
+                                </tr>
+                            ))
+                        :
+                        <tr>
+                            <td
+                                className={`min-w-[100px] border px-2 py-1 bg-white text-start rounded-l-lg
+                                ${(jenis === "Strategic" || jenis === "Strategic Crosscutting") && "border-red-700"}
+                                ${(jenis === "Tactical" || jenis === "Tactical Crosscutting") && "border-blue-500"}
+                                ${(jenis === "Operational" || jenis == "Operational N" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-green-500"}
+                                ${jenis === "Strategic Pemda" && "border-black"}
+                                ${jenis === "Tactical Pemda" && "border-black"}
+                                ${jenis === "Operational Pemda" && "border-black"}    
+                            `}
+                            >
+                                Pelaksana
+                            </td>
+                            <td
+                                className={`min-w-[300px] border px-2 py-3 bg-white text-start rounded-r-lg
+                                ${(jenis === "Strategic" || jenis === "Strategic Crosscutting") && "border-red-700"}
+                                ${(jenis === "Tactical" || jenis === "Tactical Crosscutting") && "border-blue-500"}
+                                ${(jenis === "Operational" || jenis == "Operational N" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-green-500"}
+                                ${jenis === "Strategic Pemda" && "border-black"}
+                                ${jenis === "Tactical Pemda" && "border-black"}
+                                ${jenis === "Operational Pemda" && "border-black"}    
+                            `}
+                            >
+                                -
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     )
 }
-interface TableTujuanSasaranKosong {
-    table: "tujuan" | "sasaran" | "";
-    jenis: string;
-}
-export const TableTujuanSasaranKosong: React.FC<TableTujuanSasaranKosong> = ({ table, jenis }) => {
-    return (
-        <table className='mt-2'>
-            <tbody>
-                <tr>
-                    <td
-                        className={`min-w-[100px] border px-2 py-1 bg-white border-black text-start rounded-l-lg`}
-                    >
-                        {table === "tujuan" ?
-                            <p>Tujuan Pemda</p>
-                            :
-                            <p>Sasaran Pemda</p>
-                        }
-                    </td>
-                    <td
-                        className={`min-w-[300px] border px-2 py-3 bg-white border-black text-start rounded-r-lg italic text-red-300`}
-                    >
-                        -
-                    </td>
-                </tr>
-                <IndikatorKosong jenis={jenis} />
-            </tbody>
-        </table>
-    )
+
+export const newChildButtonName = (jenis: string): string => {
+    switch (jenis) {
+        case 'Strategic Pemda':
+            return 'Tactical';
+        case 'Tactical Pemda':
+            return 'Operational';
+        case 'Strategic':
+            return 'Tactical';
+        case 'Tactical':
+            return 'Opertional';
+        default:
+            return '-'
+    }
 }
