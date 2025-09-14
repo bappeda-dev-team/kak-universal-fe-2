@@ -55,7 +55,7 @@ export const ModalIndikator: React.FC<modal> = ({ isOpen, onClose, data, isi }) 
                 <div className="fixed inset-0 bg-black opacity-10" onClick={onClose}></div>
                 <div className={`flex flex-col gap-2 bg-white rounded-lg p-6 z-10 w-4/5`}>
                     <div className="flex items-center justify-between w-max-[500px] py-2 border-b">
-                        <h1 className="text-xl text-start uppercase">{isi || "-"} - LOREM</h1>
+                        <h1 className="text-xl text-start uppercase">{isi || "-"}</h1>
                         <ButtonRed onClick={onClose} className="py-2"><TbX /></ButtonRed>
                     </div>
                     <div className="overflow-auto">
