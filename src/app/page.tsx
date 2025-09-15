@@ -15,7 +15,9 @@ const Dashboard = () => {
     if (fetchUser) {
       setUser(fetchUser.user);
     }
-  }, [])
+  }, []);
+
+  const manual_user = process.env.NEXT_PUBLIC_LINK_MANUAL_USER;
 
   return (
     <div className="flex flex-col gap-2">
@@ -26,7 +28,7 @@ const Dashboard = () => {
           Download Panduan Website (Manual User)
         </h1>
         <Link
-          href="https://drive.google.com/drive/folders/1xFqVRchn8eCRtMLhWvqSb78qDxTXB9Y1?usp=sharing"
+          href={manual_user || "https://drive.google.com/drive/folders/1xFqVRchn8eCRtMLhWvqSb78qDxTXB9Y1?usp=sharing"}
           target="_blank"
           rel="noopener noreferrer"
         >
