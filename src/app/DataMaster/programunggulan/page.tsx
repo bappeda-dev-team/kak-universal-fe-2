@@ -106,21 +106,10 @@ const MasterProgramUnggulan = () => {
                             fetchPeriode();
                         }}
                     />
-                    {/* <div className="flex flex-col">
-                        <ButtonSky 
-                            className="flex items-center justify-center"
-                            // halaman_url='/DataMaster/masteropd/tambah'
-                        >
-                            <TbCirclePlus className="mr-1"/>
-                            Tambah Program Unggulan
-                        </ButtonSky>
-                    </div> */}
                 </div>
                 <Table
                     tahun_awal={Periode?.tahun_awal || ""}
                     tahun_akhir={Periode?.tahun_akhir || ""}
-                    jenis_periode={Periode?.jenis_periode || ""}
-                    id={Periode?.id || 0}
                 />
             </div>
         </>

@@ -1,0 +1,251 @@
+'use client'
+
+import { useState, useEffect } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { ButtonSky, ButtonRed } from '@/components/global/Button';
+import { AlertNotification } from "@/components/global/Alert";
+import { getToken } from "@/components/lib/Cookie";
+import { LoadingClip, LoadingButtonClip } from "@/components/global/Loading";
+import Select from 'react-select';
+
+interface OptionTypeString {
+    value: string;
+    label: string;
+}
+interface ProgramUnggulan {
+    id: number;
+    kode_program_unggulan: string;
+    nama_tagging: string;
+    keterangan_program_unggulan: string;
+    keterangan: string;
+    tahun_awal: string;
+    tahun_akhir: string;
+}
+interface ModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSuccess: () => void;
+    jenis: "baru" | "edit";
+    dataEdit?: ProgramUnggulan;
+    tahun_awal: string;
+    tahun_akhir: string;
+}
+
+interface FormValue {
+    nama_tagging: OptionTypeString | null,
+    keterangan_program_unggulan: string,
+    keterangan: string,
+    tahun_awal: string,
+    tahun_akhir: string,
+}
+
+export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, dataEdit, jenis, onSuccess, tahun_awal, tahun_akhir }) => {
+    const { control, handleSubmit, reset } = useForm<FormValue>({
+        defaultValues: {
+            nama_tagging: dataEdit?.nama_tagging
+                ? {
+                    value: dataEdit?.nama_tagging,
+                    label: dataEdit?.nama_tagging,
+                }
+                : null,
+            keterangan_program_unggulan: dataEdit?.keterangan_program_unggulan,
+            keterangan: dataEdit?.keterangan,
+            tahun_awal: tahun_awal,
+            tahun_akhir: tahun_akhir,
+        },
+    });
+
+    const [Proses, setProses] = useState<boolean>(false);
+    const token = getToken();
+
+    const handleClose = () => {
+        reset({
+            nama_tagging: null,
+            keterangan_program_unggulan: "",
+            keterangan: "",
+            tahun_awal: "",
+            tahun_akhir: "",
+        });
+        onClose();
+    };
+
+    const OptionNamaTagging = [
+        { value: "Program Unggulan Bupati", label: "Program Unggulan Bupati" },
+        { value: "100 Hari Kerja Bupati", label: "100 Hari Kerja Bupati" },
+        { value: "Program Unggulan Pemerintah Pusat", label: "Program Unggulan Pemerintah Pusat" },
+    ]
+
+    const onSubmit: SubmitHandler<FormValue> = async (data) => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        let endpoint = "";
+        if (jenis === "edit") {
+            endpoint = `program_unggulan/update/${dataEdit?.id}`;
+        } else if (jenis === "baru") {
+            endpoint = `program_unggulan/create`;
+        } else {
+            endpoint = '';
+        }
+        const formData = {
+            //key : value
+            nama_tagging: data.nama_tagging?.value,
+            keterangan_program_unggulan: data.keterangan_program_unggulan,
+            keterangan: data.keterangan,
+            tahun_awal: tahun_awal,
+            tahun_akhir: tahun_akhir,
+        };
+        // console.log(formData);
+        try {
+            setProses(true);
+            const response = await fetch(`${API_URL}/${endpoint}`, {
+                method: jenis === 'edit' ? "PUT" : "POST",
+                headers: {
+                    Authorization: `${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+            const result = await response.json();
+            if (result.code === 200 || result.code === 201) {
+                AlertNotification("Berhasil", jenis === 'baru' ? "Berhasil menambahkan Program Unggulan" : "Berhasil Mengubah Program Unggulan", "success", 1000);
+                onClose();
+                onSuccess();
+            } else {
+                console.log(result);
+                AlertNotification("Gagal", `${result.data}`, "error", 2000);
+            }
+        } catch (err) {
+            AlertNotification("Gagal", "Cek koneksi internet / terdapat kesalahan pada server", "error", 2000);
+            console.error(err);
+        } finally {
+            setProses(false);
+        }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="fixed inset-0 bg-black opacity-50" onClick={handleClose}></div>
+            <div className="bg-white rounded-lg p-8 z-10 w-3/5 text-start">
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="w-max-[500px] py-2 border-b font-bold text-center">
+                        {jenis === 'baru' ? "Tambah" : "Edit"} Progam Unggulan
+                    </div>
+                    <Controller
+                        name="nama_tagging"
+                        control={control}
+                        render={({ field }) => (
+                            <div className="flex flex-col py-3">
+                                <label
+                                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                                    htmlFor="nama_tagging"
+                                >
+                                    Tagging
+                                </label>
+                                <Controller
+                                    name="nama_tagging"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <>
+                                            <Select
+                                                {...field}
+                                                placeholder="Pilih Tagging"
+                                                options={OptionNamaTagging}
+                                                isSearchable
+                                                isClearable
+                                                onChange={(option) => {
+                                                    field.onChange(option);
+                                                }}
+                                                styles={{
+                                                    control: (baseStyles) => ({
+                                                        ...baseStyles,
+                                                        borderRadius: '8px',
+                                                        textAlign: 'start',
+                                                    })
+                                                }}
+                                            />
+                                        </>
+                                    )}
+                                />
+                            </div>
+                        )}
+                    />
+                    <Controller
+                        name="keterangan_program_unggulan"
+                        control={control}
+                        render={({ field }) => (
+                            <div className="flex flex-col py-3">
+                                <label
+                                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                                    htmlFor="keterangan_program_unggulan"
+                                >
+                                    Program Hebat
+                                </label>
+                                <Controller
+                                    name="keterangan_program_unggulan"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <input
+                                            {...field}
+                                            className="border px-4 py-2 rounded-lg"
+                                            id="keterangan_program_unggulan"
+                                            type="text"
+                                            placeholder="masukkan program hebat"
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        )}
+                    />
+                    <Controller
+                        name="keterangan"
+                        control={control}
+                        render={({ field }) => (
+                            <div className="flex flex-col py-3">
+                                <label
+                                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                                    htmlFor="keterangan"
+                                >
+                                    keterangan
+                                </label>
+                                <Controller
+                                    name="keterangan"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <input
+                                            {...field}
+                                            className="border px-4 py-2 rounded-lg"
+                                            id="keterangan"
+                                            type="text"
+                                            placeholder="masukkan keterangan"
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        )}
+                    />
+
+                    <ButtonSky type="submit" className="w-full my-3" disabled={Proses}>
+                        {Proses ?
+                            <span className="flex">
+                                <LoadingButtonClip />
+                                {jenis === 'baru' ? "Menambahkan" : "Menyimpan"}
+                            </span>
+                            :
+                            jenis === 'baru' ? "Tambah" : "Simpan"
+                        }
+                    </ButtonSky>
+                    <ButtonRed type="button" className="w-full my-3" onClick={handleClose}>
+                        Batal
+                    </ButtonRed>
+                </form>
+            </div>
+        </div>
+    );
+};
