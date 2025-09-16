@@ -15,8 +15,8 @@ interface OptionTypeString {
 interface ProgramUnggulan {
     id: number;
     kode_program_unggulan: string;
-    nama_tagging: string;
-    keterangan_program_unggulan: string;
+    nama_program_unggulan: string;
+    rencana_implementasi: string;
     keterangan: string;
     tahun_awal: string;
     tahun_akhir: string;
@@ -32,23 +32,18 @@ interface ModalProps {
 }
 
 interface FormValue {
-    nama_tagging: OptionTypeString | null,
-    keterangan_program_unggulan: string,
+    nama_program_unggulan: string,
+    rencana_implementasi: string,
     keterangan: string,
     tahun_awal: string,
     tahun_akhir: string,
 }
 
 export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, dataEdit, jenis, onSuccess, tahun_awal, tahun_akhir }) => {
-    const { control, handleSubmit, reset } = useForm<FormValue>({
+    const { control, handleSubmit, reset, formState:{ errors }} = useForm<FormValue>({
         defaultValues: {
-            nama_tagging: dataEdit?.nama_tagging
-                ? {
-                    value: dataEdit?.nama_tagging,
-                    label: dataEdit?.nama_tagging,
-                }
-                : null,
-            keterangan_program_unggulan: dataEdit?.keterangan_program_unggulan,
+            nama_program_unggulan: dataEdit?.nama_program_unggulan,
+            rencana_implementasi: dataEdit?.rencana_implementasi,
             keterangan: dataEdit?.keterangan,
             tahun_awal: tahun_awal,
             tahun_akhir: tahun_akhir,
@@ -60,8 +55,8 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
 
     const handleClose = () => {
         reset({
-            nama_tagging: null,
-            keterangan_program_unggulan: "",
+            nama_program_unggulan: "",
+            rencana_implementasi: "",
             keterangan: "",
             tahun_awal: "",
             tahun_akhir: "",
@@ -87,8 +82,8 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
         }
         const formData = {
             //key : value
-            nama_tagging: data.nama_tagging?.value,
-            keterangan_program_unggulan: data.keterangan_program_unggulan,
+            nama_program_unggulan: data.nama_program_unggulan,
+            rencana_implementasi: data.rencana_implementasi,
             keterangan: data.keterangan,
             tahun_awal: tahun_awal,
             tahun_akhir: tahun_akhir,
@@ -131,106 +126,79 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
                     <div className="w-max-[500px] py-2 border-b font-bold text-center">
                         {jenis === 'baru' ? "Tambah" : "Edit"} Progam Unggulan
                     </div>
-                    <Controller
-                        name="nama_tagging"
-                        control={control}
-                        render={({ field }) => (
-                            <div className="flex flex-col py-3">
-                                <label
-                                    className="uppercase text-xs font-bold text-gray-700 my-2"
-                                    htmlFor="nama_tagging"
-                                >
-                                    Tagging
-                                </label>
-                                <Controller
-                                    name="nama_tagging"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <>
-                                            <Select
-                                                {...field}
-                                                placeholder="Pilih Tagging"
-                                                options={OptionNamaTagging}
-                                                isSearchable
-                                                isClearable
-                                                onChange={(option) => {
-                                                    field.onChange(option);
-                                                }}
-                                                styles={{
-                                                    control: (baseStyles) => ({
-                                                        ...baseStyles,
-                                                        borderRadius: '8px',
-                                                        textAlign: 'start',
-                                                    })
-                                                }}
-                                            />
-                                        </>
-                                    )}
+                    <div className="flex flex-col py-3">
+                        <label
+                            className="uppercase text-xs font-bold text-gray-700 my-2"
+                            htmlFor="nama_program_unggulan"
+                        >
+                            Program Hebat / Unggulan
+                        </label>
+                        <Controller
+                            name="nama_program_unggulan"
+                            control={control}
+                            rules={{ required: "" }}
+                            render={({ field }) => (
+                                <input
+                                    {...field}
+                                    className="border px-4 py-2 rounded-lg"
+                                    id="nama_program_unggulan"
+                                    type="text"
+                                    placeholder="masukkan program hebat"
+                                    onChange={(e) => {
+                                        field.onChange(e);
+                                    }}
                                 />
-                            </div>
-                        )}
-                    />
-                    <Controller
-                        name="keterangan_program_unggulan"
-                        control={control}
-                        render={({ field }) => (
-                            <div className="flex flex-col py-3">
-                                <label
-                                    className="uppercase text-xs font-bold text-gray-700 my-2"
-                                    htmlFor="keterangan_program_unggulan"
-                                >
-                                    Program Hebat
-                                </label>
-                                <Controller
-                                    name="keterangan_program_unggulan"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <input
-                                            {...field}
-                                            className="border px-4 py-2 rounded-lg"
-                                            id="keterangan_program_unggulan"
-                                            type="text"
-                                            placeholder="masukkan program hebat"
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                            }}
-                                        />
-                                    )}
+                            )}
+                        />
+                    </div>
+                    <div className="flex flex-col py-3">
+                        <label
+                            className="uppercase text-xs font-bold text-gray-700 my-2"
+                            htmlFor="rencana_implementasi"
+                        >
+                            Rencana Implementasi
+                        </label>
+                        <Controller
+                            name="rencana_implementasi"
+                            control={control}
+                            render={({ field }) => (
+                                <input
+                                    {...field}
+                                    className="border px-4 py-2 rounded-lg"
+                                    id="rencana_implementasi"
+                                    type="text"
+                                    placeholder="masukkan program hebat"
+                                    onChange={(e) => {
+                                        field.onChange(e);
+                                    }}
                                 />
-                            </div>
-                        )}
-                    />
-                    <Controller
-                        name="keterangan"
-                        control={control}
-                        render={({ field }) => (
-                            <div className="flex flex-col py-3">
-                                <label
-                                    className="uppercase text-xs font-bold text-gray-700 my-2"
-                                    htmlFor="keterangan"
-                                >
-                                    keterangan
-                                </label>
-                                <Controller
-                                    name="keterangan"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <input
-                                            {...field}
-                                            className="border px-4 py-2 rounded-lg"
-                                            id="keterangan"
-                                            type="text"
-                                            placeholder="masukkan keterangan"
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                            }}
-                                        />
-                                    )}
+                            )}
+                        />
+                    </div>
+                    <div className="flex flex-col py-3">
+                        <label
+                            className="uppercase text-xs font-bold text-gray-700 my-2"
+                            htmlFor="keterangan"
+                        >
+                            keterangan
+                        </label>
+                        <Controller
+                            name="keterangan"
+                            control={control}
+                            render={({ field }) => (
+                                <input
+                                    {...field}
+                                    className="border px-4 py-2 rounded-lg"
+                                    id="keterangan"
+                                    type="text"
+                                    placeholder="masukkan keterangan"
+                                    onChange={(e) => {
+                                        field.onChange(e);
+                                    }}
                                 />
-                            </div>
-                        )}
-                    />
-
+                            )}
+                        />
+                    </div>
                     <ButtonSky type="submit" className="w-full my-3" disabled={Proses}>
                         {Proses ?
                             <span className="flex">
