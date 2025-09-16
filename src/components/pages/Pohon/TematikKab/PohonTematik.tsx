@@ -71,7 +71,7 @@ const PohonTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
                 if(jenis === "pemda"){
                     url = `${API_URL}/pohon_kinerja_admin/tematik/${id}`;
                 } else if(jenis === "laporan"){
-                    url = `${API_URL_CASCADING_PEMDA}/laporan/cascading_pemda?tematikId=${id}`;
+                    url = `${API_URL_CASCADING_PEMDA}/laporan/cascading_pemda?tematikId=${id}&tahun=${Tahun?.value}`;
                 }
                 const response = await fetch(`${url}`, {
                     headers: {
@@ -96,10 +96,10 @@ const PohonTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
                 setLoading(false);
             }
         }
-        if (id != undefined) {
+        if (id != undefined && Tahun?.value != undefined) {
             fetchTematikKab();
         }
-    }, [id, token, Deleted, jenis]);
+    }, [id, token, Deleted, jenis, Tahun]);
 
     if (error) {
         return (
