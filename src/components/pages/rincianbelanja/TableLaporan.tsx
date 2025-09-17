@@ -154,7 +154,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
     return (
         <div className="overflow-auto m-3 rounded-t-xl border w-full">
             <table className="w-full">
-                <thead className="bg-blue-500 text-white">
+                <thead className="bg-green-500 text-white">
                     <tr>
                         <th className="border-r border-b px-6 py-3 min-w-[50px]">No</th>
                         <th className="border-r border-b px-6 py-3 min-w-[200px]">Pemilik</th>
@@ -175,7 +175,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                     :
                     Laporan.map((data: LaporanRincianBelanja, index: number) => (
                         <tbody key={index}>
-                            <tr className="bg-emerald-50 text">
+                            <tr className="bg-emerald-100 text">
                                 <td className="border-r border-b px-6 py-4">{index + 1}</td>
                                 <td colSpan={2} className="border-r border-b px-6 py-4">Sub Kegiatan: {data.nama_subkegiatan || "-"} ({data.kode_subkegiatan || "tanpa kode"})</td>
                                 {data.indikator_subkegiatan === null ?
