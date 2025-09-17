@@ -54,8 +54,8 @@ export const ModalCSF: React.FC<modal> = ({ isOpen, onClose, onSuccess, jenis, d
         const API_URL_CSF = process.env.NEXT_PUBLIC_API_URL_CSF;
         const formData = {
             //key : value
-            ...(jenis === "edit" && { id: data.pohon_id }),
-            pohon_id: data.id,
+            ...(jenis === "edit" && { id: data.id }),
+            pohon_id: data.pohon_id,
             pernyataan_kondisi_strategis: dataValue.pernyataan_kondisi_strategis,
             alasan_kondisi: dataValue.alasan_kondisi.map((a) => ({
                 alasan_kondisi_strategis: a.alasan_kondisi_strategis,
@@ -65,39 +65,39 @@ export const ModalCSF: React.FC<modal> = ({ isOpen, onClose, onSuccess, jenis, d
             })),
             tahun: String(tahun)
         };
-        console.log(formData);
-        // try {
-        //     setProses(true);
-        //     let url = '';
-        //     if (jenis === 'baru') {
-        //         url = `csf`
-        //     } else if (jenis === 'edit') {
-        //         url = `csf/${data.id}`
-        //     }
-        //     const response = await fetch(`${API_URL_CSF}/${url}`, {
-        //         method: jenis === "baru" ? "POST" : "PUT",
-        //         headers: {
-        //             // Authorization: `${token}`,
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(formData),
-        //     });
-        //     const result = await response.json();
-        //     if (response.ok) {
-        //         AlertNotification("Berhasil", "Berhasil menyimpan data", "success", 1000);
-        //         onClose();
-        //         onSuccess();
-        //         reset();
-        //     } else {
-        //         AlertNotification("Gagal", `${result.data}`, "error", 2000);
-        //         console.log(result);
-        //     }
-        // } catch (err) {
-        //     AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
-        //     console.log(err);
-        // } finally {
-        //     setProses(false);
-        // }
+        // console.log(formData);
+        try {
+            setProses(true);
+            let url = '';
+            if (jenis === 'baru') {
+                url = `csf`
+            } else if (jenis === 'edit') {
+                url = `csf/${data.id}`
+            }
+            const response = await fetch(`${API_URL_CSF}/${url}`, {
+                method: jenis === "baru" ? "POST" : "PUT",
+                headers: {
+                    // Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            const result = await response.json();
+            if (response.ok) {
+                AlertNotification("Berhasil", "Berhasil menyimpan data", "success", 1000);
+                onClose();
+                onSuccess();
+                reset();
+            } else {
+                AlertNotification("Gagal", `${result.data}`, "error", 2000);
+                console.log(result);
+            }
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
+            console.log(err);
+        } finally {
+            setProses(false);
+        }
     };
 
     const handleClose = () => {
