@@ -148,7 +148,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
 
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Pelaksana</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Rencana Kinerja</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Sub Kegiatan</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Urusan/Bidang Urusan/Kegiatan/Sub Kegiatan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Pagu Anggaran</th>
                                 <th colSpan={4} className="border-r border-b px-6 py-3 min-w-[100px]">Waktu Pelaksanaan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Keterangan</th>
