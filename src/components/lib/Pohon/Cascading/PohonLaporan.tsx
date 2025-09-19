@@ -741,7 +741,7 @@ export const TablePelaksana: React.FC<TablePelaksana> = ({ jenis, pelaksana, tip
                                             {i.nama_indikator || "-"}
                                         </td>
                                     </tr>
-                                    {i.targets.map((t: target, t_index: number) => (
+                                    {i.targets?.map((t: target, t_index: number) => (
                                         <tr key={t_index}>
                                             <td
                                                 className={`min-w-[100px] border px-2 py-1 bg-white text-start

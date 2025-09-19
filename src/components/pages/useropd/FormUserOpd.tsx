@@ -521,9 +521,6 @@ export const FormEditUserOpd = () => {
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        // const RolesIds = Roles?.map((Roles) => ({
-        //     role_id: Roles.value,
-        // })) || [];
         const formData = {
             //key : value
             nip: data.nip,
@@ -547,7 +544,6 @@ export const FormEditUserOpd = () => {
             const result = await response.json();
             if (result.code === 200 || result.code === 201) {
                 AlertNotification("Berhasil", "Berhasil mengubah data user", "success", 1000);
-                // AlertNotification(`${result.code}`, `${result.data}`, "success", 1000);
                 router.push("/useropd");
             } else {
                 AlertNotification(`Gagal`, `${result.data}`, "error", 2000);
