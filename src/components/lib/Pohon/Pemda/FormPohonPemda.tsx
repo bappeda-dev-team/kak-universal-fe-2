@@ -41,7 +41,11 @@ interface FormValue {
 }
 interface Tagging {
     nama_tagging: string;
-    keterangan_tagging: string;
+    keterangan_tagging_program: KeteranganTaggingProgram[];
+}
+interface KeteranganTaggingProgram {
+    kode_program_unggulan: OptionTypeString | null;
+    tahun: string;
 }
 interface indikator {
     nama_indikator: string;
@@ -70,9 +74,11 @@ export const FormPohonPemda: React.FC<{
     const [NamaPohon, setNamaPohon] = useState<string>('');
     const [Keterangan, setKeterangan] = useState<string>('');
     const [KodeOpd, setKodeOpd] = useState<OptionTypeString | null>(null);
-    const [Pelaksana, setPelaksana] = useState<OptionTypeString[]>([]);
+    const [BupatiValue, setBupatiValue] = useState<OptionTypeString[]>([]);
+    const [HariKerjaValue, setHariKerjaValue] = useState<OptionTypeString[]>([]);
+    const [PusatValue, setPusatValue] = useState<OptionTypeString[]>([]);
     const [OpdOption, setOpdOption] = useState<OptionTypeString[]>([]);
-    const [PelaksanaOption, setPelaksanaOption] = useState<OptionTypeString[]>([]);
+    const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
     const [Tahun, setTahun] = useState<any>(null);
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
     const [DataAdd, setDataAdd] = useState<any>(null);
@@ -108,12 +114,6 @@ export const FormPohonPemda: React.FC<{
         name: "indikator",
     });
 
-    // useEffect(() => {
-    //     if (fields.length === 0) {
-    //         append({ nama_indikator: "", targets: [{ target: "", satuan: "" }] });
-    //     }
-    // }, [fields, append]);
-
     const fetchOpd = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
@@ -140,11 +140,11 @@ export const FormPohonPemda: React.FC<{
             setIsLoading(false);
         }
     };
-    const fetchPelaksana = async () => {
+    const fetchProgramUnggulan = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/pegawai/findall`, {
+            const response = await fetch(`${API_URL}/program_unggulan/findunusedbytahun/${Tahun?.value}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `${token}`,
@@ -155,32 +155,50 @@ export const FormPohonPemda: React.FC<{
                 throw new Error('cant fetch data opd');
             }
             const data = await response.json();
-            const opd = data.data.map((item: any) => ({
-                value: item.id,
-                label: item.nama_pegawai,
-            }));
-            setPelaksanaOption(opd);
+            if (data == null) {
+                setProgramOption([]);
+                console.log(`data program unggulan belum di tambahkan / kosong`)
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: item.kode_program_unggulan,
+                    label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                }));
+                setProgramOption(program);
+            }
         } catch (err) {
-            console.log('gagal mendapatkan data opd');
+            console.error(err);
         } finally {
             setIsLoading(false);
         }
-    };
+    }
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const bupatiValue = BupatiValue?.map((dt) => ({
+            kode_program_unggulan: dt.value,
+            tahun: String(Tahun?.value ?? ""),
+        })) || [];
+        const hariValue = HariKerjaValue?.map((dt) => ({
+            kode_program_unggulan: dt.value,
+            tahun: String(Tahun?.value ?? ""),
+        })) || [];
+        const pusatValue = PusatValue?.map((dt) => ({
+            kode_program_unggulan: dt.value,
+            tahun: String(Tahun?.value ?? ""),
+        })) || [];
         const taggingData = [
             ...(UnggulanBupati ? [{
                 nama_tagging: "Program Unggulan Bupati",
-                keterangan_tagging: data.tagging?.['0']?.keterangan_tagging || '',
+                keterangan_tagging_program: bupatiValue,
             }] : []),
             ...(HariKerja ? [{
                 nama_tagging: "100 Hari Kerja Bupati",
-                keterangan_tagging: data.tagging?.['1']?.keterangan_tagging || '',
+                keterangan_tagging_program: hariValue,
             }] : []),
+
             ...(UnggulanPusat ? [{
                 nama_tagging: "Program Unggulan Pemerintah Pusat",
-                keterangan_tagging: data.tagging?.['2']?.keterangan_tagging || '',
+                keterangan_tagging_program: pusatValue,
             }] : []),
         ];
         const formData = {
@@ -333,121 +351,171 @@ export const FormPohonPemda: React.FC<{
                                 </div>
                                 {/* TAGGING */}
                                 {level > 2 &&
-                                <>
-                                    <label className="uppercase text-xs font-bold text-gray-700 my-2">
-                                        Tagging :
-                                    </label>
-                                    <div className="grid grid-flow-col gap-2 items-center border border-sky-700 rounded-lg p-3">
-                                        <div className="flex flex-col items-center">
-                                            {UnggulanBupati ?
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUnggulanBupati(false)}
-                                                    className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                                >
-                                                    <TbCheck />
-                                                </button>
-                                                :
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUnggulanBupati(true)}
-                                                    className="w-[20px] h-[20px] border border-black rounded-full"
-                                                ></button>
-                                            }
-                                            <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                            {HariKerja ?
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setHariKerja(false)}
-                                                    className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                                >
-                                                    <TbCheck />
-                                                </button>
-                                                :
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setHariKerja(true)}
-                                                    className="w-[20px] h-[20px] border border-black rounded-full"
-                                                ></button>
-                                            }
-                                            <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                            {UnggulanPusat ?
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUnggulanPusat(false)}
-                                                    className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                                >
-                                                    <TbCheck />
-                                                </button>
-                                                :
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUnggulanPusat(true)}
-                                                    className="w-[20px] h-[20px] border border-black rounded-full"
-                                                ></button>
-                                            }
-                                            <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
-                                        </div>
-                                    </div>
-                                    {UnggulanBupati &&
-                                        <Controller
-                                            name={`tagging.0.keterangan_tagging`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="flex flex-col py-3">
-                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                        Keterangan Program Unggulan Bupati :
-                                                    </label>
-                                                    <input
-                                                        {...field}
-                                                        className="border px-4 py-2 rounded-lg"
-                                                        placeholder="Masukkan Keterangan Program Unggulan Bupati"
-                                                    />
+                                    <>
+                                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                            Tagging :
+                                        </label>
+                                        <div className="border border-sky-500 rounded-lg p-3">
+                                            <div className="grid grid-flow-col gap-2 items-center">
+                                                <div className="flex flex-col items-center">
+                                                    {UnggulanBupati ?
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setUnggulanBupati(false)}
+                                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                                        >
+                                                            <TbCheck />
+                                                        </button>
+                                                        :
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setUnggulanBupati(true)}
+                                                            className="w-[20px] h-[20px] border border-black rounded-full"
+                                                        ></button>
+                                                    }
+                                                    <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
                                                 </div>
-                                            )}
-                                        />
-                                    }
-                                    {HariKerja &&
-                                        <Controller
-                                            name={`tagging.1.keterangan_tagging`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="flex flex-col py-3">
-                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                        Keterangan 100 Hari Kerja Bupati :
-                                                    </label>
-                                                    <input
-                                                        {...field}
-                                                        className="border px-4 py-2 rounded-lg"
-                                                        placeholder="Masukkan Keterangan 100 Hari Kerja Bupati"
-                                                    />
+                                                <div className="flex flex-col items-center">
+                                                    {HariKerja ?
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setHariKerja(false)}
+                                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                                        >
+                                                            <TbCheck />
+                                                        </button>
+                                                        :
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setHariKerja(true)}
+                                                            className="w-[20px] h-[20px] border border-black rounded-full"
+                                                        ></button>
+                                                    }
+                                                    <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
                                                 </div>
-                                            )}
-                                        />
-                                    }
-                                    {UnggulanPusat &&
-                                        <Controller
-                                            name={`tagging.2.keterangan_tagging`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="flex flex-col py-3">
-                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                        Keterangan Program Unggulan Pemerintah Pusat :
-                                                    </label>
-                                                    <input
-                                                        {...field}
-                                                        className="border px-4 py-2 rounded-lg"
-                                                        placeholder="Masukkan Keterangan Program Unggulan Pemerintah Pusat"
-                                                    />
+                                                <div className="flex flex-col items-center">
+                                                    {UnggulanPusat ?
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setUnggulanPusat(false)}
+                                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                                        >
+                                                            <TbCheck />
+                                                        </button>
+                                                        :
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setUnggulanPusat(true)}
+                                                            className="w-[20px] h-[20px] border border-black rounded-full"
+                                                        ></button>
+                                                    }
+                                                    <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
                                                 </div>
-                                            )}
-                                        />
-                                    }
-                                </>
+                                            </div>
+                                            {UnggulanBupati &&
+                                                <Controller
+                                                    name={`tagging.0.keterangan_tagging_program.0.kode_program_unggulan`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <div className="flex flex-col py-3 border border-emerald-500 mt-1 px-2 rounded-lg">
+                                                            <label className="uppercase text-xs font-bold text-gray-700 mb-1">
+                                                                Keterangan Program Unggulan Bupati :
+                                                            </label>
+                                                            <Select
+                                                                {...field}
+                                                                placeholder="Pilih Program Unggulan"
+                                                                value={BupatiValue}
+                                                                options={ProgramOption}
+                                                                isSearchable
+                                                                isClearable
+                                                                isMulti
+                                                                onChange={(option) => {
+                                                                    field.onChange(option || []);
+                                                                    setBupatiValue(option as OptionTypeString[]);
+                                                                }}
+                                                                onMenuOpen={() => fetchProgramUnggulan()}
+                                                                styles={{
+                                                                    control: (baseStyles) => ({
+                                                                        ...baseStyles,
+                                                                        borderRadius: '8px',
+                                                                        textAlign: 'start',
+                                                                    })
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                />
+                                            }
+                                            {HariKerja &&
+                                                <Controller
+                                                    name={`tagging.1.keterangan_tagging_program.0.kode_program_unggulan`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <div className="flex flex-col py-3">
+                                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                                Keterangan 100 Hari Kerja Bupati :
+                                                            </label>
+                                                            <Select
+                                                                {...field}
+                                                                placeholder="Pilih Program Unggulan"
+                                                                value={HariKerjaValue}
+                                                                options={ProgramOption}
+                                                                isSearchable
+                                                                isClearable
+                                                                isMulti
+                                                                onMenuOpen={() => fetchProgramUnggulan()}
+                                                                onChange={(option) => {
+                                                                    field.onChange(option || []);
+                                                                    setHariKerjaValue(option as OptionTypeString[]);
+                                                                }}
+                                                                styles={{
+                                                                    control: (baseStyles) => ({
+                                                                        ...baseStyles,
+                                                                        borderRadius: '8px',
+                                                                        textAlign: 'start',
+                                                                    })
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                />
+                                            }
+                                            {UnggulanPusat &&
+                                                <Controller
+                                                    name={`tagging.2.keterangan_tagging_program.0.kode_program_unggulan`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <div className="flex flex-col py-3">
+                                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                                Keterangan Program Unggulan Pemerintah Pusat :
+                                                            </label>
+                                                            <Select
+                                                                {...field}
+                                                                placeholder="Pilih Program Unggulan"
+                                                                value={PusatValue}
+                                                                options={ProgramOption}
+                                                                isSearchable
+                                                                isClearable
+                                                                isMulti
+                                                                onMenuOpen={() => fetchProgramUnggulan()}
+                                                                onChange={(option) => {
+                                                                    field.onChange(option || []);
+                                                                    setPusatValue(option as OptionTypeString[]);
+                                                                }}
+                                                                styles={{
+                                                                    control: (baseStyles) => ({
+                                                                        ...baseStyles,
+                                                                        borderRadius: '8px',
+                                                                        textAlign: 'start',
+                                                                    })
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                />
+                                            }
+                                        </div>
+                                    </>
                                 }
                                 {(level === 3 || level === 4 || level === 5 || level === 6) &&
                                     <div className="flex flex-col py-3">
@@ -1000,7 +1068,10 @@ export const FormEditPohon: React.FC<{
     const [Parent, setParent] = useState<number | null>(null);
     const [Tahun, setTahun] = useState<any>(null);
     const [Pelaksana, setPelaksana] = useState<OptionTypeString[]>([]);
-    const [PelaksanaOption, setPelaksanaOption] = useState<OptionTypeString[]>([]);
+    const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
+    const [BupatiValue, setBupatiValue] = useState<OptionTypeString[]>([]);
+    const [HariKerjaValue, setHariKerjaValue] = useState<OptionTypeString[]>([]);
+    const [PusatValue, setPusatValue] = useState<OptionTypeString[]>([]);
     const [OpdOption, setOpdOption] = useState<OptionTypeString[]>([]);
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -1060,32 +1131,6 @@ export const FormEditPohon: React.FC<{
             setIsLoading(false);
         }
     };
-    const fetchPelaksana = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        setIsLoading(true);
-        try {
-            const response = await fetch(`${API_URL}/pegawai/findall`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (!response.ok) {
-                throw new Error('cant fetch data opd');
-            }
-            const data = await response.json();
-            const opd = data.data.map((item: any) => ({
-                value: item.id,
-                label: item.nama_pegawai,
-            }));
-            setPelaksanaOption(opd);
-        } catch (err) {
-            console.log('gagal mendapatkan data opd');
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -1116,21 +1161,38 @@ export const FormEditPohon: React.FC<{
                     }
                     setKodeOpd(opd);
                 }
-                const { tagging } = data;
+                // const { tagging } = data;
+                if(data.tagging){
+                    const unggulanBupatiTag = data.tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Bupati");
+                    const hariKerjaTag = data.tagging?.find((t: Tagging) => t.nama_tagging === "100 Hari Kerja Bupati");
+                    const unggulanPusatTag = data.tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Pemerintah Pusat");
+    
+                    // if (unggulanBupatiTag) {
+                    //     const tag = unggulanBupatiTag.keterangan_tagging_program.map((ktg: any) => ({
+                    //         value: ktg.kode_program_unggulan,
+                    //         label: ktg.keterangan_tagging_program,
+                    //     }));
+                    //     setBupatiValue(tag);
+                    // }
+                    // if (hariKerjaTag) {
+                    //     const tag = hariKerjaTag.keterangan_tagging_program.map((ktg: any) => ({
+                    //         value: ktg.kode_program_unggulan,
+                    //         label: ktg.keterangan_tagging_program,
+                    //     }));
+                    //     setHariKerja(tag);
+                    // }
+                    // if (unggulanPusatTag) {
+                    //     const tag = unggulanPusatTag.keterangan_tagging_program.map((ktg: any) => ({
+                    //         value: ktg.kode_program_unggulan,
+                    //         label: ktg.keterangan_tagging_program,
+                    //     }));
+                    //     setUnggulanPusat(tag);
+                    // }
+                    setUnggulanBupati(!!unggulanBupatiTag);
+                    setHariKerja(!!hariKerjaTag);
+                    setUnggulanPusat(!!unggulanPusatTag);
+                }
 
-                const unggulanBupatiTag = tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Bupati");
-                const hariKerjaTag = tagging?.find((t: Tagging) => t.nama_tagging === "100 Hari Kerja Bupati");
-                const unggulanPusatTag = tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Pemerintah Pusat");
-
-                const taggingFieldsDefaultValue = {
-                    'tagging.0.keterangan_tagging': unggulanBupatiTag?.keterangan_tagging || '',
-                    'tagging.1.keterangan_tagging': hariKerjaTag?.keterangan_tagging || '',
-                    'tagging.2.keterangan_tagging': unggulanPusatTag?.keterangan_tagging || '',
-                };
-
-                setUnggulanBupati(!!unggulanBupatiTag);
-                setHariKerja(!!hariKerjaTag);
-                setUnggulanPusat(!!unggulanPusatTag);
                 reset({
                     nama_pohon: data.nama_pohon || '',
                     keterangan: data.keterangan || '',
@@ -1146,18 +1208,52 @@ export const FormEditPohon: React.FC<{
                             satuan: t.satuan,
                         })),
                     })),
-                    ...taggingFieldsDefaultValue,
+                    // tagging: [
+                    //     unggulanBupatiTag
+                    //         ? {
+                    //             nama_tagging: unggulanBupatiTag.nama_tagging,
+                    //             keterangan_tagging_program:
+                    //                 unggulanBupatiTag.keterangan_tagging_program.map((ktg: any) => ({
+                    //                     kode_program_unggulan: ktg.kode_program_unggulan,
+                    //                     tahun: ktg.tahun,
+                    //                 })),
+                    //         }
+                    //         : { nama_tagging: "Program Unggulan Bupati", keterangan_tagging_program: [] },
+
+                    //     hariKerjaTag
+                    //         ? {
+                    //             nama_tagging: hariKerjaTag.nama_tagging,
+                    //             keterangan_tagging_program:
+                    //                 hariKerjaTag.keterangan_tagging_program.map((ktg: any) => ({
+                    //                     kode_program_unggulan: ktg.kode_program_unggulan,
+                    //                     tahun: ktg.tahun,
+                    //                 })),
+                    //         }
+                    //         : { nama_tagging: "100 Hari Kerja Bupati", keterangan_tagging_program: [] },
+
+                    //     unggulanPusatTag
+                    //         ? {
+                    //             nama_tagging: unggulanPusatTag.nama_tagging,
+                    //             keterangan_tagging_program:
+                    //                 unggulanPusatTag.keterangan_tagging_program.map((ktg: any) => ({
+                    //                     kode_program_unggulan: ktg.kode_program_unggulan,
+                    //                     tahun: ktg.tahun,
+                    //                 })),
+                    //         }
+                    //         : { nama_tagging: "Program Unggulan Pemerintah Pusat", keterangan_tagging_program: [] },
+                    // ],
                 });
-                setPelaksana(
-                    data.pelaksana?.map((item: any) => ({
-                        value: item.pegawai_id,
-                        label: item.nama_pegawai,
-                    })) || []
-                );
+                // setPelaksana(
+                //     data.pelaksana?.map((item: any) => ({
+                //         value: item.pegawai_id,
+                //         label: item.nama_pegawai,
+                //     })) || []
+                // );
                 replace(data.indikator.map((item: indikator) => ({
                     indikator: item.nama_indikator,
                     targets: item.targets,
                 })));
+                console.log(data);
             } catch (err) {
                 console.error(err, 'gagal mengambil data sesuai id pohon')
             } finally {
@@ -1167,23 +1263,69 @@ export const FormEditPohon: React.FC<{
         fetchPokinById();
     }, [id, reset, token, replace]);
 
+    const fetchProgramUnggulan = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/program_unggulan/findunusedbytahun/${Tahun?.value}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            if (data == null) {
+                setProgramOption([]);
+                console.log(`data program unggulan belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: item.kode_program_unggulan,
+                    label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                }));
+                setProgramOption(program);
+                // console.log("option : ", program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const pelaksanaIds = Pelaksana?.map((pelaksana) => ({
             pegawai_id: pelaksana.value,
         })) || [];
+        const bupatiValue = BupatiValue?.map((dt) => ({
+            kode_program_unggulan: dt.value,
+            tahun: String(Tahun?.value ?? ""),
+        })) || [];
+        const hariValue = HariKerjaValue?.map((dt) => ({
+            kode_program_unggulan: dt.value,
+            tahun: String(Tahun?.value ?? ""),
+        })) || [];
+        const pusatValue = PusatValue?.map((dt) => ({
+            kode_program_unggulan: dt.value,
+            tahun: String(Tahun?.value ?? ""),
+        })) || [];
         const taggingData = [
             ...(UnggulanBupati ? [{
                 nama_tagging: "Program Unggulan Bupati",
-                keterangan_tagging: data.tagging?.['0']?.keterangan_tagging || '',
+                keterangan_tagging_program: bupatiValue,
             }] : []),
             ...(HariKerja ? [{
                 nama_tagging: "100 Hari Kerja Bupati",
-                keterangan_tagging: data.tagging?.['1']?.keterangan_tagging || '',
+                keterangan_tagging_program: hariValue,
             }] : []),
+
             ...(UnggulanPusat ? [{
                 nama_tagging: "Program Unggulan Pemerintah Pusat",
-                keterangan_tagging: data.tagging?.['2']?.keterangan_tagging || '',
+                keterangan_tagging_program: pusatValue,
             }] : []),
         ];
         const formData = {
@@ -1339,121 +1481,169 @@ export const FormEditPohon: React.FC<{
                         </div>
                         {/* TAGGING */}
                         {level > 2 &&
-                        <>
-                            <label className="uppercase text-xs font-bold text-gray-700 my-2">
-                                Tagging :
-                            </label>
-                            <div className="grid grid-flow-col gap-2 items-center border border-sky-700 rounded-lg p-3">
-                                <div className="flex flex-col items-center">
-                                    {UnggulanBupati ?
-                                        <button
-                                            type="button"
-                                            onClick={() => setUnggulanBupati(false)}
-                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                        >
-                                            <TbCheck />
-                                        </button>
-                                        :
-                                        <button
-                                            type="button"
-                                            onClick={() => setUnggulanBupati(true)}
-                                            className="w-[20px] h-[20px] border border-black rounded-full"
-                                        ></button>
-                                    }
-                                    <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
+                            <>
+                                <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                    Tagging :
+                                </label>
+                                <div className="grid grid-flow-col gap-2 items-center border border-sky-700 rounded-lg p-3">
+                                    <div className="flex flex-col items-center">
+                                        {UnggulanBupati ?
+                                            <button
+                                                type="button"
+                                                onClick={() => setUnggulanBupati(false)}
+                                                className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                            >
+                                                <TbCheck />
+                                            </button>
+                                            :
+                                            <button
+                                                type="button"
+                                                onClick={() => setUnggulanBupati(true)}
+                                                className="w-[20px] h-[20px] border border-black rounded-full"
+                                            ></button>
+                                        }
+                                        <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        {HariKerja ?
+                                            <button
+                                                type="button"
+                                                onClick={() => setHariKerja(false)}
+                                                className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                            >
+                                                <TbCheck />
+                                            </button>
+                                            :
+                                            <button
+                                                type="button"
+                                                onClick={() => setHariKerja(true)}
+                                                className="w-[20px] h-[20px] border border-black rounded-full"
+                                            ></button>
+                                        }
+                                        <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        {UnggulanPusat ?
+                                            <button
+                                                type="button"
+                                                onClick={() => setUnggulanPusat(false)}
+                                                className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                            >
+                                                <TbCheck />
+                                            </button>
+                                            :
+                                            <button
+                                                type="button"
+                                                onClick={() => setUnggulanPusat(true)}
+                                                className="w-[20px] h-[20px] border border-black rounded-full"
+                                            ></button>
+                                        }
+                                        <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col items-center">
-                                    {HariKerja ?
-                                        <button
-                                            type="button"
-                                            onClick={() => setHariKerja(false)}
-                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                        >
-                                            <TbCheck />
-                                        </button>
-                                        :
-                                        <button
-                                            type="button"
-                                            onClick={() => setHariKerja(true)}
-                                            className="w-[20px] h-[20px] border border-black rounded-full"
-                                        ></button>
-                                    }
-                                    <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
-                                </div>
-                                <div className="flex flex-col items-center">
-                                    {UnggulanPusat ?
-                                        <button
-                                            type="button"
-                                            onClick={() => setUnggulanPusat(false)}
-                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                        >
-                                            <TbCheck />
-                                        </button>
-                                        :
-                                        <button
-                                            type="button"
-                                            onClick={() => setUnggulanPusat(true)}
-                                            className="w-[20px] h-[20px] border border-black rounded-full"
-                                        ></button>
-                                    }
-                                    <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
-                                </div>
-                            </div>
-                            {UnggulanBupati &&
-                                <Controller
-                                    name={`tagging.0.keterangan_tagging`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <div className="flex flex-col py-3">
-                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                Keterangan Program Unggulan Bupati :
-                                            </label>
-                                            <input
-                                                {...field}
-                                                className="border px-4 py-2 rounded-lg"
-                                                placeholder="Masukkan Keterangan Program Unggulan Bupati"
-                                            />
-                                        </div>
-                                    )}
-                                />
-                            }
-                            {HariKerja &&
-                                <Controller
-                                    name={`tagging.1.keterangan_tagging`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <div className="flex flex-col py-3">
-                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                Keterangan 100 Hari Kerja Bupati :
-                                            </label>
-                                            <input
-                                                {...field}
-                                                className="border px-4 py-2 rounded-lg"
-                                                placeholder="Masukkan Keterangan 100 Hari Kerja Bupati"
-                                            />
-                                        </div>
-                                    )}
-                                />
-                            }
-                            {UnggulanPusat &&
-                                <Controller
-                                    name={`tagging.2.keterangan_tagging`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <div className="flex flex-col py-3">
-                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                Keterangan Program Unggulan Pemerintah Pusat :
-                                            </label>
-                                            <input
-                                                {...field}
-                                                className="border px-4 py-2 rounded-lg"
-                                                placeholder="Masukkan Keterangan Program Unggulan Pemerintah Pusat"
-                                            />
-                                        </div>
-                                    )}
-                                />
-                            }
-                        </>
+                                {UnggulanBupati &&
+                                    <Controller
+                                        name={`tagging.0.keterangan_tagging_program`}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <div className="flex flex-col py-3">
+                                                <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                    Keterangan Program Unggulan Bupati :
+                                                </label>
+                                                <Select
+                                                    {...field}
+                                                    placeholder="Pilih Program Unggulan"
+                                                    value={BupatiValue}
+                                                    options={ProgramOption}
+                                                    isSearchable
+                                                    isClearable
+                                                    isMulti
+                                                    onMenuOpen={() => fetchProgramUnggulan()}
+                                                    onChange={(option) => {
+                                                        field.onChange(option || []);
+                                                        setBupatiValue(option as OptionTypeString[]);
+                                                    }}
+                                                    styles={{
+                                                        control: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            borderRadius: '8px',
+                                                            textAlign: 'start',
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                    />
+                                }
+                                {HariKerja &&
+                                    <Controller
+                                        name={`tagging.1.keterangan_tagging_program`}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <div className="flex flex-col py-3">
+                                                <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                    Keterangan 100 Hari Kerja Bupati :
+                                                </label>
+                                                <Select
+                                                    {...field}
+                                                    placeholder="Pilih Program Unggulan"
+                                                    value={HariKerjaValue}
+                                                    options={ProgramOption}
+                                                    isSearchable
+                                                    isClearable
+                                                    isMulti
+                                                    onMenuOpen={() => fetchProgramUnggulan()}
+                                                    onChange={(option) => {
+                                                        field.onChange(option || []);
+                                                        setHariKerjaValue(option as OptionTypeString[]);
+                                                    }}
+                                                    styles={{
+                                                        control: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            borderRadius: '8px',
+                                                            textAlign: 'start',
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                    />
+                                }
+                                {UnggulanPusat &&
+                                    <Controller
+                                        name={`tagging.2.keterangan_tagging_program`}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <div className="flex flex-col py-3">
+                                                <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                    Keterangan Program Unggulan Pemerintah Pusat :
+                                                </label>
+                                                <Select
+                                                    {...field}
+                                                    placeholder="Pilih Program Unggulan"
+                                                    value={PusatValue}
+                                                    options={ProgramOption}
+                                                    isSearchable
+                                                    isClearable
+                                                    isMulti
+                                                    onMenuOpen={() => fetchProgramUnggulan()}
+                                                    onChange={(option) => {
+                                                        field.onChange(option || []);
+                                                        setPusatValue(option as OptionTypeString[]);
+                                                    }}
+                                                    styles={{
+                                                        control: (baseStyles) => ({
+                                                            ...baseStyles,
+                                                            borderRadius: '8px',
+                                                            textAlign: 'start',
+                                                        })
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                    />
+                                }
+                            </>
                         }
                         {(level == 4 || level == 5 || level == 6) &&
                             <div className="flex flex-col py-3">

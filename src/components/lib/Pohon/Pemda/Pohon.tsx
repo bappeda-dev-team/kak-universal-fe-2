@@ -28,8 +28,17 @@ interface Review {
 }
 
 interface Tagging {
+    id: number;
+    id_pokin: number;
     nama_tagging: string;
-    keterangan_tagging: string;
+    keterangan_tagging_program: KeteranganTagging[];
+}
+interface KeteranganTagging {
+    id: number;
+    id_tagging: number;
+    kode_program_unggulan: string;
+    keterangan_tagging_program: string;
+    tahun: string;
 }
 
 export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_all, set_show_all, idForm }) => {
@@ -482,10 +491,10 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                     {user != 'reviewer' &&
                                         <div
                                             className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white border-black hide-on-capture
-                                ${tema.jenis_pohon === "Strategic" && 'border-white'}
-                                ${tema.jenis_pohon === "Tactical" && 'border-white'}
-                                ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && 'border-white'}
-                            `}
+                                                ${tema.jenis_pohon === "Strategic" && 'border-white'}
+                                                ${tema.jenis_pohon === "Tactical" && 'border-white'}
+                                                ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && 'border-white'}
+                                            `}
                                         >
                                             <React.Fragment>
                                                 {!['Strategic', 'Tactical', 'Operational', 'Operational N'].includes(tema.jenis_pohon) &&
@@ -713,7 +722,9 @@ export const TablePohon = (props: any) => {
                             <h1 className='text-emerald-500'><TbCircleCheckFilled /></h1>
                             <h1 className='font-semibold'>{tg.nama_tagging || "-"}</h1>
                         </div>
-                        <h1 className="p-1 text-slate-600 text-start">{tg.keterangan_tagging || ""}</h1>
+                        {tg?.keterangan_tagging_program?.map((tp: KeteranganTagging, tp_index: number) => (
+                            <h1 key={tp_index} className="p-1 text-slate-600 text-start mr-1">{tp.keterangan_tagging_program || ""}</h1>
+                        ))}
                     </div>
                 ))
             }
