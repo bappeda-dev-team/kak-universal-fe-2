@@ -26,8 +26,8 @@ interface FormValue {
     unit_penanggung_jawab: string;
     unit_penyedia_data: string;
     sumber_data: string;
-    jangka_waktu_awal: string;
-    jangka_waktu_akhir: string;
+    jangka_waktu_awal: OptionTypeString;
+    jangka_waktu_akhir: OptionTypeString;
     periode_pelaporan: OptionTypeString;
 }
 
@@ -57,8 +57,8 @@ const FormManualIk = () => {
     const [UnitPenanggunaJawab, setUnitPenanggunaJawab] = useState<string>("");
     const [UnitPenyediaData, setUnitPenyediaData] = useState<string>("");
     const [SumberData, setSumberData] = useState<string>("");
-    const [JangkaWaktuAwal, setJangkaWaktuAwal] = useState<string>("");
-    const [JangkaWaktuAkhir, setJangkaWaktuAkhir] = useState<string>("");
+    const [JangkaWaktuAwal, setJangkaWaktuAwal] = useState<OptionTypeString | null>(null);
+    const [JangkaWaktuAkhir, setJangkaWaktuAkhir] = useState<OptionTypeString | null>(null);
     const [PeriodePelaporan, setPeriodePelaporan] = useState<OptionTypeString | null>(null);
     const [Budget, setBudget] = useState<string>("");
 
@@ -158,13 +158,29 @@ const FormManualIk = () => {
                         setSumberData(detail.sumber_data);
                         reset({ sumber_data: detail.sumber_data });
                     }
+                    // if (detail.jangka_waktu_awal) {
+                    //     setJangkaWaktuAwal(detail.jangka_waktu_awal);
+                    //     reset({ jangka_waktu_awal: detail.jangka_waktu_awal })
+                    // }
+                    // if (detail.jangka_waktu_akhir) {
+                    //     setJangkaWaktuAkhir(detail.jangka_waktu_akhir);
+                    //     reset({ jangka_waktu_akhir: detail.jangka_waktu_akhir })
+                    // }
                     if (detail.jangka_waktu_awal) {
-                        setJangkaWaktuAwal(detail.jangka_waktu_awal);
-                        reset({ jangka_waktu_awal: detail.jangka_waktu_awal })
+                        const jangkaAwal = {
+                            value: detail.jangka_waktu_awal,
+                            label: detail.jangka_waktu_awal
+                        }
+                        setJangkaWaktuAwal(jangkaAwal);
+                        reset({ jangka_waktu_awal: jangkaAwal })
                     }
                     if (detail.jangka_waktu_akhir) {
-                        setJangkaWaktuAkhir(detail.jangka_waktu_akhir);
-                        reset({ jangka_waktu_akhir: detail.jangka_waktu_akhir })
+                        const jangkaAkhir = {
+                            value: detail.jangka_waktu_akhir,
+                            label: detail.jangka_waktu_akhir
+                        }
+                        setJangkaWaktuAkhir(jangkaAkhir);
+                        reset({ jangka_waktu_akhir: jangkaAkhir })
                     }
                     if (detail.periode_pelaporan) {
                         const periode = {
@@ -175,12 +191,12 @@ const FormManualIk = () => {
                         reset({ periode_pelaporan: periode });
                     }
                 } else {
-                    if(User?.roles == 'level_1'){
+                    if (User?.roles == 'level_1') {
                         setDataNew(false);
-                    } else {   
+                    } else {
                         setDataNew(true);
                     }
-                    if(detail.nama_parent){
+                    if (detail.nama_parent) {
                         setTujuanRekin(detail.nama_parent);
                         reset({ tujuan_rekin: detail.nama_parent });
                     }
@@ -211,10 +227,25 @@ const FormManualIk = () => {
                 setLoading(false);
             }
         }
-        if(User?.roles != undefined || User?.roles != null){
+        if (User?.roles != undefined || User?.roles != null) {
             fetchManual(`manual_ik/detail/${id}`);
         }
     }, [token, id, reset, Success, Tahun, User]);
+
+    const BulanOption = [
+        { value: "Januari", label: "Januari" },
+        { value: "Februari", label: "Februari" },
+        { value: "Maret", label: "Maret" },
+        { value: "April", label: "April" },
+        { value: "Mei", label: "Mei" },
+        { value: "Juni", label: "Juni" },
+        { value: "Juli", label: "Juli" },
+        { value: "Agustus", label: "Agustus" },
+        { value: "September", label: "September" },
+        { value: "Oktober", label: "Oktober" },
+        { value: "November", label: "November" },
+        { value: "Desember", label: "Desember" }
+    ]
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -234,8 +265,8 @@ const FormManualIk = () => {
             unit_penanggung_jawab: UnitPenanggunaJawab,
             unit_penyedia_data: UnitPenyediaData,
             sumber_data: SumberData,
-            jangka_waktu_awal: JangkaWaktuAwal,
-            jangka_waktu_akhir: JangkaWaktuAkhir,
+            jangka_waktu_awal: JangkaWaktuAwal?.value,
+            jangka_waktu_akhir: JangkaWaktuAkhir?.value,
             periode_pelaporan: PeriodePelaporan?.value,
         }
         // console.log(formData);
@@ -698,15 +729,25 @@ const FormManualIk = () => {
                                 control={control}
                                 render={({ field }) => (
                                     <>
-                                        <input
+                                        <Select
                                             {...field}
                                             value={JangkaWaktuAwal}
-                                            onChange={(e) => {
-                                                field.onChange(e.target.value);
-                                                setJangkaWaktuAwal(e.target.value);
+                                            options={BulanOption}
+                                            onChange={(option) => {
+                                                field.onChange(option);
+                                                setJangkaWaktuAwal(option);
                                             }}
-                                            className="border border-black px-4 py-2 rounded-lg w-full"
                                             placeholder="Dari"
+                                            styles={{
+                                                control: (baseStyles, state) => ({
+                                                    ...baseStyles,
+                                                    borderRadius: '8px',
+                                                    borderColor: 'black', // Warna default border menjadi merah
+                                                    '&:hover': {
+                                                        borderColor: '#3673CA', // Warna border tetap merah saat hover
+                                                    },
+                                                }),
+                                            }}
                                         />
                                     </>
                                 )}
@@ -716,15 +757,25 @@ const FormManualIk = () => {
                                 control={control}
                                 render={({ field }) => (
                                     <>
-                                        <input
+                                        <Select
                                             {...field}
                                             value={JangkaWaktuAkhir}
-                                            onChange={(e) => {
-                                                field.onChange(e.target.value);
-                                                setJangkaWaktuAkhir(e.target.value);
+                                            options={BulanOption}
+                                            onChange={(option) => {
+                                                field.onChange(option);
+                                                setJangkaWaktuAkhir(option);
                                             }}
-                                            className="border border-black px-4 py-2 rounded-lg w-full"
                                             placeholder="Sampai"
+                                            styles={{
+                                                control: (baseStyles, state) => ({
+                                                    ...baseStyles,
+                                                    borderRadius: '8px',
+                                                    borderColor: 'black', // Warna default border menjadi merah
+                                                    '&:hover': {
+                                                        borderColor: '#3673CA', // Warna border tetap merah saat hover
+                                                    },
+                                                }),
+                                            }}
                                         />
                                     </>
                                 )}

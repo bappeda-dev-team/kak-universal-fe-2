@@ -50,8 +50,17 @@ interface Cross {
 }
 
 interface Tagging {
+    id: number;
+    id_pokin: number;
     nama_tagging: string;
-    keterangan_tagging: string;
+    keterangan_tagging_program: KeteranganTagging[];
+}
+interface KeteranganTagging {
+    id: number;
+    id_tagging: number;
+    kode_program_unggulan: string;
+    keterangan_tagging_program: string;
+    tahun: string;
 }
 
 interface Review {
@@ -803,7 +812,9 @@ export const TablePohon = (props: any) => {
                             <h1 className='text-emerald-500'><TbCircleCheckFilled /></h1>
                             <h1 className='font-semibold'>{tg.nama_tagging || "-"}</h1>
                         </div>
-                        <h1 className="p-1 text-slate-600 text-start">{tg.keterangan_tagging || ""}</h1>
+                         {tg?.keterangan_tagging_program?.map((tp: KeteranganTagging, tp_index: number) => (
+                            <h1 key={tp_index} className="p-1 text-slate-600 text-start mr-1">{tp.keterangan_tagging_program || ""}</h1>
+                        ))}
                     </div>
                 ))
             }
