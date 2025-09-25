@@ -135,12 +135,12 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
                     <thead>
-                        <tr className="bg-orange-500 text-white">
+                        <tr className="bg-green-500 text-white">
                             <th className="border-r border-b px-6 py-3 text-center">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Program Unggulan / Hebat</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Rencana Implementasi</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Kode</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[100px]">Tahun</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[150px]">Tahun</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Aksi</th>
                         </tr>
@@ -155,13 +155,13 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                         ) : (
                             Data.map((item: ProgramUnggulan, index: number) => (
                                 <tr key={index}>
-                                    <td className="border-x border-b border-orange-500 py-4 px-3 text-center">{index + 1}</td>
-                                    <td className="border-r border-b border-orange-500 px-6 py-4 font-semibold">{item.nama_program_unggulan || "-"}</td>
-                                    <td className="border-r border-b border-orange-500 px-6 py-4">{item.rencana_implementasi || "-"}</td>
-                                    <td className="border-r border-b border-orange-500 px-6 py-4">{item.kode_program_unggulan || "-"}</td>
-                                    <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.tahun_awal || "-"} - {item.tahun_akhir || "-"}</td>
-                                    <td className="border-r border-b border-orange-500 px-6 py-4">{item.keterangan || "-"}</td>
-                                    <td className="border-r border-b border-orange-500 px-6 py-4">
+                                    <td className="border-x border-b border-green-500 py-4 px-3 text-center">{index + 1}</td>
+                                    <td className="border-r border-b border-green-500 px-6 py-4 font-semibold">{item.nama_program_unggulan || "-"}</td>
+                                    <td className="border-r border-b border-green-500 px-6 py-4">{item.rencana_implementasi || "-"}</td>
+                                    <td className="border-r border-b border-green-500 px-6 py-4">{item.kode_program_unggulan || "-"}</td>
+                                    <td className="border-r border-b border-green-500 px-6 py-4 text-center">{item.tahun_awal || "-"} - {item.tahun_akhir || "-"}</td>
+                                    <td className="border-r border-b border-green-500 px-6 py-4">{item.keterangan || "-"}</td>
+                                    <td className="border-r border-b border-green-500 px-6 py-4">
                                         <div className="flex flex-col justify-center items-center gap-2">
                                             <ButtonGreen
                                                 className="flex items-center gap-1 w-full"

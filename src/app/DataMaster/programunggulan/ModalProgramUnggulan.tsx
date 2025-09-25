@@ -1,17 +1,12 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ButtonSky, ButtonRed } from '@/components/global/Button';
 import { AlertNotification } from "@/components/global/Alert";
 import { getToken } from "@/components/lib/Cookie";
-import { LoadingClip, LoadingButtonClip } from "@/components/global/Loading";
-import Select from 'react-select';
+import {  LoadingButtonClip } from "@/components/global/Loading";
 
-interface OptionTypeString {
-    value: string;
-    label: string;
-}
 interface ProgramUnggulan {
     id: number;
     kode_program_unggulan: string;
@@ -63,12 +58,6 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
         });
         onClose();
     };
-
-    const OptionNamaTagging = [
-        { value: "Program Unggulan Bupati", label: "Program Unggulan Bupati" },
-        { value: "100 Hari Kerja Bupati", label: "100 Hari Kerja Bupati" },
-        { value: "Program Unggulan Pemerintah Pusat", label: "Program Unggulan Pemerintah Pusat" },
-    ]
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -136,7 +125,7 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
                         <Controller
                             name="nama_program_unggulan"
                             control={control}
-                            rules={{ required: "" }}
+                            rules={{ required: "program harus terisi" }}
                             render={({ field }) => (
                                 <input
                                     {...field}
@@ -150,6 +139,9 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
                                 />
                             )}
                         />
+                        {errors.nama_program_unggulan &&
+                            <p className="text-red-500 italic">{errors.nama_program_unggulan?.message}</p>
+                        }
                     </div>
                     <div className="flex flex-col py-3">
                         <label
@@ -161,6 +153,7 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
                         <Controller
                             name="rencana_implementasi"
                             control={control}
+                            rules={{ required: "renana implementasi harus terisi" }}
                             render={({ field }) => (
                                 <input
                                     {...field}
@@ -174,6 +167,9 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
                                 />
                             )}
                         />
+                        {errors.rencana_implementasi &&
+                            <p className="text-red-500 italic">{errors.rencana_implementasi?.message}</p>
+                        }
                     </div>
                     <div className="flex flex-col py-3">
                         <label
