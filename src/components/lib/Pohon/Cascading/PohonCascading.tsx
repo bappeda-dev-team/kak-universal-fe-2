@@ -13,8 +13,17 @@ interface pohon {
     set_show_all: () => void;
 }
 interface Tagging {
+    id: number;
+    id_pokin: number;
     nama_tagging: string;
-    keterangan_tagging: string;
+    keterangan_tagging_program: KeteranganTagging[];
+}
+interface KeteranganTagging {
+    id: number;
+    id_tagging: number;
+    kode_program_unggulan: string;
+    keterangan_tagging_program: string;
+    tahun: string;
 }
 
 export const PohonCascading: React.FC<pohon> = ({ tema, deleteTrigger, show_all, set_show_all }) => {
@@ -410,7 +419,13 @@ export const TablePohon = (props: any) => {
                             <h1 className='text-emerald-500'><TbCircleCheckFilled /></h1>
                             <h1 className='font-semibold'>{tg.nama_tagging || "-"}</h1>
                         </div>
-                        <h1 className="p-1 text-slate-600 text-start">{tg.keterangan_tagging || ""}</h1>
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                            {tg?.keterangan_tagging_program?.map((tp: KeteranganTagging, tp_index: number) => (
+                                <h1 key={tp_index} className="py-1 px-3 text-start text-white bg-yellow-500 rounded-lg">
+                                    {tg.keterangan_tagging_program.length > 1 && `${tp_index + 1}.`} {tp.keterangan_tagging_program || ""}
+                                </h1>
+                            ))}
+                        </div>
                     </div>
                 ))
             }
@@ -549,7 +564,13 @@ export const TablePohonEdited = (props: any) => {
                             <h1 className='text-emerald-500'><TbCircleCheckFilled /></h1>
                             <h1 className='font-semibold'>{tg.nama_tagging || "-"}</h1>
                         </div>
-                        <h1 className="p-1 text-slate-600 text-start">{tg.keterangan_tagging || ""}</h1>
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                            {tg?.keterangan_tagging_program?.map((tp: KeteranganTagging, tp_index: number) => (
+                                <h1 key={tp_index} className="py-1 px-3 text-start text-white bg-yellow-500 rounded-lg">
+                                    {tg.keterangan_tagging_program.length > 1 && `${tp_index + 1}.`} {tp.keterangan_tagging_program || ""}
+                                </h1>
+                            ))}
+                        </div>
                     </div>
                 ))
             }
@@ -645,6 +666,7 @@ export const TablePohonEdited = (props: any) => {
                                     >
                                         {data.nama_pegawai}
                                     </td>
+
                                 </tr>
                             ))
                         :

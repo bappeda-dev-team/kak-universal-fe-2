@@ -804,20 +804,24 @@ export const TablePohon = (props: any) => {
     return (
         <div className='flex flex-col w-full'>
             <div className="flex flex-col w-full">
-            {/* TAGGING */}
-            {tagging &&
-                tagging.map((tg: Tagging, tag_index: number) => (
-                    <div key={tag_index} className="flex flex-col gap-1 w-full px-3 py-1 border border-yellow-400 rounded-lg bg-white mb-2">
-                        <div className='flex items-center gap-1'>
-                            <h1 className='text-emerald-500'><TbCircleCheckFilled /></h1>
-                            <h1 className='font-semibold'>{tg.nama_tagging || "-"}</h1>
+                {/* TAGGING */}
+                {tagging &&
+                    tagging.map((tg: Tagging, tag_index: number) => (
+                        <div key={tag_index} className="flex flex-col gap-1 w-full px-3 py-1 border border-yellow-400 rounded-lg bg-white mb-2">
+                            <div className='flex items-center gap-1'>
+                                <h1 className='text-emerald-500'><TbCircleCheckFilled /></h1>
+                                <h1 className='font-semibold'>{tg.nama_tagging || "-"}</h1>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                                {tg?.keterangan_tagging_program?.map((tp: KeteranganTagging, tp_index: number) => (
+                                    <h1 key={tp_index} className="py-1 px-3 text-start text-white bg-yellow-500 rounded-lg">
+                                        {tg.keterangan_tagging_program.length > 1 && `${tp_index + 1}.`} {tp.keterangan_tagging_program || ""}
+                                    </h1>
+                                ))}
+                            </div>
                         </div>
-                         {tg?.keterangan_tagging_program?.map((tp: KeteranganTagging, tp_index: number) => (
-                            <h1 key={tp_index} className="p-1 text-slate-600 text-start mr-1">{tp.keterangan_tagging_program || ""}</h1>
-                        ))}
-                    </div>
-                ))
-            }
+                    ))
+                }
             </div>
             <table className='w-full'>
                 <tbody>
