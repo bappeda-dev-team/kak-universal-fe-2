@@ -107,10 +107,16 @@ const MasterProgramUnggulan = () => {
                         }}
                     />
                 </div>
-                <Table
-                    tahun_awal={Periode?.tahun_awal || ""}
-                    tahun_akhir={Periode?.tahun_akhir || ""}
-                />
+                {Periode ? 
+                    <Table
+                        tahun_awal={Periode?.tahun_awal || ""}
+                        tahun_akhir={Periode?.tahun_akhir || ""}
+                    />
+                :
+                    <div className="m-5">
+                        <h1>Pilih Periode terlebih dahulu</h1>
+                    </div>
+                }
             </div>
         </>
     )
