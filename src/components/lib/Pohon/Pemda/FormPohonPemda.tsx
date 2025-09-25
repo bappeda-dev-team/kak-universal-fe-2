@@ -1161,33 +1161,46 @@ export const FormEditPohon: React.FC<{
                     }
                     setKodeOpd(opd);
                 }
-                // const { tagging } = data;
-                if(data.tagging){
-                    const unggulanBupatiTag = data.tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Bupati");
-                    const hariKerjaTag = data.tagging?.find((t: Tagging) => t.nama_tagging === "100 Hari Kerja Bupati");
-                    const unggulanPusatTag = data.tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Pemerintah Pusat");
-    
-                    // if (unggulanBupatiTag) {
-                    //     const tag = unggulanBupatiTag.keterangan_tagging_program.map((ktg: any) => ({
-                    //         value: ktg.kode_program_unggulan,
-                    //         label: ktg.keterangan_tagging_program,
-                    //     }));
-                    //     setBupatiValue(tag);
-                    // }
-                    // if (hariKerjaTag) {
-                    //     const tag = hariKerjaTag.keterangan_tagging_program.map((ktg: any) => ({
-                    //         value: ktg.kode_program_unggulan,
-                    //         label: ktg.keterangan_tagging_program,
-                    //     }));
-                    //     setHariKerja(tag);
-                    // }
-                    // if (unggulanPusatTag) {
-                    //     const tag = unggulanPusatTag.keterangan_tagging_program.map((ktg: any) => ({
-                    //         value: ktg.kode_program_unggulan,
-                    //         label: ktg.keterangan_tagging_program,
-                    //     }));
-                    //     setUnggulanPusat(tag);
-                    // }
+
+                if(data.tagging != null){
+                    const { tagging } = data;
+                    const unggulanBupatiTag = tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Bupati");
+                    const hariKerjaTag = tagging?.find((t: Tagging) => t.nama_tagging === "100 Hari Kerja Bupati");
+                    const unggulanPusatTag = tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Pemerintah Pusat");
+                    
+                    if (unggulanBupatiTag) {
+                        if(unggulanBupatiTag.keterangan_tagging_program != null){
+                            const tag = unggulanBupatiTag.keterangan_tagging_program.map((ktg: any) => ({
+                                value: ktg.kode_program_unggulan,
+                                label: ktg.keterangan_tagging_program,
+                            }));
+                            setBupatiValue(tag);
+                        } else {
+                            setBupatiValue([]);
+                        }
+                    }
+                    if (hariKerjaTag) {
+                        if(hariKerjaTag.keterangan_tagging_program != null){
+                            const tag = hariKerjaTag.keterangan_tagging_program.map((ktg: any) => ({
+                                value: ktg.kode_program_unggulan,
+                                label: ktg.keterangan_tagging_program,
+                            }));
+                            setHariKerjaValue(tag);
+                        } else {
+                            setHariKerjaValue([]);
+                        }
+                    }
+                    if (unggulanPusatTag) {
+                        if(unggulanPusatTag.keterangan_tagging_program != null){
+                            const tag = unggulanPusatTag.keterangan_tagging_program.map((ktg: any) => ({
+                                value: ktg.kode_program_unggulan,
+                                label: ktg.keterangan_tagging_program,
+                            }));
+                            setPusatValue(tag);
+                        } else {
+                            setPusatValue([]);
+                        }
+                    }
                     setUnggulanBupati(!!unggulanBupatiTag);
                     setHariKerja(!!hariKerjaTag);
                     setUnggulanPusat(!!unggulanPusatTag);
@@ -1208,52 +1221,13 @@ export const FormEditPohon: React.FC<{
                             satuan: t.satuan,
                         })),
                     })),
-                    // tagging: [
-                    //     unggulanBupatiTag
-                    //         ? {
-                    //             nama_tagging: unggulanBupatiTag.nama_tagging,
-                    //             keterangan_tagging_program:
-                    //                 unggulanBupatiTag.keterangan_tagging_program.map((ktg: any) => ({
-                    //                     kode_program_unggulan: ktg.kode_program_unggulan,
-                    //                     tahun: ktg.tahun,
-                    //                 })),
-                    //         }
-                    //         : { nama_tagging: "Program Unggulan Bupati", keterangan_tagging_program: [] },
-
-                    //     hariKerjaTag
-                    //         ? {
-                    //             nama_tagging: hariKerjaTag.nama_tagging,
-                    //             keterangan_tagging_program:
-                    //                 hariKerjaTag.keterangan_tagging_program.map((ktg: any) => ({
-                    //                     kode_program_unggulan: ktg.kode_program_unggulan,
-                    //                     tahun: ktg.tahun,
-                    //                 })),
-                    //         }
-                    //         : { nama_tagging: "100 Hari Kerja Bupati", keterangan_tagging_program: [] },
-
-                    //     unggulanPusatTag
-                    //         ? {
-                    //             nama_tagging: unggulanPusatTag.nama_tagging,
-                    //             keterangan_tagging_program:
-                    //                 unggulanPusatTag.keterangan_tagging_program.map((ktg: any) => ({
-                    //                     kode_program_unggulan: ktg.kode_program_unggulan,
-                    //                     tahun: ktg.tahun,
-                    //                 })),
-                    //         }
-                    //         : { nama_tagging: "Program Unggulan Pemerintah Pusat", keterangan_tagging_program: [] },
-                    // ],
                 });
-                // setPelaksana(
-                //     data.pelaksana?.map((item: any) => ({
-                //         value: item.pegawai_id,
-                //         label: item.nama_pegawai,
-                //     })) || []
-                // );
-                replace(data.indikator.map((item: indikator) => ({
-                    indikator: item.nama_indikator,
-                    targets: item.targets,
-                })));
-                console.log(data);
+                if(data.indikator){
+                    replace(data.indikator.map((item: indikator) => ({
+                        indikator: item.nama_indikator,
+                        targets: item.targets,
+                    })));
+                }
             } catch (err) {
                 console.error(err, 'gagal mengambil data sesuai id pohon')
             } finally {
