@@ -245,7 +245,7 @@ export const TablePerencanaan = () => {
                                                 <td className="border-r border-b text-center">
                                                     {data.indikator.map((item: any, index: number) => (
                                                         <React.Fragment key={index}>
-                                                            {item.target ?
+                                                            {item.targets ?
                                                                 item.targets.map((t: any) => (
                                                                     <p key={t.id_target} className={`${index !== data.indikator.length - 1 && "border-b"} py-4 px-6`}>
                                                                         {t.target ? t.target : "-"} / {t.satuan ? t.satuan : "-"}
