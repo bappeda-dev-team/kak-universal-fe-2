@@ -1,6 +1,6 @@
 // components/Loading.tsx
 import React from 'react';
-import { ClipLoader, BeatLoader, SyncLoader } from 'react-spinners';
+import { ClipLoader, BeatLoader, SyncLoader, HashLoader } from 'react-spinners';
 
 export const LoadingClip = (loading: any) => {
   return (
@@ -38,6 +38,17 @@ export const LoadingButtonClip2 = (loading: any, color: string) => {
   return (
     <div className="mr-2 flex flex-col items-center justify-center z-50">
       <ClipLoader color={`${color}`} loading={loading} size={15} />
+    </div>
+  );
+};
+export const IsLoadingBranding = () => {
+  return (
+    <div className='flex flex-col items-center gap-5 my-5'>
+      <HashLoader color={'#182842'} loading={true} size={150} />
+      <div className="flex flex-col items-center">
+        <h1 className='text-[#182842] font-bold text-xl'>Memuat Data Branding Website</h1>
+        <p className='text-[#14233b] font-light text-sm'>Jika loading lebih dari 10 detik, reload halaman</p>
+      </div>
     </div>
   );
 };

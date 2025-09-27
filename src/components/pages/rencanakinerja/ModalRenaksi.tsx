@@ -178,19 +178,25 @@ export const ModalRenaksi: React.FC<modal> = ({ isOpen, onClose, id, rekin_id, m
                             <Controller
                                 name="nama_rencana_aksi"
                                 control={control}
+                                rules={{ required: "tahapan wajib terisi" }}
                                 render={({ field }) => (
-                                    <input
-                                        {...field}
-                                        className="border px-4 py-2 rounded-lg"
-                                        id="nama_rencana_aksi"
-                                        type="text"
-                                        placeholder="masukkan Tahapan Rencana Aksi"
-                                        value={namaRenaksi}
-                                        onChange={(e) => {
-                                            field.onChange(e);
-                                            setNamaRenaksi(e.target.value);
-                                        }}
-                                    />
+                                    <>
+                                        <input
+                                            {...field}
+                                            className="border px-4 py-2 rounded-lg"
+                                            id="nama_rencana_aksi"
+                                            type="text"
+                                            placeholder="masukkan Tahapan Rencana Aksi"
+                                            value={namaRenaksi}
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                setNamaRenaksi(e.target.value);
+                                            }}
+                                        />
+                                        {errors.nama_rencana_aksi &&
+                                            <p className="text-red-400 italic">{errors.nama_rencana_aksi.message}</p>
+                                        }
+                                    </>
                                 )}
                             />
                         </div>
@@ -204,6 +210,7 @@ export const ModalRenaksi: React.FC<modal> = ({ isOpen, onClose, id, rekin_id, m
                             <Controller
                                 name="urutan"
                                 control={control}
+                                rules={{ required: "urutan wajib terisi" }}
                                 render={({ field }) => {
                                     const handleInputChange = (e: any) => {
                                         const inputValue = e.target.value;
@@ -213,15 +220,20 @@ export const ModalRenaksi: React.FC<modal> = ({ isOpen, onClose, id, rekin_id, m
                                     };
                                     const displayValue = urutan;
                                     return (
-                                        <input
-                                            {...field}
-                                            className="border px-4 py-2 rounded-lg"
-                                            id="urutan"
-                                            type="text"
-                                            placeholder="masukkan Urutan"
-                                            value={displayValue === null ? "" : displayValue}
-                                            onChange={handleInputChange}
-                                        />
+                                        <>
+                                            <input
+                                                {...field}
+                                                className="border px-4 py-2 rounded-lg"
+                                                id="urutan"
+                                                type="text"
+                                                placeholder="masukkan Urutan"
+                                                value={displayValue === null ? "" : displayValue}
+                                                onChange={handleInputChange}
+                                            />
+                                            {errors.urutan &&
+                                                <p className="text-red-400 italic">{errors.urutan.message}</p>
+                                            }
+                                        </>
                                     )
                                 }}
                             />

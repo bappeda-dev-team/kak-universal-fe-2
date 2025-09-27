@@ -17,6 +17,7 @@ interface BrandingContextType {
   title: string;
   clientName: string;
   logo: string;
+  LoadingBranding: boolean;
   branding: {
     title: string;
     client: string;
@@ -46,6 +47,8 @@ export function BrandingProvider({ children }: Readonly<{ children: React.ReactN
   const [SelectedOpd, setSelectedOpd] = useState<OptionTypeString | null>(null);
   const [User, setUser] = useState<any>(null);
 
+  const [Loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
     const data = getOpdTahun();
     const fetchUser = getUser();
@@ -68,6 +71,7 @@ export function BrandingProvider({ children }: Readonly<{ children: React.ReactN
         setUser(fetchUser.user);
       }
     }
+    setLoading(false);
   }, [])
 
   return (
@@ -76,6 +80,7 @@ export function BrandingProvider({ children }: Readonly<{ children: React.ReactN
         title: appName,
         clientName: clientName,
         logo: logo,
+        LoadingBranding: Loading,
         branding: {
           title: appName,
           client: clientName,
