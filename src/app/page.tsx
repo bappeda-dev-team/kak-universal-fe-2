@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { getUser } from "@/components/lib/Cookie";
 import Link from "next/link";
-import { TbDownload, TbBook2 } from "react-icons/tb";
+import { TbDownload, TbBook2, TbCircleFilled } from "react-icons/tb";
 import { ButtonSky } from "@/components/global/Button";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { IsLoadingBranding } from "@/components/global/Loading";
@@ -29,7 +29,17 @@ const Dashboard = () => {
   } else {
     return (
       <div className="flex flex-col gap-2">
-        <h1 className="p-5 rounded-xl border border-emerald-500">Selamat Datang, {User?.nama_pegawai ? User?.nama_pegawai : 'di halaman dashboard'}</h1>
+        <div className="p-5 rounded-xl border border-emerald-500">
+          <p className="flex items-center gap-1 font-bold">
+            <TbCircleFilled color="green"/>
+            Selamat Datang, {User?.nama_pegawai ? User?.nama_pegawai : 'di halaman dashboard'}
+          </p>
+          {(User?.roles != "super_admin" && User?.roles != "reviewer") &&
+            <p>
+              {User?.nama_opd ? User?.nama_opd : 'tidak terdaftar di OPD manapun'}
+            </p>
+          }
+        </div>
         <div className="flex items-center justify-between gap-2 p-5 rounded-xl border border-sky-500">
           <h1 className="flex items-center gap-2">
             <TbBook2 className="font-bold text-4xl rounded-full p-1 border border-black" />
