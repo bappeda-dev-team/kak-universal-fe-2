@@ -312,6 +312,7 @@ const FormManualIk = () => {
     const optionPeriodePelaporan: OptionTypeString[] = [
         { label: "Bulanan", value: "Bulanan" },
         { label: "Triwulan", value: "Triwulan" },
+        { label: "Semester", value: "Semester" },
         { label: "Tahunan", value: "Tahunan" }
     ];
 
