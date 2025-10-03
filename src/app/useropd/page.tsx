@@ -6,7 +6,7 @@ import { TbCirclePlus } from "react-icons/tb";
 import { FiHome } from "react-icons/fi";
 import { useBrandingContext } from "@/context/BrandingContext";
 
-const masteruser = () => {
+const MasterUser = () => {
 
     const {branding} = useBrandingContext();
 
@@ -46,4 +46,4 @@ const masteruser = () => {
     )
 }
 
-export default masteruser;
+export default MasterUser;

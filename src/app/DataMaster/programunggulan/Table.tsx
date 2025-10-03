@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { getToken } from "@/components/lib/Cookie";
-import { TbPencil, TbTrash, TbCircleX, TbCircleCheck, TbMistOff, TbMist, TbCirclePlus } from "react-icons/tb";
+import { TbPencil, TbTrash, TbCircleX, TbCircleCheck, TbMistOff, TbMist, TbCirclePlus, TbHourglass } from "react-icons/tb";
 import { ButtonBlackBorder, ButtonSkyBorder, ButtonGreen, ButtonRed } from "@/components/global/Button";
 import { AlertQuestion, AlertNotification } from "@/components/global/Alert";
 import { useBrandingContext } from "@/context/BrandingContext";
@@ -17,6 +17,7 @@ interface ProgramUnggulan {
     id: number;
     kode_program_unggulan: string;
     nama_program_unggulan: string;
+    is_active: boolean;
     rencana_implementasi: string;
     keterangan: string;
     tahun_awal: string;
@@ -139,7 +140,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                             <th className="border-r border-b px-6 py-3 text-center">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Program Unggulan / Hebat</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Rencana Implementasi</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[150px]">Kode</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[150px]">Status</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Tahun</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Aksi</th>
@@ -158,7 +159,19 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                                     <td className="border-x border-b border-green-500 py-4 px-3 text-center">{index + 1}</td>
                                     <td className="border-r border-b border-green-500 px-6 py-4 font-semibold">{item.nama_program_unggulan || "-"}</td>
                                     <td className="border-r border-b border-green-500 px-6 py-4">{item.rencana_implementasi || "-"}</td>
-                                    <td className="border-r border-b border-green-500 px-6 py-4">{item.kode_program_unggulan || "-"}</td>
+                                    <td className="border-r border-b border-green-500 px-6 py-4">
+                                        {item.is_active ? 
+                                            <p className="flex items-center gap-1">
+                                                <TbCircleCheck />
+                                                Digunakan 
+                                            </p>
+                                            : 
+                                            <p className="flex items-center gap-1">
+                                                <TbHourglass />
+                                                Pending
+                                            </p>
+                                        }
+                                    </td>
                                     <td className="border-r border-b border-green-500 px-6 py-4 text-center">{item.tahun_awal || "-"} - {item.tahun_akhir || "-"}</td>
                                     <td className="border-r border-b border-green-500 px-6 py-4">{item.keterangan || "-"}</td>
                                     <td className="border-r border-b border-green-500 px-6 py-4">
