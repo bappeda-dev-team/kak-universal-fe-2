@@ -113,7 +113,7 @@ export const FormPohonOpd: React.FC<{
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/program_unggulan/findunusedbytahun/${Tahun?.value}`, {
+            const response = await fetch(`${API_URL}/program_unggulan/findbytahun/${Tahun?.value}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `${token}`,
@@ -378,6 +378,11 @@ export const FormPohonOpd: React.FC<{
                                                         value={BupatiValue}
                                                         options={ProgramOption}
                                                         isSearchable
+                                                        onMenuOpen={() => {
+                                                            if (ProgramOption.length === 0) {
+                                                                fetchProgramUnggulan();
+                                                            }
+                                                        }}
                                                         isClearable
                                                         isMulti
                                                         onChange={(option) => {
@@ -413,6 +418,11 @@ export const FormPohonOpd: React.FC<{
                                                         isSearchable
                                                         isClearable
                                                         isMulti
+                                                        onMenuOpen={() => {
+                                                            if (ProgramOption.length === 0) {
+                                                                fetchProgramUnggulan();
+                                                            }
+                                                        }}
                                                         onChange={(option) => {
                                                             field.onChange(option || []);
                                                             setHariKerjaValue(option as OptionTypeString[]);
@@ -446,6 +456,11 @@ export const FormPohonOpd: React.FC<{
                                                         isSearchable
                                                         isClearable
                                                         isMulti
+                                                        onMenuOpen={() => {
+                                                            if (ProgramOption.length === 0) {
+                                                                fetchProgramUnggulan();
+                                                            }
+                                                        }}
                                                         onChange={(option) => {
                                                             field.onChange(option || []);
                                                             setPusatValue(option as OptionTypeString[]);
@@ -697,15 +712,15 @@ export const FormEditPohon: React.FC<{
                 if (data.jenis_pohon) {
                     setJenisPohon(data.jenis_pohon);
                 }
-                
-                if(data.tagging != null){
+
+                if (data.tagging != null) {
                     const { tagging } = data;
                     const unggulanBupatiTag = tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Bupati");
                     const hariKerjaTag = tagging?.find((t: Tagging) => t.nama_tagging === "100 Hari Kerja Bupati");
                     const unggulanPusatTag = tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Pemerintah Pusat");
-                    
+
                     if (unggulanBupatiTag) {
-                        if(unggulanBupatiTag.keterangan_tagging_program != null){
+                        if (unggulanBupatiTag.keterangan_tagging_program != null) {
                             const tag = unggulanBupatiTag.keterangan_tagging_program.map((ktg: any) => ({
                                 value: ktg.kode_program_unggulan,
                                 label: ktg.keterangan_tagging_program,
@@ -716,7 +731,7 @@ export const FormEditPohon: React.FC<{
                         }
                     }
                     if (hariKerjaTag) {
-                        if(hariKerjaTag.keterangan_tagging_program != null){
+                        if (hariKerjaTag.keterangan_tagging_program != null) {
                             const tag = hariKerjaTag.keterangan_tagging_program.map((ktg: any) => ({
                                 value: ktg.kode_program_unggulan,
                                 label: ktg.keterangan_tagging_program,
@@ -727,7 +742,7 @@ export const FormEditPohon: React.FC<{
                         }
                     }
                     if (unggulanPusatTag) {
-                        if(unggulanPusatTag.keterangan_tagging_program != null){
+                        if (unggulanPusatTag.keterangan_tagging_program != null) {
                             const tag = unggulanPusatTag.keterangan_tagging_program.map((ktg: any) => ({
                                 value: ktg.kode_program_unggulan,
                                 label: ktg.keterangan_tagging_program,
@@ -741,7 +756,7 @@ export const FormEditPohon: React.FC<{
                     setHariKerja(!!hariKerjaTag);
                     setUnggulanPusat(!!unggulanPusatTag);
                 }
-                
+
                 reset({
                     nama_pohon: data.nama_pohon || '',
                     keterangan: data.keterangan || '',
@@ -764,7 +779,7 @@ export const FormEditPohon: React.FC<{
                         label: item.nama_pegawai,
                     })) || []
                 );
-                if(data.indikator){
+                if (data.indikator) {
                     replace(data.indikator.map((item: indikator) => ({
                         indikator: item.nama_indikator,
                         targets: item.targets,
@@ -867,7 +882,7 @@ export const FormEditPohon: React.FC<{
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/program_unggulan/findunusedbytahun/${Tahun?.value}`, {
+            const response = await fetch(`${API_URL}/program_unggulan/findbytahun/${Tahun?.value}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `${token}`,
@@ -1047,7 +1062,11 @@ export const FormEditPohon: React.FC<{
                                                 isSearchable
                                                 isClearable
                                                 isMulti
-                                                onMenuOpen={() => fetchProgramUnggulan()}
+                                                onMenuOpen={() => {
+                                                    if (ProgramOption.length === 0) {
+                                                        fetchProgramUnggulan();
+                                                    }
+                                                }}
                                                 onChange={(option) => {
                                                     field.onChange(option || []);
                                                     setBupatiValue(option as OptionTypeString[]);
@@ -1081,7 +1100,11 @@ export const FormEditPohon: React.FC<{
                                                 isSearchable
                                                 isClearable
                                                 isMulti
-                                                onMenuOpen={() => fetchProgramUnggulan()}
+                                                onMenuOpen={() => {
+                                                    if (ProgramOption.length === 0) {
+                                                        fetchProgramUnggulan();
+                                                    }
+                                                }}
                                                 onChange={(option) => {
                                                     field.onChange(option || []);
                                                     setHariKerjaValue(option as OptionTypeString[]);
@@ -1115,7 +1138,11 @@ export const FormEditPohon: React.FC<{
                                                 isSearchable
                                                 isClearable
                                                 isMulti
-                                                onMenuOpen={() => fetchProgramUnggulan()}
+                                                onMenuOpen={() => {
+                                                    if (ProgramOption.length === 0) {
+                                                        fetchProgramUnggulan();
+                                                    }
+                                                }}
                                                 onChange={(option) => {
                                                     field.onChange(option || []);
                                                     setPusatValue(option as OptionTypeString[]);
