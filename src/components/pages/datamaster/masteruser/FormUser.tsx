@@ -317,7 +317,7 @@ export const FormUser = () => {
                                             <input
                                                 {...field}
                                                 className="border px-4 py-2 rounded-lg flex-1"
-                                                minLength={8}
+                                                // minLength={8}
                                                 id="password"
                                                 type={showPassword ? "text" : "password"}
                                                 placeholder="Masukkan Password"
