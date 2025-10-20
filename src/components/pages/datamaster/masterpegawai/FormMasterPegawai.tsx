@@ -32,6 +32,7 @@ export const FormMasterPegawai = () => {
     const [NamaPegawai, setNamaPegawai] = useState<string>('');
     const [KodeOpd, setKodeOpd] = useState<OptionTypeString | null>(null);
     const [Plt, setPlt] = useState<boolean>(false);
+    const [Pbt, setPbt] = useState<boolean>(false);
     const [Nip, setNip] = useState<string>('');
     const [OpdOption, setOpdOption] = useState<OptionTypeString[]>([]);
     const [IsLoading, setIsLoading] = useState<boolean>(false);
@@ -69,7 +70,7 @@ export const FormMasterPegawai = () => {
         const formData = {
             //key : value
             nama_pegawai: `${data.nama_pegawai} ${Plt ? '(PLT)' : ''}`,
-            nip: `${Plt ? `${data.nip}_plt` : data.nip}`,
+            nip: `${Plt ? `${data.nip}_plt` : Pbt ? `${data.nip}_pbt` : data.nip}`,
             kode_opd: data.kode_opd?.value,
         };
         // console.log(formData);
@@ -152,7 +153,10 @@ export const FormMasterPegawai = () => {
                                 {Plt ?
                                     <button
                                         type="button"
-                                        onClick={() => setPlt(false)}
+                                        onClick={() => {
+                                            setPlt(false)
+                                            setPbt(false)
+                                        }}
                                         className="w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
                                     >
                                         <TbCheck />
@@ -160,11 +164,36 @@ export const FormMasterPegawai = () => {
                                     :
                                     <button
                                         type="button"
-                                        onClick={() => setPlt(true)}
+                                        onClick={() => {
+                                            setPlt(true)
+                                            setPbt(false)
+                                        }}
                                         className="w-[20px] h-[20px] border border-black rounded-full"
                                     ></button>
                                 }
                                 <p className="text-lg">PLT</p>
+                                {Pbt ?
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setPbt(false)
+                                            setPlt(false)
+                                        }}
+                                        className="w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                    >
+                                        <TbCheck />
+                                    </button>
+                                    :
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setPbt(true)
+                                            setPlt(false)
+                                        }}
+                                        className="w-[20px] h-[20px] border border-black rounded-full"
+                                    ></button>
+                                }
+                                <p className="text-lg">PBT</p>
                             </div>
                         </label>
                         <Controller
