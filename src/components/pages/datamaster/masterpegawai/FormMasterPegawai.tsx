@@ -69,7 +69,7 @@ export const FormMasterPegawai = () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const formData = {
             //key : value
-            nama_pegawai: `${data.nama_pegawai} ${Plt ? '(PLT)' : ''}`,
+            nama_pegawai: `${data.nama_pegawai} ${Plt ? '(PLT)' : ''} ${Pbt ? "(PBT)" : ""}`,
             nip: `${Plt ? `${data.nip}_plt` : Pbt ? `${data.nip}_pbt` : data.nip}`,
             kode_opd: data.kode_opd?.value,
         };
