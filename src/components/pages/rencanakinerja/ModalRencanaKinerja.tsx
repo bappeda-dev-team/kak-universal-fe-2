@@ -329,7 +329,7 @@ export const ModalRencanaKinerja: React.FC<ModalProps> = ({ isOpen, onClose, id,
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         try {
             setIsLoading(true);
-            const response = await fetch(`${API_URL}/rencana_kinerja_pokin/pokin_by_pelaksana/${pegawai_id}/${tahun}`, {
+            const response = await fetch(`${API_URL}/rencana_kinerja_pokin/pokin_by_pelaksana/${nip}/${tahun}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `${token}`,
