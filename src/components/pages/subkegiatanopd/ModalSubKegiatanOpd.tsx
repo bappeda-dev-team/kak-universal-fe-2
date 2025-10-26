@@ -33,7 +33,7 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
 
     const { control, handleSubmit, reset } = useForm<FormValue>();
 
-    const [SubKegiatan, setSubKegiatan] = useState<OptionTypeString | null>(null);
+    const [SubKegiatan, setSubKegiatan] = useState<OptionTypeString[]>([]);
     const [OptionSubKegiatan, setOptionSubKegiatan] = useState<OptionTypeString[]>([]);
 
     const [LoadingOption, setLoadingOption] = useState<boolean>(false);
@@ -41,7 +41,7 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
     const token = getToken();
 
     const handleClose = () => {
-        setSubKegiatan(null);
+        setSubKegiatan([]);
         onClose();
     };
 
@@ -74,14 +74,14 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const sk = SubKegiatan.map(item => item.value);
         const formData = {
             //key : value
-            kode_subkegiatan: SubKegiatan?.value,
+            kode_subkegiatan: sk,
             kode_opd: kode_opd,
             tahun: tahun,
         };
         // console.log(formData);
-        // console.log("endpoint", endpoint);
         try {
             setProses(true);
             const response = await fetch(`${API_URL}/subkegiatanopd/create`, {
@@ -94,7 +94,7 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
             });
             const result = await response.json();
             if (result.code === 200 || result.code === 201) {
-                AlertNotification("Berhasil", "Berhasil menambahkan Sub Kegiatan OPD", "success", 1000);
+                AlertNotification("Berhasil", `${result.data.message || "Berhasil menambahkan sub kegiatan untuk opd"}`, "success", 1000);
                 onClose();
                 onSuccess();
             } else {
@@ -114,7 +114,7 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
     return (
         <div className="fixed inset-0 flex items-center justify-center z-10">
             <div className="fixed inset-0 bg-black opacity-30" onClick={handleClose}></div>
-            <div className="bg-white rounded-lg p-8 z-10 w-3/5 text-start">
+            <div className="bg-white rounded-lg p-8 z-10 w-3/5 max-h-[80%] text-start">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="w-max-[500px] py-2 border-b font-bold text-center">
                         Tambah Sub Kegiatan OPD
@@ -138,21 +138,22 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
                                         isLoading={LoadingOption}
                                         isSearchable
                                         isClearable
+                                        isMulti
                                         value={SubKegiatan}
                                         onMenuOpen={() => {
                                             fetchOptionSubKegiatan();
                                         }}
                                         onChange={(option) => {
                                             field.onChange(option);
-                                            setSubKegiatan(option);
+                                            setSubKegiatan(option as OptionTypeString[]);
                                         }}
                                         styles={{
                                             control: (baseStyles) => ({
                                                 ...baseStyles,
                                                 borderRadius: '8px',
                                             }),
-                                            menuPortal: (base) => ({ 
-                                                ...base, zIndex: 9999 
+                                            menuPortal: (base) => ({
+                                                ...base, zIndex: 9999
                                             })
                                         }}
                                     />
