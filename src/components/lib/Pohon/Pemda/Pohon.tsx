@@ -535,10 +535,10 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                                         </button>
                                                         <ButtonBlack
                                                             className='flex justify-center items-center gap-1'
-                                                            // onClick={() => setIsClone(true)}
-                                                            onClick={() => {
-                                                                AlertNotification("Fitur dalam perbaikan", "", "warning", 3000);
-                                                            }}
+                                                            onClick={() => setIsClone(true)}
+                                                            // onClick={() => {
+                                                            //     AlertNotification("Fitur dalam perbaikan", "", "warning", 3000);
+                                                            // }}
                                                         >
                                                             <TbCopy />
                                                             Clone

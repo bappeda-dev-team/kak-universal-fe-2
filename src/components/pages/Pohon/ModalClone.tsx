@@ -65,22 +65,33 @@ export const ModalClone: React.FC<modal> = ({ isOpen, onClose, onSuccess, id, ta
 
     const clonePokin = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const formData = {
+        const formDataOpd = {
             //key : value
             kode_opd: kode_opd,
             tahun_sumber: String(tahun),
             tahun_tujuan: TahunTarget?.value,
         };
-        console.log(formData);
+        const formDataPemda = {
+            //key : value
+            tahun_target: TahunTarget?.value,
+        };
+        // console.log(formDataOpd);
+        // console.log(formDataPemda);
         try {
             setProses(true);
-            const response = await fetch(`${API_URL}/pohon_kinerja_opd/clone`, {
+            const response = await fetch(`
+                    ${jenis === 'pemda' ? 
+                        `${API_URL}/clone_pokin_pemda/${id}`
+                        :
+                        `${API_URL}/pohon_kinerja_opd/clone`
+                    }
+                `, {
                 method: "POST",
                 headers: {
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(jenis === "pemda" ? formDataPemda : formDataOpd),
             });
             const result = await response.json();
             if (result.code === 200 || result.code === 201) {
