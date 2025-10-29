@@ -76,7 +76,7 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                 if (result.code === 200) {
                     setData(result.data);
                     setError(false);
-                } else if (result.code) {
+                } else if (result.code === 401) {
                     AlertNotification("Login Kembali", "", "warning", 2000);
                     router.push('/login');
                 } else {
@@ -92,7 +92,7 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
             }
         }
         fetchRenja();
-    }, [kode_opd, tahun, token])
+    }, [kode_opd, tahun, token, router])
 
 
     if (Loading) {
