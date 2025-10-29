@@ -9,7 +9,7 @@ import { useBrandingContext } from "@/context/BrandingContext";
 import { useRouter } from "next/navigation";
 import { AlertNotification } from "@/components/global/Alert";
 
-interface TargetOpd {
+interface Target {
     id: string;
     indikator_id: string;
     tahun: string;
@@ -17,24 +17,32 @@ interface TargetOpd {
     satuan: string;
 }
 
-interface IndikatorOpd {
+interface Indikator {
     id: string;
     id_tujuan_opd: number;
     indikator: string;
     rumus_perhitungan: string;
     sumber_data: string;
-    target: TargetOpd[];
+    target: Target[];
 }
 
 interface TujuanOpd {
     id_tujuan_opd: number;
-    kode_opd: string;
-    nama_opd: string;
     tujuan: string;
     tahun_awal: string;
     tahun_akhir: string;
     jenis_periode: string;
-    indikator: IndikatorOpd[];
+    indikator: Indikator[];
+}
+
+interface Tujuan {
+    kode_urusan: string;
+    urusan: string;
+    kode_bidang_urusan: string;
+    nama_bidang_urusan: string;
+    kode_opd: string;
+    nama_opd: string;
+    tujuan_opd: TujuanOpd[];
 }
 
 interface Table {
@@ -45,7 +53,7 @@ interface Table {
 const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
 
     const { branding } = useBrandingContext();
-    const [Data, setData] = useState<TujuanOpd[]>([]);
+    const [Data, setData] = useState<Tujuan[]>([]);
     const [Error, setError] = useState<boolean | null>(null);
     const [DataNull, setDataNull] = useState<boolean | null>(null);
 
@@ -130,65 +138,58 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                 </td>
                             </tr>
                             :
-                            Data.map((item: TujuanOpd, index: number) => (
-                                <React.Fragment key={index}>
-                                    <tr>
-                                        <td rowSpan={item.indikator ? item.indikator.length + 1 : 2} className="border-x border-b border-emerald-500 py-4 px-3 text-center">
-                                            {index + 1}
-                                        </td>
-                                        <td rowSpan={item.indikator ? item.indikator.length + 1 : 2} className="border-r border-b border-emerald-500 px-6 py-4">
-                                            urusan & bidang urusan
-                                        </td>
-                                        <td rowSpan={item.indikator ? item.indikator.length + 1 : 2} className="border-r border-b border-emerald-500 px-6 py-4">
-                                            {item.tujuan || "-"}
-                                        </td>
-                                    </tr>
-                                    {item.indikator ?
-                                        item.indikator.map((i: IndikatorOpd, sub_index: number) => (
-                                            <tr key={sub_index}>
-                                                <td className="border-r border-b border-emerald-500 px-6 py-4">
-                                                    {i.indikator || "-"}
-                                                </td>
-                                                <td className="border-r border-b border-emerald-500 px-6 py-4">
-                                                    {i.rumus_perhitungan || "-"}
-                                                </td>
-                                                <td className="border-r border-b border-emerald-500 px-6 py-4">
-                                                    {i.sumber_data || "-"}
-                                                </td>
-                                                {i.target ?
-                                                    i.target.map((t: TargetOpd, subs_index: number) => (
-                                                        <React.Fragment key={subs_index}>
-                                                            <td className="border-r border-b border-emerald-500 px-6 py-4">
-                                                                {t.target || "-"}
-                                                            </td>
-                                                            <td className="border-r border-b border-emerald-500 px-6 py-4">
-                                                                {t.satuan || "-"}
-                                                            </td>
-                                                        </React.Fragment>
-                                                    ))
-                                                    :
-                                                    <>
-                                                        <td className="border-r border-b border-emerald-500 px-6 py-4">
-                                                            -
-                                                        </td>
-                                                        <td className="border-r border-b border-emerald-500 px-6 py-4">
-                                                            -
-                                                        </td>
-                                                    </>
-                                                }
-                                            </tr>
-                                        ))
-                                        :
+                            Data.map((item: Tujuan, index: number) => {
+                                const TotalRow = item.tujuan_opd.reduce((total, item) => total + (item.indikator.length === 0 ? 1 : item.indikator.length), 0) + item.tujuan_opd.length + 1;
+                                return (
+                                    <React.Fragment key={index}>
                                         <tr>
-                                            <td className="border-r border-b border-emerald-500 px-6 py-4">-</td>
-                                            <td className="border-r border-b border-emerald-500 px-6 py-4">-</td>
-                                            <td className="border-r border-b border-emerald-500 px-6 py-4">-</td>
-                                            <td className="border-r border-b border-emerald-500 px-6 py-4">-</td>
-                                            <td className="border-r border-b border-emerald-500 px-6 py-4">-</td>
+                                            <td rowSpan={TotalRow} className="border-x border-b border-emerald-500 py-4 px-3 text-center">
+                                                {index + 1}
+                                            </td>
+                                            <td rowSpan={TotalRow} className="border-r border-b border-emerald-500 px-6 py-4">
+                                                <div className="flex flex-col gap-2">
+                                                    <p className="border-b border-emerald-500 pb-2">{item.urusan ? `${item.kode_urusan} - ${item.urusan}` : "-"}</p>
+                                                    <p>{item.kode_bidang_urusan ? `${item.kode_bidang_urusan} - ${item.nama_bidang_urusan}` : "-"}</p>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    }
-                                </React.Fragment>
-                            ))
+                                        {item.tujuan_opd.map((item: TujuanOpd) => (
+                                            <React.Fragment key={item.id_tujuan_opd}>
+                                                <tr>
+                                                    <td className="border-x border-b border-emerald-500 px-6 py-6 h-full" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                        <p className="flex min-h-[100px] bg-white items-center">
+                                                            {item.tujuan || "-"}
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                                {/* INDIKATOR */}
+                                                {item.indikator.length === 0 ? (
+                                                    <React.Fragment>
+                                                        <tr>
+                                                            <td colSpan={30} className="border-x border-b border-emerald-500 px-6 py-6 bg-yellow-500 text-white">indikator tujuan opd belum di tambahkan</td>
+                                                        </tr>
+                                                    </React.Fragment>
+                                                ) : (
+                                                    item.indikator.map((i: Indikator) => (
+                                                        <tr key={i.id}>
+                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">{i.indikator || "-"}</td>
+                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">{i.rumus_perhitungan || "-"}</td>
+                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">{i.sumber_data || "-"}</td>
+                                                            {i.target.map((t: Target) => (
+                                                                <React.Fragment key={t.id}>
+                                                                    <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.target || "-"}</td>
+                                                                    <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.satuan || "-"}</td>
+                                                                </React.Fragment>
+                                                            ))}
+                                                        </tr>
+                                                    ))
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+
+                                    </React.Fragment>
+                                )
+                            })
                         }
                     </tbody>
                 </table>
