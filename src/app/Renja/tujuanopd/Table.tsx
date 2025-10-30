@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
-import { getOpdTahun } from "@/components/lib/Cookie";
-import { TahunNull } from "@/components/global/OpdTahunNull";
+import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { useRouter } from "next/navigation";
@@ -104,11 +103,21 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
     } else if (Error) {
         return (
             <div className="border p-5 rounded-xl shadow-xl">
-                <h1 className="text-red-500 font-bold mx-5 py-5">Periksa koneksi internet atau database server</h1>
+                <h1 className="text-red-500 font-bold mx-5 py-5">Error, Periksa koneksi internet atau database server, jika error masih berlanjut hubungi tim developer</h1>
             </div>
         )
     } else if (branding?.tahun?.value == undefined) {
         return <TahunNull />
+    } else if (branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') {
+        if (branding?.opd?.value == undefined) {
+            return (
+                <>
+                    <div className="flex flex-col p-5 border-b-2 border-x-2 rounded-b-xl">
+                        <OpdTahunNull />
+                    </div>
+                </>
+            )
+        }
     }
 
     return (

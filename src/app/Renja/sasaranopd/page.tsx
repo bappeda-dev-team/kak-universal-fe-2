@@ -4,7 +4,7 @@ import { FiHome } from "react-icons/fi";
 import Table from "./Table";
 import { useBrandingContext } from "@/context/BrandingContext";
 
-const TujuanPemda = () => {
+const SasaranOpd = () => {
 
     const { branding } = useBrandingContext();
 
@@ -36,4 +36,4 @@ const TujuanPemda = () => {
     )
 }
 
-export default TujuanPemda;
+export default SasaranOpd;
