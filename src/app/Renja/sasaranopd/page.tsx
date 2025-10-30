@@ -2,23 +2,11 @@
 
 import { FiHome } from "react-icons/fi";
 import Table from "./Table";
-import { getOpdTahun } from "@/components/lib/Cookie";
-import { useState, useEffect } from "react";
+import { useBrandingContext } from "@/context/BrandingContext";
 
-const SasaranOpd = () => {
+const TujuanPemda = () => {
 
-    const [Tahun, setTahun] = useState<any>(null);
-
-    useEffect(() => {
-        const data = getOpdTahun();
-        if (data.tahun) {
-            const tahun = {
-                value: data.tahun.value,
-                label: data.tahun.label
-            }
-            setTahun(tahun);
-        }
-    }, []);
+    const { branding } = useBrandingContext();
 
     return (
         <>
@@ -29,16 +17,23 @@ const SasaranOpd = () => {
                 <p className="mr-1">/ Sasaran OPD</p>
             </div>
             <div className="mt-3 rounded-xl shadow-lg border">
-                <div className="flex items-center justify-between border-b px-5 py-5">
-                    <div className="flex flex-wrap items-end">
-                        <h1 className="uppercase font-bold">Sasaran OPD</h1>
-                        <h1 className="uppercase font-bold ml-1">{Tahun ? Tahun?.label : ""}</h1>
-                    </div>
+                <div className="flex flex-wrap items-center justify-between border-b px-5 py-5">
+                    <h1 className="font-bold text-lg uppercase">Renja - Sasaran OPD {branding?.tahun?.label || ''}</h1>
+                    {(branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') ?
+                        <h1 className="text-sm">{branding?.opd?.label || ''}</h1>
+                        :
+                        <div className="">
+                            <h1 className="text-sm">{branding?.user?.nama_opd || ''}</h1>
+                        </div>
+                    }
                 </div>
-                <Table />
+                <Table 
+                    kode_opd={(branding?.user?.roles == "super_admin" || branding?.user?.roles == 'reviewer') ? branding?.opd?.value : branding?.user?.kode_opd}
+                    tahun={branding?.tahun?.value || 0}
+                />
             </div>
         </>
     )
 }
 
-export default SasaranOpd;
+export default TujuanPemda;

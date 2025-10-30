@@ -2,24 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { FiHome } from "react-icons/fi";
-// import Table from "./Table";
+import { TableRenja } from "./Table";
 import Maintenance from "@/components/global/Maintenance";
 import { getOpdTahun } from "@/components/lib/Cookie";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 const MatrixRenja = () => {
 
-    const [Tahun, setTahun] = useState<any>(null);
-
-    useEffect(() => {
-        const data = getOpdTahun();
-        if(data.tahun){
-            const tahun = {
-                value: data.tahun.value,
-                label: data.tahun.label
-            }
-            setTahun(tahun);
-        }
-    }, []);
+    const { branding } = useBrandingContext();
+    const opd = (branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') ? branding?.opd?.value : branding?.user?.kode_opd
 
     return (
         <>
@@ -30,14 +21,18 @@ const MatrixRenja = () => {
                 <p className="mr-1">/ Matrix Renja</p>
             </div>
             <div className="mt-3 rounded-xl shadow-lg border">
-                <div className="flex items-center justify-between border-b px-5 py-5">
-                    <div className="flex flex-wrap items-end">
-                        <h1 className="uppercase font-bold">Matrix Renja</h1>
-                        <h1 className="uppercase font-bold ml-1">{Tahun? Tahun?.label : ""}</h1>
-                    </div>
+                <div className="flex flex-wrap items-center justify-between border-b px-5 py-5">
+                    <h1 className="font-bold text-lg uppercase">Matrix Renja {branding?.tahun?.label || ''}</h1>
+                    {(branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') ?
+                        <h1 className="text-sm">{branding?.opd?.label || ''}</h1>
+                        :
+                        <div className="">
+                            <h1 className="text-sm">{branding?.user?.nama_opd || ''}</h1>
+                        </div>
+                    }
                 </div>
-                {/* <Table /> */}
-                <Maintenance />
+                <TableRenja tahun={String(branding?.tahun?.value)} jenis="opd" kode_opd={opd} />
+                {/* <Maintenance /> */}
             </div>
         </>
     )
