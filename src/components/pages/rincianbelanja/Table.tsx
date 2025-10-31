@@ -160,27 +160,35 @@ export const TableAsn: React.FC<TableAsn> = ({ tahun, nip }) => {
                             </div>
                             <p className="p-2 bg-green-500 rounded-xl min-w-[200px] text-center text-white">{data.total_anggaran ? `Rp.${formatRupiah(data.total_anggaran)}` : "Rp. 0"}</p>
                         </div>
-                        {data.rincian_belanja.map((r: RincianBelanja, r_index: number) => (
-                            <div key={r_index} className={`flex flex-wrap gap-2 items-center justify-between transition-all duration-300 ease-in-out border-x border-b border-black ${ShowRekin ? 'opacity-100 ml-3 p-3' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                                <div className="flex items-center gap-2 w-full justify-between">
-                                    <div className="flex flex-col items-start gap-2">
-                                        <p className="font-semibold">{index + 1}.{r_index + 1} {r.rencana_kinerja}</p>
-                                        <ButtonBlackBorder
-                                            onClick={() => handleModalIndikator(r.rencana_kinerja, r.indikator)}
-                                            className="flex items-center gap-1"
-                                        >
-                                            <TbEye />
-                                            cek indikator
-                                        </ButtonBlackBorder>
+                        {data.rincian_belanja ? 
+                            data.rincian_belanja?.map((r: RincianBelanja, r_index: number) => (
+                                <div key={r_index} className={`flex flex-wrap gap-2 items-center justify-between transition-all duration-300 ease-in-out border-x border-b border-black ${ShowRekin ? 'opacity-100 ml-3 p-3' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                                    <div className="flex items-center gap-2 w-full justify-between">
+                                        <div className="flex flex-col items-start gap-2">
+                                            <p className="font-semibold">{index + 1}.{r_index + 1} {r.rencana_kinerja}</p>
+                                            <ButtonBlackBorder
+                                                onClick={() => handleModalIndikator(r.rencana_kinerja, r.indikator)}
+                                                className="flex items-center gap-1"
+                                            >
+                                                <TbEye />
+                                                cek indikator
+                                            </ButtonBlackBorder>
+                                        </div>
+                                        <div className="p-2 bg-green-500 rounded-xl min-w-[200px] text-center text-white">Rp. {formatRupiah(r.total_anggaran)}</div>
                                     </div>
-                                    <div className="p-2 bg-green-500 rounded-xl min-w-[200px] text-center text-white">Rp. {formatRupiah(r.total_anggaran)}</div>
+                                    <TableRekinAsn
+                                        renaksi={r.rencana_aksi}
+                                        fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                    />
                                 </div>
-                                <TableRekinAsn
-                                    renaksi={r.rencana_aksi}
-                                    fetchTrigger={() => setFetchTrigger((prev) => !prev)}
-                                />
-                            </div>
-                        ))}
+                            ))
+                        :
+                                <div className={`flex flex-wrap gap-2 items-center justify-between transition-all duration-300 ease-in-out border-x border-b border-black ${ShowRekin ? 'opacity-100 ml-3 p-3' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                                    <div className="flex items-center gap-2 w-full justify-between">
+                                        <p className="text-red-500 font-bold">Rencana Kinerja Belum Di Tambahkan</p>
+                                    </div>
+                                </div>
+                        }
                     </React.Fragment>
                 ))
             }
