@@ -2,11 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
-import { getOpdTahun } from "@/components/lib/Cookie";
 import { TahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
-import { TbCircleX, TbCircleCheck } from "react-icons/tb";
 
 const Table = () => {
 
@@ -46,6 +44,12 @@ const Table = () => {
                             <th className="border-r border-b px-6 py-3 w-[200px]">Jumlah Pokin</th>
                             <th className="border-r border-b px-6 py-3 w-[200px]">Jumlah Pelaksana</th>
                             <th className="border-l border-b px-6 py-3 w-[200px]">Jumlah Pokin tanpa Pelaksana</th>
+                            <th className="border-l border-b px-6 py-3 w-[200px]">
+                                <div className="flex flex-col gap-1">
+                                    <p>Persentase</p>
+                                    <p className="text-sm">(Kolom 5 / Kolom 3)</p>
+                                </div>
+                            </th>
                         </tr>
                         <tr className="bg-orange-700 text-white">
                             <th className="border-r border-b px-2 py-1 text-center">1</th>
@@ -53,6 +57,7 @@ const Table = () => {
                             <th className="border-r border-b px-2 py-1 w-[200px]">3</th>
                             <th className="border-r border-b px-2 py-1 w-[200px]">4</th>
                             <th className="border-l border-b px-2 py-1 w-[200px]">5</th>
+                            <th className="border-l border-b px-2 py-1 w-[200px]">6</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,6 +77,9 @@ const Table = () => {
                             <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
                                 -
                             </td>
+                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                0%
+                            </td>
                         </tr>
                         <tr>
                             <td className="border-x border-b border-orange-500 py-4 px-3 text-center">
@@ -88,6 +96,9 @@ const Table = () => {
                             </td>
                             <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
                                 -
+                            </td>
+                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                0%
                             </td>
                         </tr>
                         <tr>
@@ -106,6 +117,9 @@ const Table = () => {
                             <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
                                 -
                             </td>
+                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                0%
+                            </td>
                         </tr>
                         <tr>
                             <td className="border-x border-b border-orange-500 py-4 px-3 text-center">
@@ -123,13 +137,25 @@ const Table = () => {
                             <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
                                 -
                             </td>
+                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                0%
+                            </td>
                         </tr>
                         <tr className="bg-orange-500 text-white">
-                            <td colSpan={2} className="border-x border-r border-b border-white px-6 py-4 font-bold">
-                                Persentase
+                            <td colSpan={2} className="border-r border-l border-r-white border-l-orange-500 px-6 py-4 font-bold">
+                                Total
                             </td>
-                            <td colSpan={3} className="border-r border-b border-white px-6 py-4 text-center">
-                                (Kolom 5 / Kolom 3) = 100 %
+                            <td className="text-center border-r border-white px-6 py-4 font-bold">
+                                -
+                            </td>
+                            <td className="text-center border-r border-white px-6 py-4 font-bold">
+                                -
+                            </td>
+                            <td className="text-center border-r border-white px-6 py-4 font-bold">
+                                -
+                            </td>
+                            <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
+                                0%
                             </td>
                         </tr>
                     </tbody>
