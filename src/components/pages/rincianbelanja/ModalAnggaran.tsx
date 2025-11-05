@@ -59,8 +59,8 @@ export const ModalAnggaran: React.FC<modal> = ({ isOpen, onClose, nama_renaksi, 
             if (metode === "baru") return formDataNew;
             return {}; // Default jika metode tidak sesuai
         };
-        if (Anggaran === 0 || Anggaran === null) {
-            AlertNotification("Anggaran tidak boleh 0", "", "warning", 3000);
+        if (Anggaran === null) {
+            AlertNotification("Anggaran tidak boleh kosong", "", "warning", 3000);
         } else {
             // metode === 'baru' && console.log("baru :", formDataNew);
             // metode === 'lama' && console.log("lama :", formDataEdit);
