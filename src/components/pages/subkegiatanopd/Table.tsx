@@ -72,7 +72,7 @@ const Table: React.FC<table> = ({ tahun, opd }) => {
 
     const handleModal = (jenis: "opd" | "all") => {
         if(ModalTambah){
-            setJenisModal("all");
+            setJenisModal("opd");
             setModalTambah(false);
         } else {
             setJenisModal(jenis);
@@ -122,15 +122,15 @@ const Table: React.FC<table> = ({ tahun, opd }) => {
                     onClick={() => handleModal("opd")}
                 >
                     <TbCirclePlus />
-                    Tambah Sub Kegiatan OPD (didalam opd)
+                    Tambah Sub Kegiatan OPD
                 </ButtonSkyBorder>
-                <ButtonGreenBorder 
+                {/* <ButtonGreenBorder 
                     className="m-2 flex items-center gap-1"
                     onClick={() => handleModal("all")}
                 >
                     <TbCirclePlus />
                     Tambah Sub Kegiatan OPD (diluar opd)
-                </ButtonGreenBorder>
+                </ButtonGreenBorder> */}
             </div>
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
