@@ -6,8 +6,9 @@ import { ButtonSky, ButtonRed } from '@/components/global/Button';
 import { AlertNotification } from "@/components/global/Alert";
 import { getToken } from "@/components/lib/Cookie";
 import Select from 'react-select';
-import { LoadingClip, LoadingButtonClip } from "@/components/global/Loading";
+import { LoadingButtonClip } from "@/components/global/Loading";
 import { TbCirclePlus, TbCircleX } from "react-icons/tb";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 interface OptionTypeString {
     value: string,
@@ -20,6 +21,7 @@ interface ModalProps {
     kode_opd: string;
     tahun: string;
     onSuccess: () => void;
+    jenis: "opd" | "all"; 
 }
 
 interface FormValue {
@@ -29,7 +31,7 @@ interface FormValue {
     keterangan: string;
 }
 
-export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kode_opd, tahun, onSuccess }) => {
+export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kode_opd, tahun, jenis, onSuccess }) => {
 
     const { control, handleSubmit, reset } = useForm<FormValue>();
 
@@ -39,17 +41,18 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
     const [LoadingOption, setLoadingOption] = useState<boolean>(false);
     const [Proses, setProses] = useState<boolean>(false);
     const token = getToken();
+    const {branding} = useBrandingContext();
 
     const handleClose = () => {
         setSubKegiatan([]);
+        setOptionSubKegiatan([]);
         onClose();
     };
 
-    const fetchOptionSubKegiatan = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    const fetchOptionSubKegiatan = async (url: string) => {
         setLoadingOption(true);
         try {
-            const response = await fetch(`${API_URL}/subkegiatanopd/bidangurusan/${kode_opd}`, {
+            const response = await fetch(`${url}`, {
                 headers: {
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
@@ -59,12 +62,21 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
                 throw new Error('error fetch option master sub kegiatan dengan response !ok');
             }
             const result = await response.json();
-            const hasil = result.data;
-            const data = hasil.map((item: any) => ({
-                value: item.kode_subkegiatan,
-                label: `${item.kode_subkegiatan} - ${item.nama_sub_kegiatan}`,
-            }));
-            setOptionSubKegiatan(data);
+            if(jenis === "all"){
+                const hasil = result.sub_kegiatan;
+                const data = hasil.map((item: any) => ({
+                    value: item.kode_subkegiatan,
+                    label: `${item.kode_subkegiatan} - ${item.nama_sub_kegiatan}`,
+                }));
+                setOptionSubKegiatan(data);
+            } else {
+                const hasil = result.data;
+                const data = hasil.map((item: any) => ({
+                    value: item.kode_subkegiatan,
+                    label: `${item.kode_subkegiatan} - ${item.nama_sub_kegiatan}`,
+                }));
+                setOptionSubKegiatan(data);
+            }
         } catch (err) {
             console.log('error saat fetch option Master Sub Kegaitan', err);
         } finally {
@@ -117,7 +129,7 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
             <div className="bg-white rounded-lg p-8 z-10 w-3/5 max-h-[80%] text-start">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="w-max-[500px] py-2 border-b font-bold text-center">
-                        Tambah Sub Kegiatan OPD
+                        Tambah Sub Kegiatan OPD {jenis === "all" ? "(Semua OPD)":""}
                     </div>
                     <div className="flex flex-col py-3">
                         <label
@@ -141,7 +153,11 @@ export const ModalSubKegiatanOpd: React.FC<ModalProps> = ({ isOpen, onClose, kod
                                         isMulti
                                         value={SubKegiatan}
                                         onMenuOpen={() => {
-                                            fetchOptionSubKegiatan();
+                                            if(jenis === "opd"){
+                                                fetchOptionSubKegiatan(`${branding?.api_perencanaan}/subkegiatanopd/bidangurusan/${kode_opd}`);
+                                            } else {
+                                                fetchOptionSubKegiatan(`${branding?.api_perencanaan}/sub_kegiatan/findall`);
+                                            }
                                         }}
                                         onChange={(option) => {
                                             field.onChange(option);
