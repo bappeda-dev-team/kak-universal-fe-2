@@ -6,16 +6,73 @@ import { TahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 
-const Table = () => {
+interface Table {
+    kode_opd: string;
+    tahun: number;
+}
 
-    const { branding } = useBrandingContext();
+interface PokinLevel {
+    level_pohon: number;
+    nama_level: string;
+    jumlah_pokin: number;
+    jumlah_pelaksana: number;
+    jumlah_pokin_tanpa_pelaksana: number;
+    persentase: string;
+}
+
+interface PokinTotal {
+    total_pokin: number;
+    total_pelaksana: number;
+    total_pokin_tanpa_pelaksana: number;
+    persentase: string;
+}
+
+interface Pokin {
+    data: PokinLevel[] | null;
+    total: PokinTotal;
+}
+
+const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
+
+    const [Data, setData] = useState<Pokin | null>(null);
     const [Error, setError] = useState<boolean | null>(null);
-    const [DataNull, setDataNull] = useState<boolean | null>(null);
 
     const [Loading, setLoading] = useState<boolean | null>(null);
-    const [Tahun, setTahun] = useState<any>(null);
     const token = getToken();
+    const { branding } = useBrandingContext();
 
+    useEffect(() => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const fetchIkuOpd = async () => {
+            setLoading(true);
+            setError(false);
+            try {
+                const response = await fetch(`${API_URL}/pohon_kinerja_opd/control_pokin_opd/${kode_opd}/${tahun}`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                if (result.code === 200) {
+                    setData(result.data);
+                } else if (result.code === 401) {
+                    window.location.href = "/login";
+                } else {
+                    setData(null);
+                    setError(true);
+                }
+            } catch (err) {
+                setError(true);
+                console.error(err)
+            } finally {
+                setLoading(false);
+            }
+        }
+        if (tahun != undefined) {
+            fetchIkuOpd();
+        }
+    }, [token, tahun, kode_opd]);
 
     if (Loading) {
         return (
@@ -61,103 +118,60 @@ const Table = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td className="border-x border-b border-orange-500 py-4 px-3 text-center">
-                                1
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-red-400 font-bold">
-                                Strategic
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                0%
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="border-x border-b border-orange-500 py-4 px-3 text-center">
-                                2
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-blue-500 font-bold">
-                                Tactical
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                0%
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="border-x border-b border-orange-500 py-4 px-3 text-center">
-                                3
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-green-500 font-bold">
-                                Operational
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                0%
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="border-x border-b border-orange-500 py-4 px-3 text-center">
-                                4
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-emerald-400 font-bold">
-                                Operational N
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                -
-                            </td>
-                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
-                                0%
-                            </td>
-                        </tr>
-                        <tr className="bg-orange-500 text-white">
-                            <td colSpan={2} className="border-r border-l border-r-white border-l-orange-500 px-6 py-4 font-bold">
-                                Total
-                            </td>
-                            <td className="text-center border-r border-white px-6 py-4 font-bold">
-                                -
-                            </td>
-                            <td className="text-center border-r border-white px-6 py-4 font-bold">
-                                -
-                            </td>
-                            <td className="text-center border-r border-white px-6 py-4 font-bold">
-                                -
-                            </td>
-                            <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
-                                0%
-                            </td>
-                        </tr>
+                        {!Data?.data ?
+                            <tr>
+                                <td className="px-6 py-3" colSpan={30}>
+                                    Data Kosong / Belum Ditambahkan
+                                </td>
+                            </tr>
+                            :
+                            <>
+                                {Data.data.map((item: PokinLevel, index: number) => (
+                                    <tr key={index}>
+                                        <td className="border-x border-b border-orange-500 py-4 px-3 text-center">
+                                            {index + 1}
+                                        </td>
+                                        <td className={`border-r border-b border-orange-500 px-6 py-4 font-bold
+                                                ${item.level_pohon === 4 && "text-red-400"}
+                                                ${item.level_pohon === 5 && "text-blue-400"}
+                                                ${item.level_pohon === 6 && "text-green-400"}
+                                                ${item.level_pohon > 6 && "text-emerald-400"}
+                                            `}>
+                                            {item.nama_level || "-"}
+                                        </td>
+                                        <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                            {item.jumlah_pokin || 0}
+                                        </td>
+                                        <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                            {item.jumlah_pelaksana || 0}
+                                        </td>
+                                        <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                            {item.jumlah_pokin_tanpa_pelaksana || 0}
+                                        </td>
+                                        <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                            {item.persentase || "0%"}
+                                        </td>
+                                    </tr>
+                                ))}
+                                <tr className="bg-orange-600 text-white">
+                                    <td colSpan={2} className="border-r border-l border-r-white border-l-orange-500 px-6 py-4 font-bold">
+                                        Total
+                                    </td>
+                                    <td className="text-center border-r border-white px-6 py-4 font-bold">
+                                        {Data.total.total_pokin || 0}
+                                    </td>
+                                    <td className="text-center border-r border-white px-6 py-4 font-bold">
+                                        {Data.total.total_pelaksana || 0}
+                                    </td>
+                                    <td className="text-center border-r border-white px-6 py-4 font-bold">
+                                        {Data.total.total_pokin_tanpa_pelaksana || 0}
+                                    </td>
+                                    <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
+                                        {Data.total.persentase || "0%"}
+                                    </td>
+                                </tr>
+                            </>
+                        }
                     </tbody>
                 </table>
             </div>
