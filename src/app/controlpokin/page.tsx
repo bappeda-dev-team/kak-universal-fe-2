@@ -40,14 +40,14 @@ const ControlPokin = () => {
                     </div>
                     <div className="flex m-2">
                         {(branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') ?
-                            <Table />
+                            <Table kode_opd={branding?.opd?.value || ""} tahun={branding?.tahun?.value}/>
                             :
                             (branding?.tahun?.value === undefined) ?
                                 <div className="w-full">
                                     <TahunNull />
                                 </div>
                                 :
-                                <Table />
+                                <Table kode_opd={branding?.user?.kode_opd} tahun={branding?.tahun?.value} />
                         }
                     </div>
                 </div>
