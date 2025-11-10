@@ -1,7 +1,5 @@
 'use client'
 
-import { useEffect, useState } from "react";
-import { getOpdTahun, getUser } from "@/components/lib/Cookie";
 import Table from "./Table";
 import { FiHome } from "react-icons/fi";
 import { useBrandingContext } from "@/context/BrandingContext";
@@ -11,15 +9,16 @@ const ControlPokin = () => {
 
     const { branding } = useBrandingContext();
 
-    if(branding?.tahun?.value === undefined || branding?.tahun?.value === null){
-        return(
-            <TahunNull />
-        )
-    } else if((branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') && branding?.opd?.value === undefined){
+    if((branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') && (branding?.opd?.value === undefined || branding?.opd?.value === null)){
         return(
             <OpdNull />
         )
-    } else {
+    } else if(branding?.tahun?.value === undefined || branding?.tahun?.value === null){
+        return(
+            <TahunNull />
+        )
+    } 
+    else {
         return (
             <>
                 <div className="flex items-center">
