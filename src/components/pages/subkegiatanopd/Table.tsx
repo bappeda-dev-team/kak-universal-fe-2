@@ -7,6 +7,7 @@ import { getToken } from "@/components/lib/Cookie";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TbCirclePlus, TbTrash } from "react-icons/tb";
 import { ModalSubKegiatanOpd } from "./ModalSubKegiatanOpd";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 interface subkegiatan {
     id: number;
@@ -29,6 +30,7 @@ const Table: React.FC<table> = ({ tahun, opd }) => {
     const [DataNull, setDataNull] = useState<boolean | null>(null);
     const [JenisModal, setJenisModal] = useState<"opd" | "all">("all");
     const token = getToken();
+    const { branding } = useBrandingContext();
 
     // MODAL & TRIGGER
     const [ModalTambah, setModalTambah] = useState<boolean>(false);
@@ -65,13 +67,13 @@ const Table: React.FC<table> = ({ tahun, opd }) => {
                 setLoading(false);
             }
         }
-        if(tahun && opd){
+        if (tahun && opd) {
             fetchSubKegiatan();
         }
     }, [opd, tahun, fetchTrigger, token]);
 
     const handleModal = (jenis: "opd" | "all") => {
-        if(ModalTambah){
+        if (ModalTambah) {
             setJenisModal("opd");
             setModalTambah(false);
         } else {
@@ -117,20 +119,20 @@ const Table: React.FC<table> = ({ tahun, opd }) => {
     return (
         <>
             <div className="flex flex-wrap items-center gap-1">
-                <ButtonSkyBorder 
+                <ButtonSkyBorder
                     className="m-2 flex items-center gap-1"
                     onClick={() => handleModal("opd")}
                 >
                     <TbCirclePlus />
                     Tambah Sub Kegiatan OPD
                 </ButtonSkyBorder>
-                {/* <ButtonGreenBorder 
+                <ButtonGreenBorder
                     className="m-2 flex items-center gap-1"
                     onClick={() => handleModal("all")}
                 >
                     <TbCirclePlus />
-                    Tambah Sub Kegiatan OPD (diluar opd)
-                </ButtonGreenBorder> */}
+                    Tambah Sub Kegiatan Baru
+                </ButtonGreenBorder>
             </div>
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
@@ -177,7 +179,7 @@ const Table: React.FC<table> = ({ tahun, opd }) => {
                         }
                     </tbody>
                 </table>
-                <ModalSubKegiatanOpd 
+                <ModalSubKegiatanOpd
                     kode_opd={opd}
                     tahun={String(tahun)}
                     isOpen={ModalTambah}
