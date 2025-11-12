@@ -111,6 +111,15 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                         <p className="text-sm">(Kolom 5 / Kolom 3)</p>
                                     </div>
                                 </th>
+                                <th className="border-l border-b px-6 py-3 w-[200px]">Jumlah Rencana Kinerja</th>
+                                <th className="border-l border-b px-6 py-3 w-[200px]">Jumlah Pokin Dengan Rencana Kinerja</th>
+                                <th className="border-l border-b px-6 py-3 w-[200px]">Jumlah Pokin Tanpa Rencana Kinerja</th>
+                                <th className="border-l border-b px-6 py-3 w-[200px]">
+                                    <div className="flex flex-col gap-1">
+                                        <p>Persentase Cascading Kinerja</p>
+                                        <p className="text-sm">(Kolom 9  / Kolom 3)</p>
+                                    </div>
+                                </th>
                             </tr>
                             <tr className="bg-orange-700 text-white">
                                 <th className="border-r border-b px-2 py-1 text-center">1</th>
@@ -120,6 +129,10 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                 <th className="border-l border-b px-2 py-1 text-center">5</th>
                                 <th className="border-l border-b px-2 py-1 text-center">6</th>
                                 <th className="border-l border-b px-2 py-1 text-center">7</th>
+                                <th className="border-l border-b px-2 py-1 text-center">8</th>
+                                <th className="border-l border-b px-2 py-1 text-center">9</th>
+                                <th className="border-l border-b px-2 py-1 text-center">10</th>
+                                <th className="border-l border-b px-2 py-1 text-center">11</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -159,6 +172,18 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                             <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
                                                 {item.persentase || "0%"}
                                             </td>
+                                            <td className="border-r border-b border-orange-500 bg-orange-100 px-6 py-4 text-center">
+                                                -
+                                            </td>
+                                            <td className="border-r border-b border-orange-500 bg-orange-100 px-6 py-4 text-center">
+                                                -
+                                            </td>
+                                            <td className="border-r border-b border-orange-500 bg-orange-100 px-6 py-4 text-center">
+                                                -
+                                            </td>
+                                            <td className="border-r border-b border-orange-500 bg-orange-100 px-6 py-4 text-center">
+                                                0%
+                                            </td>
                                         </tr>
                                     ))}
                                     <tr className="bg-orange-600 text-white">
@@ -179,6 +204,18 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                         </td>
                                         <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
                                             {Data.total.persentase || "0%"}
+                                        </td>
+                                        <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
+                                            -
+                                        </td>
+                                        <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
+                                            -
+                                        </td>
+                                        <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
+                                            -
+                                        </td>
+                                        <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
+                                            0%
                                         </td>
                                     </tr>
                                 </>
