@@ -105,16 +105,16 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                 <th className="border-r border-b px-6 py-3 w-[200px]">Jumlah Pelaksana</th>
                                 <th className="border-l border-b px-6 py-3 w-[200px]">Jumlah Pokin Dengan Pelaksana</th>
                                 <th className="border-l border-b px-6 py-3 w-[200px]">Jumlah Pokin Tanpa Pelaksana</th>
-                                <th className="border-l border-b px-6 py-3 w-[200px]">
+                                <th className="border-l border-b px-6 py-3 min-w-[200px]">
                                     <div className="flex flex-col gap-1">
-                                        <p>Persentase</p>
+                                        <p>Persentase Pokin Dengan Pelaksana</p>
                                         <p className="text-sm">(Kolom 5 / Kolom 3)</p>
                                     </div>
                                 </th>
                                 <th className="border-l border-b px-6 py-3 w-[200px]">Jumlah Rencana Kinerja</th>
                                 <th className="border-l border-b px-6 py-3 w-[200px]">Jumlah Pokin Dengan Rencana Kinerja</th>
                                 <th className="border-l border-b px-6 py-3 w-[200px]">Jumlah Pokin Tanpa Rencana Kinerja</th>
-                                <th className="border-l border-b px-6 py-3 w-[200px]">
+                                <th className="border-l border-b px-6 py-3 min-w-[200px]">
                                     <div className="flex flex-col gap-1">
                                         <p>Persentase Cascading Kinerja</p>
                                         <p className="text-sm">(Kolom 9  / Kolom 3)</p>
