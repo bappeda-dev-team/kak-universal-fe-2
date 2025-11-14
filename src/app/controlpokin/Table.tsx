@@ -12,21 +12,29 @@ interface Table {
 }
 
 interface PokinLevel {
+    jumlah_pelaksana: number;
+    jumlah_pokin: number;
+    jumlah_pokin_ada_pelaksana: number;
+    jumlah_pokin_ada_rekin: number;
+    jumlah_pokin_tanpa_pelaksana: number;
+    jumlah_pokin_tanpa_rekin: number;
+    jumlah_rencana_kinerja: number;
     level_pohon: number;
     nama_level: string;
-    jumlah_pokin: number;
-    jumlah_pelaksana: number;
-    jumlah_pokin_ada_pelaksana: number;
-    jumlah_pokin_tanpa_pelaksana: number;
     persentase: string;
+    persentase_cascading: string;
 }
 
 interface PokinTotal {
-    total_pokin: number;
-    total_pelaksana: number;
-    total_pokin_tanpa_pelaksana: number;
-    total_pokin_ada_pelaksana: number;
     persentase: string;
+    persentase_cascading: string;
+    total_pelaksana: number;
+    total_pokin: number;
+    total_pokin_ada_pelaksana: number;
+    total_pokin_ada_rekin: number;
+    total_pokin_tanpa_pelaksana: number;
+    total_pokin_tanpa_rekin: number;
+    total_rencana_kinerja: number;
 }
 
 interface Pokin {
@@ -90,7 +98,7 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
         )
     } else if (branding?.tahun?.value === undefined) {
         return <TahunNull />
-    } else if(branding?.user?.roles == "super_admin" && (branding?.opd?.value === null || branding?.opd?.value === undefined)) {
+    } else if (branding?.user?.roles == "super_admin" && (branding?.opd?.value === null || branding?.opd?.value === undefined)) {
         return <OpdNull />
     } else {
         return (
@@ -173,16 +181,16 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                                 {item.persentase || "0%"}
                                             </td>
                                             <td className="border-r border-b border-orange-500 bg-orange-100 px-6 py-4 text-center">
-                                                -
+                                                {item.jumlah_rencana_kinerja || 0}
                                             </td>
                                             <td className="border-r border-b border-orange-500 bg-orange-100 px-6 py-4 text-center">
-                                                -
+                                                {item.jumlah_pokin_ada_rekin || 0}
                                             </td>
                                             <td className="border-r border-b border-orange-500 bg-orange-100 px-6 py-4 text-center">
-                                                -
+                                                {item.jumlah_pokin_tanpa_rekin || 0}
                                             </td>
                                             <td className="border-r border-b border-orange-500 bg-orange-100 px-6 py-4 text-center">
-                                                0%
+                                                {item.persentase_cascading || "0%"}
                                             </td>
                                         </tr>
                                     ))}
@@ -206,16 +214,16 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                             {Data.total.persentase || "0%"}
                                         </td>
                                         <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
-                                            -
+                                            {Data.total.total_rencana_kinerja || 0}
                                         </td>
                                         <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
-                                            -
+                                            {Data.total.total_pokin_ada_rekin || 0}
                                         </td>
                                         <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
-                                            -
+                                            {Data.total.total_pokin_tanpa_rekin || 0}
                                         </td>
                                         <td className="text-center border-r border-orange-500 px-6 py-4 font-bold">
-                                            0%
+                                            {Data.total.persentase_cascading || "0%"}
                                         </td>
                                     </tr>
                                 </>
