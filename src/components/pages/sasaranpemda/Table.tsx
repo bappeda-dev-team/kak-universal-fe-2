@@ -44,12 +44,14 @@ interface SubTematik {
     jenis_pohon: string;
     level_pohon: number;
     is_active: boolean;
+    tahun: string;
     sasaran_pemda: SasaranPemda[];
 }
 
 interface Sasaran {
     tematik_id: number;
     nama_tematik: string;
+    tahun: string;
     subtematik: SubTematik[];
 }
 
@@ -249,9 +251,9 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                                 onClick={() => handleShow(data.tematik_id)}
                             >
                                 {isActiveTematik ? 
-                                    <h1 className="font-semibold">Tematik - {data.nama_tematik}</h1>
+                                    <h1 className="font-semibold">Tematik - {data.nama_tematik} ({data.tahun})</h1>
                                     :
-                                    <h1 className="font-semibold text-red-400">Tematik - {data.nama_tematik} - NON AKTIF</h1>
+                                    <h1 className="font-semibold text-red-400">Tematik - {data.nama_tematik} ({data.tahun}) - NON AKTIF</h1>
                                 }
                                 <div className="flex items-center">
                                     <TbArrowBadgeDownFilled className={`transition-all duration-200 ease-in-out text-3xl ${isShown ? "" : "-rotate-90"}`} />
@@ -307,7 +309,7 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                                                                     {index + 1}
                                                                 </td>
                                                                 <td className="border border-emerald-500 px-6 py-4" rowSpan={sasaranLength + (indikatorLength === 0 ? 1 : indikatorLength)}>
-                                                                    <p>{item.nama_subtematik}</p>
+                                                                    <p>{item.nama_subtematik} ({item.tahun})</p>
                                                                     <div className="flex flex-col justify-between gap-2 h-full">
                                                                         <p className="uppercase text-emerald-500 text-xs">{item.jenis_pohon}</p>
                                                                         {item.is_active === false ? 
