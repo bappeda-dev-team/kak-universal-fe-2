@@ -253,7 +253,7 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                                             </td>
                                             <td className="border-r border-b border-emerald-500 px-6 py-4" rowSpan={data.tujuan_pemda.length === 0 ? 2 : TotalRow}>
                                                 <div className="flex flex-col gap-2">
-                                                    {data.nama_tematik || "-"}
+                                                    {data.nama_tematik || "-"} - {data.tahun_pokin}
                                                     <div className="flex items center gap-1 border-t border-emerald-500 pt-3">
                                                         <div className="flex flex-col justify-between  gap-2 h-full w-full">
                                                             {data.is_active === false ? 
