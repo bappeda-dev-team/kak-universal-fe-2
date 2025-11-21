@@ -850,6 +850,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Control Pokin</span>
               </li>
             </Link>
+            <Link href="/leaderboardrekin">
+              <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/controlpokin" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <TbChartBar className="text-xl" />
+                <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Leaderboard Rekin</span>
+              </li>
+            </Link>
             {/* LABEL LAPORAN REVIEW */}
             <li
               className="flex justify-between items-center gap-x-2 cursor-pointer p-2 hover:bg-slate-500 rounded-xl transition-all duration-300 ease-in-out"
