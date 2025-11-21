@@ -84,9 +84,9 @@ const Table: React.FC<Table> = ({ tahun }) => {
                         <thead>
                             <tr className="bg-orange-500 text-white">
                                 <th className="border-r border-b px-6 py-3 text-center">No</th>
-                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Perangkat Daerah</th>
-                                <th className="border-r border-b px-6 py-3 w-[200px]">Tema</th>
-                                <th className="border-r border-b px-6 py-3 w-[200px]">Persentase Cascading</th>
+                                <th className="border-r border-b px-6 py-3 w-[350px]">Perangkat Daerah</th>
+                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Tema</th>
+                                <th className="border-r border-b px-6 py-3 w-[100px]">Persentase Cascading</th>
                             </tr>
                             <tr className="bg-orange-700 text-white">
                                 <th className="border-r border-b px-2 py-1 text-center">1</th>
