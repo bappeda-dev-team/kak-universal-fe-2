@@ -219,6 +219,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       url === `/laporantaggingpohon` ||
       url === `/laporancascadingpemda` ||
       url === `/controlpokin` ||
+      url === `/leaderboardrekin` ||
       url === "/laporancascadingopd"
     ) {
       setDataMaster(false);
