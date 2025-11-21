@@ -851,7 +851,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               </li>
             </Link>
             <Link href="/leaderboardrekin">
-              <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/controlpokin" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/leaderboardrekin" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                 <TbChartBar className="text-xl" />
                 <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Leaderboard Rekin</span>
               </li>
