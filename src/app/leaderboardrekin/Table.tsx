@@ -115,7 +115,7 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                             {item.tematik ? 
                                                 item.tematik.map((t: Tematik, index_tematik: number) => (
                                                     <div key={index_tematik} className="flex items-center">
-                                                        <p className="py-1 px-2 my-2 bg-orange-500 text-white rounded-lg">{t.nama || "tematik tanpa nama"}</p>
+                                                        <p className="py-1 px-2 my-2 bg-emerald-600 text-white rounded-lg">{t.nama || "tematik tanpa nama"}</p>
                                                     </div>
                                                 ))
                                                 :
