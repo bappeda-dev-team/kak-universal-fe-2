@@ -122,7 +122,7 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                                 <p>-</p>
                                             }
                                         </td>
-                                        <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                        <td className="border-r border-b font-bold border-orange-500 px-6 py-4 text-center">
                                             {item.persentase_cascading || "0%"}
                                         </td>
                                     </tr>
