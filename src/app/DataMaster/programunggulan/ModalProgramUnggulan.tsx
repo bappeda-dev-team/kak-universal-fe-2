@@ -5,7 +5,8 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ButtonSky, ButtonRed } from '@/components/global/Button';
 import { AlertNotification } from "@/components/global/Alert";
 import { getToken } from "@/components/lib/Cookie";
-import {  LoadingButtonClip } from "@/components/global/Loading";
+import { LoadingButtonClip } from "@/components/global/Loading";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 interface ProgramUnggulan {
     id: number;
@@ -47,6 +48,7 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
 
     const [Proses, setProses] = useState<boolean>(false);
     const token = getToken();
+    const {branding} = useBrandingContext();
 
     const handleClose = () => {
         reset({
@@ -120,7 +122,11 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
                             className="uppercase text-xs font-bold text-gray-700 my-2"
                             htmlFor="nama_program_unggulan"
                         >
-                            Program Hebat / Unggulan
+                            {branding?.client === "KABUPATEN-MAHAKAM-ULU" ? 
+                                "Program Prioritas"
+                            :
+                                "Program Hebat / Unggulan"
+                            }
                         </label>
                         <Controller
                             name="nama_program_unggulan"
@@ -132,7 +138,7 @@ export const ModalProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose, da
                                     className="border px-4 py-2 rounded-lg"
                                     id="nama_program_unggulan"
                                     type="text"
-                                    placeholder="masukkan program hebat"
+                                    placeholder="masukkan program"
                                     onChange={(e) => {
                                         field.onChange(e);
                                     }}
