@@ -84,9 +84,9 @@ const Table: React.FC<Table> = ({ tahun }) => {
                         <thead>
                             <tr className="bg-orange-500 text-white">
                                 <th className="border-r border-b px-6 py-3 text-center">No</th>
-                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Perangkat Daerah</th>
-                                <th className="border-r border-b px-6 py-3 w-[200px]">Tema</th>
-                                <th className="border-r border-b px-6 py-3 w-[200px]">Persentase Cascading</th>
+                                <th className="border-r border-b px-6 py-3 w-[350px]">Perangkat Daerah</th>
+                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Tema</th>
+                                <th className="border-r border-b px-6 py-3 w-[100px]">Persentase Cascading</th>
                             </tr>
                             <tr className="bg-orange-700 text-white">
                                 <th className="border-r border-b px-2 py-1 text-center">1</th>
@@ -115,14 +115,14 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                             {item.tematik ? 
                                                 item.tematik.map((t: Tematik, index_tematik: number) => (
                                                     <div key={index_tematik} className="flex items-center">
-                                                        <p className="py-1 px-2 my-2 bg-orange-500 text-white rounded-lg">{t.nama || "tematik tanpa nama"}</p>
+                                                        <p className="py-1 px-2 my-2 bg-emerald-600 text-white rounded-lg">{t.nama || "tematik tanpa nama"}</p>
                                                     </div>
                                                 ))
                                                 :
                                                 <p>-</p>
                                             }
                                         </td>
-                                        <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                        <td className="border-r border-b font-bold border-orange-500 px-6 py-4 text-center">
                                             {item.persentase_cascading || "0%"}
                                         </td>
                                     </tr>
