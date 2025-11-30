@@ -131,9 +131,12 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[250px]">Permasalahan</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[250px]">Nama Data Dukung</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[250px]">Narasi Data Dukung</th>
-                            {tahun_list.map((item: any) => (
-                                <th key={item} colSpan={2} className="border-r border-b px-6 py-3">{item}</th>
-                            ))}
+                            {tahun_list
+                                .slice()
+                                .reverse()
+                                .map((item: any) => (
+                                    <th key={item} colSpan={2} className="border-r border-b px-6 py-3">{item}</th>
+                                ))}
                         </tr>
                         <tr className={`bg-emerald-600 text-white`}>
                             {tahun_list.map((item: any) => (
@@ -155,7 +158,7 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                             Isu.map((i: IsuStrategis, index: number) => {
 
                                 const TotalRow = i.permasalahan_opd?.reduce((total, item) => total + (item.data_dukung.length == 0 ? 1 : item.data_dukung.length), 0) + i.permasalahan_opd?.length + 1;
-                                
+
                                 return (
                                     <React.Fragment key={index}>
                                         <tr>
@@ -197,33 +200,33 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                                                     <tr>
                                                         <td rowSpan={p.data_dukung ? p.data_dukung.length + 1 : 2} className="border-r border-b border-emerald-500 px-6 py-4">{p.masalah || "-"}</td>
                                                     </tr>
-                                                        {(p.data_dukung.length === 0 || !p.data_dukung) ?
-                                                            <tr>
-                                                                <td colSpan={14} className="border-r border-b border-emerald-500 px-6 py-4 text-red-400 italic">Data Dukung belum di tambahkan</td>
+                                                    {(p.data_dukung.length === 0 || !p.data_dukung) ?
+                                                        <tr>
+                                                            <td colSpan={14} className="border-r border-b border-emerald-500 px-6 py-4 text-red-400 italic">Data Dukung belum di tambahkan</td>
+                                                        </tr>
+                                                        :
+                                                        p.data_dukung.map((dd: DataDukung, dd_index) => (
+                                                            <tr key={dd_index}>
+                                                                <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.data_dukung || "-"}</td>
+                                                                <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.narasi_data_dukung || "-"}</td>
+                                                                {dd.jumlah_data.length === 0 ?
+                                                                    tahun_list.map((tl: any, tl_index: number) => (
+                                                                        <React.Fragment key={tl_index}>
+                                                                            <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
+                                                                            <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
+                                                                        </React.Fragment>
+                                                                    ))
+                                                                    :
+                                                                    dd.jumlah_data.map((d: TargetJumlahData, d_index: number) => (
+                                                                        <React.Fragment key={d_index}>
+                                                                            <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.jumlah_data || "-"}</td>
+                                                                            <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.satuan || "-"}</td>
+                                                                        </React.Fragment>
+                                                                    ))
+                                                                }
                                                             </tr>
-                                                            :
-                                                            p.data_dukung.map((dd: DataDukung, dd_index) => (
-                                                                <tr key={dd_index}>
-                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.data_dukung || "-"}</td>
-                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.narasi_data_dukung || "-"}</td>
-                                                                    {dd.jumlah_data.length === 0 ?
-                                                                        tahun_list.map((tl: any, tl_index: number) => (
-                                                                            <React.Fragment key={tl_index}>
-                                                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
-                                                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
-                                                                            </React.Fragment>
-                                                                        ))
-                                                                        :
-                                                                        dd.jumlah_data.map((d: TargetJumlahData, d_index: number) => (
-                                                                            <React.Fragment key={d_index}>
-                                                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.jumlah_data || "-"}</td>
-                                                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.satuan || "-"}</td>
-                                                                            </React.Fragment>
-                                                                        ))
-                                                                    }
-                                                                </tr>
-                                                            ))
-                                                        }
+                                                        ))
+                                                    }
                                                 </React.Fragment>
                                             ))
                                         }

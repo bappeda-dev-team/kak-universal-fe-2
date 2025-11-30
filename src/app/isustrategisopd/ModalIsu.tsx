@@ -104,6 +104,8 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
     const { branding } = useBrandingContext();
     const Tahun = branding?.tahun ? branding?.tahun.value : 0;
 
+    const reversedTahunList = tahun_list.slice().reverse();
+
     useEffect(() => {
         const fetchUser = getUser();
         const fetchPeriode = getPeriode();
@@ -123,6 +125,10 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
             setPeriode(data);
         }
     }, []);
+
+    useEffect(() => {
+        console.log(tahun_list)
+    }, [tahun_list]);
 
     const fetchBidangUrusanOption = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -361,7 +367,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                                 {dataTerukurField.jumlah_data.map((_, subindex) => (
                                     <div key={`${permasalahan_index}-${subindex}`} className="flex flex-col py-1 px-3 border border-gray-200 rounded-lg">
                                         <label className="text-base text-center text-gray-700">
-                                            <p>{tahun_list[subindex]}</p>
+                                            <p>{reversedTahunList[subindex]}</p>
                                         </label>
                                         <Controller
                                             name={`permasalahan_opd.${permasalahan_index}.data_dukung.${dataTerukurIndex}.jumlah_data.${subindex}.jumlah_data`}
