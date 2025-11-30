@@ -69,13 +69,15 @@ export const FormPohonOpd: React.FC<{
     const [Tahun, setTahun] = useState<any>(null);
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
     const [BupatiValue, setBupatiValue] = useState<OptionTypeString[]>([]);
-    const [HariKerjaValue, setHariKerjaValue] = useState<OptionTypeString[]>([]);
+    const [RBValue, setRBValue] = useState<OptionTypeString[]>([]);
     const [PusatValue, setPusatValue] = useState<OptionTypeString[]>([]);
     const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
     const [DataAdd, setDataAdd] = useState<any>(null);
     const [IsAdded, setIsAdded] = useState<boolean>(false);
     const [UnggulanBupati, setUnggulanBupati] = useState<boolean>(false);
-    const [HariKerja, setHariKerja] = useState<boolean>(false);
+    // renamed to RB
+    // const [HariKerja, setHariKerja] = useState<boolean>(false);
+    const [RB, setRB] = useState<boolean>(false);
     const [UnggulanPusat, setUnggulanPusat] = useState<boolean>(false);
     const [Proses, setProses] = useState<boolean>(false);
     const [IsLoading, setIsLoading] = useState<boolean>(false);
@@ -148,7 +150,7 @@ export const FormPohonOpd: React.FC<{
             kode_program_unggulan: dt.value,
             tahun: String(Tahun?.value ?? ""),
         })) || [];
-        const hariValue = HariKerjaValue?.map((dt) => ({
+        const rbValue = RBValue?.map((dt) => ({
             kode_program_unggulan: dt.value,
             tahun: String(Tahun?.value ?? ""),
         })) || [];
@@ -161,9 +163,9 @@ export const FormPohonOpd: React.FC<{
                 nama_tagging: "Program Unggulan Bupati",
                 keterangan_tagging_program: bupatiValue,
             }] : []),
-            ...(HariKerja ? [{
-                nama_tagging: "100 Hari Kerja Bupati",
-                keterangan_tagging_program: hariValue,
+            ...(RB ? [{
+                nama_tagging: "RB",
+                keterangan_tagging_program: rbValue,
             }] : []),
 
             ...(UnggulanPusat ? [{
@@ -327,10 +329,10 @@ export const FormPohonOpd: React.FC<{
                                             <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
                                         </div>
                                         <div className="flex flex-col items-center">
-                                            {HariKerja ?
+                                            {RB ?
                                                 <button
                                                     type="button"
-                                                    onClick={() => setHariKerja(false)}
+                                                    onClick={() => setRB(false)}
                                                     className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
                                                 >
                                                     <TbCheck />
@@ -338,11 +340,11 @@ export const FormPohonOpd: React.FC<{
                                                 :
                                                 <button
                                                     type="button"
-                                                    onClick={() => setHariKerja(true)}
+                                                    onClick={() => setRB(true)}
                                                     className="w-[20px] h-[20px] border border-black rounded-full"
                                                 ></button>
                                             }
-                                            <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
+                                            <p onClick={() => setRB((prev) => !prev)} className={`cursor-pointer ${RB && 'text-emerald-500'}`}>RB</p>
                                         </div>
                                         <div className="flex flex-col items-center">
                                             {UnggulanPusat ?
@@ -401,19 +403,19 @@ export const FormPohonOpd: React.FC<{
                                             )}
                                         />
                                     }
-                                    {HariKerja &&
+                                    {RB &&
                                         <Controller
                                             name={`tagging.1.keterangan_tagging_program`}
                                             control={control}
                                             render={({ field }) => (
                                                 <div className="flex flex-col py-3">
                                                     <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                        Keterangan 100 Hari Kerja Bupati :
+                                                        Keterangan RB :
                                                     </label>
                                                     <Select
                                                         {...field}
                                                         placeholder="Pilih Program Unggulan"
-                                                        value={HariKerjaValue}
+                                                        value={RBValue}
                                                         options={ProgramOption}
                                                         isSearchable
                                                         isClearable
@@ -425,7 +427,7 @@ export const FormPohonOpd: React.FC<{
                                                         }}
                                                         onChange={(option) => {
                                                             field.onChange(option || []);
-                                                            setHariKerjaValue(option as OptionTypeString[]);
+                                                            setRBValue(option as OptionTypeString[]);
                                                         }}
                                                         styles={{
                                                             control: (baseStyles) => ({
@@ -643,7 +645,9 @@ export const FormEditPohon: React.FC<{
     const [Parent, setParent] = useState<number | null>(null);
     const [KodeOpd, setKodeOpd] = useState<number | null>(null);
     const [BupatiValue, setBupatiValue] = useState<OptionTypeString[]>([]);
-    const [HariKerjaValue, setHariKerjaValue] = useState<OptionTypeString[]>([]);
+    // renamed to RB
+    //    const [HariKerjaValue, setHariKerjaValue] = useState<OptionTypeString[]>([]);
+    const [RBValue, setRBValue] = useState<OptionTypeString[]>([]);
     const [PusatValue, setPusatValue] = useState<OptionTypeString[]>([]);
     const [JenisPohon, setJenisPohon] = useState<string | null>(null);
     const [Tahun, setTahun] = useState<any>(null);
@@ -651,7 +655,9 @@ export const FormEditPohon: React.FC<{
     const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
     const [UnggulanBupati, setUnggulanBupati] = useState<boolean>(false);
-    const [HariKerja, setHariKerja] = useState<boolean>(false);
+    // renamed to RB
+    // const [HariKerja, setHariKerja] = useState<boolean>(false);
+    const [RB, setRB] = useState<boolean>(false);
     const [UnggulanPusat, setUnggulanPusat] = useState<boolean>(false);
     const [Proses, setProses] = useState<boolean>(false);
     const [IsLoading, setIsLoading] = useState<boolean>(false);
@@ -716,7 +722,7 @@ export const FormEditPohon: React.FC<{
                 if (data.tagging != null) {
                     const { tagging } = data;
                     const unggulanBupatiTag = tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Bupati");
-                    const hariKerjaTag = tagging?.find((t: Tagging) => t.nama_tagging === "100 Hari Kerja Bupati");
+                    const rbTag = tagging?.find((t: Tagging) => t.nama_tagging === "RB");
                     const unggulanPusatTag = tagging?.find((t: Tagging) => t.nama_tagging === "Program Unggulan Pemerintah Pusat");
 
                     if (unggulanBupatiTag) {
@@ -730,15 +736,15 @@ export const FormEditPohon: React.FC<{
                             setBupatiValue([]);
                         }
                     }
-                    if (hariKerjaTag) {
-                        if (hariKerjaTag.keterangan_tagging_program != null) {
-                            const tag = hariKerjaTag.keterangan_tagging_program.map((ktg: any) => ({
+                    if (rbTag) {
+                        if (rbTag.keterangan_tagging_program != null) {
+                            const tag = rbTag.keterangan_tagging_program.map((ktg: any) => ({
                                 value: ktg.kode_program_unggulan,
                                 label: ktg.keterangan_tagging_program,
                             }));
-                            setHariKerjaValue(tag);
+                            setRBValue(tag);
                         } else {
-                            setHariKerjaValue([]);
+                            setRBValue([]);
                         }
                     }
                     if (unggulanPusatTag) {
@@ -753,7 +759,7 @@ export const FormEditPohon: React.FC<{
                         }
                     }
                     setUnggulanBupati(!!unggulanBupatiTag);
-                    setHariKerja(!!hariKerjaTag);
+                    setRB(!!rbTag);
                     setUnggulanPusat(!!unggulanPusatTag);
                 }
 
@@ -803,7 +809,7 @@ export const FormEditPohon: React.FC<{
             kode_program_unggulan: dt.value,
             tahun: String(Tahun?.value ?? ""),
         })) || [];
-        const hariValue = HariKerjaValue?.map((dt) => ({
+        const rbValue = RBValue?.map((dt) => ({
             kode_program_unggulan: dt.value,
             tahun: String(Tahun?.value ?? ""),
         })) || [];
@@ -816,9 +822,9 @@ export const FormEditPohon: React.FC<{
                 nama_tagging: "Program Unggulan Bupati",
                 keterangan_tagging_program: bupatiValue,
             }] : []),
-            ...(HariKerja ? [{
-                nama_tagging: "100 Hari Kerja Bupati",
-                keterangan_tagging_program: hariValue,
+            ...(RB ? [{
+                nama_tagging: "RB",
+                keterangan_tagging_program: rbValue,
             }] : []),
 
             ...(UnggulanPusat ? [{
@@ -1009,10 +1015,10 @@ export const FormEditPohon: React.FC<{
                                     <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    {HariKerja ?
+                                    {RB ?
                                         <button
                                             type="button"
-                                            onClick={() => setHariKerja(false)}
+                                            onClick={() => setRB(false)}
                                             className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
                                         >
                                             <TbCheck />
@@ -1020,11 +1026,11 @@ export const FormEditPohon: React.FC<{
                                         :
                                         <button
                                             type="button"
-                                            onClick={() => setHariKerja(true)}
+                                            onClick={() => setRB(true)}
                                             className="w-[20px] h-[20px] border border-black rounded-full"
                                         ></button>
                                     }
-                                    <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
+                                    <p onClick={() => setRB((prev) => !prev)} className={`cursor-pointer ${RB && 'text-emerald-500'}`}>RB</p>
                                 </div>
                                 <div className="flex flex-col items-center">
                                     {UnggulanPusat ?
@@ -1083,19 +1089,19 @@ export const FormEditPohon: React.FC<{
                                     )}
                                 />
                             }
-                            {HariKerja &&
+                            {RB &&
                                 <Controller
                                     name={`tagging.1.keterangan_tagging_program`}
                                     control={control}
                                     render={({ field }) => (
                                         <div className="flex flex-col py-3">
                                             <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                Keterangan 100 Hari Kerja Bupati :
+                                                Keterangan RB :
                                             </label>
                                             <Select
                                                 {...field}
                                                 placeholder="Pilih Program Unggulan"
-                                                value={HariKerjaValue}
+                                                value={RBValue}
                                                 options={ProgramOption}
                                                 isSearchable
                                                 isClearable
@@ -1107,7 +1113,7 @@ export const FormEditPohon: React.FC<{
                                                 }}
                                                 onChange={(option) => {
                                                     field.onChange(option || []);
-                                                    setHariKerjaValue(option as OptionTypeString[]);
+                                                    setRBValue(option as OptionTypeString[]);
                                                 }}
                                                 styles={{
                                                     control: (baseStyles) => ({
