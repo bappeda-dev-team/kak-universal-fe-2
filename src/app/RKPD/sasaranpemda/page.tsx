@@ -4,8 +4,10 @@ import { FiHome } from "react-icons/fi";
 import Table from "./Table";
 import { getOpdTahun } from "@/components/lib/Cookie";
 import { useState, useEffect } from "react";
+import Maintenance from "@/components/global/Maintenance";
 
 const IkuPemda = () => {
+    const [IsMaintenance, _setIsMaintenance] = useState<boolean>(true)
 
     const [Tahun, setTahun] = useState<any>(null);
 
@@ -19,6 +21,12 @@ const IkuPemda = () => {
             setTahun(tahun);
         }
     }, []);
+
+    if (IsMaintenance) {
+        return (
+            <Maintenance />
+        )
+    }
 
     return (
         <>
