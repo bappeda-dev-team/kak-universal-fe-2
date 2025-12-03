@@ -11,8 +11,7 @@ import {
   TbCalendar, TbHexagonLetterV, TbHexagonLetterM, TbClipboardText, TbZoomExclamation,
   TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar, 
   TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI,
-  TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree,
-  TbChartBarOff
+  TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbDice4Filled
 } from "react-icons/tb";
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
@@ -369,10 +368,10 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Usulan</span>
                 </li>
               </Link>
-              <Link href="/DataMaster/masterusulan">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/masterusulan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                  <TbChartBarOff className="text-xl" />
-                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>RB</span>
+              <Link href="/DataMaster/master-rb">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbDice4Filled className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master RB</span>
                 </li>
               </Link>
               <Link href="/DataMaster/programunggulan">
