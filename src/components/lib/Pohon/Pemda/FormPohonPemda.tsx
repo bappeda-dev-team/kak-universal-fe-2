@@ -10,6 +10,7 @@ import { Pohon } from './Pohon';
 import { getToken } from '../../Cookie';
 import { LoadingButtonClip, LoadingSync } from '@/components/global/Loading';
 import { TbCheck, TbDeviceFloppy, TbCircleX, TbCirclePlus } from 'react-icons/tb';
+import { useBrandingContext } from '@/context/BrandingContext';
 
 interface OptionTypeString {
     value: string;
@@ -90,6 +91,7 @@ export const FormPohonPemda: React.FC<{
     const [Deleted, setDeleted] = useState<boolean>(false);
     const [Proses, setProses] = useState<boolean>(false);
     const token = getToken();
+    const { branding } = useBrandingContext();
 
     useEffect(() => {
         const data = getOpdTahun();
@@ -164,6 +166,38 @@ export const FormPohonPemda: React.FC<{
                     label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
                 }));
                 setProgramOption(program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const fetchRb = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/datamaster/rb/findByTahun/${branding?.tahun?.value}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            if (data == null) {
+                setProgramOption([]);
+                console.log(`data RB belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: String(item.id),
+                    label: `${item.jenis_rb} - ${item.kegiatan_utama}`,
+                }));
+                setProgramOption(program);
+                // console.log("option : ", program);
             }
         } catch (err) {
             console.error(err);
@@ -434,9 +468,7 @@ export const FormPohonPemda: React.FC<{
                                                                     setBupatiValue(option as OptionTypeString[]);
                                                                 }}
                                                                 onMenuOpen={() => {
-                                                                    if (ProgramOption.length === 0) {
-                                                                        fetchProgramUnggulan();
-                                                                    }
+                                                                    fetchProgramUnggulan();
                                                                 }}
                                                                 styles={{
                                                                     control: (baseStyles) => ({
@@ -468,9 +500,7 @@ export const FormPohonPemda: React.FC<{
                                                                 isClearable
                                                                 isMulti
                                                                 onMenuOpen={() => {
-                                                                    if (ProgramOption.length === 0) {
-                                                                        fetchProgramUnggulan();
-                                                                    }
+                                                                    fetchRb();
                                                                 }}
                                                                 onChange={(option) => {
                                                                     field.onChange(option || []);
@@ -506,9 +536,7 @@ export const FormPohonPemda: React.FC<{
                                                                 isClearable
                                                                 isMulti
                                                                 onMenuOpen={() => {
-                                                                    if (ProgramOption.length === 0) {
-                                                                        fetchProgramUnggulan();
-                                                                    }
+                                                                    fetchProgramUnggulan();
                                                                 }}
                                                                 onChange={(option) => {
                                                                     field.onChange(option || []);
@@ -1095,6 +1123,7 @@ export const FormEditPohon: React.FC<{
     const [Proses, setProses] = useState<boolean>(false);
     const [ProsesDetail, setProsesDetail] = useState<boolean>(false);
     const token = getToken();
+    const {branding} = useBrandingContext();
 
     useEffect(() => {
         const data = getOpdTahun();
@@ -1273,6 +1302,38 @@ export const FormEditPohon: React.FC<{
                 const program = data.data.map((item: any) => ({
                     value: item.kode_program_unggulan,
                     label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                }));
+                setProgramOption(program);
+                // console.log("option : ", program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const fetchRb = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/datamaster/rb/findByTahun/${branding?.tahun?.value}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            if (data == null) {
+                setProgramOption([]);
+                console.log(`data RB belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: String(item.id),
+                    label: `${item.jenis_rb} - ${item.kegiatan_utama}`,
                 }));
                 setProgramOption(program);
                 // console.log("option : ", program);
@@ -1586,7 +1647,7 @@ export const FormEditPohon: React.FC<{
                                                     isMulti
                                                     onMenuOpen={() => {
                                                         if (ProgramOption.length === 0) {
-                                                            fetchProgramUnggulan();
+                                                            fetchRb();
                                                         }
                                                     }}
                                                     onChange={(option) => {

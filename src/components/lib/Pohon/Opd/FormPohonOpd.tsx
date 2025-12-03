@@ -10,6 +10,7 @@ import { getToken, getUser } from '../../Cookie';
 import { LoadingButtonClip, LoadingSync } from '@/components/global/Loading';
 import { TbCirclePlus, TbCircleX, TbDeviceFloppy, TbCheck } from 'react-icons/tb';
 import Select from 'react-select';
+import { useBrandingContext } from '@/context/BrandingContext';
 
 interface OptionTypeString {
     value: string;
@@ -83,6 +84,7 @@ export const FormPohonOpd: React.FC<{
     const [IsLoading, setIsLoading] = useState<boolean>(false);
     const [user, setUser] = useState<any>(null);
     const token = getToken();
+    const { branding } = useBrandingContext();
 
     useEffect(() => {
         const fetchUser = getUser();
@@ -133,6 +135,38 @@ export const FormPohonOpd: React.FC<{
                 const program = data.data.map((item: any) => ({
                     value: item.kode_program_unggulan,
                     label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                }));
+                setProgramOption(program);
+                // console.log("option : ", program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const fetchRb = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/datamaster/rb/findByTahun/${branding?.tahun?.value}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            if (data == null) {
+                setProgramOption([]);
+                console.log(`data RB belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: String(item.id),
+                    label: `${item.jenis_rb} - ${item.kegiatan_utama}`,
                 }));
                 setProgramOption(program);
                 // console.log("option : ", program);
@@ -381,12 +415,12 @@ export const FormPohonOpd: React.FC<{
                                                         options={ProgramOption}
                                                         isSearchable
                                                         onMenuOpen={() => {
-                                                            if (ProgramOption.length === 0) {
-                                                                fetchProgramUnggulan();
-                                                            }
+                                                            fetchProgramUnggulan();
+
                                                         }}
                                                         isClearable
                                                         isMulti
+                                                        isLoading={IsLoading}
                                                         onChange={(option) => {
                                                             field.onChange(option || []);
                                                             setBupatiValue(option as OptionTypeString[]);
@@ -414,16 +448,15 @@ export const FormPohonOpd: React.FC<{
                                                     </label>
                                                     <Select
                                                         {...field}
-                                                        placeholder="Pilih Program Unggulan"
+                                                        placeholder="Pilih RB"
                                                         value={RBValue}
                                                         options={ProgramOption}
                                                         isSearchable
                                                         isClearable
                                                         isMulti
+                                                        isLoading={IsLoading}
                                                         onMenuOpen={() => {
-                                                            if (ProgramOption.length === 0) {
-                                                                fetchProgramUnggulan();
-                                                            }
+                                                            fetchRb();
                                                         }}
                                                         onChange={(option) => {
                                                             field.onChange(option || []);
@@ -458,10 +491,9 @@ export const FormPohonOpd: React.FC<{
                                                         isSearchable
                                                         isClearable
                                                         isMulti
+                                                        isLoading={IsLoading}
                                                         onMenuOpen={() => {
-                                                            if (ProgramOption.length === 0) {
-                                                                fetchProgramUnggulan();
-                                                            }
+                                                            fetchProgramUnggulan();
                                                         }}
                                                         onChange={(option) => {
                                                             field.onChange(option || []);
@@ -664,6 +696,7 @@ export const FormEditPohon: React.FC<{
     const [ProsesDetail, setProsesDetail] = useState<boolean>(false);
     const [user, setUser] = useState<any>(null);
     const token = getToken();
+    const { branding } = useBrandingContext();
 
     useEffect(() => {
         const fetchUser = getUser();
@@ -916,6 +949,38 @@ export const FormEditPohon: React.FC<{
             setIsLoading(false);
         }
     }
+    const fetchRb = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/datamaster/rb/findByTahun/${branding?.tahun?.value}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            if (data == null) {
+                setProgramOption([]);
+                console.log(`data RB belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: String(item.id),
+                    label: `${item.jenis_rb} - ${item.kegiatan_utama}`,
+                }));
+                setProgramOption(program);
+                // console.log("option : ", program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     if (ProsesDetail) {
         return (
@@ -1069,9 +1134,7 @@ export const FormEditPohon: React.FC<{
                                                 isClearable
                                                 isMulti
                                                 onMenuOpen={() => {
-                                                    if (ProgramOption.length === 0) {
-                                                        fetchProgramUnggulan();
-                                                    }
+                                                    fetchProgramUnggulan();
                                                 }}
                                                 onChange={(option) => {
                                                     field.onChange(option || []);
@@ -1107,9 +1170,7 @@ export const FormEditPohon: React.FC<{
                                                 isClearable
                                                 isMulti
                                                 onMenuOpen={() => {
-                                                    if (ProgramOption.length === 0) {
-                                                        fetchProgramUnggulan();
-                                                    }
+                                                    fetchRb();
                                                 }}
                                                 onChange={(option) => {
                                                     field.onChange(option || []);
@@ -1145,9 +1206,7 @@ export const FormEditPohon: React.FC<{
                                                 isClearable
                                                 isMulti
                                                 onMenuOpen={() => {
-                                                    if (ProgramOption.length === 0) {
-                                                        fetchProgramUnggulan();
-                                                    }
+                                                    fetchProgramUnggulan();
                                                 }}
                                                 onChange={(option) => {
                                                     field.onChange(option || []);
