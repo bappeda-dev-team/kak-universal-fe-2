@@ -219,6 +219,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       url === `/laporantaggingpohon` ||
       url === `/laporancascadingpemda` ||
       url === `/controlpokin` ||
+      url === `/laporanrb` ||
       url === `/leaderboardrekin` ||
       url === "/laporancascadingopd"
     ) {
@@ -943,6 +944,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporantaggingpohon" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                 <TbCircleCheck className="text-xl" />
                 <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Renaksi Tematik</span>
+              </li>
+            </Link>
+            <Link href="/laporanrb">
+              <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <TbDice4Filled className="text-xl" />
+                <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Laporan RB</span>
               </li>
             </Link>
             <Link href="/laporancascadingopd">
