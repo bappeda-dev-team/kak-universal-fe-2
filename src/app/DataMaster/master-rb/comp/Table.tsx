@@ -193,7 +193,7 @@ export const Table = () => {
                                                     </div>
                                                 </td>
                                                 <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.kegiatan_utama || "-"}</td>
-                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">keterangan</td>
+                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.keterangan || "-"}</td>
                                             </tr>
                                             {item.indikator ?
                                                 item.indikator.map((i: IndikatorRB, sub_index: number) => (
