@@ -120,7 +120,9 @@ export const Table = () => {
                                 <tr className="bg-yellow-600 text-white">
                                     <th rowSpan={2} className="border-r border-b px-6 py-3 text-center">No</th>
                                     <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Jenis RB</th>
-                                    <th rowSpan={2} className="border-r border-b px-6 py-3 w-[100px]">Aksi</th>
+                                    {branding?.user?.roles == "super_admin" &&
+                                        <th rowSpan={2} className="border-r border-b px-6 py-3 w-[100px]">Aksi</th>
+                                    }
                                     <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Kegiatan Utama</th>
                                     <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                                     <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
@@ -138,7 +140,9 @@ export const Table = () => {
                                 <tr className="bg-yellow-600 text-white">
                                     <th className="border-r border-b px-2 py-1 text-center">1</th>
                                     <th className="border-r border-b px-2 py-1 text-center">2</th>
-                                    <th className="border-r border-b px-2 py-1 text-center"></th>
+                                    {branding?.user.roles == "super_admin" &&
+                                        <th className="border-r border-b px-2 py-1 text-center"></th>
+                                    }
                                     <th className="border-r border-b px-2 py-1 text-center">3</th>
                                     <th className="border-r border-b px-2 py-1 text-center">4</th>
                                     <th className="border-r border-b px-2 py-1 text-center">5</th>
@@ -170,28 +174,30 @@ export const Table = () => {
                                                         }
                                                     </div>
                                                 </td>
-                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">
-                                                    <div className="flex flex-col items-center gap-1">
-                                                        <ButtonSkyBorder
-                                                            className="w-full flex items-center gap-1"
-                                                            onClick={() => handleModalOpen("edit", item)}
-                                                        >
-                                                            <TbPencil />
-                                                            Edit
-                                                        </ButtonSkyBorder>
-                                                        <ButtonRedBorder
-                                                            className="w-full flex items-center gap-1"
-                                                            onClick={() => AlertQuestion("Hapus", "Hapus Data RB?", "question", "Hapus", "Batal").then((resp) => {
-                                                                if (resp.isConfirmed) {
-                                                                    hapusRB(item.id);
-                                                                }
-                                                            })}
-                                                        >
-                                                            <TbTrash />
-                                                            Hapus
-                                                        </ButtonRedBorder>
-                                                    </div>
-                                                </td>
+                                                {branding?.user?.roles == "super_admin" &&
+                                                    <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">
+                                                        <div className="flex flex-col items-center gap-1">
+                                                            <ButtonSkyBorder
+                                                                className="w-full flex items-center gap-1"
+                                                                onClick={() => handleModalOpen("edit", item)}
+                                                            >
+                                                                <TbPencil />
+                                                                Edit
+                                                            </ButtonSkyBorder>
+                                                            <ButtonRedBorder
+                                                                className="w-full flex items-center gap-1"
+                                                                onClick={() => AlertQuestion("Hapus", "Hapus Data RB?", "question", "Hapus", "Batal").then((resp) => {
+                                                                    if (resp.isConfirmed) {
+                                                                        hapusRB(item.id);
+                                                                    }
+                                                                })}
+                                                            >
+                                                                <TbTrash />
+                                                                Hapus
+                                                            </ButtonRedBorder>
+                                                        </div>
+                                                    </td>
+                                                }
                                                 <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.kegiatan_utama || "-"}</td>
                                                 <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.keterangan || "-"}</td>
                                             </tr>

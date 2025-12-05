@@ -10,9 +10,51 @@ import { getToken } from "@/components/lib/Cookie"
 import { LoadingClip } from "@/components/global/Loading"
 // import { RB, IndikatorRB, TargetRB } from "../type"
 
+interface RencanaAksi {
+    rencana_aksi: string;
+    indikator_rencana_aksis: [];
+    anggaran: string;
+    realisasi_anggaran: string;
+    capaian_anggaran: string;
+    opd_koordinator: string;
+    nip_pelaksana: string;
+    nama_pelaksana: string;
+    opd_crosscuttings: [];
+}
+
+interface TargetRB {
+    id: string;
+    id_indikator: string;
+    tahun_baseline: number;
+    target_baseline: string;
+    realisasi_baseline: string;
+    satuan_baseline: string;
+    tahun_next: number;
+    target_next: string;
+    satuan_next: string;
+}
+
+interface IndikatorRB {
+    id: string;
+    id_rb: number;
+    indikator: string;
+    target: TargetRB[];
+}
+
+interface RencanaReformasiBirokrasi {
+    id: number;
+    jenis_rb: string;
+    kegiatan_utama: string;
+    keterangan: string;
+    tahun_baseline: number;
+    tahun_next: number;
+    indikator: IndikatorRB[];
+    rencana_aksis: RencanaAksi[];
+}
+
 export const Table = () => {
 
-    // const [Data, setData] = useState<RB[]>([]);
+    const [Data, setData] = useState<RencanaReformasiBirokrasi[]>([]);
 
     const [ModalOpen, setModalOpen] = useState<boolean>(false);
     const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
@@ -26,67 +68,36 @@ export const Table = () => {
     const tahunBaseline = Number(branding?.tahun?.value) - 1;
     const token = getToken();
 
-    // const handleModalOpen = (jenis: "tambah" | "edit", data: RB | null) => {
-    //     if (ModalOpen) {
-    //         setModalOpen(false);
-    //         setJenisModal(jenis);
-    //         setDataModal(null);
-    //     } else {
-    //         setModalOpen(true);
-    //         setJenisModal(jenis);
-    //         setDataModal(data);
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     const fetchOpd = async () => {
-    //         setLoading(true);
-    //         setError(false);
-    //         try {
-    //             const response = await fetch(`${branding?.api_perencanaan}/datamaster/rb?tahun_next=${branding?.tahun?.value}`, {
-    //                 headers: {
-    //                     Authorization: `${token}`,
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //             });
-    //             const result = await response.json();
-    //             if (result.code === 200) {
-    //                 setData(result.data);
-    //                 // console.log(result.data);
-    //             } else if (result.code === 401) {
-    //                 window.location.href = "/login";
-    //             } else {
-    //                 setData([]);
-    //                 setError(true);
-    //             }
-    //         } catch (err) {
-    //             setError(true);
-    //             console.error(err)
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     }
-    //     fetchOpd();
-    // }, [token, branding, FetchTrigger]);
-
-    // const hapusRB = async (id: any) => {
-    //     try {
-    //         const response = await fetch(`${branding?.api_perencanaan}/datamaster/rb/${id}/delete`, {
-    //             method: "DELETE",
-    //             headers: {
-    //                 Authorization: `${token}`,
-    //                 'Content-Type': 'application/json',
-    //             },
-    //         })
-    //         if (!response.ok) {
-    //             alert("cant fetch data")
-    //         }
-    //         setData(Data.filter((data) => (data.id !== id)))
-    //         AlertNotification("Berhasil", "Data RB Berhasil Dihapus", "success", 1000);
-    //     } catch (err) {
-    //         AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
-    //     }
-    // };
+    useEffect(() => {
+        const fetchOpd = async () => {
+            setLoading(true);
+            setError(false);
+            try {
+                const response = await fetch(`${branding?.api_perencanaan}/datamaster/rb/laporanByTahun/${branding?.tahun?.value}/TEMATIK`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                if (result.code === 200) {
+                    setData(result.data);
+                    // console.log(result.data);
+                } else if (result.code === 401) {
+                    window.location.href = "/login";
+                } else {
+                    setData([]);
+                    setError(true);
+                }
+            } catch (err) {
+                setError(true);
+                console.error(err)
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchOpd();
+    }, [token, branding, FetchTrigger]);
 
     if (Loading) {
         return (
@@ -109,13 +120,12 @@ export const Table = () => {
                             <tr className="bg-yellow-600 text-white">
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 text-center">No</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Jenis RB</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 w-[100px]">Aksi</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Kegiatan Utama</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
                                 <th colSpan={4} className="border-r border-b px-6 py-3 w-[400px]">BaseLine {tahunBaseline}</th>
                                 <th colSpan={2} className="border-r border-b px-6 py-3 w-[200px]">{branding?.tahun?.value}</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Rencana Aksi</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[900px]">Rencana Aksi</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator Output</th>
                                 <th colSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Periode Pelaksanaan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Satuan Output</th>
@@ -140,69 +150,72 @@ export const Table = () => {
                                 <th className="border-r border-b px-6 py-1 w-[100px]">Realisasi</th>
                             </tr>
                             <tr className="bg-yellow-600 text-white">
-                                {Array.from({ length: 25 }, (_, index) => (
+                                {Array.from({ length: 24 }, (_, index) => (
                                     <th key={index} className="border-r border-b px-2 py-1 text-center">{index + 1}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {/* {Data.length > 0 ?
-                                    Data.map((item: RB, index: number) => (
-                                        <React.Fragment key={index}>
-                                            <tr key={index}>
-                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-x border-b border-yellow-600 py-4 px-3 text-center">{index + 1}</td>
-                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.jenis_rb || "-"}</td>
-                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">
-                                                    <div className="flex flex-col items-center gap-1">
-                                                        <ButtonSkyBorder
-                                                            className="w-full flex items-center gap-1"
-                                                            onClick={() => handleModalOpen("edit", item)}
-                                                        >
-                                                            <TbPencil />
-                                                            Edit
-                                                        </ButtonSkyBorder>
-                                                        <ButtonRedBorder
-                                                            className="w-full flex items-center gap-1"
-                                                            onClick={() => AlertQuestion("Hapus", "Hapus Data RB?", "question", "Hapus", "Batal").then((resp) => {
-                                                                if (resp.isConfirmed) {
-                                                                    hapusRB(item.id);
-                                                                }
-                                                            })}
-                                                        >
-                                                            <TbTrash />
-                                                            Hapus
-                                                        </ButtonRedBorder>
-                                                    </div>
-                                                </td>
-                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.kegiatan_utama || "-"}</td>
-                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">keterangan</td>
-                                            </tr>
+                            {Data.length > 0 ?
+                                Data.map((item: RencanaReformasiBirokrasi, index: number) => (
+                                    <React.Fragment key={index}>
+                                        <tr key={index}>
+                                            <td className="border-x border-b border-yellow-600 py-4 px-3 text-center">{index + 1}</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.jenis_rb || "-"}</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.kegiatan_utama || "-"}</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.keterangan || "-"}</td>
                                             {item.indikator ?
-                                                item.indikator.map((i: IndikatorRB, sub_index: number) => (
-                                                    <tr key={sub_index}>
-                                                        <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{i.indikator || "-"}</td>
-                                                        <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{i.target[0].target_baseline || "-"}</td>
-                                                        <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{i.target[0].realisasi_baseline || "-"}</td>
-                                                        <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{i.target[0].satuan_baseline || "-"}</td>
-                                                        <td className="border-r border-b border-yellow-600 px-6 py-4 text-center italic">pengembangan</td>
-                                                        <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{i.target[0].target_next || "-"}</td>
-                                                        <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{i.target[0].satuan_next || "-"}</td>
-                                                    </tr>
-                                                ))
+                                                <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">
+                                                    {item.indikator.map((ind: IndikatorRB, ind_index: number) => (
+                                                        <div className="flex gap-1" key={ind_index}>
+                                                            <p className="">{ind.indikator || "-"}</p>
+                                                        </div>
+                                                    ))}
+                                                </td>
                                                 :
-                                                <tr>
-                                                    <td colSpan={12} className="border-r border-b bg-red-300 text-white border-yellow-600 px-6 py-4 text-center">Indikator Kosong</td>
-                                                </tr>
+                                                <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">-</td>
                                             }
-                                        </React.Fragment>
-                                    ))
-                                    :
-                                    <></>
-                                } */}
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            {item.rencana_aksis.length > 0 ?
+                                                <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">
+                                                    {item.rencana_aksis.map((ra: RencanaAksi, ra_index: number) => (
+                                                        <div className="flex gap-1" key={ra_index}>
+                                                            <p className="border border-black p-1 rounded-lg">{ra_index + 1}.</p>
+                                                            <p className="">{ra.rencana_aksi || "-"}</p>
+                                                        </div>
+                                                    ))}
+                                                </td>
+                                                :
+                                                <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">-</td>
+                                            }
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
+                                        </tr>
+                                    </React.Fragment>
+                                ))
+                                :
+                                <tr>
+                                    <td className="px-6 py-3" colSpan={30}>
+                                        Data Kosong / Belum Ditambahkan
+                                    </td>
+                                </tr>
+                            }
                             <tr>
-                                <td className="px-6 py-3" colSpan={30}>
-                                    Laporan Dalam Pengembangan
-                                </td>
                             </tr>
                         </tbody>
                     </table>
