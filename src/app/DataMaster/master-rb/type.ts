@@ -20,6 +20,7 @@ export interface IndikatorRB {
 export interface RB {
     id: number;
     jenis_rb: string;
+    sudah_diambil: boolean,
     kegiatan_utama: string;
     keterangan: string;
     indikator: IndikatorRB[];
