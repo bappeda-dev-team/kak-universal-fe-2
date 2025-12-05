@@ -459,6 +459,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Sub Kegiatan OPD</span>
                 </li>
               </Link>
+              <Link href="/DataMaster/master-rb">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbDice4Filled className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master RB</span>
+                </li>
+              </Link>
             </div>
           }
 
