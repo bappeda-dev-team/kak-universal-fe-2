@@ -9,9 +9,10 @@ import {
   TbBuildingEstate, TbFileChart, TbFileDots, TbFileCode, TbFileCode2, TbUsers,
   TbUser, TbHexagonLetterR, TbBinaryTree2, TbTarget, TbMapPin, TbChartBar, TbCalendarShare,
   TbCalendar, TbHexagonLetterV, TbHexagonLetterM, TbClipboardText, TbZoomExclamation,
-  TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar, 
+  TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar,
   TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI,
-  TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbDice4Filled
+  TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbDice4Filled,
+  TbCircleFilled
 } from "react-icons/tb";
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
@@ -52,6 +53,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
   const [UsulanLaporan, setUsulanLaporan] = useState<boolean | null>(null);
   const [Review, setReview] = useState<boolean | null>(null);
   const [RenstraView, setRenstraView] = useState<boolean | null>(null);
+  const [LaporanRB, setLaporanRB] = useState<boolean | null>(null);
 
   useEffect(() => {
     const fetchUser = getUser();
@@ -946,12 +948,32 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Renaksi Tematik</span>
               </li>
             </Link>
-            <Link href="/laporanrb">
-              <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+            {/* LABEL LAPORAN RB */}
+            <li
+              className="flex justify-between items-center gap-x-2 cursor-pointer p-2 hover:bg-slate-500 rounded-xl transition-all duration-300 ease-in-out"
+              onClick={() => setLaporanRB(Review ? false : true)}
+            >
+              <div className="flex items-center gap-2">
                 <TbDice4Filled className="text-xl" />
-                <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Laporan RB</span>
-              </li>
-            </Link>
+                <span className={`${!isOpen && 'hidden'} origin-left`}>Laporan RB</span>
+              </div>
+              <TbChevronRight className={`transition-all duration-200 ease-in-out ${LaporanRB ? "rotate-90" : ""}`} />
+            </li>
+            {/* SUBS MENU LAPORAN RB */}
+            <div className={`transition-all duration-300 ease-in-out ${LaporanRB ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+              <Link href="/laporanrb/general">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrb/general" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbCircleFilled className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>RB General</span>
+                </li>
+              </Link>
+              <Link href="/laporanrb/tematik">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrb/tematik" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbCircleFilled className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>RB Tematik</span>
+                </li>
+              </Link>
+            </div>
             <Link href="/laporancascadingopd">
               <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporancascadingopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                 <TbListDetails className="text-xl" />
