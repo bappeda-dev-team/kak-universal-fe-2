@@ -117,12 +117,12 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                     Program Unggulan Bupati
                 </button>
                 <button
-                    className={`flex items-center gap-1 p-2 border ${NamaTagging === "100 Hari Kerja Bupati" ? 'bg-sky-500 text-white' : 'border-sky-500 text-sky-500'} rounded-lg hover:bg-sky-500 hover:text-white
+                    className={`flex items-center gap-1 p-2 border ${NamaTagging === "RB" ? 'bg-sky-500 text-white' : 'border-sky-500 text-sky-500'} rounded-lg hover:bg-sky-500 hover:text-white
                         `}
-                    onClick={() => setNamaTagging("100 Hari Kerja Bupati")}
+                    onClick={() => setNamaTagging("RB")}
                 >
                     <TbCircleCheckFilled />
-                    100 Hari Kerja Bupati
+                    RB
                 </button>
                 <button
                     className={`flex items-center gap-1 p-2 border ${NamaTagging === "Program Unggulan Pemerintah Pusat" ? 'bg-sky-500 text-white' : 'border-sky-500 text-sky-500'} rounded-lg hover:bg-sky-500 hover:text-white
