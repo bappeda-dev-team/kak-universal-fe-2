@@ -22,6 +22,17 @@ interface RencanaAksi {
     opd_crosscuttings: [];
 }
 
+interface Crosscutting {
+    id_pohon: number,
+    kode_opd: string,
+    nama_opd: string,
+    pelaksana_crosscuttings: PelaksanaCross[]
+}
+interface PelaksanaCross {
+    nip_pelaksana: string,
+    nama_pelaksana: string;
+}
+
 interface TargetRB {
     id: string;
     id_indikator: string;
@@ -237,10 +248,17 @@ export const Table = () => {
                                                     {renaksi[0]?.nama_pelaksana ?? "-"}<br />
                                                     {renaksi[0]?.nip_pelaksana ?? ""}
                                                 </td>
-
-                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
-                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
-                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                {renaksi[0]?.opd_crosscuttings ?
+                                                    renaksi[0].opd_crosscuttings.map((cr: Crosscutting, sr_index: number) => (
+                                                        <td key={sr_index} className="border border-white bg-blue-100 px-6 py-4 text-center">{cr.nama_opd || "-"}</td>
+                                                    ))
+                                                    :
+                                                    <React.Fragment>
+                                                        <td className="border border-white bg-blue-100 px-6 py-4 text-center">-</td>
+                                                        <td className="border border-white bg-blue-100 px-6 py-4 text-center">-</td>
+                                                        <td className="border border-white bg-blue-100 px-6 py-4 text-center">-</td>
+                                                    </React.Fragment>
+                                                }
                                             </tr>
 
                                             {/* ====================== SISA INDIKATOR ====================== */}
@@ -299,10 +317,17 @@ export const Table = () => {
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-left">
                                                         {ra.nama_pelaksana}<br />{ra.nip_pelaksana}
                                                     </td>
-
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                    {ra.opd_crosscuttings  ?
+                                                        ra.opd_crosscuttings?.map((cr: Crosscutting, sr_index: number) => (
+                                                            <td key={sr_index} className="border border-white bg-blue-100 px-6 py-4 text-center">{cr.nama_opd || "-"}</td>
+                                                        ))
+                                                        :
+                                                        <React.Fragment>
+                                                            <td className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                            <td className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                            <td className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                        </React.Fragment>
+                                                    }
                                                 </tr>
                                             ))}
                                         </React.Fragment>

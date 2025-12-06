@@ -218,6 +218,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                     narasi_data_dukung: dd.narasi_data_dukung,
                     permasalahan_opd_id: p.id_permasalahan?.value,
                     jumlah_data: dd.jumlah_data.map((jd, index) => ({
+                        id: jd.id,
                         jumlah_data: Number(jd.jumlah_data),
                         satuan: jd.satuan,
                         tahun: reversedTahunList[index],
