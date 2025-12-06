@@ -26,7 +26,7 @@ const LaporanRbTematik = () => {
                             <h1 className="uppercase font-bold ml-1">{branding?.tahun?.label}</h1>
                         </div>
                     </div>
-                    <div className="m-2">
+                    <div className="m-2 bg-white">
                         <Table />
                     </div>
                 </div>

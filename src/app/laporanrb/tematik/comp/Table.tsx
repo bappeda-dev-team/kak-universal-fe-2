@@ -12,7 +12,7 @@ import { LoadingClip } from "@/components/global/Loading"
 
 interface RencanaAksi {
     rencana_aksi: string;
-    indikator_rencana_aksis: [];
+    indikator_rencana_aksis: IndikatorRenaksi[];
     anggaran: string;
     realisasi_anggaran: string;
     capaian_anggaran: string;
@@ -33,12 +33,23 @@ interface TargetRB {
     target_next: string;
     satuan_next: string;
 }
+interface TargetRenaksi {
+    target: string;
+    realisasi: string
+    satuan: string;
+    capaian: string
+    tahun: string
+}
 
 interface IndikatorRB {
     id: string;
     id_rb: number;
     indikator: string;
     target: TargetRB[];
+}
+interface IndikatorRenaksi {
+    indikator: string;
+    targets: TargetRenaksi[];
 }
 
 interface RencanaReformasiBirokrasi {
@@ -114,17 +125,17 @@ export const Table = () => {
     } else {
         return (
             <>
-                <div className="overflow-auto m-2 rounded-t-xl border w-full">
-                    <table className="w-full">
+                <div className="overflow-auto m-2 bg-white rounded-t-xl border w-full">
+                    <table className="w-full bg-white">
                         <thead>
                             <tr className="bg-yellow-600 text-white">
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 text-center">No</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Jenis RB</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Kegiatan Utama</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
                                 <th colSpan={4} className="border-r border-b px-6 py-3 w-[400px]">BaseLine {tahunBaseline}</th>
                                 <th colSpan={2} className="border-r border-b px-6 py-3 w-[200px]">{branding?.tahun?.value}</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Keterangan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[900px]">Rencana Aksi</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator Output</th>
                                 <th colSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Periode Pelaksanaan</th>
@@ -135,7 +146,7 @@ export const Table = () => {
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Pelaksana</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">OPD Crosscutting</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Pelaksana Cross</th>
-                                <th rowSpan={2} className="border-l border-b px-6 py-3 min-w-[200px]">Ketarangan</th>
+                                <th rowSpan={2} className="border-l border-b px-6 py-3 min-w-[200px]">Keterangan</th>
                             </tr>
                             <tr className="bg-yellow-600 text-white">
                                 <th className="border-r border-b px-6 py-1 w-[100px]">Target</th>
@@ -155,72 +166,157 @@ export const Table = () => {
                                 ))}
                             </tr>
                         </thead>
-                        <tbody>
-                            {Data.length > 0 ?
-                                Data.map((item: RencanaReformasiBirokrasi, index: number) => (
-                                    <React.Fragment key={index}>
-                                        <tr key={index}>
-                                            <td className="border-x border-b border-yellow-600 py-4 px-3 text-center">{index + 1}</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.jenis_rb || "-"}</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.kegiatan_utama || "-"}</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.keterangan || "-"}</td>
-                                            {item.indikator ?
-                                                <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">
-                                                    {item.indikator.map((ind: IndikatorRB, ind_index: number) => (
-                                                        <div className="flex gap-1" key={ind_index}>
-                                                            <p className="">{ind.indikator || "-"}</p>
-                                                        </div>
-                                                    ))}
+                        <tbody className="bg-white">
+                            {Data && Data.length > 0 ? (
+                                Data.map((item: RencanaReformasiBirokrasi, index: number) => {
+                                    const indikator = item.indikator ?? [];
+                                    const renaksi = item.rencana_aksis ?? [];
+                                    const indikatorCount = Math.max(1, indikator.length);
+
+                                    return (
+                                        <React.Fragment key={item.id ?? index}>
+                                            {/* ====================== BARIS PERTAMA (INDIKATOR 1) ====================== */}
+                                            <tr>
+                                                {/* RB Info */}
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{index + 1}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.jenis_rb}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.kegiatan_utama}</td>
+
+                                                {/* Indikator pertama */}
+                                                {(() => {
+                                                    const ind = indikator[0];
+                                                    const base = ind?.target?.find(t => t.tahun_baseline !== 0);
+                                                    const next = ind?.target?.find(t => t.tahun_next !== 0);
+
+                                                    return (
+                                                        <>
+                                                            <td className="border px-6 py-4">{ind?.indikator ?? "-"}</td>
+                                                            <td className="border px-6 py-4 text-center">{base?.target_baseline ?? "-"}</td>
+                                                            <td className="border px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
+                                                            <td className="border px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
+                                                            <td className="border px-6 py-4 text-center">{base ? "0" : "-"}</td>
+                                                            <td className="border px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
+                                                            <td className="border px-6 py-4 text-center">{next?.satuan_next ?? "-"}</td>
+                                                        </>
+                                                    );
+                                                })()}
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.keterangan}</td>
+
+                                                {/* 🟩 Rencana Aksi + Output + Target + dst. */}
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-left">
+                                                    {renaksi.length > 0 ? renaksi[0].rencana_aksi : "-"}
                                                 </td>
-                                                :
-                                                <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">-</td>
-                                            }
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            {item.rencana_aksis.length > 0 ?
-                                                <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">
-                                                    {item.rencana_aksis.map((ra: RencanaAksi, ra_index: number) => (
-                                                        <div className="flex gap-1" key={ra_index}>
-                                                            <p className="border border-black p-1 rounded-lg">{ra_index + 1}.</p>
-                                                            <p className="">{ra.rencana_aksi || "-"}</p>
-                                                        </div>
-                                                    ))}
+
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-left">
+                                                    {renaksi[0]?.indikator_rencana_aksis?.map((i: IndikatorRenaksi, idx) => (
+                                                        <div key={idx}>{i.indikator}</div>
+                                                    )) ?? "-"}
                                                 </td>
-                                                :
-                                                <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">-</td>
-                                            }
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                            <td className="border-r border-b border-yellow-600 px-6 py-4 text-center">pengembangan</td>
-                                        </tr>
-                                    </React.Fragment>
-                                ))
-                                :
+
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                    {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.target ?? "-"}
+                                                </td>
+
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                    {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.realisasi ?? "-"}
+                                                </td>
+
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                    {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.satuan ?? "-"}
+                                                </td>
+
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                    {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.capaian ?? "-"}
+                                                </td>
+
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">{renaksi[0]?.anggaran ?? "-"}</td>
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">{renaksi[0]?.realisasi_anggaran ?? "-"}</td>
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">{renaksi[0]?.opd_koordinator ?? "-"}</td>
+
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-left">
+                                                    {renaksi[0]?.nama_pelaksana ?? "-"}<br />
+                                                    {renaksi[0]?.nip_pelaksana ?? ""}
+                                                </td>
+
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                            </tr>
+
+                                            {/* ====================== SISA INDIKATOR ====================== */}
+                                            {indikator.slice(1).map((ind, indIndex) => {
+                                                const base = ind.target?.find(t => t.tahun_baseline !== 0);
+                                                const next = ind.target?.find(t => t.tahun_next !== 0);
+
+                                                return (
+                                                    <tr key={ind.id ?? indIndex}>
+                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-left">{ind.indikator}</td>
+
+                                                        {/* Baseline */}
+                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{base?.target_baseline ?? "-"}</td>
+                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
+                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
+                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{base ? "0" : "-"}</td>
+
+                                                        {/* Next */}
+                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
+                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{next?.satuan_next ?? "-"}</td>
+                                                    </tr>
+                                                );
+                                            })}
+
+                                            {/* ====================== BARIS RENAKSI (SETELAH INDIKATOR) ====================== */}
+                                            {/* ====================== RENAKSI 2, 3, 4, ... ====================== */}
+                                            {renaksi.slice(1).map((ra: RencanaAksi, raIndex: number) => (
+                                                <tr key={`ra-${raIndex}`}>
+                                                    {/* Kosongkan kolom indikator 1–11 */}
+                                                    <td colSpan={11} className="px-6 py-4">-</td>
+
+                                                    {/* Kolom Renaksi */}
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-left">{ra.rencana_aksi}</td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-left">
+                                                        {ra.indikator_rencana_aksis?.map((i: IndikatorRenaksi, idx) => (
+                                                            <div key={idx}>{i.indikator}</div>
+                                                        ))}
+                                                    </td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                        {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.target ?? "-"}
+                                                    </td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                        {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.realisasi ?? "-"}
+                                                    </td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                        {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.satuan ?? "-"}
+                                                    </td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                        {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.capaian ?? "-"}
+                                                    </td>
+
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.anggaran}</td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.realisasi_anggaran}</td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.opd_koordinator}</td>
+
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-left">
+                                                        {ra.nama_pelaksana}<br />{ra.nip_pelaksana}
+                                                    </td>
+
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">-</td>
+                                                </tr>
+                                            ))}
+                                        </React.Fragment>
+                                    );
+                                })
+                            ) : (
                                 <tr>
-                                    <td className="px-6 py-3" colSpan={30}>
-                                        Data Kosong / Belum Ditambahkan
-                                    </td>
+                                    <td colSpan={24} className="text-center p-4">Data Kosong / Belum Ditambahkan</td>
                                 </tr>
-                            }
-                            <tr>
-                            </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
             </>
         )
     }
-} 
+}
