@@ -268,17 +268,17 @@ export const Table = () => {
 
                                                 return (
                                                     <tr key={ind.id ?? indIndex}>
-                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-left">{ind.indikator}</td>
+                                                        <td className="border border-white px-6 py-4 text-left">{ind.indikator}</td>
 
                                                         {/* Baseline */}
-                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{base?.target_baseline ?? "-"}</td>
-                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
-                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
-                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{base ? "0" : "-"}</td>
+                                                        <td className="border border-white px-6 py-4 text-center">{base?.target_baseline ?? "-"}</td>
+                                                        <td className="border border-white px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
+                                                        <td className="border border-white px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
+                                                        <td className="border border-white px-6 py-4 text-center">{base ? "0" : "-"}</td>
 
                                                         {/* Next */}
-                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
-                                                        <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{next?.satuan_next ?? "-"}</td>
+                                                        <td className="border border-white px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
+                                                        <td className="border border-white px-6 py-4 text-center">{next?.satuan_next ?? "-"}</td>
                                                     </tr>
                                                 );
                                             })}
