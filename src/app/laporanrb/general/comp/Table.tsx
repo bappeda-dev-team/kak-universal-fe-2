@@ -95,7 +95,7 @@ export const Table = () => {
             setLoading(true);
             setError(false);
             try {
-                const response = await fetch(`${branding?.api_perencanaan}/datamaster/rb/laporanByTahun/${branding?.tahun?.value}/TEMATIK`, {
+                const response = await fetch(`${branding?.api_perencanaan}/datamaster/rb/laporanByTahun/${branding?.tahun?.value}/GENERAL`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
