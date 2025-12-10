@@ -53,7 +53,7 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
 
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const fetchIkuOpd = async () => {
+        const fetchOpd = async () => {
             setLoading(true);
             setError(false);
             try {
@@ -80,7 +80,7 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
             }
         }
         if (tahun != undefined) {
-            fetchIkuOpd();
+            fetchOpd();
         }
     }, [token, tahun, kode_opd]);
 

@@ -104,7 +104,7 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                 </tr>
                                 :
                                 Data.map((item: Pokin, index: number) => (
-                                    <tr>
+                                    <tr key={index}>
                                         <td className="border-x border-b border-orange-500 py-4 px-3 text-center">
                                             {index + 1}
                                         </td>
