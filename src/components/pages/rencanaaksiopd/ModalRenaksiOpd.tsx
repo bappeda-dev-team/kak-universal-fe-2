@@ -219,7 +219,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
                         onSubmit={handleSubmit(onSubmit)}
                     >
                         <div className="w-max-[500px] py-2 mb-2 border-b-2 border-gray-300 text-center uppercase font-bold">
-                            {metode === "baru" ? "Tambah" : "Edit"} Rencana Aksi OPD
+                            {metode === "baru" ? "Tambah" : "Edit"} Pokok Pikiran
                         </div>
                         <div className="flex flex-col pt-3">
                             <label
@@ -264,7 +264,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
                                 className="uppercase text-xs font-bold text-gray-700 my-2"
                                 htmlFor="id_renaksi"
                             >
-                                Rencana Aksi OPD
+                                Pokok Pikiran
                             </label>
                             <Controller
                                 name="id_renaksi"
@@ -273,7 +273,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
                                     <React.Fragment>
                                         <Select
                                             {...field}
-                                            placeholder="Pilih Rencana Aksi OPD"
+                                            placeholder="Pilih Pokok Pikiran"
                                             value={Renaksi}
                                             options={RenaksiOption}
                                             isLoading={IsLoading}
