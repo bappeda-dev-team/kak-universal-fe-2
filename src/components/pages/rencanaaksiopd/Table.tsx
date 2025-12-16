@@ -139,23 +139,23 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
     if (Loading) {
         return (
             <div className="w-full overflow-auto">
-               <LoadingClip className="mx-5 py-5" />     
+                <LoadingClip className="mx-5 py-5" />
             </div>
         )
     }
     if (Error) {
         return (
             <div className="w-full overflow-auto">
-               <h1 className="text-red-500 font-bold mx-5 py-5">Periksa koneksi internet atau database server</h1>   
+                <h1 className="text-red-500 font-bold mx-5 py-5">Periksa koneksi internet atau database server</h1>
             </div>
         )
     }
 
     return (
         <div className="overflow-auto">
-            {DataNull ? 
+            {DataNull ?
                 <h1 className="font-bold mx-5 py-5">Sasaran OPD belum di tambahkan di RENSTRA</h1>
-            :
+                :
                 SasaranOpd.map((data: Sasaran, index: number) => (
                     <div className="my-2" key={data.id || index}>
                         <div
@@ -254,7 +254,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
             if (!response.ok) {
                 alert(`response tidak !ok saat hapus data renaksi opd dengan id ${id}`)
             }
-            AlertNotification("Berhasil", "Rencana Aksi OPD Berhasil Dihapus", "success", 1000);
+            AlertNotification("Berhasil", "Pokok Pikiran Berhasil Dihapus", "success", 1000);
             setFetchTrigger((prev) => !prev);
         } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
@@ -349,7 +349,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
                 className="flex items-center justify-center gap-1 w-full mb-2"
             >
                 <TbCirclePlus />
-                Tambah Rencana Aksi OPD
+                Tambah Pokok Pikiran
             </ButtonSkyBorder>
             <div className="overflow-auto rounded-t-xl border">
                 <table className="w-full">
@@ -469,4 +469,4 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
             </div>
         </div>
     )
-} 
+}

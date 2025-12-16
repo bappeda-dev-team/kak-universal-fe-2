@@ -42,12 +42,12 @@ const RencanaAksiOpd = () => {
             <div className="flex items-center">
                 <a href="/" className="mr-1"><FiHome /></a>
                 <p className="mr-1">/ Perencanaan OPD</p>
-                <p>/ Rencana Aksi OPD</p>
+                <p>/ Pokok Pikiran</p>
             </div>
             <div className="mt-3 rounded-xl shadow-lg border">
                 <div className="flex flex-wrap items-center justify-between border-b px-5 py-5">
                     <div className="flex items-center gap-1">
-                        <h1 className="font-bold text-xl uppercase">Rencana Aksi OPD</h1>
+                        <h1 className="font-bold text-xl uppercase">Pokok Pikiran</h1>
                         <h1 className="font-bold text-xl uppercase text-green-500">{Tahun?.label || ''}</h1>
                     </div>
                 </div>
