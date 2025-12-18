@@ -14,7 +14,6 @@ interface FormValue {
 interface modal {
     isOpen: boolean;
     onClose: () => void;
-    metode: 'lama' | 'baru';
     id?: string;
     nama_renaksi: string;
     anggaran: number | null;
@@ -22,7 +21,7 @@ interface modal {
 }
 
 
-export const ModalAnggaran: React.FC<modal> = ({ isOpen, onClose, nama_renaksi, anggaran, id, metode, onSuccess }) => {
+export const ModalAnggaran: React.FC<modal> = ({ isOpen, onClose, nama_renaksi, anggaran, id, onSuccess }) => {
 
     const {
         control,
@@ -44,21 +43,16 @@ export const ModalAnggaran: React.FC<modal> = ({ isOpen, onClose, nama_renaksi, 
 
     const onSubmit: SubmitHandler<FormValue> = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const formDataNew = {
+        const payload = {
             //key : value
             renaksi_id: id,
             anggaran: Anggaran,
         };
-        const formDataEdit = {
-            //key : value
-            renaksi_id: id,
-            anggaran: Anggaran,
-        };
-        const getBody = () => {
-            if (metode === "lama") return formDataEdit;
-            if (metode === "baru") return formDataNew;
-            return {}; // Default jika metode tidak sesuai
-        };
+        // const getBody = () => {
+        //     if (metode === "lama") return formDataEdit;
+        //     if (metode === "baru") return formDataNew;
+        //     return {}; // Default jika metode tidak sesuai
+        // };
         if (Anggaran === null) {
             AlertNotification("Anggaran tidak boleh kosong", "", "warning", 3000);
         } else {
@@ -66,25 +60,19 @@ export const ModalAnggaran: React.FC<modal> = ({ isOpen, onClose, nama_renaksi, 
             // metode === 'lama' && console.log("lama :", formDataEdit);
             try {
                 let url = "";
-                if (metode === "lama") {
-                    url = `rincian_belanja/update/${id}`;
-                } else if (metode === "baru") {
-                    url = `rincian_belanja/create`;
-                } else {
-                    url = '';
-                }
+                url = `rincian_belanja/upsert`;
                 setProses(true);
                 const response = await fetch(`${API_URL}/${url}`, {
-                    method: metode === 'lama' ? "PUT" : "POST",
+                    method: "POST",
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(getBody()),
+                    body: JSON.stringify(payload),
                 });
                 const result = await response.json();
                 if (result.code === 200 || result.code === 201) {
-                    AlertNotification("Berhasil", `Berhasil ${metode === 'baru' ? "Menambahkan" : "Mengubah"} Anggaran Renaksi`, "success", 1000);
+                    AlertNotification("Berhasil", `Berhasil menyimpan Anggaran Renaksi`, "success", 1000);
                     onClose();
                     onSuccess();
                 } else {
