@@ -252,7 +252,6 @@ export const TableRekinAsn: React.FC<TableRekinAsn> = ({ renaksi, fetchTrigger }
                 ))
             }
             <ModalAnggaran
-                metode={Anggaran === 0 ? 'baru' : 'lama'}
                 isOpen={ModalOpen}
                 id={IdRenaksi}
                 anggaran={Anggaran}
