@@ -71,8 +71,8 @@ export const Table: React.FC<Table> = ({ tahun }) => {
             setLoading(true)
             const API_URL_TAGGING = process.env.NEXT_PUBLIC_API_URL_TAGGING;
             try {
-                // const response = await fetch(`${API_URL_TAGGING}/laporan/tagging_pokin?nama_tagging=${encodeURIComponent(NamaTagging)}&tahun=${tahun}`, {
-                const response = await fetch(`http://laporan-tagging-ponorogo.zeabur.app/laporan/tagging_pokin?nama_tagging=Program%20Unggulan%20Bupati&tahun=2025 `, {
+                const response = await fetch(`${API_URL_TAGGING}/laporan/tagging_pokin?nama_tagging=${encodeURIComponent(NamaTagging)}&tahun=${tahun}`, {
+                // const response = await fetch(`${API_URL_TAGGING}/laporan/tagging_pokin?nama_tagging=Program%20Unggulan%20Bupati&tahun=2025 `, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
