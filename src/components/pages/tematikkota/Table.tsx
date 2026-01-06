@@ -1,7 +1,7 @@
 'use client'
 
 import { ButtonRed, ButtonGreen } from "@/components/global/Button";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { getOpdTahun } from "@/components/lib/Cookie";
@@ -161,13 +161,16 @@ const Table = () => {
                                         ))}
                                     </td>
                                     <td className="border-r border-b px-6 py-4 text-center">
-                                        {data.indikator.map((item: indikator) => (
-                                            item.targets ? 
-                                                item.targets.map((t: target) => (
-                                                    <p key={t.id_target}>{t.target} / {t.satuan}</p>
-                                                ))
-                                                :
-                                                <p>-</p>
+                                        {data.indikator.map((item: indikator, i_index: number) => (
+                                            <React.Fragment key={i_index}>
+                                                {item.targets ? 
+                                                    item.targets.map((t: target) => (
+                                                        <p key={t.id_target}>{t.target} / {t.satuan}</p>
+                                                    ))
+                                                    :
+                                                    <p>-</p>
+                                                }
+                                            </React.Fragment>
                                             
                                         ))}
                                     </td>
