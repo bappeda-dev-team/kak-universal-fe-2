@@ -56,7 +56,7 @@ export const TablePerencanaan = () => {
     const [ModalCloneOpen, setModalCloneOpen] = useState<boolean>(false);
     const [DataModalClone, setDataModalClone] = useState<type_rekin | null>(null);
 
-    const {branding} = useBrandingContext();
+    const { branding } = useBrandingContext();
     const token = getToken();
 
     useEffect(() => {
@@ -92,8 +92,10 @@ export const TablePerencanaan = () => {
                 setLoading(false);
             }
         }
-        fetchRekin();
-    }, [branding, token, FetchTrigger]);
+        if (User?.pegawai_id != undefined) {
+            fetchRekin();
+        }
+    }, [branding, User, token, FetchTrigger]);
 
     const handleEditRekin = (id: string) => {
         if (ModalEdit) {
