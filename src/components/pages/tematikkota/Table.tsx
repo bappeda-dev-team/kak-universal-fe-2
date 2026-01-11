@@ -151,7 +151,7 @@ const Table = () => {
                         Tematik.map((data, index) => (
                         <tr key={data.id}>
                             <td className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
-                            <td className="border-r border-b px-6 py-4 text-center">{data.tema}</td>
+                            <td className="border-r border-b px-6 py-4 text-center">{data.tema || "-"} - {data.id || "-"}</td>
                             <td className="border-r border-b px-6 py-4 text-center">{data.keterangan ? data.keterangan : "-"}</td>
                             {data.indikator ?
                                 <>
