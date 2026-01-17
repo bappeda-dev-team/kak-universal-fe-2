@@ -29,6 +29,15 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+    const tahun = Number(branding?.tahun?.value);
+    const [PeriodeBaru, setPeriodeBaru] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (tahun) {
+            const Tahun = Array.from({ length: 5 }, (_, i) => `${tahun - (i + 1)}`);
+            setPeriodeBaru(Tahun);
+        }
+    }, [tahun]);
 
     const handleModal = (jenis: "baru" | "edit" | "", data: IsuStrategis | null) => {
         if (Modal) {
@@ -131,7 +140,7 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[250px]">Permasalahan</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[250px]">Nama Data Dukung</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[250px]">Narasi Data Dukung</th>
-                            {tahun_list
+                            {PeriodeBaru
                                 .slice()
                                 .reverse()
                                 .map((item: any) => (
@@ -139,7 +148,7 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                                 ))}
                         </tr>
                         <tr className={`bg-emerald-600 text-white`}>
-                            {tahun_list.map((item: any) => (
+                            {PeriodeBaru.map((item: any) => (
                                 <React.Fragment key={item}>
                                     <th className="border-r border-b px-6 py-1 min-w-[50px]">Jumlah</th>
                                     <th className="border-r border-b px-6 py-1 min-w-[50px]">Satuan</th>
@@ -242,7 +251,7 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                     isOpen={Modal}
                     onClose={() => handleModal("", null)}
                     metode={JenisModal}
-                    tahun_list={tahun_list}
+                    tahun_list={PeriodeBaru}
                     Data={DataEdit ? DataEdit : null}
                     onSuccess={() => setFetchTrigger((prev) => !prev)}
                 />

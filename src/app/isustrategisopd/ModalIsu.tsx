@@ -366,9 +366,9 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                             />
                             <div className="flex flex-wrap justify-between gap-1">
                                 {dataTerukurField.jumlah_data.map((_, subindex) => (
-                                    <div key={`${permasalahan_index}-${subindex}`} className="flex flex-col py-1 px-3 border border-gray-200 rounded-lg">
+                                    <div key={`${permasalahan_index}-${subindex}`} className="flex flex-col py-1 px-3 border border-sky-600 rounded-lg">
                                         <label className="text-base text-center text-gray-700">
-                                            <p>{reversedTahunList[subindex]}</p>
+                                            <p className="font-bold text-sky-600">{Number(reversedTahunList[subindex])}</p>
                                         </label>
                                         <Controller
                                             name={`permasalahan_opd.${permasalahan_index}.data_dukung.${dataTerukurIndex}.jumlah_data.${subindex}.jumlah_data`}
