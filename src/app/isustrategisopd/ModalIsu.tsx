@@ -96,7 +96,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
     const [PermasalahanOption, setPermasalahanOption] = useState<TablePermasalahan[]>([]);
 
     const [User, setUser] = useState<any>(null);
-    const [Periode, setPeriode] = useState<any>(null);
+    // const [Periode, setPeriode] = useState<any>(null);
     const [Proses, setProses] = useState<boolean>(false);
     const [LoadingOption, setLoadingOption] = useState<boolean>(false);
 
@@ -108,27 +108,10 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
 
     useEffect(() => {
         const fetchUser = getUser();
-        const fetchPeriode = getPeriode();
         if (fetchUser) {
             setUser(fetchUser.user);
         }
-        if (fetchPeriode.periode) {
-            const data = {
-                value: fetchPeriode.periode.value,
-                label: fetchPeriode.periode.label,
-                id: fetchPeriode.periode.value,
-                tahun_awal: fetchPeriode.periode.tahun_awal,
-                tahun_akhir: fetchPeriode.periode.tahun_akhir,
-                jenis_periode: fetchPeriode.periode.jenis_periode,
-                tahun_list: fetchPeriode.periode.tahun_list
-            }
-            setPeriode(data);
-        }
     }, []);
-
-    useEffect(() => {
-        console.log(tahun_list)
-    }, [tahun_list]);
 
     const fetchBidangUrusanOption = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -209,8 +192,8 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
             kode_opd: User?.roles == "super_admin" ? branding?.opd?.value : User?.kode_opd,
             kode_bidang_urusan: data.kode_bidang_urusan?.value,
             nama_bidang_urusan: data.kode_bidang_urusan?.nama_bidang_urusan,
-            tahun_awal: Periode.tahun_awal,
-            tahun_akhir: Periode.tahun_akhir,
+            tahun_awal: "",
+            tahun_akhir: "",
             isu_strategis: data.isu_strategis,
             permasalahan_opd: data.permasalahan_opd.map((p) => ({
                 data_dukung: p.data_dukung.map((dd) => ({
@@ -234,8 +217,8 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
             kode_opd: Data?.kode_opd,
             kode_bidang_urusan: data.kode_bidang_urusan?.value,
             nama_bidang_urusan: data.kode_bidang_urusan?.nama_bidang_urusan,
-            tahun_awal: Data?.tahun_awal,
-            tahun_akhir: Data?.tahun_akhir,
+            tahun_awal: "",
+            tahun_akhir: "",
             isu_strategis: data.isu_strategis,
             permasalahan_opd: data.permasalahan_opd.map((p) => ({
                 data_dukung: p.data_dukung.map((dd) => ({
@@ -259,11 +242,11 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
             if (metode === "baru") return formDataNew;
             return {}; // Default jika metode tidak sesuai
         };
-        // metode === 'baru' && console.log("baru :", formDataNew);
-        // metode === 'edit' && console.log("edit :", formDataEdit);
         if (data?.kode_bidang_urusan?.value === undefined) {
             AlertNotification("Bidang Urusan", "Bidang Urusan wajib terisi", "warning");
         } else {
+            // metode === 'baru' && console.log("baru :", formDataNew);
+            // metode === 'edit' && console.log("edit :", formDataEdit);
             try {
                 setProses(true);
                 let url = "";
@@ -366,9 +349,18 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                             />
                             <div className="flex flex-wrap justify-between gap-1">
                                 {dataTerukurField.jumlah_data.map((_, subindex) => (
-                                    <div key={`${permasalahan_index}-${subindex}`} className="flex flex-col py-1 px-3 border border-sky-600 rounded-lg">
+                                    <div
+                                        key={`${permasalahan_index}-${subindex}`}
+                                        className={`flex flex-col py-1 px-3 border rounded-lg
+                                            ${Number(tahun_list[subindex]) === branding?.tahun?.value ? 
+                                                "border-yellow-600"
+                                                :
+                                                "border-sky-600"
+                                            } 
+                                        `}
+                                    >
                                         <label className="text-base text-center text-gray-700">
-                                            <p className="font-bold text-sky-600">{Number(reversedTahunList[subindex])}</p>
+                                            <p className={`font-bold text-sky-600 ${Number(tahun_list[subindex]) === branding?.tahun?.value ? "text-yellow-600" : "text-sky-600"}`}>{tahun_list[subindex]}</p>
                                         </label>
                                         <Controller
                                             name={`permasalahan_opd.${permasalahan_index}.data_dukung.${dataTerukurIndex}.jumlah_data.${subindex}.jumlah_data`}
@@ -489,7 +481,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                                 rules={{ required: "Isu Strategis Wajib Diisi" }}
                                 control={control}
                                 render={({ field }) => {
-                                    return(
+                                    return (
                                         <>
                                             <textarea
                                                 {...field}

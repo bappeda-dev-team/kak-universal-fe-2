@@ -22,7 +22,7 @@ interface Periode {
 
 const IsuStrategis = () => {
 
-    const {branding} = useBrandingContext()
+    const { branding } = useBrandingContext()
     const tahun = branding?.tahun ? branding?.tahun.value : 0;
     const [User, setUser] = useState<any>(null);
     const [Periode, setPeriode] = useState<Periode | null>(null);
@@ -78,20 +78,20 @@ const IsuStrategis = () => {
         }
     };
 
-    if(User?.roles ==  "super_admin"){
-        if(branding?.opd?.value === undefined || branding?.tahun?.value === undefined){
-            return(
+    if (User?.roles == "super_admin") {
+        if (branding?.opd?.value === undefined || branding?.tahun?.value === undefined) {
+            return (
                 <OpdTahunNull />
             )
         }
-    } else if(User?.roles != "super_admin"){
-        if(branding?.tahun?.value == undefined){
-            return(
+    } else if (User?.roles != "super_admin") {
+        if (branding?.tahun?.value == undefined) {
+            return (
                 <TahunNull />
             )
         }
-    } else if(User?.roles != "super_admin" || User?.roles != "admin_opd" || User?.roles != 'reviewer'){
-        return(
+    } else if (User?.roles != "super_admin" || User?.roles != "admin_opd" || User?.roles != 'reviewer') {
+        return (
             <h1>403 Forbidden Access for {User?.roles || "this role"}</h1>
         )
     }
@@ -111,51 +111,14 @@ const IsuStrategis = () => {
                         <h1 className="uppercase font-bold">Isu Strategis</h1>
                         <h1 className="uppercase font-bold ml-1 text-emerald-500">(Periode {Periode?.tahun_awal} - {Periode?.tahun_akhir})</h1>
                     </div>
-                    <Select
-                        styles={{
-                            control: (baseStyles) => ({
-                                ...baseStyles,
-                                borderRadius: '8px',
-                                minWidth: '200.562px',
-                                minHeight: '38px'
-                            })
-                        }}
-                        onChange={(option) => {
-                            setPeriode(option);
-                            setCookie("periode", JSON.stringify(option));
-                        }}
-                        options={PeriodeOption}
-                        isLoading={Loading}
-                        isClearable
-                        placeholder="Pilih Periode ..."
-                        value={Periode}
-                        isSearchable
-                        onMenuOpen={() => {
-                            fetchPeriode();
-                        }}
-                    />
                 </div>
-                {Periode ?
-                    <>
-                        <p className='text-sm italic text-gray-400 ml-3 mt-2'>*data permasalahan per tahun {tahun} (header)</p>
-                        <TablePermasalahan 
-                            tahun={tahun}
-                            kode_opd={User?.roles == 'super_admin' ? branding?.opd?.value : User?.kode_opd}
-                        />
-                        {/* <TableBidangUrusan /> */}
-                        <TableIsuStrategis
-                            id_periode={Periode?.value}
-                            tahun_awal={Periode?.tahun_awal ? Periode?.tahun_awal : ""}
-                            tahun_akhir={Periode?.tahun_akhir ? Periode?.tahun_akhir : ""}
-                            jenis={Periode?.jenis_periode ? Periode?.jenis_periode : ""}
-                            tahun_list={Periode?.tahun_list ? Periode?.tahun_list : []}
-                        />
-                    </>
-                    :
-                    <div className="m-5">
-                        <h1>Pilih Periode terlebih dahulu</h1>
-                    </div>
-                }
+                <p className='text-sm italic text-gray-400 ml-3 mt-2'>*data permasalahan per tahun {tahun} (header)</p>
+                <TablePermasalahan
+                    tahun={tahun}
+                    kode_opd={User?.roles == 'super_admin' ? branding?.opd?.value : User?.kode_opd}
+                />
+                <TableIsuStrategis />
+
             </div>
         </>
     )
