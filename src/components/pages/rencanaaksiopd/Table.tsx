@@ -447,30 +447,34 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
                         }
                     </tbody>
                 </table>
-                <ModalRenaksiOpd
-                    metode="baru"
-                    isOpen={ModalTambah}
-                    onClose={() => handleModalTambah(0, '', [])}
-                    kode_opd={kode_opd}
-                    tahun={String(tahun)}
-                    id_rekin={IdRekin}
-                    id_sasaran={IdSasaran}
-                    rekin={Rekin}
-                    indikator={IndikatorSasaran ? IndikatorSasaran : []}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
-                />
-                <ModalRenaksiOpd
-                    metode="lama"
-                    isOpen={ModalEdit}
-                    onClose={() => handleModalEdit(0, '', [])}
-                    id={IdRenaksi}
-                    kode_opd={kode_opd}
-                    tahun={String(tahun)}
-                    id_rekin={IdRekin}
-                    rekin={Rekin}
-                    indikator={IndikatorSasaran ? IndikatorSasaran : []}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
-                />
+                {ModalTambah &&
+                    <ModalRenaksiOpd
+                        metode="baru"
+                        isOpen={ModalTambah}
+                        onClose={() => handleModalTambah(0, '', [])}
+                        kode_opd={kode_opd}
+                        tahun={String(tahun)}
+                        id_rekin={IdRekin}
+                        id_sasaran={IdSasaran}
+                        rekin={Rekin}
+                        indikator={IndikatorSasaran ? IndikatorSasaran : []}
+                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                    />
+                }
+                {ModalEdit &&
+                    <ModalRenaksiOpd
+                        metode="lama"
+                        isOpen={ModalEdit}
+                        onClose={() => handleModalEdit(0, '', [])}
+                        id={IdRenaksi}
+                        kode_opd={kode_opd}
+                        tahun={String(tahun)}
+                        id_rekin={IdRekin}
+                        rekin={Rekin}
+                        indikator={IndikatorSasaran ? IndikatorSasaran : []}
+                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                    />
+                }
             </div>
         </div>
     )
