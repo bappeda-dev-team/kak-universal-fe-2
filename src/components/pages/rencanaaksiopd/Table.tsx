@@ -303,8 +303,13 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
                     setDataNull(true);
                     setData([]);
                 } else {
-                    setDataNull(false);
-                    setData(data);
+                    if(result.code === 200){
+                        setDataNull(false);
+                        setData(data);
+                    } else {
+                        setError(true);
+                        setData([]);
+                    }
                 }
             } catch (err) {
                 console.error(err);
@@ -372,8 +377,8 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
                         </tr>
                     </thead>
                     <tbody>
-                        {Data.length != 0 ?
-                            Data.map((data: Rekin, index: number) => (
+                        {Data?.length != 0 ?
+                            Data?.map((data: Rekin, index: number) => (
                                 <React.Fragment key={index}>
                                     {data.rencana_kinerja.map((rk: RencanaKinerja, sub_index: number) => (
                                         <tr key={rk.id_renaksiopd || index}>
