@@ -45,11 +45,16 @@ const TableIsuStrategis = () => {
     }
 
     useEffect(() => {
-        const API_URL = branding?.api_permasalahan;
+        let url = "";
+        if (branding?.user?.roles == "super_admin") {
+            url = `isu_strategis/kebelakang/${branding?.opd?.value}/${branding?.tahun?.value}`
+        } else {
+            url = `isu_strategis/kebelakang/${branding?.user?.kode_opd}/${branding?.tahun?.value}`
+        }
         const fetchIsuStrategis = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/isu_strategis/kebelakang/${branding?.opd?.value}/${branding?.tahun?.value}`, {
+                const response = await fetch(`${branding?.api_permasalahan}/${url}`, {
                     headers: {
                         'Content-Type': 'application/json'
                     }

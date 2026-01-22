@@ -114,10 +114,15 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
     }, []);
 
     const fetchBidangUrusanOption = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        let url = "";
+        if(branding?.user?.roles == "super_admin"){
+            url = `bidang_urusan/findall/${branding?.opd?.value}`
+        } else {
+            url = `bidang_urusan/findall/${branding?.user?.kode_opd}`
+        }
         try {
             setLoadingOption(true);
-            const response = await fetch(`${API_URL}/bidang_urusan/findall/${branding?.opd?.value}`, {
+            const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `${token}`
@@ -144,10 +149,15 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
         }
     }
     const fetchPermasalahanOption = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN;
+        let url = "";
+        if(branding?.user?.roles == "super_admin"){
+            url = `permasalahan_terpilih/findall?kode_opd=${branding?.opd?.value}&tahun=${Tahun}`
+        } else {
+            url = `permasalahan_terpilih/findall?kode_opd=${branding?.user?.kode_opd}&tahun=${Tahun}`
+        }
         try {
             setLoadingOption(true);
-            const response = await fetch(`${API_URL}/permasalahan_terpilih/findall?kode_opd=${branding?.opd?.value}&tahun=${Tahun}`, {
+            const response = await fetch(`${branding?.api_permasalahan}/${url}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     // Authorization: `${token}`
@@ -530,6 +540,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                                                 id={`permasalahan_opd.${index}.id_permasalahan`}
                                                 options={PermasalahanOption}
                                                 placeholder="pilih permasalahan"
+                                                isLoading={LoadingOption}
                                                 noOptionsMessage={() => `Permasalahan Terpilih kosong, pilih permasalahan di menu renstra/permasalahan`}
                                                 onMenuOpen={() => {
                                                     if (PermasalahanOption.length === 0) {
