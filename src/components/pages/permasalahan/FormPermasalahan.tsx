@@ -67,7 +67,7 @@ export const FormPermasalahan: React.FC<FormPermasalahan> = ({ data, jenis, rowS
             jenis_masalah: data?.level_pohon === 4 ? "MASALAH_POKOK" :
                 data?.level_pohon === 5 ? "MASALAH" :
                     data?.level_pohon === 6 ? "AKAR_MASALAH" : "",
-            kode_opd: branding?.opd?.value,
+            kode_opd: branding?.user?.roles == "super_admin" ? branding?.opd?.value : branding?.user?.kode_opd,
             tahun: String(branding?.tahun?.value),
         }
         // console.log(formData);
