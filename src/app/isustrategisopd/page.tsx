@@ -25,58 +25,14 @@ const IsuStrategis = () => {
     const { branding } = useBrandingContext()
     const tahun = branding?.tahun ? branding?.tahun.value : 0;
     const [User, setUser] = useState<any>(null);
-    const [Periode, setPeriode] = useState<Periode | null>(null);
-    const [PeriodeOption, setPeriodeOption] = useState<Periode[]>([]);
-    const [Loading, setLoading] = useState<boolean>(false);
     const token = getToken();
 
     useEffect(() => {
         const fetchUser = getUser();
-        const fetchPeriode = getPeriode();
         if (fetchUser) {
             setUser(fetchUser.user);
         }
-        if (fetchPeriode.periode) {
-            const data = {
-                value: fetchPeriode.periode.value,
-                label: fetchPeriode.periode.label,
-                id: fetchPeriode.periode.value,
-                tahun_awal: fetchPeriode.periode.tahun_awal,
-                tahun_akhir: fetchPeriode.periode.tahun_akhir,
-                jenis_periode: fetchPeriode.periode.jenis_periode,
-                tahun_list: fetchPeriode.periode.tahun_list
-            }
-            setPeriode(data);
-        }
     }, []);
-
-    const fetchPeriode = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try {
-            setLoading(true);
-            const response = await fetch(`${API_URL}/periode/findall`, {
-                headers: {
-                    Authorization: `${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const result = await response.json();
-            const hasil = result.data;
-            const data = hasil.map((item: any) => ({
-                value: item.id,
-                label: `${item.tahun_awal} - ${item.tahun_akhir} (${item.jenis_periode})`,
-                tahun_awal: item.tahun_awal,
-                tahun_akhir: item.tahun_akhir,
-                jenis_periode: item.jenis_periode,
-                tahun_list: item.tahun_list,
-            }));
-            setPeriodeOption(data);
-        } catch (err) {
-            console.error("error fetch periode", err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     if (User?.roles == "super_admin") {
         if (branding?.opd?.value === undefined || branding?.tahun?.value === undefined) {
@@ -109,7 +65,7 @@ const IsuStrategis = () => {
                 <div className="flex items-center justify-between border-b px-5 py-5">
                     <div className="flex flex-wrap items-end">
                         <h1 className="uppercase font-bold">Isu Strategis</h1>
-                        <h1 className="uppercase font-bold ml-1 text-emerald-500">(Periode {Periode?.tahun_awal} - {Periode?.tahun_akhir})</h1>
+                        <h1 className="uppercase font-bold ml-1 text-emerald-500">{branding?.tahun?.label}</h1>
                     </div>
                 </div>
                 <p className='text-sm italic text-gray-400 ml-3 mt-2'>*data permasalahan per tahun {tahun} (header)</p>
@@ -118,7 +74,6 @@ const IsuStrategis = () => {
                     kode_opd={User?.roles == 'super_admin' ? branding?.opd?.value : User?.kode_opd}
                 />
                 <TableIsuStrategis />
-
             </div>
         </>
     )
