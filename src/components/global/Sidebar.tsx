@@ -83,7 +83,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
     //DATA MASTER OPD
     if (
       url === "/useropd" ||
-      url === "/subkegiatanopd"
+      url === "/subkegiatanopd" ||
+      url === "/bidang-urusan-opd" 
     ) {
       setDataMaster(false);
       setDataMasterOpd(true);
@@ -463,6 +464,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbDice4Filled className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master RB</span>
+                </li>
+              </Link>
+              <Link href="/bidang-urusan-opd">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/bidang-urusan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbFileDelta className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200 text-sm`}>Bidang Urusan OPD</span>
                 </li>
               </Link>
             </div>

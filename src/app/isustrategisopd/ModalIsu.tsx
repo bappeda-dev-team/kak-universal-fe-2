@@ -5,7 +5,7 @@ import { Controller, SubmitHandler, useForm, useFieldArray, Control } from "reac
 import { ButtonSky, ButtonSkyBorder, ButtonRed, ButtonRedBorder } from '@/components/global/Button';
 import { getToken, getUser, getPeriode } from "@/components/lib/Cookie";
 import { LoadingButtonClip } from "@/components/global/Loading";
-import { OptionType, PermasalahanOpd, IsuStrategis, BidangUrusan, TargetJumlahData, TablePermasalahan } from "@/types";
+import { IsuStrategis, BidangUrusan, TargetJumlahData, TablePermasalahan } from "@/types";
 import Select from "react-select";
 import { AlertNotification } from "@/components/global/Alert";
 import { TbCirclePlus, TbPlus, TbTrash } from "react-icons/tb";

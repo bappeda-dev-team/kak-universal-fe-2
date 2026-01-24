@@ -243,7 +243,7 @@ const TableIsuStrategis = () => {
                     </tbody>
                 </table>
             </div>
-            {Modal &&
+            {(Modal && PeriodeBelakang)&&
                 <ModalIsu
                     isOpen={Modal}
                     onClose={() => handleModal("", null)}

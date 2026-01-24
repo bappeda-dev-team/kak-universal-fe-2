@@ -61,7 +61,7 @@ export const TablePermasalahan: React.FC<Table> = ({ kode_opd, tahun }) => {
                 });
                 const result = await response.json();
                 if (result.code === 200 || result.code === 2001) {
-                    if (result.data.childs.length === 0) {
+                    if (result.data.childs === null) {
                         setDataNull(true);
                         setError(false)
                         setPohon([]);
