@@ -111,14 +111,14 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
         if (fetchUser) {
             setUser(fetchUser.user);
         }
-    }, []);
+    }, [branding]);
 
     const fetchBidangUrusanOption = async () => {
         let url = "";
         if(branding?.user?.roles == "super_admin"){
             url = `bidang_urusan_opd/findall/${branding?.opd?.value}`
         } else {
-            url = `bidang_urusan_opd/findall/${branding?.user?.kode_opd}`
+            url = `bidang_urusan_opd/findall/${User?.kode_opd}`
         }
         try {
             setLoadingOption(true);
