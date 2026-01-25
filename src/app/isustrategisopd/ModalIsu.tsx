@@ -116,9 +116,9 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
     const fetchBidangUrusanOption = async () => {
         let url = "";
         if(branding?.user?.roles == "super_admin"){
-            url = `bidang_urusan/findall/${branding?.opd?.value}`
+            url = `bidang_urusan_opd/findall/${branding?.opd?.value}`
         } else {
-            url = `bidang_urusan/findall/${branding?.user?.kode_opd}`
+            url = `bidang_urusan_opd/findall/${branding?.user?.kode_opd}`
         }
         try {
             setLoadingOption(true);
@@ -445,7 +445,8 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                                 className="uppercase text-xs font-bold text-gray-700 my-2"
                                 htmlFor="kode_bidang_urusan"
                             >
-                                Bidang Urusan:
+                                Bidang Urusan: 
+                                <span className="text-slate-500 font-thin italic ml-1">Bidang Urusan diambil dari master opd bidang urusan</span>
                             </label>
                             <Controller
                                 name="kode_bidang_urusan"
@@ -464,7 +465,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                                             }
                                         }}
                                         placeholder="Pilih Bidang Urusan"
-                                        noOptionsMessage={() => `bidang urusan kosong, tambahkan di data master (super_admin)`}
+                                        noOptionsMessage={() => `bidang urusan kosong, tambahkan di data master opd`}
                                         styles={{
                                             control: (baseStyles, state) => ({
                                                 ...baseStyles,

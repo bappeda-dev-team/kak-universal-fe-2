@@ -2,7 +2,7 @@
 
 import { FiHome } from "react-icons/fi";
 import Table from "./comp/Table";
-import { OpdNull, OpdTahunNull, TahunNull } from "@/components/global/OpdTahunNull";
+import { OpdNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { IsLoadingBranding } from "@/components/global/Loading";
 
