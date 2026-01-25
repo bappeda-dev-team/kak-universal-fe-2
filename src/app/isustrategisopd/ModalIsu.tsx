@@ -153,7 +153,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
         if(branding?.user?.roles == "super_admin"){
             url = `permasalahan_terpilih/findall?kode_opd=${branding?.opd?.value}&tahun=${Tahun}`
         } else {
-            url = `permasalahan_terpilih/findall?kode_opd=${branding?.user?.kode_opd}&tahun=${Tahun}`
+            url = `permasalahan_terpilih/findall?kode_opd=${User?.kode_opd}&tahun=${Tahun}`
         }
         try {
             setLoadingOption(true);

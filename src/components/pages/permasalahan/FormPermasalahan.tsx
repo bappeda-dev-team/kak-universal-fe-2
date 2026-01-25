@@ -6,6 +6,7 @@ import { TbCircleX, TbDeviceFloppy } from "react-icons/tb"
 import { useBrandingContext } from "@/context/BrandingContext"
 import { AlertNotification } from "@/components/global/Alert"
 import { Childs } from "./TablePermasalahan"
+import { getUser } from "@/components/lib/Cookie"
 
 interface FormPermasalahan {
     data?: Childs;
@@ -42,6 +43,14 @@ export const FormPermasalahan: React.FC<FormPermasalahan> = ({ data, jenis, rowS
     const [Proses, setProses] = useState<boolean>(false);
     const [Success, setSuccess] = useState<boolean>(false);
     const [DataResult, setDataResult] = useState<any>(null);
+    const [User, setUser] = useState<any>(null);
+
+    useEffect(() => {
+            const fetchUser = getUser();
+            if (fetchUser) {
+                setUser(fetchUser.user);
+            }
+        }, []);
 
     const { control, reset, handleSubmit } = useForm<FormValue>({
         defaultValues: {
@@ -67,8 +76,8 @@ export const FormPermasalahan: React.FC<FormPermasalahan> = ({ data, jenis, rowS
             jenis_masalah: data?.level_pohon === 4 ? "MASALAH_POKOK" :
                 data?.level_pohon === 5 ? "MASALAH" :
                     data?.level_pohon === 6 ? "AKAR_MASALAH" : "",
-            kode_opd: branding?.user?.roles == "super_admin" ? branding?.opd?.value : branding?.user?.kode_opd,
-            nama_opd: branding?.user?.roles == "super_admin" ? branding?.opd?.label : branding?.user?.nama_opd,
+            kode_opd: branding?.user?.roles == "super_admin" ? branding?.opd?.value : User?.kode_opd,
+            nama_opd: branding?.user?.roles == "super_admin" ? branding?.opd?.label : User?.nama_opd,
             tahun: String(branding?.tahun?.value),
         }
         // console.log(formData);
