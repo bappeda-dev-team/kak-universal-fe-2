@@ -65,7 +65,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
   useEffect(() => {
     //DATA MASTER
     if (
-      url.startsWith("/DataMaster")
+      url.startsWith("/DataMaster") ||
+      url === "/bidang-urusan-opd"
     ) {
       setDataMaster(true);
       setDataMasterOpd(false);

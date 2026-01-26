@@ -195,7 +195,6 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
     }
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN;
         const formDataNew = {
             //key : value
             nama_opd: User?.roles == "super_admin" ? branding?.opd?.label : User?.nama_opd,
@@ -211,10 +210,9 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                     narasi_data_dukung: dd.narasi_data_dukung,
                     permasalahan_opd_id: p.id_permasalahan?.value,
                     jumlah_data: dd.jumlah_data.map((jd, index) => ({
-                        id: jd.id,
                         jumlah_data: Number(jd.jumlah_data),
                         satuan: jd.satuan,
-                        tahun: reversedTahunList[index],
+                        tahun: tahun_list[index],
                     })),
                 })),
                 id_permasalahan: p.id_permasalahan?.value,
@@ -236,10 +234,10 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                     data_dukung: dd.data_dukung,
                     narasi_data_dukung: dd.narasi_data_dukung,
                     permasalahan_opd_id: p.id_permasalahan?.value,
-                    jumlah_data: dd.jumlah_data.map((jd) => ({
+                    jumlah_data: dd.jumlah_data.map((jd, index) => ({
                         id: jd.id,
                         id_data_dukung: jd.id_data_dukung,
-                        tahun: jd.tahun,
+                        tahun: tahun_list[index],
                         jumlah_data: Number(jd.jumlah_data),
                         satuan: jd.satuan
                     })),
@@ -265,7 +263,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                 } else if (metode) {
                     url = "isu_strategis"
                 }
-                const response = await fetch(`${API_URL}/${url}`, {
+                const response = await fetch(`${branding?.api_permasalahan}/${url}`, {
                     method: metode === "baru" ? "POST" : "PUT",
                     headers: {
                         'Content-Type': 'application/json',

@@ -9,7 +9,12 @@ import { LoadingBeat } from "@/components/global/Loading";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { IsuStrategis, DataDukung, TargetJumlahData, PermasalahanOpd } from "@/types";
 
-const TableIsuStrategis = () => {
+interface Table {
+    kode_opd: string;
+    tahun: number;
+}
+
+const TableIsuStrategis:React.FC<Table> = ({ kode_opd, tahun }) => {
 
     const { branding } = useBrandingContext();
     const [Isu, setIsu] = useState<IsuStrategis[]>([]);
@@ -21,7 +26,6 @@ const TableIsuStrategis = () => {
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
-    const tahun = Number(branding?.tahun?.value);
 
     const PeriodeBelakang = [
         `${tahun}`,
