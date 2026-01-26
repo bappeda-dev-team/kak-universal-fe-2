@@ -9,15 +9,12 @@ import { LoadingBeat } from "@/components/global/Loading";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { IsuStrategis, DataDukung, TargetJumlahData, PermasalahanOpd } from "@/types";
 
-interface table {
-    id_periode: number;
-    tahun_awal: string;
-    tahun_akhir: string;
-    jenis: string;
-    tahun_list: string[];
+interface Table {
+    kode_opd: string;
+    tahun: number;
 }
 
-const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, tahun_list }) => {
+const TableIsuStrategis:React.FC<Table> = ({ kode_opd, tahun }) => {
 
     const { branding } = useBrandingContext();
     const [Isu, setIsu] = useState<IsuStrategis[]>([]);
@@ -29,6 +26,15 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+
+    const PeriodeBelakang = [
+        `${tahun}`,
+        `${tahun - 1}`,
+        `${tahun - 2}`,
+        `${tahun - 3}`,
+        `${tahun - 4}`,
+        `${tahun - 5}`,
+    ]
 
     const handleModal = (jenis: "baru" | "edit" | "", data: IsuStrategis | null) => {
         if (Modal) {
@@ -43,11 +49,16 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
     }
 
     useEffect(() => {
-        const API_URL = branding?.api_permasalahan;
+        let url = "";
+        if (branding?.user?.roles == "super_admin") {
+            url = `isu_strategis/kebelakang/${branding?.opd?.value}/${branding?.tahun?.value}`
+        } else {
+            url = `isu_strategis/kebelakang/${branding?.user?.kode_opd}/${branding?.tahun?.value}`
+        }
         const fetchIsuStrategis = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/isu_strategis/${branding?.opd?.value}/${tahun_awal}/${tahun_akhir}`, {
+                const response = await fetch(`${branding?.api_permasalahan}/${url}`, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -68,10 +79,9 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                 setLoading(false);
             }
         }
-        if (tahun_awal && tahun_akhir) {
-            fetchIsuStrategis();
-        }
-    }, [branding, tahun_akhir, tahun_awal, FetchTrigger]);
+        fetchIsuStrategis();
+
+    }, [branding, FetchTrigger]);
 
     const hapusIsu = async (id: number) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN;
@@ -112,7 +122,7 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
     return (
         <>
             <div className="flex items-center justify-between my-3 mx-3">
-                <p className="text-gray-400 text-sm italic">*data isu strategis berdasarkan periode {tahun_awal} - {tahun_akhir}</p>
+                <p className="text-gray-400 text-sm italic">*data isu strategis berdasarkan {branding?.tahun?.label} kebelakang</p>
                 <ButtonGreenBorder
                     className="flex items-center gap-1"
                     onClick={() => handleModal("baru", null)}
@@ -131,18 +141,18 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[250px]">Permasalahan</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[250px]">Nama Data Dukung</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[250px]">Narasi Data Dukung</th>
-                            {tahun_list
+                            {PeriodeBelakang
                                 .slice()
                                 .reverse()
                                 .map((item: any) => (
-                                    <th key={item} colSpan={2} className="border-r border-b px-6 py-3">{item}</th>
+                                    <th key={item} colSpan={2} className={`border-r border-b px-6 py-3 ${item === String(tahun) ? "bg-yellow-600" : "bg-emerald-500"}`}>{item}</th>
                                 ))}
                         </tr>
-                        <tr className={`bg-emerald-600 text-white`}>
-                            {tahun_list.map((item: any) => (
+                        <tr className={`text-white`}>
+                            {PeriodeBelakang.slice().reverse().map((item: any) => (
                                 <React.Fragment key={item}>
-                                    <th className="border-r border-b px-6 py-1 min-w-[50px]">Jumlah</th>
-                                    <th className="border-r border-b px-6 py-1 min-w-[50px]">Satuan</th>
+                                    <th className={`${item === String(tahun) ? "bg-yellow-700" : "bg-emerald-600"} border-r border-b px-6 py-1 min-w-[50px]`}>Jumlah</th>
+                                    <th className={`${item === String(tahun) ? "bg-yellow-700" : "bg-emerald-600"} border-r border-b px-6 py-1 min-w-[50px]`}>Satuan</th>
                                 </React.Fragment>
                             ))}
                         </tr>
@@ -210,14 +220,14 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                                                                 <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.data_dukung || "-"}</td>
                                                                 <td className="border-r border-b border-emerald-500 px-6 py-4">{dd.narasi_data_dukung || "-"}</td>
                                                                 {dd.jumlah_data.length === 0 ?
-                                                                    tahun_list.map((tl: any, tl_index: number) => (
+                                                                    PeriodeBelakang.map((tl: any, tl_index: number) => (
                                                                         <React.Fragment key={tl_index}>
                                                                             <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
                                                                             <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">-</td>
                                                                         </React.Fragment>
                                                                     ))
                                                                     :
-                                                                    dd.jumlah_data.map((d: TargetJumlahData, d_index: number) => (
+                                                                    dd.jumlah_data.slice().reverse().map((d: TargetJumlahData, d_index: number) => (
                                                                         <React.Fragment key={d_index}>
                                                                             <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.jumlah_data || "-"}</td>
                                                                             <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{d.satuan || "-"}</td>
@@ -237,12 +247,12 @@ const TableIsuStrategis: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhi
                     </tbody>
                 </table>
             </div>
-            {Modal &&
+            {(Modal && PeriodeBelakang)&&
                 <ModalIsu
                     isOpen={Modal}
                     onClose={() => handleModal("", null)}
                     metode={JenisModal}
-                    tahun_list={tahun_list}
+                    tahun_list={PeriodeBelakang}
                     Data={DataEdit ? DataEdit : null}
                     onSuccess={() => setFetchTrigger((prev) => !prev)}
                 />
