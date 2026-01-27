@@ -5,7 +5,7 @@ import { Controller, SubmitHandler, useForm, useFieldArray, Control } from "reac
 import { ButtonSky, ButtonSkyBorder, ButtonRed, ButtonRedBorder } from '@/components/global/Button';
 import { getToken, getUser, getPeriode } from "@/components/lib/Cookie";
 import { LoadingButtonClip } from "@/components/global/Loading";
-import { OptionType, PermasalahanOpd, IsuStrategis, BidangUrusan, TargetJumlahData, TablePermasalahan } from "@/types";
+import { IsuStrategis, BidangUrusan, TargetJumlahData, TablePermasalahan } from "@/types";
 import Select from "react-select";
 import { AlertNotification } from "@/components/global/Alert";
 import { TbCirclePlus, TbPlus, TbTrash } from "react-icons/tb";
@@ -96,7 +96,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
     const [PermasalahanOption, setPermasalahanOption] = useState<TablePermasalahan[]>([]);
 
     const [User, setUser] = useState<any>(null);
-    const [Periode, setPeriode] = useState<any>(null);
+    // const [Periode, setPeriode] = useState<any>(null);
     const [Proses, setProses] = useState<boolean>(false);
     const [LoadingOption, setLoadingOption] = useState<boolean>(false);
 
@@ -108,33 +108,21 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
 
     useEffect(() => {
         const fetchUser = getUser();
-        const fetchPeriode = getPeriode();
         if (fetchUser) {
             setUser(fetchUser.user);
         }
-        if (fetchPeriode.periode) {
-            const data = {
-                value: fetchPeriode.periode.value,
-                label: fetchPeriode.periode.label,
-                id: fetchPeriode.periode.value,
-                tahun_awal: fetchPeriode.periode.tahun_awal,
-                tahun_akhir: fetchPeriode.periode.tahun_akhir,
-                jenis_periode: fetchPeriode.periode.jenis_periode,
-                tahun_list: fetchPeriode.periode.tahun_list
-            }
-            setPeriode(data);
-        }
-    }, []);
-
-    useEffect(() => {
-        console.log(tahun_list)
-    }, [tahun_list]);
+    }, [branding]);
 
     const fetchBidangUrusanOption = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        let url = "";
+        if(branding?.user?.roles == "super_admin"){
+            url = `bidang_urusan_opd/findall/${branding?.opd?.value}`
+        } else {
+            url = `bidang_urusan_opd/findall/${User?.kode_opd}`
+        }
         try {
             setLoadingOption(true);
-            const response = await fetch(`${API_URL}/bidang_urusan/findall/${branding?.opd?.value}`, {
+            const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `${token}`
@@ -161,10 +149,15 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
         }
     }
     const fetchPermasalahanOption = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN;
+        let url = "";
+        if(branding?.user?.roles == "super_admin"){
+            url = `permasalahan_terpilih/findall?kode_opd=${branding?.opd?.value}&tahun=${Tahun}`
+        } else {
+            url = `permasalahan_terpilih/findall?kode_opd=${User?.kode_opd}&tahun=${Tahun}`
+        }
         try {
             setLoadingOption(true);
-            const response = await fetch(`${API_URL}/permasalahan_terpilih/findall?kode_opd=${branding?.opd?.value}&tahun=${Tahun}`, {
+            const response = await fetch(`${branding?.api_permasalahan}/${url}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     // Authorization: `${token}`
@@ -202,15 +195,14 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
     }
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN;
         const formDataNew = {
             //key : value
             nama_opd: User?.roles == "super_admin" ? branding?.opd?.label : User?.nama_opd,
             kode_opd: User?.roles == "super_admin" ? branding?.opd?.value : User?.kode_opd,
             kode_bidang_urusan: data.kode_bidang_urusan?.value,
             nama_bidang_urusan: data.kode_bidang_urusan?.nama_bidang_urusan,
-            tahun_awal: Periode.tahun_awal,
-            tahun_akhir: Periode.tahun_akhir,
+            tahun_awal: "",
+            tahun_akhir: "",
             isu_strategis: data.isu_strategis,
             permasalahan_opd: data.permasalahan_opd.map((p) => ({
                 data_dukung: p.data_dukung.map((dd) => ({
@@ -220,7 +212,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                     jumlah_data: dd.jumlah_data.map((jd, index) => ({
                         jumlah_data: Number(jd.jumlah_data),
                         satuan: jd.satuan,
-                        tahun: reversedTahunList[index],
+                        tahun: tahun_list[index],
                     })),
                 })),
                 id_permasalahan: p.id_permasalahan?.value,
@@ -233,8 +225,8 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
             kode_opd: Data?.kode_opd,
             kode_bidang_urusan: data.kode_bidang_urusan?.value,
             nama_bidang_urusan: data.kode_bidang_urusan?.nama_bidang_urusan,
-            tahun_awal: Data?.tahun_awal,
-            tahun_akhir: Data?.tahun_akhir,
+            tahun_awal: "",
+            tahun_akhir: "",
             isu_strategis: data.isu_strategis,
             permasalahan_opd: data.permasalahan_opd.map((p) => ({
                 data_dukung: p.data_dukung.map((dd) => ({
@@ -242,15 +234,15 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                     data_dukung: dd.data_dukung,
                     narasi_data_dukung: dd.narasi_data_dukung,
                     permasalahan_opd_id: p.id_permasalahan?.value,
-                    jumlah_data: dd.jumlah_data.map((jd) => ({
+                    jumlah_data: dd.jumlah_data.map((jd, index) => ({
                         id: jd.id,
                         id_data_dukung: jd.id_data_dukung,
-                        tahun: jd.tahun,
+                        tahun: tahun_list[index],
                         jumlah_data: Number(jd.jumlah_data),
                         satuan: jd.satuan
                     })),
                 })),
-                permasalahan_opd_id: p.id_permasalahan?.value,
+                id_permasalahan: p.id_permasalahan?.value,
             }))
         };
         const getBody = () => {
@@ -258,11 +250,11 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
             if (metode === "baru") return formDataNew;
             return {}; // Default jika metode tidak sesuai
         };
-        // metode === 'baru' && console.log("baru :", formDataNew);
-        // metode === 'edit' && console.log("edit :", formDataEdit);
         if (data?.kode_bidang_urusan?.value === undefined) {
             AlertNotification("Bidang Urusan", "Bidang Urusan wajib terisi", "warning");
         } else {
+            // metode === 'baru' && console.log("baru :", formDataNew);
+            // metode === 'edit' && console.log("edit :", formDataEdit);
             try {
                 setProses(true);
                 let url = "";
@@ -271,7 +263,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                 } else if (metode) {
                     url = "isu_strategis"
                 }
-                const response = await fetch(`${API_URL}/${url}`, {
+                const response = await fetch(`${branding?.api_permasalahan}/${url}`, {
                     method: metode === "baru" ? "POST" : "PUT",
                     headers: {
                         'Content-Type': 'application/json',
@@ -365,9 +357,18 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                             />
                             <div className="flex flex-wrap justify-between gap-1">
                                 {dataTerukurField.jumlah_data.map((_, subindex) => (
-                                    <div key={`${permasalahan_index}-${subindex}`} className="flex flex-col py-1 px-3 border border-gray-200 rounded-lg">
+                                    <div
+                                        key={`${permasalahan_index}-${subindex}`}
+                                        className={`flex flex-col py-1 px-3 border rounded-lg
+                                            ${Number(tahun_list[subindex]) === branding?.tahun?.value ? 
+                                                "border-yellow-600"
+                                                :
+                                                "border-sky-600"
+                                            } 
+                                        `}
+                                    >
                                         <label className="text-base text-center text-gray-700">
-                                            <p>{reversedTahunList[subindex]}</p>
+                                            <p className={`font-bold text-sky-600 ${Number(tahun_list[subindex]) === branding?.tahun?.value ? "text-yellow-600" : "text-sky-600"}`}>{tahun_list[subindex]}</p>
                                         </label>
                                         <Controller
                                             name={`permasalahan_opd.${permasalahan_index}.data_dukung.${dataTerukurIndex}.jumlah_data.${subindex}.jumlah_data`}
@@ -442,7 +443,8 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                                 className="uppercase text-xs font-bold text-gray-700 my-2"
                                 htmlFor="kode_bidang_urusan"
                             >
-                                Bidang Urusan:
+                                Bidang Urusan: 
+                                <span className="text-slate-500 font-thin italic ml-1">Bidang Urusan diambil dari master opd bidang urusan</span>
                             </label>
                             <Controller
                                 name="kode_bidang_urusan"
@@ -461,7 +463,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                                             }
                                         }}
                                         placeholder="Pilih Bidang Urusan"
-                                        noOptionsMessage={() => `bidang urusan kosong, tambahkan di data master (super_admin)`}
+                                        noOptionsMessage={() => `bidang urusan kosong, tambahkan di data master opd`}
                                         styles={{
                                             control: (baseStyles, state) => ({
                                                 ...baseStyles,
@@ -488,7 +490,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                                 rules={{ required: "Isu Strategis Wajib Diisi" }}
                                 control={control}
                                 render={({ field }) => {
-                                    return(
+                                    return (
                                         <>
                                             <textarea
                                                 {...field}
@@ -537,6 +539,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
                                                 id={`permasalahan_opd.${index}.id_permasalahan`}
                                                 options={PermasalahanOption}
                                                 placeholder="pilih permasalahan"
+                                                isLoading={LoadingOption}
                                                 noOptionsMessage={() => `Permasalahan Terpilih kosong, pilih permasalahan di menu renstra/permasalahan`}
                                                 onMenuOpen={() => {
                                                     if (PermasalahanOption.length === 0) {

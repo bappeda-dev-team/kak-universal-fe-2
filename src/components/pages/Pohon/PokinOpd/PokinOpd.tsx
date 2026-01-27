@@ -14,6 +14,7 @@ import { ModalTujuanOpd } from '../../tujuanopd/ModalTujuanOpd';
 import { ModalClone } from '../ModalClone';
 import html2canvas from 'html2canvas';
 import { AlertNotification, AlertQuestion2 } from '@/components/global/Alert';
+import { useBrandingContext } from '@/context/BrandingContext';
 
 interface OptionType {
     value: number;
@@ -51,6 +52,9 @@ interface TujuanOpd {
 }
 
 const PokinOpd = () => {
+    const {branding} = useBrandingContext();
+    const nama_opd = branding?.user?.roles == "super_admin" ? branding?.opd?.label : branding?.user?.nama_opd;
+    const kode_opd = branding?.user?.roles == "super_admin" ? branding?.opd?.value : branding?.user?.kode_opd;
 
     const [User, setUser] = useState<any>(null);
     const [Tahun, setTahun] = useState<any>(null);
@@ -740,15 +744,17 @@ const PokinOpd = () => {
                                             <TbPrinter className='mr-1' />
                                             Cetak Penuh Pohon Kinerja
                                         </ButtonSky>
-                                        {/* <ModalClone
-                                            isOpen={Clone}
-                                            onClose={() => setClone(false)}
-                                            jenis='opd'
-                                            tahun={Tahun?.value}
-                                            nama_opd={SelectedOpd?.label}
-                                            kode_opd={SelectedOpd?.value}
-                                            onSuccess={() => setTriggerAfterPokinOutside((prev) => !prev)}
-                                        /> */}
+                                        {/* {Clone &&
+                                            <ModalClone
+                                                isOpen={Clone}
+                                                onClose={() => setClone(false)}
+                                                jenis='opd'
+                                                tahun={Tahun?.value}
+                                                nama_opd={nama_opd}
+                                                kode_opd={kode_opd}
+                                                onSuccess={() => setTriggerAfterPokinOutside((prev) => !prev)}
+                                            />
+                                        } */}
                                     </div>
                                 }
                                 {/* BUTTON HEADER POKIN */}
