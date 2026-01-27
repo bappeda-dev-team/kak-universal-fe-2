@@ -721,13 +721,13 @@ const PokinOpd = () => {
                                             <TbCirclePlus className="mr-1" />
                                             Tambah Tujuan OPD
                                         </ButtonSkyBorder>
-                                        <ButtonBlack
+                                        {/* <ButtonBlack
                                             className='flex flex-wrap items-center justify-center gap-1'
                                             onClick={() => setClone(true)}
                                         >
                                             <TbCopy className='mr-1' />
                                             Clone Pohon Kinerja
-                                        </ButtonBlack>
+                                        </ButtonBlack> */}
                                         <ButtonSky
                                             className='flex flex-wrap items-center justify-center gap-1'
                                             onClick={() => {
@@ -744,7 +744,7 @@ const PokinOpd = () => {
                                             <TbPrinter className='mr-1' />
                                             Cetak Penuh Pohon Kinerja
                                         </ButtonSky>
-                                        {Clone &&
+                                        {/* {Clone &&
                                             <ModalClone
                                                 isOpen={Clone}
                                                 onClose={() => setClone(false)}
@@ -754,7 +754,7 @@ const PokinOpd = () => {
                                                 kode_opd={kode_opd}
                                                 onSuccess={() => setTriggerAfterPokinOutside((prev) => !prev)}
                                             />
-                                        }
+                                        } */}
                                     </div>
                                 }
                                 {/* BUTTON HEADER POKIN */}
