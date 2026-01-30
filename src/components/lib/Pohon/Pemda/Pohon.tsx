@@ -533,16 +533,16 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                                             {tema.is_active === false ? <TbCheck /> : <TbX />}
                                                             {tema.is_active === false ? 'Aktifkan tematik' : 'Non Aktifkan tematik'}
                                                         </button>
-                                                        {/* <ButtonBlack
+                                                        <ButtonBlack
                                                             className='flex justify-center items-center gap-1'
                                                             onClick={() => setIsClone(true)}
-                                                        // onClick={() => {
-                                                        //     AlertNotification("Fitur dalam perbaikan", "", "warning", 3000);
-                                                        // }}
+                                                            // onClick={() => {
+                                                            //     AlertNotification("Fitur dalam perbaikan", "", "warning", 3000);
+                                                            // }}
                                                         >
                                                             <TbCopy />
                                                             Clone
-                                                        </ButtonBlack> */}
+                                                        </ButtonBlack>
                                                         {IsClone &&
                                                             <ModalClone
                                                                 jenis="pemda"
