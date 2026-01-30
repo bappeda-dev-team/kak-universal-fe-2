@@ -219,6 +219,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       url === `/laporantaggingpohon` ||
       url === `/laporancascadingpemda` ||
       url === `/controlpokin` ||
+      url === `/perjanjian-kinerja` ||
       url === `/leaderboardrekin` ||
       url === "/laporancascadingopd"
     ) {
@@ -921,6 +922,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </li>
               </Link>
             </div>
+            <Link href="perjanjian-kinerja">
+              <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/perjanjian-kinerja" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <TbChecklist className="text-xl" />
+                <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Perjanjian Kinerja</span>
+              </li>
+            </Link>
             <Link href="#">
               <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/rencanakinerja-kak" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                 <TbChecklist className="text-xl" />
