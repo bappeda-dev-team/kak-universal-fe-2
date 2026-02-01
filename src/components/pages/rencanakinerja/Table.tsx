@@ -297,7 +297,7 @@ export const TablePerencanaan = () => {
                                                 <TbLayersSelected className="mr-1" />
                                                 Clone
                                             </ButtonBlackBorder>
-                                            {(User?.roles == 'level_3' || User?.roles == 'level_4') &&
+                                            {(User?.roles == "level_2" || User?.roles == 'level_3' || User?.roles == 'level_4') &&
                                                 <ButtonGreenBorder
                                                     className="w-full"
                                                     halaman_url={`/rencanakinerja/${data.id_rencana_kinerja}`}
