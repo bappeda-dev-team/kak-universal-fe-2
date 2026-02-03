@@ -17,6 +17,7 @@ interface modal {
     onSuccess: () => void;
     Data: pegawai | null;
     kode_opd: string;
+    nama_opd: string;
 }
 interface pegawai {
     id: string;
@@ -31,7 +32,7 @@ export interface FormValue {
     nip: string;
 }
 
-export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess, jenis, Data, kode_opd }) => {
+export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess, jenis, Data, kode_opd, nama_opd }) => {
 
     const { branding } = useBrandingContext();
     const { control, handleSubmit, reset, formState: { errors } } = useForm<FormValue>({
@@ -39,8 +40,8 @@ export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess
             nama_pegawai: Data?.nama_pegawai,
             nip: Data?.nip,
             kode_opd: {
-                value: branding?.opd?.value,
-                label: branding?.opd?.label
+                value: kode_opd,
+                label: nama_opd,
             }
         }
     });
@@ -62,13 +63,13 @@ export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess
         const formDataTambah = {
             nama_pegawai: `${data.nama_pegawai} ${Plt ? '(PLT)' : ''} ${Pbt ? "(PBT)" : ""}`,
             nip: `${Plt ? `${data.nip}_plt` : Pbt ? `${data.nip}_pbt` : data.nip}`,
-            kode_opd: data.kode_opd?.value,
+            kode_opd: kode_opd,
         }
         const formDataEdit = {
             //key : value
             nama_pegawai: data.nama_pegawai,
             nip: data.nip,
-            kode_opd: data?.kode_opd.value,
+            kode_opd: kode_opd,
         };
         const getBody = () => {
             if (jenis === "tambah") return formDataTambah;
@@ -85,7 +86,7 @@ export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess
         try {
             setProses(true);
             const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
-                method: "POST",
+                method: jenis === "tambah" ? "POST" : "PUT",
                 headers: {
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
@@ -247,7 +248,7 @@ export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess
                             >
                                 Perangkat Daerah
                             </label>
-                            <div className="border px-4 py-2 rounded-lg">{branding?.opd?.label}</div>
+                            <div className="border px-4 py-2 rounded-lg">{nama_opd}</div>
                         </div>
                         <ButtonSky type="submit" className="w-full my-3 gap-1" disabled={Proses}>
                             {Proses ?

@@ -116,8 +116,9 @@ const Table = () => {
         }
         if (Opd?.value != undefined) {
             fetchPegawai();
+            setSearchQuery("");
         }
-    }, [token, Opd, branding]);
+    }, [token, Opd, branding, FetchTrigger]);
 
     const FilteredData = Pegawai?.filter((item: pegawai) => {
         const params = searchQuery.toLowerCase();
@@ -344,7 +345,8 @@ const Table = () => {
                     onSuccess={() => setFetchTrigger((prev) => !prev)}
                     Data={DataModal}
                     jenis={JenisModal}
-                    kode_opd={branding?.opd?.value ?? ""}
+                    kode_opd={Opd?.value ?? ""}
+                    nama_opd={Opd?.label ?? ""}
                 />
             }
             {ModalJabatanOpen &&
@@ -353,7 +355,7 @@ const Table = () => {
                     isOpen={ModalJabatanOpen}
                     onSuccess={() => setFetchTrigger((prev) => !prev)}
                     Data={DataModal}
-                    kode_opd={branding?.opd?.value ?? ""}
+                    kode_opd={Opd?.value ?? ""}
                 />
             }
         </>
