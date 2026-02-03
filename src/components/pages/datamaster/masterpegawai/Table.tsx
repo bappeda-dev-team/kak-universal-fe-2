@@ -43,17 +43,23 @@ const Table = () => {
     const [ModalJabatanOpen, setModalJabatanOpen] = useState<boolean>(false);
     const [DataModal, setDataModal] = useState<pegawai | null>(null);
     const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
+    const [NamaOpd, setNamaOpd] = useState<string>("");
+    const [KodeOpd, setKodeOpd] = useState<string>("");
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
-    const handleModal = (jenis: "tambah" | "edit", Data: pegawai | null) => {
+    const handleModal = (jenis: "tambah" | "edit", Data: pegawai | null, nama_opd: string, kode_opd: string) => {
         if (ModalOpen) {
             setModalOpen(false);
             setJenisModal(jenis);
             setDataModal(Data);
+            setNamaOpd(nama_opd);
+            setKodeOpd(kode_opd);
         } else {
             setModalOpen(true);
             setJenisModal(jenis);
             setDataModal(Data);
+            setNamaOpd(nama_opd);
+            setKodeOpd(kode_opd);
         }
     }
     const handleModalJabatan = (Data: pegawai | null) => {
@@ -232,7 +238,7 @@ const Table = () => {
                     <div className="flex flex-col">
                         <ButtonSky
                             className="flex items-center justify-center"
-                            onClick={() => handleModal("tambah", null)}
+                            onClick={() => handleModal("tambah", null, Opd?.label ?? "", Opd?.value ?? "")}
                         >
                             <TbCirclePlus className="mr-1" />
                             Tambah Pegawai
@@ -307,7 +313,7 @@ const Table = () => {
                                             <div className="flex flex-col jutify-center items-center gap-2">
                                                 <ButtonGreen
                                                     className="w-full"
-                                                    onClick={() => handleModal("edit", data)}
+                                                    onClick={() => handleModal("edit", data, data?.nama_opd, data?.kode_opd)}
                                                 >
                                                     Edit
                                                 </ButtonGreen>
@@ -341,12 +347,12 @@ const Table = () => {
             {ModalOpen &&
                 <ModalMasterPegawai
                     isOpen={ModalOpen}
-                    onClose={() => handleModal("tambah", null)}
+                    onClose={() => handleModal("tambah", null, "", "")}
                     onSuccess={() => setFetchTrigger((prev) => !prev)}
                     Data={DataModal}
                     jenis={JenisModal}
-                    kode_opd={Opd?.value ?? ""}
-                    nama_opd={Opd?.label ?? ""}
+                    kode_opd={KodeOpd}
+                    nama_opd={NamaOpd}
                 />
             }
             {ModalJabatanOpen &&
