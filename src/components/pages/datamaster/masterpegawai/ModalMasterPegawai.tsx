@@ -9,6 +9,7 @@ import { LoadingButtonClip } from "@/components/global/Loading";
 import { OptionTypeString } from "@/types";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { getToken } from "@/components/lib/Cookie";
+import Select from "react-select";
 
 interface modal {
     jenis: "tambah" | "edit";
@@ -51,6 +52,9 @@ export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess
     const [Plt, setPlt] = useState<boolean>(false);
     const [Pbt, setPbt] = useState<boolean>(false);
 
+    const [OpdOption, setOpdOption] = useState<OptionTypeString[]>([]);
+
+    const [IsLoading, setIsLoading] = useState<boolean>(false);
     const [Proses, setProses] = useState<boolean>(false);
     const token = getToken();
 
@@ -59,17 +63,44 @@ export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess
         reset();
     }
 
+    const fetchOpd = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/opd/findall`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            const opd = data.data.map((item: any) => ({
+                value: item.kode_opd,
+                label: item.nama_opd,
+            }));
+            setOpdOption(opd);
+        } catch (err) {
+            console.log('gagal mendapatkan data opd');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const formDataTambah = {
             nama_pegawai: `${data.nama_pegawai} ${Plt ? '(PLT)' : ''} ${Pbt ? "(PBT)" : ""}`,
             nip: `${Plt ? `${data.nip}_plt` : Pbt ? `${data.nip}_pbt` : data.nip}`,
-            kode_opd: kode_opd,
+            kode_opd: data.kode_opd?.value,
         }
         const formDataEdit = {
             //key : value
             nama_pegawai: data.nama_pegawai,
             nip: data.nip,
-            kode_opd: kode_opd,
+            kode_opd: data.kode_opd?.value,
         };
         const getBody = () => {
             if (jenis === "tambah") return formDataTambah;
@@ -78,7 +109,7 @@ export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess
         };
         // console.log(getBody());
         let url = ''
-        if(jenis === "tambah"){
+        if (jenis === "tambah") {
             url = 'pegawai/create'
         } else {
             url = `pegawai/update/${Data?.id}`
@@ -248,7 +279,34 @@ export const ModalMasterPegawai: React.FC<modal> = ({ isOpen, onClose, onSuccess
                             >
                                 Perangkat Daerah
                             </label>
-                            <div className="border px-4 py-2 rounded-lg">{nama_opd}</div>
+                            <Controller
+                                name="kode_opd"
+                                control={control}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            {...field}
+                                            placeholder="Pilih Perangkat Daerah"
+                                            options={OpdOption}
+                                            isLoading={IsLoading}
+                                            isSearchable
+                                            isClearable
+                                            onMenuOpen={() => {
+                                                if (OpdOption.length === 0) {
+                                                    fetchOpd();
+                                                }
+                                            }}
+                                            styles={{
+                                                control: (baseStyles) => ({
+                                                    ...baseStyles,
+                                                    borderRadius: '8px',
+                                                    textAlign: 'start',
+                                                })
+                                            }}
+                                        />
+                                    </>
+                                )}
+                            />
                         </div>
                         <ButtonSky type="submit" className="w-full my-3 gap-1" disabled={Proses}>
                             {Proses ?
