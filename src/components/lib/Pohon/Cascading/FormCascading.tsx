@@ -265,7 +265,7 @@ export const FormEditCascading: React.FC<{
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const pelaksanaIds = Pelaksana?.map((pelaksana) => ({
-            pegawai_id: pelaksana.value, // Ubah `value` menjadi `pegawai_id`
+            pegawai_id: String(pelaksana.value), // Ubah `value` menjadi `pegawai_id`
         })) || [];
         const formData = {
             //key : value
@@ -367,7 +367,8 @@ export const FormEditCascading: React.FC<{
                                                             } else if (level === 5) {
                                                                 fetchPelaksana('level_2');
                                                             } else if (level === 6) {
-                                                                fetchPelaksana3dan4();
+                                                                // fetchPelaksana3dan4();
+                                                                fetchPelaksana('level_3');
                                                             } else if (level >= 7) {
                                                                 fetchPelaksana('level_4');
                                                             } else {
