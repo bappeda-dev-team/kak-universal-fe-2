@@ -190,7 +190,7 @@ export const FormEditCascading: React.FC<{
                 .filter((pegawai: any) => {
                     return pegawai.role.some((r: any) => r.role === "level_3" || r.role === "level_4");
                 }).map((pegawai: any) => ({
-                    value: pegawai.nip,
+                    value: pegawai.id,
                     label: pegawai.nama_pegawai,
                 }));
                 console.log(filteredPegawai);
