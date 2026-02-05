@@ -112,8 +112,8 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
         {/* pihak pertama */}
         {/* bawahan */}
         <NamaJabatan
-          nama={data?.pegawai.nama_pegawai || "-"}
-          jabatan={data?.jabatan_pegawai || "-"}
+          nama={data?.pegawai?.nama_pegawai || "-"}
+          jabatan={data?.pegawai?.jabatan_pegawai || "-"}
         />
 
         <View style={styles.flexRow}>
@@ -124,8 +124,8 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
         {/* pihak kedua */}
         {/* atasan */}
         <NamaJabatan
-          nama={data?.pegawai.nama_atasan || "-"}
-          jabatan={data?.pegawai.jabatan_atasan || "-"}
+          nama={data?.pegawai?.nama_atasan || "-"}
+          jabatan={data?.pegawai?.jabatan_atasan || "-"}
         />
 
         <View style={styles.flexRow}>
