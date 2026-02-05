@@ -117,31 +117,32 @@ export const ModalJabatanPegawai: React.FC<modal> = ({ isOpen, onClose, onSucces
             kode_opd: data.kode_opd?.value,
             id_jabatan: data.id_jabatan?.value,
             tahun: branding?.tahun?.value,
+            bulan: data.bulan?.value
         }
-        console.log(payload);
-        // try {
-        //     setProses(true);
-        //     const response = await fetch(`${branding?.api_perencanaan}/pegawai/tambah_jabatan`, {
-        //         method: "POST",
-        //         headers: {
-        //             Authorization: `${token}`,
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(payload),
-        //     });
-        //     const result = await response.json();
-        //     if (result.code === 200 || result.code === 201) {
-        //         AlertNotification("Berhasil", "Berhasil menambahkan data Jabatan", "success", 1000);
-        //         onSuccess();
-        //         handleClose();
-        //     } else {
-        //         AlertNotification("Gagal", `${result.data}`, "error", 2000);
-        //     }
-        // } catch (err) {
-        //     AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
-        // } finally {
-        //     setProses(false);
-        // }
+        // console.log(payload);
+        try {
+            setProses(true);
+            const response = await fetch(`${branding?.api_perencanaan}/pegawai/tambahJabatan`, {
+                method: "POST",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+            const result = await response.json();
+            if (result.code === 200 || result.code === 201) {
+                AlertNotification("Berhasil", "Berhasil menambahkan data Jabatan", "success", 1000);
+                onSuccess();
+                handleClose();
+            } else {
+                AlertNotification("Gagal", `${result.data}`, "error", 2000);
+            }
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
+        } finally {
+            setProses(false);
+        }
     };
 
     if (!isOpen) {
