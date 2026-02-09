@@ -188,7 +188,7 @@ export const FormEditCascading: React.FC<{
 
             const filteredPegawai = responseData
                 .filter((pegawai: any) => {
-                    return pegawai.role.some((r: any) => r.role === "level_3" || r.role === "level_4");
+                    return pegawai.role?.some((r: any) => r.role === "level_3" || r.role === "level_4");
                 }).map((pegawai: any) => ({
                     value: pegawai.pegawai_id,
                     label: pegawai.nama_pegawai,
@@ -196,7 +196,7 @@ export const FormEditCascading: React.FC<{
             console.log(filteredPegawai);
             setPelaksanaOption(filteredPegawai);
         } catch (err) {
-            console.log('gagal mendapatkan data opd');
+            console.log(err);
         } finally {
             setIsLoading(false);
         }
