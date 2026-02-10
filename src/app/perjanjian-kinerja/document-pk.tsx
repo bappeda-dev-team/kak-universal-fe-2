@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 import NamaJabatan from '../../components/cetak/nama-jabatan';
 import TTD from '../../components/cetak/tanda-tangan';
@@ -81,16 +82,46 @@ const styles = StyleSheet.create({
   },
 });
 
+export async function imageToBase64(imageUrl: string): Promise<string> {
+  const res = await fetch(
+    `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`
+  );
+
+  const blob = await res.blob();
+
+  return await new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
+}
 
 const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
-  // const nama_daerah = process.env.NEXT_PUBLIC_NAMA_DAERAH;
+
+  const [logoBase64, setLogoBase64] = useState("");
+
+  useEffect(() => {
+    const image = process.env.NEXT_PUBLIC_LOGO_URL as string;
+
+    imageToBase64(image).then(setLogoBase64);
+  }, []);
+
+  if (!logoBase64) {
+    return (
+      <Document>
+        <Page size="A4">
+          <Text>Loading PDF...</Text>
+        </Page>
+      </Document>
+    );
+  }
 
   return (
     <Document title='dokumen perjanjian kinerja'>
       <Page size="A4" style={styles.page}>
         <View style={styles.logoContainer}>
           <Image
-            src={branding}
+            src={logoBase64}
             style={styles.logoImage}
           />
         </View>
@@ -172,7 +203,22 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
             total={0}
           />
         }
-
+        <View style={[styles.marginTop, styles.tandaTangan]}>
+          {/* pihak kedua */}
+          <TTD
+            nama={data?.pegawai?.nama_atasan || "-"}
+            nip={data?.pegawai?.nip_atasan || "-"}
+            pihak={data?.pegawai?.jabatan_atasan || "-"}
+            tanggal={false}
+          />
+          {/* pihak pertama */}
+          <TTD
+            nama={data?.pegawai?.nama_pegawai || "-"}
+            nip={data?.pegawai?.nip || "-"}
+            pihak={data?.pegawai?.jabatan_pegawai || ""}
+            tanggal
+          />
+        </View>
       </Page>
     </Document>
   );
