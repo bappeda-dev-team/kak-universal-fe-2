@@ -44,8 +44,9 @@ const PerjanjianKinerja = () => {
   }, [])
 
   const [data, setData] = useState<PkOpdResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [_submitting, setSubmitting] = useState(false)
+  const [loading, setLoading] = useState<boolean>(true);
+  const [Error, setError] = useState<boolean>(true);
+  const [_submitting, setSubmitting] = useState(false);
 
   const [search, setSearch] = useState("");
 
@@ -59,7 +60,6 @@ const PerjanjianKinerja = () => {
   const [rekinAtasanList, setRekinAtasanList] = useState<
     RekinOption[]
   >([])
-
 
   const [showPilihAtasanModal, setShowPilihAtasanModal] = useState(false)
   const [selectedAtasan, setSelectedAtasan] = useState<{
@@ -77,19 +77,35 @@ const PerjanjianKinerja = () => {
     const controller = new AbortController()
 
     const fetchData = async () => {
-      setLoading(true)
-      const res = await fetch(
-        `${apiPerencanaan}/pk_opd/${kodeOpd}/${tahun}`,
-        {
-          headers: {
-            Authorization: `${token}`,
-            'Content-Type': 'application/json',
-          },
-          signal: controller.signal,
-        })
-      const json = await res.json()
-      setData(json.data)
-      setLoading(false)
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `${apiPerencanaan}/pk_opd/${kodeOpd}/${tahun}`,
+          {
+            headers: {
+              Authorization: `${token}`,
+              'Content-Type': 'application/json',
+            },
+            signal: controller.signal,
+          })
+        const json = await res.json();
+        if (!res.ok) {
+          setError(true);
+          setData(null);
+          setLoading(false);
+        }
+        if (json.code === 200 || json.code === 201) {
+          setData(json.data);
+          setError(false);
+        } else {
+          setData(null);
+          setError(true);
+        }
+      } catch (err) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
     }
 
     fetchData()
@@ -134,8 +150,12 @@ const PerjanjianKinerja = () => {
   }
 
   if (!data) {
+    if (Error) {
+      return <div className="text-red-500 p-5">Error, gagal mendapatkan data PK, cek koneksi internet, jika berlanjut hubungi tim developer</div>
+    }
     return <div className="p-6">Data tidak ditemukan</div>;
   }
+
 
   return (
     <div className="flex flex-col gap-3">
