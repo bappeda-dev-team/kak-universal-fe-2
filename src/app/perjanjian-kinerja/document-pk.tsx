@@ -196,11 +196,11 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
           <Text>{data?.pegawai.jabatan_pegawai || ""}</Text>
         </View>
         <TableRekin rekin={data?.pegawai.pks || []} />
-        {data?.jenis_item &&
+        {data?.pegawai?.item_pk &&
           <TableProgram
-            data={data?.pegawai.subkegiatan || []}
-            jenis_item={data?.jenis_item || ""}
-            total={0}
+            data={data?.pegawai?.item_pk || []}
+            jenis_item={data?.pegawai?.jenis_item || ""}
+            total={data?.pegawai?.total_pagu}
           />
         }
         <View style={[styles.marginTop, styles.tandaTangan]}>
