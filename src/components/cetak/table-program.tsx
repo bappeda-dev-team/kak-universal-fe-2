@@ -69,7 +69,12 @@ const TableProgram: React.FC<Program> = ({ data, jenis_item, total }) => (
       </View>
       <View style={[styles.tableColHeader, styles.col2, styles.colBorderRight, styles.colBorderBottom]}>
         <Text style={styles.tableCell}>
-          {jenis_item || "Program / Kegiatan / Sub Kegiatan"}
+          {
+            jenis_item === "Strategic" ? "Program" :
+              jenis_item === "Tactical" ? "Kegiatan" :
+                jenis_item === "Operational" ? "Sub Kegiatan" :
+                  "Program / Kegiatan / Sub Kegiatan"
+          }
         </Text>
       </View>
       <View style={[styles.tableColHeader, styles.col3, styles.colBorderBottom]}>
@@ -84,7 +89,7 @@ const TableProgram: React.FC<Program> = ({ data, jenis_item, total }) => (
           <Text style={styles.tableCell}>{index + 1}</Text>
         </View>
         <View style={[styles.tableCol, styles.col2, styles.colBorderRight, styles.colBorderBottom]}>
-          <Text style={styles.tableCell}>{item.nama_item || "-"}</Text>
+          <Text style={styles.tableCell}>({item.kode_item || "x"}) {item.nama_item || "-"}</Text>
         </View>
         <View style={[styles.tableCol, styles.col3, styles.colBorderBottom]}>
           <Text style={styles.tableCell}>Rp.{formatRupiah(item.pagu || 0)}</Text>
