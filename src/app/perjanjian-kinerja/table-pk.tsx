@@ -62,155 +62,160 @@ export const TablePk = ({
       </thead>
 
       <tbody>
-        {data.pk_item.map((level) =>
-          level.pegawais
-            .filter((pegawai) =>
-              pegawai.nama_pegawai
-                .toLowerCase()
-                .includes(search.toLowerCase())
-            )
-            .map((pegawai) => {
-              const totalPk = pegawai.pks.length
-              const PkLengkap = pegawai.pks.every(item => item.nip_atasan.trim() !== "" ? true : false);
-              return pegawai.pks.map((pk, idx) => 
-              (
-                <tr
-                  key={`${pk.id_rekin_pemilik_pk}-${pk.id_rekin_atasan || "none"}`}
-                >
-                  {/* NO */}
-                  {idx === 0 && (
-                    <td
-                      rowSpan={totalPk}
-                      className="border p-3 text-center align-top font-semibold"
-                    >
-                      {rowNo++}
+        {data.pk_item.length > 0 ? 
+          data.pk_item.map((level) =>
+            level.pegawais
+              .filter((pegawai) =>
+                pegawai.nama_pegawai
+                  .toLowerCase()
+                  .includes(search.toLowerCase())
+              )
+              .map((pegawai) => {
+                const totalPk = pegawai.pks.length
+                const PkLengkap = pegawai.pks.every(item => item.nip_atasan.trim() !== "" ? true : false);
+                return pegawai.pks.map((pk, idx) => 
+                (
+                  <tr
+                    key={`${pk.id_rekin_pemilik_pk}-${pk.id_rekin_atasan || "none"}`}
+                  >
+                    {/* NO */}
+                    {idx === 0 && (
+                      <td
+                        rowSpan={totalPk}
+                        className="border p-3 text-center align-top font-semibold"
+                      >
+                        {rowNo++}
+                      </td>
+                    )}
+
+                    {/* LEVEL */}
+                    {idx === 0 && (
+                      <td
+                        rowSpan={totalPk}
+                        className="border p-3 text-center align-top w-[100px]"
+                      >
+                        {translateLevel(level.level_pk)}
+                      </td>
+                    )}
+
+                    {/* NAMA ASN */}
+                    {idx === 0 && (
+                      <td
+                        rowSpan={totalPk}
+                        className="border p-3 align-top text-base w-[200px]"
+                      >
+                        <div className="pb-3 mb-3 gap-5 flex flex-col">
+                          <p className="text-base text-slate-800">
+                            {pegawai.nama_pegawai}
+                          </p>
+
+                          <p className="text-sm text-slate-600">
+                            {pegawai.nip}
+                          </p>
+                        </div>
+                      </td>
+                    )}
+
+                    {/* REKIN PEMILIK */}
+                    <td className="border w-[400px]">
+                      <p className="px-3 py-5 text-sm font-light">
+                        {pk.rekin_pemilik_pk}
+                      </p>
                     </td>
-                  )}
 
-                  {/* LEVEL */}
-                  {idx === 0 && (
-                    <td
-                      rowSpan={totalPk}
-                      className="border p-3 text-center align-top w-[100px]"
-                    >
-                      {translateLevel(level.level_pk)}
-                    </td>
-                  )}
-
-                  {/* NAMA ASN */}
-                  {idx === 0 && (
-                    <td
-                      rowSpan={totalPk}
-                      className="border p-3 align-top text-base w-[200px]"
-                    >
-                      <div className="pb-3 mb-3 gap-5 flex flex-col">
-                        <p className="text-base text-slate-800">
-                          {pegawai.nama_pegawai}
-                        </p>
-
-                        <p className="text-sm text-slate-600">
-                          {pegawai.nip}
-                        </p>
-                      </div>
-                    </td>
-                  )}
-
-                  {/* REKIN PEMILIK */}
-                  <td className="border w-[400px]">
-                    <p className="px-3 py-5 text-sm font-light">
-                      {pk.rekin_pemilik_pk}
-                    </p>
-                  </td>
-
-                  {/* REKIN ATASAN */}
-                  <td className="border p-3 w-[400px]">
-                    <div className="flex flex-col gap-4">
-                      {pk.rekin_atasan != "" &&
-                        (
-                          <div className="pb-3 mb-3 border-b border-blue-700 gap-5 flex flex-col">
-                            <p className="text-base text-slate-800">
-                              {pk.rekin_atasan || "-"}
-                            </p>
-
-                            <p className="text-sm text-slate-600">
-                              ({pk.nama_atasan || "-"} - {pk.nip_atasan || "-"})
-                            </p>
-                          </div>
-                        )
-                      }
-                      <HubungkanButton
-                        isLinked={pk.id != ""}
-                        onClick={() => {
-                          onSelectPk({
-                            pk,
-                            levelPk: level.level_pk,
-                          })
-                        }}
-                      />
-                    </div>
-                  </td>
-
-                  {/* NAMA ATASAN TERPILIH */}
-                  {idx === 0 && (
-                    <td
-                      rowSpan={totalPk}
-                      className="border p-3 w-[200px]">
-                      <div className="flex flex-col gap-4 text-center">
-                        {!!pegawai.nip_atasan &&
+                    {/* REKIN ATASAN */}
+                    <td className="border p-3 w-[400px]">
+                      <div className="flex flex-col gap-4">
+                        {pk.rekin_atasan != "" &&
                           (
                             <div className="pb-3 mb-3 border-b border-blue-700 gap-5 flex flex-col">
-                              <p className="font-medium text-slate-800">
-                                {pegawai.nama_atasan}
+                              <p className="text-base text-slate-800">
+                                {pk.rekin_atasan || "-"}
                               </p>
-                              <p className="font-medium text-slate-800">
-                                {pegawai.nip_atasan}
+
+                              <p className="text-sm text-slate-600">
+                                ({pk.nama_atasan || "-"} - {pk.nip_atasan || "-"})
                               </p>
                             </div>
                           )
                         }
-
-                        {!PkLengkap ?
-                          <p className="text-xs text-red-400">Hubungkan Semua Rekin dahulu</p>
-                          :
-                          <HubungkanAtasanButton
-                            isLinked={!!pegawai.nip_atasan}
-                            onClick={() => {
-                              onSelectAtasan({
-                                nipBawahan: pegawai.nip
-                              })
-                            }}
-                          />
-                        }
+                        <HubungkanButton
+                          isLinked={pk.id != ""}
+                          onClick={() => {
+                            onSelectPk({
+                              pk,
+                              levelPk: level.level_pk,
+                            })
+                          }}
+                        />
                       </div>
                     </td>
-                  )}
 
-                  {/* AKSI */}
+                    {/* NAMA ATASAN TERPILIH */}
+                    {idx === 0 && (
+                      <td
+                        rowSpan={totalPk}
+                        className="border p-3 w-[200px]">
+                        <div className="flex flex-col gap-4 text-center">
+                          {!!pegawai.nip_atasan &&
+                            (
+                              <div className="pb-3 mb-3 border-b border-blue-700 gap-5 flex flex-col">
+                                <p className="font-medium text-slate-800">
+                                  {pegawai.nama_atasan}
+                                </p>
+                                <p className="font-medium text-slate-800">
+                                  {pegawai.nip_atasan}
+                                </p>
+                              </div>
+                            )
+                          }
 
-                  {idx === 0 && (
-                    <td
-                      rowSpan={totalPk}
-                      className="border p-3 text-center w-[150px]">
-                      {!!pegawai.nip_atasan &&
-                        <button className="button px-4 py-2
-                        rounded border border-black bg-green-300
-                        hover:bg-green-600 text-black"
-                          onClick={() => onPreviewPk(pegawai.nip)}
-                        >
-                          Cetak PK
-                        </button>
-                      }
-                    </td>
-                  )}
-                </tr>
-              ))
-            })
-        )}
+                          {!PkLengkap ?
+                            <p className="text-xs text-red-400">Hubungkan Semua Rekin dahulu</p>
+                            :
+                            <HubungkanAtasanButton
+                              isLinked={!!pegawai.nip_atasan}
+                              onClick={() => {
+                                onSelectAtasan({
+                                  nipBawahan: pegawai.nip
+                                })
+                              }}
+                            />
+                          }
+                        </div>
+                      </td>
+                    )}
+
+                    {/* AKSI */}
+
+                    {idx === 0 && (
+                      <td
+                        rowSpan={totalPk}
+                        className="border p-3 text-center w-[150px]">
+                        {!!pegawai.nip_atasan &&
+                          <button className="button px-4 py-2
+                          rounded border border-black bg-green-300
+                          hover:bg-green-600 text-black"
+                            onClick={() => onPreviewPk(pegawai.nip)}
+                          >
+                            Cetak PK
+                          </button>
+                        }
+                      </td>
+                    )}
+                  </tr>
+                ))
+              })
+          )
+        :
+          <tr>
+            <td colSpan={7} className="p-3">data perjanjian kinerja pegawai kosong di {data.tahun || ""}</td>
+          </tr>
+        }
       </tbody>
     </table>
   );
 }
-
 
 type hubungkanButtonProps = {
   isLinked: boolean
