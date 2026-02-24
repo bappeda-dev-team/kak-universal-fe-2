@@ -3,7 +3,7 @@ import { AlertNotification } from "../global/Alert";
 
 // Fungsi untuk menyimpan nilai ke cookies
 export const setCookie = (name: string, value: any) => {
-    document.cookie = `${name}=${value}; path=/;`;
+  document.cookie = `${name}=${value}; path=/;`;
 };
 
 export const getCookie = (name: string): string | null => {
@@ -38,23 +38,23 @@ export const login = async (username: string, password: string): Promise<boolean
         // Simpan token di cookie
         document.cookie = `token=${token}; path=/;`;
         document.cookie = `user=${JSON.stringify(decoded)}; path=/;`;
-        AlertNotification("Login Berhasil", "" , "success", 1000)
+        AlertNotification("Login Berhasil", "", "success", 1000)
         return true;
       } catch (decodeError) {
-        AlertNotification("Login Gagal", `${data.data}` , "error", 1000)
+        AlertNotification("Login Gagal", `${data.data}`, "error", 1000)
         console.error('Error decoding token:', data.code);
         return false;
       }
     } else if (data.code === 400) {
-        AlertNotification("Login Gagal", `${data.data}` , "error", 1000)
-        return false;
-      } else {
-        console.log(`Login gagal: Status ${data.data}`);
-        return false;
-      }
-    } catch (err) {
-      AlertNotification("Login Gagal", "terdapat kesalahan server / koneksi internet" , "error", 2000)
-      console.error('Login gagal dengan error:', err);
+      AlertNotification("Login Gagal", `${data.data}`, "error", 1000)
+      return false;
+    } else {
+      console.log(`Login gagal: Status ${data.data}`);
+      return false;
+    }
+  } catch (err) {
+    AlertNotification("Login Gagal", "terdapat kesalahan server / koneksi internet", "error", 2000)
+    console.error('Login gagal dengan error:', err);
     return false;
   }
 };
@@ -77,7 +77,7 @@ export const logout = () => {
 
 export const getUser = () => {
   const get_user = getCookie("user");
-  if(get_user){
+  if (get_user) {
     return {
       user: JSON.parse(get_user)
     };
@@ -90,6 +90,47 @@ export const getToken = () => {
     return get_Token;
   }
   return null;
+}
+
+type SelectedValue = {
+  value: any
+  label?: string
+}
+
+type OpdTahunResult = {
+  tahun: SelectedValue | null
+  opd: SelectedValue | null
+  roles: string[] | null
+}
+
+export const getOpdTahunNew = (): OpdTahunResult => {
+  try {
+    const tahunCookie = getCookie("tahun")
+    const opdCookie = getCookie("opd")
+    const userCookie = getCookie("user")
+
+    const tahun = tahunCookie ? JSON.parse(tahunCookie) : null
+    const user = userCookie ? JSON.parse(userCookie) : null
+    const roles = user?.roles ?? null
+
+    // DEFAULT
+    let opd: SelectedValue | null = null
+
+    if (roles.some((r: string) => ['super_admin'].includes(r))) {
+      // super admin pilih dari dropdown → cookie opd
+      opd = opdCookie ? JSON.parse(opdCookie) : null
+    } else {
+      // selain super admin → opd dari user
+      opd = user?.kode_opd
+        ? { value: user.kode_opd }
+        : null
+    }
+
+    return { tahun, opd, roles }
+  } catch (err) {
+    console.error("getOpdTahun error:", err)
+    return { tahun: null, opd: null, roles: null }
+  }
 }
 
 export const getOpdTahun = () => {
