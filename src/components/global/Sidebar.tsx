@@ -218,6 +218,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       url === "/ikuopdview" ||
       url === `/laporanrenstra` ||
       url === "/rencanakinerja-kak" ||
+      url === "/perjanjian-kinerja" ||
       url === `/laporanrincianbelanja` ||
       url === `/laporantaggingpohon` ||
       url === `/laporancascadingpemda` ||
