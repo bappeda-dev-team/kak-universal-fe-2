@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
     width: 210, // Memberi batas lebar agar teks turun ke bawah (wrap)
@@ -101,7 +102,7 @@ const TTD: React.FC<TTDProps> = ({ pihak, nama, nip, tanggal }) => {
       <View style={styles.spacer} />
 
       {/* Nama dan NIP */}
-      <View>
+      <View style={styles.container}>
         <Text style={styles.nameText}>{nama || "-"}</Text>
         <Text style={styles.nipText}>NIP. {nip || "-"}</Text>
       </View>
