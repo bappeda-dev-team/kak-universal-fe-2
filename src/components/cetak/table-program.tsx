@@ -69,12 +69,13 @@ const TableProgram: React.FC<Program> = ({ data, jenis_item, total }) => (
       </View>
       <View style={[styles.tableColHeader, styles.col2, styles.colBorderRight, styles.colBorderBottom]}>
         <Text style={styles.tableCell}>
-          {
+          {/* {
             jenis_item === "Strategic" ? "Program" :
               jenis_item === "Tactical" ? "Kegiatan" :
                 jenis_item === "Operational" ? "Sub Kegiatan" :
                   "Program / Kegiatan / Sub Kegiatan"
-          }
+          } */}
+          Program / Kegiatan / Sub Kegiatan
         </Text>
       </View>
       <View style={[styles.tableColHeader, styles.col3, styles.colBorderBottom]}>
