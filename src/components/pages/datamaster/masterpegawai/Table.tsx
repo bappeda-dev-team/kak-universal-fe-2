@@ -231,20 +231,6 @@ const Table = () => {
     return (
         <>
             <div className="mt-3 rounded-xl shadow-lg border">
-                <div className="flex items-center justify-between border-b px-5 py-5">
-                    <div className="flex flex-col items-end">
-                        <h1 className="uppercase font-bold">Daftar Pegawai</h1>
-                    </div>
-                    <div className="flex flex-col">
-                        <ButtonSky
-                            className="flex items-center justify-center"
-                            onClick={() => handleModal("tambah", null, Opd?.label ?? "", Opd?.value ?? "")}
-                        >
-                            <TbCirclePlus className="mr-1" />
-                            Tambah Pegawai
-                        </ButtonSky>
-                    </div>
-                </div>
                 <div className="flex flex-wrap gap-2 items-center uppercase px-3 py-2">
                     <Select
                         styles={{
