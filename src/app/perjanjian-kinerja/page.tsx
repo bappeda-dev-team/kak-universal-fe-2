@@ -496,6 +496,7 @@ function extractUniqueAtasanFromData(
 }
 
 type PkPegawaiContext = {
+    level: number
     kode_opd: string
     nama_opd: string
     tahun: number
@@ -511,6 +512,7 @@ function findPkPegawaiWithContext(
         const pegawai = level.pegawais.find(p => p.nip === nipBawahan)
         if (pegawai) {
             return {
+                level: level.level_pk,
                 kode_opd: data.kode_opd,
                 nama_opd: data.nama_opd,
                 tahun: data.tahun,
