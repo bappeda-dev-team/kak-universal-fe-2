@@ -127,7 +127,7 @@ export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) 
                     {tema.jenis_pohon === 'Operational N' ?
                         <h1>Operational {tema.level_pohon - 6} {tema.id_pohon}</h1>
                         :
-                        <h1>{tema.jenis_pohon} {tema.id_pohon}</h1>
+                        <h1>{tema.jenis_pohon} {tema.id}</h1>
                     }
                 </div>
                 {/* BODY */}

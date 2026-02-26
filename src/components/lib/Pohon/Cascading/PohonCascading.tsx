@@ -120,9 +120,9 @@ export const PohonCascading: React.FC<pohon> = ({ tema, deleteTrigger, show_all,
                         `}
                         >
                             {tema.jenis_pohon === 'Operational N' ?
-                                <h1>Operational {tema.level_pohon - 6}  </h1>
+                                <h1>Operational {tema.level_pohon - 6} {tema.id_pohon}</h1>
                                 :
-                                <h1>{tema.jenis_pohon} </h1>
+                                <h1>{tema.jenis_pohon} {tema.id}</h1>
                             }
                         </div>
                         {/* BODY */}
