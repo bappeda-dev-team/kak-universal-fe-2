@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { ButtonGreenBorder, ButtonSkyBorder } from "@/components/global/Button";
 import { TbPencil } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
+import { ModalMatrix } from "./ModalMatrixRenja";
 
 interface renstra {
     nama: string;
@@ -258,7 +259,7 @@ interface Thead {
 export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type }) => {
     return (
         <thead>
-            <tr className={` 
+            <tr className={`
                 ${jenis === "Urusan" && "bg-white text-black"}
                 ${jenis === "Bidang Urusan" && "bg-red-500 text-white"}
                 ${jenis === "Program" && "bg-blue-500 text-white"}
@@ -294,7 +295,7 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type }) => {
         </thead>
     )
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indikator, fetchTrigger }) => {
+export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indikator }) => {
 
     const [ModalTambah, setModalTambah] = useState<boolean>(false);
     const [ModalEdit, setModalEdit] = useState<boolean>(false);
@@ -384,6 +385,33 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indi
                                     }
                                 </td>
                             }
+                            {/* MODAL TAMBAH */}
+                            <ModalMatrix
+                                isOpen={ModalTambah}
+                                onClose={() => handleModalTambah('')}
+                                metode="baru"
+                                nama={nama}
+                                jenis={jenis}
+                                pagu={jenis === 'Sub Kegiatan' ? 'pagu' : 'non-pagu'}
+                                kode={kode}
+                                kode_opd={kode_opd}
+                                tahun={TahunN}
+                                onSuccess={() => { }}
+                            />
+                            {/* MODAL EDIT */}
+                            <ModalMatrix
+                                id={IdIndikator}
+                                isOpen={ModalEdit}
+                                onClose={() => handleModalEdit('', '')}
+                                metode="lama"
+                                nama={nama}
+                                jenis={jenis}
+                                pagu={jenis === 'Sub Kegiatan' ? 'pagu' : 'non-pagu'}
+                                kode={kode}
+                                kode_opd={kode_opd}
+                                tahun={TahunN}
+                                onSuccess={() => { }}
+                            />
                         </React.Fragment>
                     ))}
                 </tr>
