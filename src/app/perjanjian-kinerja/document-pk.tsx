@@ -187,7 +187,7 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
                             <TTD
                                 nama={data?.pegawai?.nama_atasan || "-"}
                                 nip={data?.pegawai?.nip_atasan || "-"}
-                                pihak={data?.pegawai?.jabatan_atasan || "-"}
+                                pihak="Pihak Kedua"
                                 tanggal={false}
                             />
                         )}
