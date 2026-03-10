@@ -1,9 +1,7 @@
-import { ButtonSky } from "@/components/global/Button";
 import { FiHome } from "react-icons/fi";
-import { TbCirclePlus } from "react-icons/tb";
 import Table from "@/components/pages/datamaster/masterlembaga/Table";
 
-const masterjabatan = () => {
+const PageMasterLembaga = () => {
     return(
         <>
             <div className="flex items-center">
@@ -14,16 +12,18 @@ const masterjabatan = () => {
             <div className="mt-3 rounded-xl shadow-lg border">
                 <div className="flex items-center justify-between border-b px-5 py-5">
                     <div className="flex flex-col items-end">
-                        <h1 className="uppercase font-bold">Daftar Lembaga / Kota / Kabupaten</h1>
+                        <h1 className="uppercase font-bold">Data Master Kabupaten</h1>
                     </div>
                     <div className="flex flex-col">
-                        <ButtonSky 
+                      {/* DISABLED, MENCEGAH PENAMBAHAN KABUPATEN / LEMBAGA BARU, SATU PEMDA CUKUP SATU LEMBAGA */}
+                        {/*  <ButtonSky
                             className="flex items-center justify-center"
                             halaman_url='/DataMaster/masterlembaga/tambah'
                         >
                             <TbCirclePlus className="mr-1"/>
                             Tambah Lembaga
                         </ButtonSky>
+                        */}
                     </div>
                 </div>
                 <Table />
@@ -32,4 +32,4 @@ const masterjabatan = () => {
     )
 }
 
-export default masterjabatan;
+export default PageMasterLembaga;
