@@ -24,6 +24,7 @@ interface FormValue {
 interface indikator {
     id_indikator?: string;
     indikator: string;
+    definisi_operasional: string;
     rumus_perhitungan: string;
     sumber_data: string;
     target: target[];
@@ -83,7 +84,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
 
     const handleTambahIndikator = () => {
         const defaultTarget = Array(special === true ? Periode?.tahun_list.length : (tahun_list && tahun_list.length)).fill({ target: '', satuan: '' }); // Buat array (jumlahnya sesuai dengan tahun_list length) dengan target kosong
-        append({ indikator: '', rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
+        append({ indikator: '', definisi_operasional: "", rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
     };
 
     useEffect(() => {
@@ -115,6 +116,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                     id: item.id, // Sesuai dengan struktur API
                     indikator: item.indikator,
                     rumus_perhitungan: item.rumus_perhitungan,
+                    definisi_operasional: item.definisi_operasional,
                     sumber_data: item.sumber_data,
                     target: item.target.map((t: any) => ({
                         target: t.target,
@@ -196,6 +198,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
             tujuan: TujuanOpd,
             indikator: data.indikator.map((ind) => ({
                 indikator: ind.indikator,
+                definisi_operasional: ind.definisi_operasional,
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
@@ -214,6 +217,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
             periode_id: periode,
             indikator: data.indikator.map((ind) => ({
                 indikator: ind.indikator,
+                definisi_operasional: ind.definisi_operasional,
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
@@ -417,6 +421,25 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                                     {...field}
                                                     className="border px-4 py-2 rounded-lg"
                                                     placeholder={`Masukkan nama indikator ${index + 1}`}
+                                                />
+                                            </div>
+                                        )}
+                                    />
+                                </div>
+                                <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                    <Controller
+                                        name={`indikator.${index}.definisi_operasional`}
+                                        control={control}
+                                        defaultValue={field.definisi_operasional}
+                                        render={({ field }) => (
+                                            <div className="flex flex-col py-3">
+                                                <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                    Definisi Operasional :
+                                                </label>
+                                                <input
+                                                    {...field}
+                                                    className="border px-4 py-2 rounded-lg"
+                                                    placeholder={`Masukkan Definisi Operasional`}
                                                 />
                                             </div>
                                         )}

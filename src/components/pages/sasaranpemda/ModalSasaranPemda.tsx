@@ -24,6 +24,7 @@ interface FormValue {
 interface indikator {
     id_indikator?: string;
     indikator: string;
+    definisi_operasional: string;
     rumus_perhitungan: string;
     sumber_data: string;
     target: target[];
@@ -77,7 +78,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
 
     const handleTambahIndikator = () => {
         const defaultTarget = Array(6).fill({ target: '', satuan: '' }); // Buat array 5 target kosong
-        append({ indikator: '', rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
+        append({ indikator: '', definisi_operasional: "", rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
     };
 
     useEffect(() => {
@@ -110,6 +111,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                     const indikatorData = hasil.indikator?.map((item: any) => ({
                         id: item.id, // Sesuai dengan struktur API
                         indikator: item.indikator,
+                        definisi_operasional: item.definisi_operasional,
                         rumus_perhitungan: item.rumus_perhitungan,
                         sumber_data: item.sumber_data,
                         target: item.target.map((t: any) => ({
@@ -184,6 +186,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
             sasaran_pemda: SasaranPemda,
             indikator: data.indikator.map((ind) => ({
                 indikator: ind.indikator,
+                definisi_operasional: ind.definisi_operasional,
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
@@ -203,6 +206,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
             indikator: data.indikator.map((ind) => ({
                 indikator: ind.indikator,
                 rumus_perhitungan: ind.rumus_perhitungan,
+                definisi_operasional: ind.definisi_operasional,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
                     target: t.target,
@@ -393,6 +397,25 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                                             {...field}
                                                             className="border px-4 py-2 rounded-lg"
                                                             placeholder={`Masukkan nama indikator ${index + 1}`}
+                                                        />
+                                                    </div>
+                                                )}
+                                            />
+                                        </div>
+                                        <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                            <Controller
+                                                name={`indikator.${index}.definisi_operasional`}
+                                                control={control}
+                                                defaultValue={field.definisi_operasional}
+                                                render={({ field }) => (
+                                                    <div className="flex flex-col py-3">
+                                                        <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                            Definisi Operasional :
+                                                        </label>
+                                                        <input
+                                                            {...field}
+                                                            className="border px-4 py-2 rounded-lg"
+                                                            placeholder={`Masukkan Definisi Operasional`}
                                                         />
                                                     </div>
                                                 )}

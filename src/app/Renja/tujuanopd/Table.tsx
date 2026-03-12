@@ -20,6 +20,7 @@ interface Indikator {
     id: string;
     id_tujuan_opd: number;
     indikator: string;
+    definisi_operasional: string;
     rumus_perhitungan: string;
     sumber_data: string;
     target: Target[];
@@ -130,6 +131,7 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Urusan & Bidang Urusan</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Tujuan OPD</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</td>
+                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi Operasional</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
                             <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{branding?.tahun?.value}</th>
@@ -182,6 +184,7 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                                     item.indikator.map((i: Indikator) => (
                                                         <tr key={i.id}>
                                                             <td className="border-x border-b border-emerald-500 px-6 py-6">{i.indikator || "-"}</td>
+                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">{i.definisi_operasional || "-"}</td>
                                                             <td className="border-x border-b border-emerald-500 px-6 py-6">{i.rumus_perhitungan || "-"}</td>
                                                             <td className="border-x border-b border-emerald-500 px-6 py-6">{i.sumber_data || "-"}</td>
                                                             {i.target.map((t: Target) => (
