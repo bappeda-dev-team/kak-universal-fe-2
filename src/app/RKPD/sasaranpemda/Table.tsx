@@ -12,6 +12,7 @@ interface PemdaStrategicGoal {
     strategic_pemda: string;
     tujuan_pemda: string;
     indikator: string;
+    definisi_operasional: string;
     rumus_perhitungan: string;
     sumber_data: string;
     target: {
@@ -26,6 +27,7 @@ const data = [
         "strategic_pemda": "MENINGKATNYA PROFESIONALITAS ASN",
         "tujuan_pemda": "Terwujudnya profesionalitas ASN",
         "indikator": "Indeks Profesional ASN",
+        "definisi_operasional": "IP ASN didasarkan pada empat dimensi, yaitu kompetensi, kualifikasi, kinerja, dan kedisiplinan",
         "rumus_perhitungan": "IP ASN didasarkan pada empat dimensi, yaitu kompetensi, kualifikasi, kinerja, dan kedisiplinan",
         "sumber_data": "Sistem Aplikasi Pelayanan Kepegawaian (SAPK) BKN, Data Pendaftaran Ulang PNS, Data yang terhimpun pada unit pengelola kepegawaian, Data yang dimiliki ASN yang bersangkutan",
         "target": {
@@ -72,6 +74,7 @@ const Table = () => {
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Strategic Pemda</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Sasaran Pemda</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</td>
+                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi Operasional</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
                             <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{branding?.tahun?.value}</th>
@@ -104,6 +107,9 @@ const Table = () => {
                                         <div className="flex gap-2 items-center">
                                             <p>{item.indikator || "-"}</p>
                                         </div>
+                                    </td>
+                                    <td className="border-r border-b border-emerald-500 px-6 py-4">
+                                        {item.definisi_operasional || "-"}
                                     </td>
                                     <td className="border-r border-b border-emerald-500 px-6 py-4">
                                         {item.rumus_perhitungan || "-"}
