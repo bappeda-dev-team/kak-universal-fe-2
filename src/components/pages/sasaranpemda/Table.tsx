@@ -22,6 +22,7 @@ interface Indikator {
     id: string;
     indikator: string;
     rumus_perhitungan: string;
+    definisi_operational: string;
     sumber_data: string;
     target: Target[];
 }
@@ -268,6 +269,7 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                                                 <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Strategic Pemda</td>
                                                 <td rowSpan={2} colSpan={2} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Sasaran Pemda</td>
                                                 <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</td>
+                                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi operational</td>
                                                 <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</td>
                                                 <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
                                                 {tahun_list.map((item: any) => (
@@ -383,6 +385,7 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                                                                             s.indikator.map((i: Indikator) => (
                                                                                 <tr key={i.id}>
                                                                                     <td className="border-b border-r border-emerald-500 px-6 py-4">{i.indikator || "-"}</td>
+                                                                                    <td className="border-b border-r border-emerald-500 px-6 py-4">{i.definisi_operational || "-"}</td>
                                                                                     <td className="border-b border-r border-emerald-500 px-6 py-4">{i.rumus_perhitungan || "-"}</td>
                                                                                     <td className="border-b border-r border-emerald-500 px-6 py-4">{i.sumber_data || "-"}</td>
                                                                                     {i.target.map((t: Target) => (

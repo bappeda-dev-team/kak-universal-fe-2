@@ -35,6 +35,7 @@ interface FormValue {
 interface indikator {
     id?: string;
     indikator: string;
+    definisi_operasional: string;
     rumus_perhitungan: string;
     sumber_data: string;
     target: target[];
@@ -90,7 +91,7 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
 
     const handleTambahIndikator = () => {
         const defaultTarget = Array((tahun_list && tahun_list.length)).fill({ target: '', satuan: '' }); // Buat array 5 target kosong
-        append({ indikator: '', rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
+        append({ indikator: '', definisi_operasional: "", rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
     };
 
     useEffect(() => {
@@ -121,6 +122,7 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                     indikator: hasil.indikator?.map((item: indikator) => ({
                         id: item.id,
                         indikator: item.indikator,
+                        definisi_operasional: item.definisi_operasional,
                         rumus_perhitungan: item.rumus_perhitungan,
                         sumber_data: item.sumber_data,
                         target: item.target.map((t: target) => ({
@@ -134,6 +136,7 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                 replace(hasil.indikator.map((item: indikator) => ({
                     id: item.id,
                     indikator: item.indikator,
+                    definisi_operasional: item.definisi_operasional,
                     rumus_perhitungan: item.rumus_perhitungan,
                     sumber_data: item.sumber_data,
                     target: item.target,
@@ -159,6 +162,7 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                 const indikatorData = hasil.indikator?.map((item: any) => ({
                     id: item.id, // Sesuai dengan struktur API
                     indikator: item.indikator,
+                    definisi_operasional: item.definisi_operasional,
                     rumus_perhitungan: item.rumus_perhitungan,
                     sumber_data: item.sumber_data,
                     target: item.target.map((t: any) => ({
@@ -226,6 +230,7 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
             jenis_periode: jenis_periode,
             indikator: data.indikator.map((ind) => ({
                 indikator: ind.indikator,
+                definisi_operasional: ind.definisi_operasional,
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
@@ -246,6 +251,7 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
             indikator: data.indikator.map((ind) => ({
                 id: ind.id,
                 indikator: ind.indikator,
+                definisi_operasional: ind.definisi_operasional,
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
@@ -419,6 +425,25 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                                                         {...field}
                                                         className="border px-4 py-2 rounded-lg"
                                                         placeholder={`Masukkan nama indikator ${index_indikator + 1}`}
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                        <Controller
+                                            name={`indikator.${index_indikator}.definisi_operasional`}
+                                            control={control}
+                                            defaultValue={field.definisi_operasional}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col py-3">
+                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                        Definisi Operasional :
+                                                    </label>
+                                                    <input
+                                                        {...field}
+                                                        className="border px-4 py-2 rounded-lg"
+                                                        placeholder={`Masukkan Definisi Operasional`}
                                                     />
                                                 </div>
                                             )}

@@ -14,6 +14,7 @@ interface IKU {
     sumber: string;
     is_active: boolean;
     iku_active: boolean;
+    definisi_operasional: string;
     rumus_perhitungan: string;
     sumber_data: string;
     indikator: string;
@@ -237,6 +238,9 @@ const TablePemda: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jeni
                                                 }
                                             </ButtonBlackBorder>
                                         </div>
+                                    </td>
+                                    <td className={`border-r border-b ${TableAktif ? "border-emerald-500" : "border-orange-500"} px-6 py-4`}>
+                                        {item.definisi_operasional || "-"}
                                     </td>
                                     <td className={`border-r border-b ${TableAktif ? "border-emerald-500" : "border-orange-500"} px-6 py-4`}>
                                         {item.rumus_perhitungan || "-"}
