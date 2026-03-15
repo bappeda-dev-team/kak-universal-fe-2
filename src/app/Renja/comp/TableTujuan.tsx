@@ -242,7 +242,7 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                                                                         </ButtonGreenBorder>
                                                                         <ButtonRedBorder
                                                                             onClick={() => AlertQuestion("Hapus", "Hapus Indikator ini?", "question", "Hapus", "Batal").then((resp) => {
-                                                                                if(resp.isConfirmed){
+                                                                                if (resp.isConfirmed) {
                                                                                     hapusIndikator(i.kode_indikator);
                                                                                 }
                                                                             })}
@@ -276,9 +276,10 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                     <ModalIndikatorRenja
                         isOpen={ModalTambahIndikator}
                         onClose={() => handleTambahIndikator(0)}
-                        onSuccess={handleFetchTrigger}
+                        onSuccess={() => handleFetchTrigger()}
                         tujuan_id={String(IdTujuan)}
                         tahun={tahun}
+                        jenis="tujuan_opd"
                         menu={menu}
                     />
                 }
@@ -286,8 +287,9 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                     <ModalEditIndikatorRenja
                         isOpen={ModalEditIndikator}
                         onClose={() => handleEditIndikator(null)}
-                        onSuccess={handleFetchTrigger}
+                        onSuccess={() => handleFetchTrigger()}
                         Data={DataEdit}
+                        jenis="tujuan_opd"
                         menu={menu}
                     />
                 }

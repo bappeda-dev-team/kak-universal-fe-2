@@ -38,11 +38,12 @@ interface modal {
     onClose: () => void;
     tujuan_id: string;
     tahun: string;
+    jenis: 'tujuan_opd' | 'sasaran_opd',
     menu: 'ranwal' | 'rankhir' | 'penetapan'
     onSuccess: () => void;
 }
 
-export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_id, tahun, menu, onSuccess }) => {
+export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_id, tahun, jenis, menu, onSuccess }) => {
 
     const { branding } = useBrandingContext();
     const { control, handleSubmit, reset } = useForm<FormValue>({
@@ -84,7 +85,7 @@ export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_i
         }));
         // console.log(payload);
         try {
-            let url = `tujuan_opd/renja/${menu}/indikator/create/${tujuan_id}`;
+            let url = `${jenis}/renja/${menu}/indikator/create/${tujuan_id}`;
             setProses(true);
             const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
                 method: "POST",
@@ -308,10 +309,11 @@ interface modalEdit {
     onClose: () => void;
     onSuccess: () => void;
     Data: IndikatorForm | null;
+    jenis: 'tujuan_opd' | 'sasaran_opd'
     menu: 'ranwal' | 'rankhir' | 'penetapan'
 }
 
-export const ModalEditIndikatorRenja: React.FC<modalEdit> = ({ isOpen, onClose, Data, menu, onSuccess }) => {
+export const ModalEditIndikatorRenja: React.FC<modalEdit> = ({ isOpen, onClose, Data, jenis, menu, onSuccess }) => {
 
     const { branding } = useBrandingContext();
     const { control, handleSubmit, reset } = useForm<IndikatorForm>({
@@ -353,7 +355,7 @@ export const ModalEditIndikatorRenja: React.FC<modalEdit> = ({ isOpen, onClose, 
         }
         // console.log(payload);
         try {
-            let url = `tujuan_opd/renja/${menu}/indikator/update/${Data?.kode_indikator}`;
+        let url = `${jenis}/renja/${menu}/indikator/update/${Data?.kode_indikator}`;
             setProses(true);
             const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
                 method: "PUT",

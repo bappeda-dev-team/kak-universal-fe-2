@@ -1,6 +1,7 @@
 'use client'
 
-import { ButtonRed, ButtonGreen } from "@/components/global/Button";
+import { ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder } from "@/components/global/Button";
+import { TbCirclePlus, TbPencil, TbTrash } from "react-icons/tb";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
@@ -8,6 +9,7 @@ import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { useRouter } from "next/navigation";
+import { ModalEditIndikatorRenja, ModalIndikatorRenja } from "./ModalIndikatorRenja";
 
 interface Target {
     id: string;
@@ -18,6 +20,7 @@ interface Target {
 
 interface Indikator {
     id: string;
+    kode_indikator: string;
     indikator: string;
     definisi_operasional: string;
     rumus_perhitungan: string;
@@ -65,8 +68,15 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
     const [Sasaran, setSasaran] = useState<Sasaran[]>([]);
 
     const [Error, setError] = useState<boolean | null>(null);
+    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [DataNull, setDataNull] = useState<boolean | null>(null);
     const [Loading, setLoading] = useState<boolean | null>(null);
+    const [Proses, setProses] = useState<boolean | null>(null);
+
+    const [ModalTambahIndikator, setModalTambahIndikator] = useState<boolean>(false);
+    const [ModalEditIndikator, setModalEditIndikator] = useState<boolean>(false);
+    const [DataEdit, setDataEdit] = useState<Indikator | null>(null);
+    const [IdSasaran, setIdSasaran] = useState<string>('');
 
     const router = useRouter();
     const token = getToken();
@@ -114,7 +124,46 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
             fetchSasaranOpd();
 
         }
-    }, [token, branding, tahun, kode_opd, router]);
+    }, [token, branding, tahun, kode_opd, router, FetchTrigger]);
+
+    const handleFetchTrigger = () => { setFetchTrigger((prev) => !prev) }
+    const handleTambahIndikator = (tujuan_id: string) => {
+        if (ModalTambahIndikator) {
+            setModalTambahIndikator(false);
+            setIdSasaran(tujuan_id);
+        } else {
+            setModalTambahIndikator(true);
+            setIdSasaran(tujuan_id);
+        }
+    }
+    const handleEditIndikator = (Data: Indikator | null) => {
+        if (ModalEditIndikator) {
+            setModalEditIndikator(false);
+            setDataEdit(Data);
+        } else {
+            setModalEditIndikator(true);
+            setDataEdit(Data);
+        }
+    }
+    const hapusIndikator = async (kode_indikator: string) => {
+        try {
+            setProses(true);
+            const response = await fetch(`${branding?.api_perencanaan}/tujuan_opd/renja/indikator/delete/${kode_indikator}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            })
+            AlertNotification("Berhasil", "Indikator Berhasil Dihapus", "success", 1000);
+            handleFetchTrigger();
+        } catch (err) {
+            AlertNotification("Gagal", `${err}`, "error", 2000);
+            console.log(err);
+        } finally {
+            setProses(false);
+        }
+    }
 
     if (Loading) {
         return (
@@ -141,6 +190,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Pemilik</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sasaran OPD</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Tujuan OPD</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Aksi</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Definisi Operasional</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Rumus Perhitungan</th>
@@ -202,6 +252,17 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                                                                 <p className="italic text-red-300 font-thin">tujuan opd belum di pilih</p>
                                                             }
                                                         </td>
+                                                        <td className="border-x border-b border-emerald-500 px-6 py-6 h-full" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                            <div className="flex justify-center">
+                                                                <ButtonSkyBorder
+                                                                    className="flex items-center gap-1"
+                                                                    onClick={() => handleTambahIndikator(item.id)}
+                                                                >
+                                                                    <TbCirclePlus />
+                                                                    Indikator
+                                                                </ButtonSkyBorder>
+                                                            </div>
+                                                        </td>
                                                     </tr>
                                                     {/* INDIKATOR */}
                                                     {item.indikator.length === 0 ? (
@@ -213,7 +274,28 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                                                     ) : (
                                                         item.indikator.map((i: Indikator) => (
                                                             <tr key={i.id}>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-6">{i.indikator || "-"}</td>
+                                                                <td className="border-x border-b border-emerald-500 px-6 py-6">
+                                                                    <div className="flex flex-col gap-2">
+                                                                        <p>{i.indikator || "-"}</p>
+                                                                        <div className="flex items-center justify-center gap-1 pt-2 border-t border-gray-300">
+                                                                            <ButtonGreenBorder
+                                                                                onClick={() => handleEditIndikator(i)}
+                                                                                className="rounded-full"
+                                                                            >
+                                                                                <TbPencil />
+                                                                            </ButtonGreenBorder>
+                                                                            <ButtonRedBorder
+                                                                                onClick={() => AlertQuestion("Hapus", "Hapus Indikator ini?", "question", "Hapus", "Batal").then((resp) => {
+                                                                                    if (resp.isConfirmed) {
+                                                                                        hapusIndikator(i.kode_indikator);
+                                                                                    }
+                                                                                })}
+                                                                            >
+                                                                                <TbTrash />
+                                                                            </ButtonRedBorder>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
                                                                 <td className="border-x border-b border-emerald-500 px-6 py-6">{i.definisi_operasional || "-"}</td>
                                                                 <td className="border-x border-b border-emerald-500 px-6 py-6">{i.rumus_perhitungan || "-"}</td>
                                                                 <td className="border-x border-b border-emerald-500 px-6 py-6">{i.sumber_data || "-"}</td>
@@ -241,6 +323,27 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                         }
                     </tbody>
                 </table>
+                {ModalTambahIndikator &&
+                    <ModalIndikatorRenja
+                        isOpen={ModalTambahIndikator}
+                        onClose={() => handleTambahIndikator("")}
+                        onSuccess={() => handleFetchTrigger()}
+                        tujuan_id={IdSasaran}
+                        tahun={String(branding?.tahun?.value)}
+                        menu={menu}
+                        jenis="sasaran_opd"
+                    />
+                }
+                {ModalEditIndikator &&
+                    <ModalEditIndikatorRenja 
+                        isOpen={ModalEditIndikator}
+                        onClose={() => handleEditIndikator(null)}
+                        onSuccess={() => handleFetchTrigger()}
+                        Data={DataEdit}
+                        jenis="sasaran_opd"
+                        menu={menu}
+                    />
+                }
             </div>
         </>
     )
