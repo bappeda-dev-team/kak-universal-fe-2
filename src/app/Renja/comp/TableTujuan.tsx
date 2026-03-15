@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
-import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
+import { ButtonSkyBorder, ButtonGreenBorder, ButtonRedBorder } from "@/components/global/Button";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { useRouter } from "next/navigation";
-import { AlertNotification } from "@/components/global/Alert";
+import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
+import { ModalIndikatorRenja, ModalEditIndikatorRenja } from "./ModalIndikatorRenja";
+import { TbCirclePlus, TbPencil, TbTrash } from "react-icons/tb";
 
 interface Target {
     id: string;
@@ -18,6 +20,7 @@ interface Target {
 
 interface Indikator {
     id: string;
+    kode_indikator: string;
     id_tujuan_opd: number;
     indikator: string;
     definisi_operasional: string;
@@ -48,25 +51,31 @@ interface Tujuan {
 interface Table {
     kode_opd: string;
     tahun: string;
+    menu: "ranwal" | "rankhir" | "penetapan";
 }
 
-const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
+const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
 
     const { branding } = useBrandingContext();
     const [Data, setData] = useState<Tujuan[]>([]);
     const [Error, setError] = useState<boolean | null>(null);
-    const [DataNull, setDataNull] = useState<boolean | null>(null);
 
-    const [Loading, setLoading] = useState<boolean | null>(null);
+    const [ModalTambahIndikator, setModalTambahIndikator] = useState<boolean>(false);
+    const [ModalEditIndikator, setModalEditIndikator] = useState<boolean>(false);
+    const [DataEdit, setDataEdit] = useState<Indikator | null>(null);
+    const [IdTujuan, setIdTujuan] = useState<number>(0);
+
+    const [Loading, setLoading] = useState<boolean>(false);
+    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+    const [Proses, setProses] = useState<boolean>(false);
     const token = getToken();
     const router = useRouter();
 
     useEffect(() => {
-        const fetchRenja = async () => {
-            const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const fetchTujuan = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/tujuan_opd/renja/${kode_opd}/${tahun}/RPJMD`, {
+                const response = await fetch(`${branding?.api_perencanaan}/tujuan_opd/${menu}/${kode_opd}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -82,7 +91,7 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                 } else {
                     setData([]);
                     setError(true);
-                    AlertNotification("Error", `${result.data || "error saat mengambil data renja tujuan opd"}`, "warning", 2000);
+                    AlertNotification("Error", `${result.data || `error saat mengambil data ${menu} tujuan opd`}`, "warning", 2000);
                 }
             } catch (err) {
                 AlertNotification("Error", `${err}`, "warning", 2000);
@@ -91,9 +100,47 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                 setLoading(false);
             }
         }
-        fetchRenja();
-    }, [kode_opd, tahun, token, router])
+        fetchTujuan();
+    }, [kode_opd, tahun, token, router, FetchTrigger])
 
+    const handleFetchTrigger = () => { setFetchTrigger((prev) => !prev) }
+    const handleTambahIndikator = (tujuan_id: number) => {
+        if (ModalTambahIndikator) {
+            setModalTambahIndikator(false);
+            setIdTujuan(tujuan_id);
+        } else {
+            setModalTambahIndikator(true);
+            setIdTujuan(tujuan_id);
+        }
+    }
+    const handleEditIndikator = (Data: Indikator | null) => {
+        if (ModalEditIndikator) {
+            setModalEditIndikator(false);
+            setDataEdit(Data);
+        } else {
+            setModalEditIndikator(true);
+            setDataEdit(Data);
+        }
+    }
+    const hapusIndikator = async (kode_indikator: string) => {
+        try {
+            setProses(true);
+            const response = await fetch(`${branding?.api_perencanaan}/tujuan_opd/renja/indikator/delete/${kode_indikator}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            })
+            AlertNotification("Berhasil", "Indikator Berhasil Dihapus", "success", 1000);
+            handleFetchTrigger();
+        } catch (err) {
+            AlertNotification("Gagal", `${err}`, "error", 2000);
+            console.log(err);
+        } finally {
+            setProses(false);
+        }
+    }
 
     if (Loading) {
         return (
@@ -107,18 +154,6 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                 <h1 className="text-red-500 font-bold mx-5 py-5">Error, Periksa koneksi internet atau database server, jika error masih berlanjut hubungi tim developer</h1>
             </div>
         )
-    } else if (branding?.tahun?.value == undefined) {
-        return <TahunNull />
-    } else if (branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') {
-        if (branding?.opd?.value == undefined) {
-            return (
-                <>
-                    <div className="flex flex-col p-5 border-b-2 border-x-2 rounded-b-xl">
-                        <OpdTahunNull />
-                    </div>
-                </>
-            )
-        }
     }
 
     return (
@@ -130,11 +165,12 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                             <td rowSpan={2} className="border-r border-b px-6 py-3 max-w-[100px] text-center">No</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Urusan & Bidang Urusan</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Tujuan OPD</td>
-                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</td>
+                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Aksi</td>
+                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi Operasional</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
-                            <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{branding?.tahun?.value}</th>
+                            <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{branding?.tahun?.value || 0}</th>
                         </tr>
                         <tr className="bg-emerald-500 text-white">
                             <th className="border-l border-b px-6 py-3 min-w-[50px]">Target</th>
@@ -172,18 +208,50 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                                             {item.tujuan || "-"}
                                                         </p>
                                                     </td>
+                                                    <td className="border-x border-b border-emerald-500 px-6 py-6 h-full" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                        <div className="flex justify-center">
+                                                            <ButtonSkyBorder
+                                                                className="flex items-center gap-1"
+                                                                onClick={() => handleTambahIndikator(item.id_tujuan_opd)}
+                                                            >
+                                                                <TbCirclePlus />
+                                                                Indikator
+                                                            </ButtonSkyBorder>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                                 {/* INDIKATOR */}
                                                 {item.indikator.length === 0 ? (
                                                     <React.Fragment>
                                                         <tr>
-                                                            <td colSpan={30} className="border-x border-b border-emerald-500 px-6 py-6 bg-yellow-500 text-white">indikator tujuan opd belum di tambahkan</td>
+                                                            <td colSpan={30} className="border-x border-b border-emerald-500 px-6 py-6 bg-yellow-500 text-white">indikator tujuan belum di tambahkan</td>
                                                         </tr>
                                                     </React.Fragment>
                                                 ) : (
                                                     item.indikator.map((i: Indikator) => (
                                                         <tr key={i.id}>
-                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">{i.indikator || "-"}</td>
+                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">
+                                                                <div className="flex flex-col gap-2">
+                                                                    <p>{i.indikator || "-"}</p>
+                                                                    <div className="flex items-center justify-center gap-1 pt-2 border-t border-gray-300">
+                                                                        <ButtonGreenBorder
+                                                                            onClick={() => handleEditIndikator(i)}
+                                                                            className="rounded-full"
+                                                                        >
+                                                                            <TbPencil />
+                                                                        </ButtonGreenBorder>
+                                                                        <ButtonRedBorder
+                                                                            onClick={() => AlertQuestion("Hapus", "Hapus Indikator ini?", "question", "Hapus", "Batal").then((resp) => {
+                                                                                if(resp.isConfirmed){
+                                                                                    hapusIndikator(i.kode_indikator);
+                                                                                }
+                                                                            })}
+                                                                        >
+                                                                            <TbTrash />
+                                                                        </ButtonRedBorder>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
                                                             <td className="border-x border-b border-emerald-500 px-6 py-6">{i.definisi_operasional || "-"}</td>
                                                             <td className="border-x border-b border-emerald-500 px-6 py-6">{i.rumus_perhitungan || "-"}</td>
                                                             <td className="border-x border-b border-emerald-500 px-6 py-6">{i.sumber_data || "-"}</td>
@@ -198,16 +266,34 @@ const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                                 )}
                                             </React.Fragment>
                                         ))}
-
                                     </React.Fragment>
                                 )
                             })
                         }
                     </tbody>
                 </table>
+                {ModalTambahIndikator &&
+                    <ModalIndikatorRenja
+                        isOpen={ModalTambahIndikator}
+                        onClose={() => handleTambahIndikator(0)}
+                        onSuccess={handleFetchTrigger}
+                        tujuan_id={String(IdTujuan)}
+                        tahun={tahun}
+                        menu={menu}
+                    />
+                }
+                {ModalEditIndikator &&
+                    <ModalEditIndikatorRenja
+                        isOpen={ModalEditIndikator}
+                        onClose={() => handleEditIndikator(null)}
+                        onSuccess={handleFetchTrigger}
+                        Data={DataEdit}
+                        menu={menu}
+                    />
+                }
             </div>
         </>
     )
 }
 
-export default Table;
+export default TableTujuan;

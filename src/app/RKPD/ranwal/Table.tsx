@@ -3,7 +3,7 @@
 import { getToken } from "@/components/lib/Cookie";
 import React, { useEffect, useState } from "react";
 import { ButtonGreenBorder, ButtonSkyBorder } from "@/components/global/Button";
-import { TbPencil } from "react-icons/tb";
+import { TbPencil, TbCirclePlus } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
 
 interface renstra {
@@ -11,6 +11,7 @@ interface renstra {
     kode: string;
     jenis: string;
     indikator: Indikator[];
+    anggaran: Anggaran[];
     bidang_urusan?: renstra[];
     program?: renstra[]
     kegiatan?: renstra[]
@@ -22,6 +23,11 @@ interface matrix {
     tahun_akhir: string;
     pagu_total: pagu[];
     urusan: renstra[];
+}
+type combinedData = Anggaran & Partial<Indikator>;
+interface Anggaran {
+    tahun: string;
+    pagu_indikatif: number;
 }
 interface Indikator {
     id: string;
@@ -48,7 +54,8 @@ interface table {
     tahun: string;
 }
 interface Tr {
-    indikator: any[];
+    indikator: Indikator[];
+    anggaran: Anggaran[];
     nama: string;
     kode: string;
     kode_opd: string;
@@ -137,6 +144,7 @@ export const TableRenja: React.FC<table> = ({ jenis, tahun, kode_opd }) => {
                                                 jenis="Urusan"
                                                 type={jenis}
                                                 indikator={u.indikator}
+                                                anggaran={u.anggaran}
                                                 kode={u.kode}
                                                 nama={u.nama}
                                                 kode_opd={item.kode_opd}
@@ -157,6 +165,7 @@ export const TableRenja: React.FC<table> = ({ jenis, tahun, kode_opd }) => {
                                                                 jenis="Bidang Urusan"
                                                                 type={jenis}
                                                                 indikator={br.indikator}
+                                                                anggaran={u.anggaran}
                                                                 kode={br.kode}
                                                                 nama={br.nama}
                                                                 kode_opd={kode_opd}
@@ -177,6 +186,7 @@ export const TableRenja: React.FC<table> = ({ jenis, tahun, kode_opd }) => {
                                                                                 jenis="Program"
                                                                                 type={jenis}
                                                                                 indikator={p.indikator}
+                                                                                anggaran={u.anggaran}
                                                                                 kode={p.kode}
                                                                                 nama={p.nama}
                                                                                 kode_opd={kode_opd}
@@ -197,6 +207,7 @@ export const TableRenja: React.FC<table> = ({ jenis, tahun, kode_opd }) => {
                                                                                                 jenis="Kegiatan"
                                                                                                 type={jenis}
                                                                                                 indikator={k.indikator}
+                                                                                                anggaran={u.anggaran}
                                                                                                 kode={k.kode}
                                                                                                 nama={k.nama}
                                                                                                 kode_opd={kode_opd}
@@ -217,6 +228,7 @@ export const TableRenja: React.FC<table> = ({ jenis, tahun, kode_opd }) => {
                                                                                                                 jenis="Sub Kegiatan"
                                                                                                                 type={jenis}
                                                                                                                 indikator={sk.indikator}
+                                                                                                                anggaran={u.anggaran}
                                                                                                                 kode={sk.kode}
                                                                                                                 nama={sk.nama}
                                                                                                                 kode_opd={kode_opd}
@@ -267,7 +279,7 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type }) => {
             `}>
                 <td rowSpan={2} className="border-r border-b px-6 py-4 w-[200px]">Kode</td>
                 <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[200px]">{jenis}</td>
-                <td colSpan={type === "opd" ? 5 : 4} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{tahun || 0}</td>
+                <td colSpan={type === "opd" ? 3 : 2} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{tahun || 0}</td>
 
             </tr>
             <tr className={`
@@ -278,29 +290,44 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type }) => {
                 ${jenis === "Sub Kegiatan" && "bg-emerald-500 text-white"}
             `}>
                 {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
-                    <td colSpan={type === "opd" ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
+                    <td colSpan={type === "opd" ? 3 : 2} className="border-x border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
                     :
                     <>
-                        <td className="border-l border-b px-6 py-3 min-w-[300px] text-center">indikator</td>
-                        <td className="border-l border-b px-6 py-3 min-w-[50px]">Target</td>
-                        <td className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</td>
-                        <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
+                        <td className="border-l border-b px-6 py-3 min-w-[300px] text-center">indikator/target/satuan</td>
                         {type === "opd" &&
                             <td className="border-l border-b px-6 py-3 min-w-[50px] text-center">Aksi</td>
                         }
+                        <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
                     </>
                 }
             </tr>
         </thead>
     )
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indikator, fetchTrigger }) => {
+export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indikator, anggaran, fetchTrigger }) => {
 
     const [ModalTambah, setModalTambah] = useState<boolean>(false);
     const [ModalEdit, setModalEdit] = useState<boolean>(false);
 
     const [TahunN, setTahunN] = useState<string>('');
     const [IdIndikator, setIdIndikator] = useState<string>('');
+
+    const combinedData = anggaran.map((itemAnggaran) => {
+        // Ambil SEMUA indikator yang tahunnya sama
+        const matchingIndikators = indikator.filter(
+            (itemIndikator) => itemIndikator.tahun === itemAnggaran.tahun
+        );
+
+        return {
+            ...itemAnggaran,
+            // Simpan sebagai array di dalam objek anggaran
+            list_indikator: matchingIndikators.length > 0 ? matchingIndikators : [{
+                id: "",
+                indikator: "-",
+                target: []
+            }]
+        };
+    });
 
     const handleModalTambah = (tahun: string) => {
         if (ModalTambah) {
@@ -337,12 +364,11 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indi
                 <tr>
                     <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
                     <td className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
-                    {indikator.map((i: Indikator, index: number) => (
+                    {combinedData.map((i: combinedData, index: number) => (
                         <React.Fragment key={i.id || index}>
                             <td className={`border-b px-6 py-4 w-full text-center`}></td>
-                            <td className={`border-b px-6 py-4 w-full text-center`}></td>
                             <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
-                            <td className={`border-b px-6 py-4 w-full`}>Rp.{formatRupiah(i.pagu_anggaran)}</td>
+                            <td className={`border-b px-6 py-4 w-full`}>Rp.{formatRupiah(i.pagu_indikatif || 0)}</td>
                             {type === "opd" &&
                                 <td className={`border-r border-b px-6 py-4 w-full`}></td>
                             }
@@ -353,37 +379,64 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indi
                 <tr>
                     <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
                     <td className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
-                    {indikator.map((i: Indikator, index: number) => (
-                        <React.Fragment key={i.id || index}>
-                            <td className={`border-r border-b px-6 py-4 w-full`}>{i.indikator || "-"}</td>
-                            {i.target.map((t: Target, sub_index: number) => (
-                                <React.Fragment key={sub_index}>
-                                    <td className={`border-r border-b px-6 py-4 w-full text-center`}>{t.target || "-"}</td>
-                                    <td className={`border-r border-b px-6 py-4 w-full text-center`}>{t.satuan || "-"}</td>
-                                </React.Fragment>
-                            ))}
-                            <td className={`border-r border-b px-6 py-4 w-full`}>Rp.{formatRupiah(i.pagu_anggaran)}</td>
-                            {type === "opd" &&
-                                <td className={`border-r border-b px-6 py-4 w-full`}>
-                                    {i.id !== "" ?
-                                        <ButtonGreenBorder
-                                            className="flex items-center gap-1"
-                                            onClick={() => handleModalEdit(i.id, i.tahun)}
+                    {combinedData.map((a, index) => (
+                        <React.Fragment key={index}>
+                            {/* Kolom Indikator & Target */}
+                            <td className="border-r border-b px-6 py-4">
+                                {a.list_indikator.map((ind, idx) => (
+                                    <div key={ind.id || idx} className={idx > 0 ? "border-t mt-2 pt-2" : ""}>
+                                        <p className="font-medium">{ind.indikator || ""}</p>
+
+                                        {/* Render Target di dalam sini jika ingin menyatu */}
+                                        <div className="text-sm text-gray-500">
+                                            {(ind.target ?? []).map((t, tidx) => (
+                                                <span key={tidx}>{t.target || ""} {t.satuan || ""}</span>
+                                            ))}
+                                        </div>
+
+                                        {/* Tombol Edit/Tambah per Indikator */}
+                                        <div className="mt-2">
+                                            {ind.id && (
+                                                <div className="flex items-center gap-1">
+                                                    <ButtonGreenBorder
+                                                        className="flex items-center gap-1"
+                                                        // onClick={() => handleModalEdit(ind.id || "", a.tahun, ind.indikator, ind.target[0].target, ind.target[0].satuan)}
+                                                    >
+                                                        <TbPencil />
+                                                        Edit
+                                                    </ButtonGreenBorder>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </td>
+                            <td className="border-r border-b px-6 py-4">
+                                <ButtonSkyBorder
+                                    className="flex items-center gap-1"
+                                    onClick={() => handleModalTambah(a.tahun)}
+                                >
+                                    <TbCirclePlus />
+                                    <p className="text-sm">Indikator</p>
+                                </ButtonSkyBorder>
+                            </td>
+
+                            {/* Kolom Pagu (Biasanya pagu anggaran nempel ke tahun, bukan ke per indikator) */}
+                            <td className="border-r border-b px-6 py-4">
+                                <div className="flex flex-col items-center gap-2">
+                                    Rp.{formatRupiah(a.pagu_indikatif || 0)}
+                                    {jenis === "Sub Kegiatan" &&
+                                        <button
+                                            type="button"
+                                            // onClick={() => handleModalPagu(a.pagu_indikatif, a.tahun)}
+                                            className="text-sky-400 border border-sky-300 hover:text-sky-600 p-1 rounded-full hover:bg-sky-100 transition-colors"
+                                            title="Edit Pagu Anggaran"
                                         >
-                                            <TbPencil />
-                                            Edit
-                                        </ButtonGreenBorder>
-                                        :
-                                        <ButtonSkyBorder
-                                            className="flex items-center gap-1"
-                                            onClick={() => handleModalTambah(i.tahun)}
-                                        >
-                                            <TbPencil />
-                                            Edit
-                                        </ButtonSkyBorder>
+                                            <TbPencil size={14} />
+                                        </button>
                                     }
-                                </td>
-                            }
+                                </div>
+                            </td>
                         </React.Fragment>
                     ))}
                 </tr>
