@@ -406,7 +406,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                             indikator Tujuan OPD :
                         </label>
                         {fields.map((field, index) => (
-                            <React.Fragment key={index}>
+                            <React.Fragment key={field.id}>
                                 <div className="flex flex-col my-2 py-2 rounded-lg">
                                     <Controller
                                         name={`indikator.${index}.indikator`}
@@ -426,7 +426,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                         )}
                                     />
                                 </div>
-                                <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                <div className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
                                     <Controller
                                         name={`indikator.${index}.definisi_operasional`}
                                         control={control}
@@ -445,7 +445,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                         )}
                                     />
                                 </div>
-                                <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                <div className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
                                     <Controller
                                         name={`indikator.${index}.rumus_perhitungan`}
                                         control={control}
@@ -464,7 +464,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                         )}
                                     />
                                 </div>
-                                <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                <div className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
                                     <Controller
                                         name={`indikator.${index}.sumber_data`}
                                         control={control}
