@@ -3,28 +3,29 @@
 import { getToken } from "@/components/lib/Cookie";
 import React, { useEffect, useState } from "react";
 import { ButtonGreenBorder, ButtonSkyBorder } from "@/components/global/Button";
-import { TbCirclePlus, TbPencil } from "react-icons/tb";
+import { TbPencil, TbCirclePlus } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
-import { ModalMatrix, ModalEditMatrix } from "./ModalMatrix";
-import { ModalPaguAnggaran } from "./ModalPaguAnggaran";
+import { ModalIndikatorMatrixRenja } from "./ModalIndikatorMatrixRenja";
+import { ModalAnggaranMatrixRenja } from "./ModalAnggaranMatrixRenja";
+import { useBrandingContext } from "@/context/BrandingContext";
 
-interface renstra {
+interface Renja {
     nama: string;
     kode: string;
     jenis: string;
     indikator: Indikator[];
     anggaran: Anggaran[];
-    bidang_urusan?: renstra[];
-    program?: renstra[]
-    kegiatan?: renstra[]
-    subkegiatan?: renstra[]
+    bidang_urusan?: Renja[];
+    program?: Renja[]
+    kegiatan?: Renja[]
+    subkegiatan?: Renja[]
 }
 interface matrix {
     kode_opd: string
     tahun_awal: string;
     tahun_akhir: string;
     pagu_total: pagu[];
-    urusan: renstra[];
+    urusan: Renja[];
 }
 type combinedData = Anggaran & Partial<Indikator>;
 interface Anggaran {
@@ -32,20 +33,15 @@ interface Anggaran {
     pagu_indikatif: number;
 }
 interface Indikator {
-    id?: string;
-    kode: string;
-    kode_opd: string;
-    indikator: string;
-    tahun: string;
-    target: Target[];
-}
-interface IndikatorForm {
+    id: string;
+    kode_indikator: string;
     kode: string;
     kode_opd: string;
     indikator: string;
     tahun: string;
     target: string;
     satuan: string;
+    status_target_renja: boolean;
 }
 interface Target {
     id: string;
@@ -59,32 +55,13 @@ interface pagu {
 }
 interface table {
     jenis: "laporan" | "opd";
-    tahun_awal: string;
-    tahun_akhir: string;
-    tahun_list: string[];
     kode_opd: string;
-}
-interface Thead {
-    jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
-    tahun_list: string[];
-    type: "laporan" | "opd";
-}
-interface Tr {
-    indikator: Indikator[];
-    anggaran: Anggaran[];
-    nama: string;
-    kode: string;
-    kode_opd: string;
-    jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
-    type: "laporan" | "opd";
-    fetchTrigger: () => void;
-}
-interface TablePagu {
-    tahun_list: string[];
-    pagu_total: pagu[];
+    menu: "ranwal" | "rankhir" | "penetapan";
+    tahun: string;
 }
 
-export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, tahun_list, kode_opd }) => {
+
+export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd }) => {
 
     const [Matrix, setMatrix] = useState<matrix[]>([]);
 
@@ -98,7 +75,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
         const fetchMatrix = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/matrix_renstra/opd/${kode_opd}?tahun_awal=${tahun_awal}&tahun_akhir=${tahun_akhir}`, {
+                const response = await fetch(`${API_URL}/matrix_renja/${menu}/${kode_opd}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -122,11 +99,11 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
             }
         }
         fetchMatrix();
-    }, [kode_opd, tahun_awal, tahun_akhir, token, FetchTrigger]);
+    }, [kode_opd, tahun, token, FetchTrigger]);
 
     if (DataNull) {
         return (
-            <h1 className="p-5 text-sky-500 font-semibold">Sub Kegiatan OPD belum di pilih pada periode tahun {tahun_awal} sampai {tahun_akhir}</h1>
+            <h1 className="p-5 text-red-500 font-semibold">Sub Kegiatan OPD belum di pilih pada tahun {tahun || 0}</h1>
         )
     }
     if (Loading) {
@@ -143,19 +120,19 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                 <React.Fragment key={index}>
                     <div className="overflow-auto m-2 rounded-xl border">
                         <TableTotalPagu
-                            tahun_list={tahun_list}
-                            pagu_total={item.pagu_total}
+                            tahun={tahun}
+                            pagu_total={item.pagu_total[0]?.pagu_indikatif || 0}
                         />
                     </div>
                     <div className="overflow-auto m-2 rounded-t-xl border">
                         {item.urusan.length === 0 ?
-                            <h1 className="p-5">Sub Kegiatan di periode {tahun_awal} - {tahun_akhir} belum di gunakan di rencana kinerja</h1>
+                            <h1 className="p-5">Sub Kegiatan di tahun {tahun || 0} belum di gunakan di rencana kinerja</h1>
                             :
                             <table className="w-full">
-                                {item.urusan.map((u: renstra, u_index: number) => (
+                                {item.urusan.map((u: Renja, u_index: number) => (
                                     <React.Fragment key={u_index}>
                                         <TheadMatrix
-                                            tahun_list={tahun_list}
+                                            tahun={String(tahun) || "0"}
                                             jenis="Urusan"
                                             type={jenis}
                                         />
@@ -169,14 +146,15 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                 nama={u.nama}
                                                 kode_opd={item.kode_opd}
                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                menu={menu}
                                             />
                                         </tbody>
                                         {u.bidang_urusan &&
                                             <React.Fragment>
-                                                {u.bidang_urusan.map((br: renstra, br_index: number) => (
+                                                {u.bidang_urusan.map((br: Renja, br_index: number) => (
                                                     <React.Fragment key={br_index}>
                                                         <TheadMatrix
-                                                            tahun_list={tahun_list}
+                                                            tahun={String(tahun) || "0"}
                                                             jenis="Bidang Urusan"
                                                             type={jenis}
                                                         />
@@ -185,19 +163,20 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                 jenis="Bidang Urusan"
                                                                 type={jenis}
                                                                 indikator={br.indikator}
-                                                                anggaran={u.anggaran}
+                                                                anggaran={br.anggaran}
                                                                 kode={br.kode}
                                                                 nama={br.nama}
                                                                 kode_opd={kode_opd}
                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                                menu={menu}
                                                             />
                                                         </tbody>
                                                         {br.program &&
                                                             <React.Fragment>
-                                                                {br.program.map((p: renstra, p_index: number) => (
+                                                                {br.program.map((p: Renja, p_index: number) => (
                                                                     <React.Fragment key={p_index}>
                                                                         <TheadMatrix
-                                                                            tahun_list={tahun_list}
+                                                                            tahun={String(tahun) || "0"}
                                                                             jenis="Program"
                                                                             type={jenis}
                                                                         />
@@ -206,19 +185,20 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                                 jenis="Program"
                                                                                 type={jenis}
                                                                                 indikator={p.indikator}
-                                                                                anggaran={u.anggaran}
+                                                                                anggaran={p.anggaran}
                                                                                 kode={p.kode}
                                                                                 nama={p.nama}
                                                                                 kode_opd={kode_opd}
                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                                                menu={menu}
                                                                             />
                                                                         </tbody>
                                                                         {p.kegiatan &&
                                                                             <React.Fragment>
-                                                                                {p.kegiatan.map((k: renstra, k_index: number) => (
+                                                                                {p.kegiatan.map((k: Renja, k_index: number) => (
                                                                                     <React.Fragment key={k_index}>
                                                                                         <TheadMatrix
-                                                                                            tahun_list={tahun_list}
+                                                                                            tahun={String(tahun) || "0"}
                                                                                             jenis="Kegiatan"
                                                                                             type={jenis}
                                                                                         />
@@ -227,32 +207,34 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                                                 jenis="Kegiatan"
                                                                                                 type={jenis}
                                                                                                 indikator={k.indikator}
-                                                                                                anggaran={u.anggaran}
+                                                                                                anggaran={k.anggaran}
                                                                                                 kode={k.kode}
                                                                                                 nama={k.nama}
                                                                                                 kode_opd={kode_opd}
                                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                                                                menu={menu}
                                                                                             />
                                                                                         </tbody>
                                                                                         {k.subkegiatan &&
                                                                                             <React.Fragment>
                                                                                                 <TheadMatrix
-                                                                                                    tahun_list={tahun_list}
+                                                                                                    tahun={String(tahun) || "0"}
                                                                                                     jenis="Sub Kegiatan"
                                                                                                     type={jenis}
                                                                                                 />
-                                                                                                {k.subkegiatan.map((sk: renstra, sk_index: number) => (
+                                                                                                {k.subkegiatan.map((sk: Renja, sk_index: number) => (
                                                                                                     <React.Fragment key={sk_index}>
                                                                                                         <tbody>
                                                                                                             <TrMatrix
                                                                                                                 jenis="Sub Kegiatan"
                                                                                                                 type={jenis}
                                                                                                                 indikator={sk.indikator}
-                                                                                                                anggaran={u.anggaran}
+                                                                                                                anggaran={sk.anggaran}
                                                                                                                 kode={sk.kode}
                                                                                                                 nama={sk.nama}
                                                                                                                 kode_opd={kode_opd}
                                                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                                                                                menu={menu}
                                                                                                             />
                                                                                                         </tbody>
                                                                                                     </React.Fragment>
@@ -281,10 +263,16 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
         </>
     )
 }
-export const TheadMatrix: React.FC<Thead> = ({ jenis, type, tahun_list }) => {
+
+interface Thead {
+    jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
+    type: "laporan" | "opd";
+    tahun: string;
+}
+export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type }) => {
     return (
         <thead>
-            <tr className={` 
+            <tr className={`
                 ${jenis === "Urusan" && "bg-white text-black"}
                 ${jenis === "Bidang Urusan" && "bg-red-500 text-white"}
                 ${jenis === "Program" && "bg-blue-500 text-white"}
@@ -293,9 +281,7 @@ export const TheadMatrix: React.FC<Thead> = ({ jenis, type, tahun_list }) => {
             `}>
                 <td rowSpan={2} className="border-r border-b px-6 py-4 w-[200px]">Kode</td>
                 <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[200px]">{jenis}</td>
-                {tahun_list.map((item: any) => (
-                    <td key={item} colSpan={type === "opd" ? 3 : 2} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{item}</td>
-                ))}
+                <td colSpan={type === "opd" ? 5 : 4} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{tahun || 0}</td>
 
             </tr>
             <tr className={`
@@ -306,239 +292,206 @@ export const TheadMatrix: React.FC<Thead> = ({ jenis, type, tahun_list }) => {
                 ${jenis === "Sub Kegiatan" && "bg-emerald-500 text-white"}
             `}>
                 {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
-                    tahun_list.map((item: string) => (
-                        <React.Fragment key={item}>
-                            <td colSpan={type === "opd" ? 3 : 2} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
-                        </React.Fragment>
-                    ))
+                    <td colSpan={type === "opd" ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
                     :
-                    tahun_list.map((item: string) => (
-                        <React.Fragment key={item}>
-                            <td className="border-l border-b px-6 py-3 min-w-[300px] text-center">indikator/target/satuan</td>
-                            {type === "opd" &&
-                                <td className="border-l border-b px-6 py-3 min-w-[50px] text-center">Aksi</td>
-                            }
-                            <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
-                        </React.Fragment>
-                    ))
+                    <>
+                        <td className="border-l border-b px-6 py-3 min-w-[300px] text-center">indikator</td>
+                        <td className="border-l border-b px-6 py-3 min-w-[50px]">Target</td>
+                        <td className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</td>
+                        <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
+                        {type === "opd" &&
+                            <td className="border-l border-b px-6 py-3 min-w-[50px] text-center">Aksi</td>
+                        }
+                    </>
                 }
             </tr>
         </thead>
     )
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indikator, anggaran, fetchTrigger }) => {
+interface Tr {
+    indikator: Indikator[];
+    anggaran: Anggaran[];
+    nama: string;
+    kode: string;
+    kode_opd: string;
+    jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
+    type: "laporan" | "opd";
+    menu: "ranwal" | "rankhir" | "penetapan";
+    fetchTrigger: () => void;
+}
+export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama, anggaran, indikator, fetchTrigger }) => {
 
-    const [ModalTambah, setModalTambah] = useState<boolean>(false);
-    const [ModalEdit, setModalEdit] = useState<boolean>(false);
-    const [DataModal, setDataModal] = useState<IndikatorForm[]>([]);
-    const [Indikator, setIndikator] = useState<string>("");
-    const [Target, setTarget] = useState<string>("");
-    const [Satuan, setSatuan] = useState<string>("");
-
-    const [Pagu, setPagu] = useState<number | null>(null);
+    const { branding } = useBrandingContext();
     const [ModalPagu, setModalPagu] = useState<boolean>(false);
+    const [Pagu, setPagu] = useState<number>(0);
+    const [ModalIndikator, setModalIndikator] = useState<boolean>(false);
+    const [DataModal, setDataModal] = useState<Indikator[]>([]);
 
-    const [TahunN, setTahunN] = useState<string>('');
-    const [IdIndikator, setIdIndikator] = useState<string>('');
-
-    const combinedData = anggaran.map((itemAnggaran) => {
+    const combinedData = anggaran.map((a) => {
         // Ambil SEMUA indikator yang tahunnya sama
         const matchingIndikators = indikator.filter(
-            (itemIndikator) => itemIndikator.tahun === itemAnggaran.tahun
+            (i) => i.tahun === a.tahun
         );
-
         return {
-            ...itemAnggaran,
+            ...a,
             // Simpan sebagai array di dalam objek anggaran
-            list_indikator: matchingIndikators.length > 0 ? matchingIndikators : [{
-                id: "",
-                indikator: "-",
-                target: []
-            }]
+            list_indikator: matchingIndikators.length > 0 ? matchingIndikators
+                : [{
+                    id: "",
+                    indikator: "-",
+                    target: "",
+                    satuan: ""
+                }]
         };
     });
 
-    const handleModalTambah = (tahun: string) => {
-        if (ModalTambah) {
-            setModalTambah(false);
-            setTahunN('');
+    const handleModalIndikator = (data: Indikator[]) => {
+        if (ModalIndikator) {
+            setModalIndikator(false);
+            setDataModal([]);
         } else {
-            setModalTambah(true);
-            setTahunN(tahun);
+            setModalIndikator(true);
+            setDataModal(data);
         }
     }
-
-    const handleModalEdit = (id: string, tahun: string, indikator: string, target: string, satuan: string) => {
-        if (ModalEdit) {
-            setModalEdit(false);
-            setTahunN('');
-            setIdIndikator('');
-            setIndikator(indikator);
-            setTarget(target);
-            setSatuan(satuan);
-        } else {
-            setModalEdit(true);
-            setTahunN(tahun);
-            setIdIndikator(id);
-            setIndikator(indikator);
-            setTarget(target);
-            setSatuan(satuan);
-
-        }
-    }
-
-    const handleModalPagu = (pagu: number, tahun: string) => {
+    const handleModalPagu = (pagu: number) => {
         if (ModalPagu) {
             setModalPagu(false);
             setPagu(pagu);
-            setTahunN(tahun);
         } else {
             setModalPagu(true);
             setPagu(pagu);
-            setTahunN(tahun);
         }
     }
-
     function formatRupiah(angka: number) {
         if (typeof angka !== 'number') {
             return String(angka); // Jika bukan angka, kembalikan sebagai string
         }
         return angka.toLocaleString('id-ID'); // 'id-ID' untuk format Indonesia
     }
+
     return (
-        // terdapat error hidrasi disini
         <>
             {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
                 <tr>
-                    <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode || ""}</td>
-                    <td className={`border-r border-b px-6 py-4 w-full`}>{nama || ""}</td>
+                    <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
+                    <td className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
                     {combinedData.map((i: combinedData, index: number) => (
                         <React.Fragment key={i.id || index}>
+                            <td className={`border-b px-6 py-4 w-full text-center`}></td>
+                            <td className={`border-b px-6 py-4 w-full text-center`}></td>
                             <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
-                            <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
-                            <td className={`border-r border-b px-6 py-4 w-full`}>Rp.{formatRupiah(i.pagu_indikatif || 0)}</td>
+                            <td className={`border-b px-6 py-4 w-full text-center`}>
+                                <span className="font-semibold text-sm">
+                                    Rp.{formatRupiah(i.pagu_indikatif)}
+                                </span>
+                            </td>
                             {type === "opd" &&
-                                <td className={`border-b px-6 py-4 w-full`}></td>
+                                <td className={`border-r border-b px-6 py-4 w-full`}></td>
                             }
                         </React.Fragment>
                     ))}
                 </tr>
                 :
-                <tr>
-                    <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode || ""}</td>
-                    <td className={`border-r border-b px-6 py-4 w-full`}>{nama || ""}</td>
-                    {combinedData.map((a, index) => (
-                        <React.Fragment key={index}>
-                            {/* Kolom Indikator & Target */}
-                            <td className="border-r border-b px-6 py-4">
-                                {a.list_indikator.map((ind, idx) => (
-                                    <div key={ind.id || idx} className={idx > 0 ? "border-t mt-2 pt-2" : ""}>
-                                        <p className="font-medium">{ind.indikator || ""}</p>
+                <>
+                    <tr>
+                        <td rowSpan={indikator.length ? indikator.length + 1 : 2} className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
+                        <td rowSpan={indikator.length ? indikator.length + 1 : 2} className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
+                    </tr>
+                    {combinedData.map((c, index: number) => {
+                        const totalRowsInYear = c.list_indikator.length;
+                        return (
+                            <React.Fragment key={index}>
+                                {c.list_indikator.map((i, idx) => (
+                                    <tr key={i.id || idx}>
+                                        {/* KOLOM INDIKATOR */}
+                                        <td className="border-r border-b px-6 py-4 w-full">
+                                            <div className="flex items-center gap-2">
+                                                {i.indikator || "-"}
+                                            </div>
+                                        </td>
+                                        <td className="border-r border-b px-6 py-4 text-center">{i.target || "-"}</td>
+                                        <td className="border-r border-b px-6 py-4 text-center">{i.satuan || "-"}</td>
 
-                                        {/* Render Target di dalam sini jika ingin menyatu */}
-                                        <div className="text-sm text-gray-500">
-                                            {(ind.target ?? []).map((t, tidx) => (
-                                                <span key={tidx}>{t.target || ""} {t.satuan || ""}</span>
-                                            ))}
-                                        </div>
-
-                                        {/* Tombol Edit/Tambah per Indikator */}
-                                        <div className="mt-2">
-                                            {ind.id && (
-                                                <div className="flex items-center gap-1">
-                                                    <ButtonGreenBorder 
-                                                        className="flex items-center gap-1"
-                                                        onClick={() => handleModalEdit(ind.id || "", a.tahun, ind.indikator, ind.target[0].target, ind.target[0].satuan)}
-                                                    >
-                                                        <TbPencil />
-                                                        Edit
-                                                    </ButtonGreenBorder>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
+                                        {/* KOLOM PAGU: Hanya muncul di baris pertama tiap tahun (idx === 0) */}
+                                        {idx === 0 && (
+                                            <>
+                                                <td
+                                                    rowSpan={totalRowsInYear}
+                                                    className="border-r border-b px-6 py-4 text-center align-middle"
+                                                >
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <span className="font-semibold text-sm">
+                                                            Rp.{formatRupiah(c.pagu_indikatif || 0)}
+                                                        </span>
+                                                        {(jenis === "Sub Kegiatan" && menu === "penetapan") && (
+                                                            <button
+                                                                type="button"
+                                                                className="text-sky-400 border border-sky-300 hover:text-sky-600 p-1 rounded-full hover:bg-sky-100 transition-colors"
+                                                                title="Edit Pagu Anggaran"
+                                                                onClick={() => handleModalPagu(c.pagu_indikatif || 0)}
+                                                            >
+                                                                <TbPencil size={14} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td
+                                                    rowSpan={totalRowsInYear}
+                                                    className="border-r border-b px-6 py-4 text-center align-middle"
+                                                >
+                                                    {type === "opd" &&
+                                                        <ButtonSkyBorder
+                                                            className="flex items-center gap-1"
+                                                            onClick={() => handleModalIndikator(indikator)}
+                                                        >
+                                                            <TbCirclePlus />
+                                                            <p className="text-sm">Indikator</p>
+                                                        </ButtonSkyBorder>
+                                                    }
+                                                </td>
+                                            </>
+                                        )}
+                                    </tr>
                                 ))}
-                            </td>
-                            <td className="border-r border-b px-6 py-4">
-                                <ButtonSkyBorder 
-                                    className="flex items-center gap-1"
-                                    onClick={() => handleModalTambah(a.tahun)}
-                                >
-                                    <TbCirclePlus />
-                                    <p className="text-sm">Indikator</p>
-                                </ButtonSkyBorder>
-                            </td>
-
-                            {/* Kolom Pagu (Biasanya pagu anggaran nempel ke tahun, bukan ke per indikator) */}
-                            <td className="border-r border-b px-6 py-4">
-                                <div className="flex flex-col items-center gap-2">
-                                    Rp.{formatRupiah(a.pagu_indikatif || 0)}
-                                    {jenis === "Sub Kegiatan" &&
-                                        <button
-                                            type="button"
-                                            onClick={() => handleModalPagu(a.pagu_indikatif, a.tahun)}
-                                            className="text-sky-400 border border-sky-300 hover:text-sky-600 p-1 rounded-full hover:bg-sky-100 transition-colors"
-                                            title="Edit Pagu Anggaran"
-                                        >
-                                            <TbPencil size={14} />
-                                        </button>
-                                    }
-                                </div>
-                            </td>
-                        </React.Fragment>
-                    ))}
-                </tr>
+                            </React.Fragment>
+                        );
+                    })}
+                </>
             }
-            {/* MODAL TAMBAH */}
-            {ModalTambah &&
-                <ModalMatrix
-                    isOpen={ModalTambah}
-                    onClose={() => handleModalTambah('')}
-                    metode="baru"
-                    nama={nama}
-                    jenis={jenis}
-                    Data={[]}
-                    kode={kode}
-                    kode_opd={kode_opd}
-                    tahun={TahunN}
+            {ModalIndikator &&
+                <ModalIndikatorMatrixRenja
+                    isOpen={ModalIndikator}
+                    onClose={() => handleModalIndikator([])}
                     onSuccess={fetchTrigger}
+                    kode_opd={kode_opd}
+                    tahun={String(branding?.tahun?.value) || ""}
+                    Data={DataModal}
+                    kode={kode}
+                    menu={menu}
                 />
             }
-            {/* MODAL EDIT */}
-            {ModalEdit &&
-                <ModalEditMatrix
-                    id={IdIndikator}
-                    isOpen={ModalEdit}
-                    onClose={() => handleModalEdit('', '', "", "", "")}
-                    nama={nama}
-                    jenis={jenis}
-                    indikator={Indikator}
-                    target={Target}
-                    satuan={Satuan}
-                    kode={kode}
-                    kode_opd={kode_opd}
-                    tahun={TahunN}
-                    onSuccess={fetchTrigger}
-                />
-            }
-            {/* MODAL PAGU */}
             {ModalPagu &&
-                <ModalPaguAnggaran
+                <ModalAnggaranMatrixRenja
                     isOpen={ModalPagu}
-                    onClose={() => handleModalPagu(0, '')}
-                    nama={nama}
-                    jenis={jenis}
-                    pagu={Pagu || 0}
-                    kode={kode}
-                    kode_opd={kode_opd}
-                    tahun={TahunN}
+                    onClose={() => handleModalPagu(0)}
                     onSuccess={fetchTrigger}
+                    kode_opd={kode_opd}
+                    tahun={String(branding?.tahun?.value)}
+                    pagu={Pagu}
+                    kode={kode}
                 />
             }
         </>
     )
 }
-export const TableTotalPagu: React.FC<TablePagu> = ({ tahun_list, pagu_total }) => {
+
+interface TablePagu {
+    tahun: string;
+    pagu_total: number;
+}
+
+export const TableTotalPagu: React.FC<TablePagu> = ({ tahun, pagu_total }) => {
 
     function formatRupiah(angka: number) {
         if (typeof angka !== 'number') {
@@ -552,14 +505,10 @@ export const TableTotalPagu: React.FC<TablePagu> = ({ tahun_list, pagu_total }) 
             <tbody>
                 <tr>
                     <td rowSpan={2} className={`border-r border-b px-6 py-4 font-semibold`}>Total Pagu OPD</td>
-                    {tahun_list.map((item: string) => (
-                        <td key={item} className="border-r border-b px-6 py-4 font-semibold text-center">{item}</td>
-                    ))}
+                    <td className="border-r border-b px-6 py-4 font-semibold text-center">{tahun || "tahun"}</td>
                 </tr>
                 <tr>
-                    {pagu_total.map((item: pagu, index: number) => (
-                        <td key={index} className="border-r border-b px-6 py-4 font-semibold text-center">Rp.{formatRupiah(item.pagu_indikatif)}</td>
-                    ))}
+                    <td className="border-r border-b px-6 py-4 font-semibold text-center">Rp.{formatRupiah(pagu_total)}</td>
                 </tr>
             </tbody>
         </table>
