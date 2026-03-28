@@ -150,7 +150,8 @@ const TematikKab = () => {
             return;
         }
         setTematik(tema);
-        router.push(`/pohonkinerjapemda?tema=${tema.label}&id=${tema.value}`);
+        // router.push(`/pohonkinerjapemda?tema=${tema.label}&id=${tema.value}`);
+        router.push(`/pohonkinerjapemda`);
     };
 
     return (
