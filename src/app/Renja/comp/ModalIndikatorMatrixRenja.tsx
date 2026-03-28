@@ -13,7 +13,6 @@ interface FormValue {
     kode: string;
     kode_opd: string;
     tahun: string;
-    jenis: string;
     indikator: IndikatorForm[];
 }
 
@@ -27,7 +26,8 @@ interface TargetForm {
 interface IndikatorForm {
     kode_indikator?: string;
     indikator: string;
-    target: TargetForm[];
+    target: string;
+    satuan: string;
 }
 
 interface modal {
@@ -46,31 +46,25 @@ export const ModalIndikatorMatrixRenja: React.FC<modal> = ({ isOpen, onClose, Da
     const { branding } = useBrandingContext();
     const { control, handleSubmit, reset } = useForm<FormValue>({
         defaultValues: {
-            kode: kode ?? "",
-            kode_opd: kode_opd ?? "",
-            tahun: tahun ?? "",
-            jenis: menu,
             indikator: (Data.length > 0)
                 ? Data.map((i: IndikatorForm) => ({
+                    kode: kode ?? "",
+                    kode_opd: kode_opd ?? "",
+                    tahun: tahun ?? "",
                     kode_indikator: i.kode_indikator ?? "",
                     indikator: i.indikator ?? "",
-                    target: i.target.map((t: TargetForm) => ({
-                        id: t.id,
-                        indikator_id: t.indikator_id,
-                        target: t.target,
-                        satuan: t.satuan
-                    }))
+                    target: i.target ?? "",
+                    satuan: i.satuan ?? "",
                 }))
                 :
                 [{
+                    kode: kode,
+                    kode_opd: kode_opd,
                     kode_indikator: "",
                     indikator: "",
-                    target: [{
-                        id: "",
-                        indikator_id: "",
-                        target: "",
-                        satuan: "",
-                    }]
+                    tahun: "",
+                    target: "",
+                    satuan: "",
                 }]
         }
     });
@@ -87,26 +81,15 @@ export const ModalIndikatorMatrixRenja: React.FC<modal> = ({ isOpen, onClose, Da
     });
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const payload = {
-            kode: data.kode,
-            kode_opd: data.kode_opd,
-            tahun: data.tahun,
-            jenis: data.jenis,
-
-            indikator: data.indikator.map((item) => ({
-                kode_indikator: item.kode_indikator,
-                indikator: item.indikator,
-
-                target: item.target.map((t) => (
-                    {
-                        id: t.id ?? "",
-                        indikator_id: t.indikator_id ?? item.kode_indikator ?? "",
-                        target: t.target ?? "",
-                        satuan: t.satuan ?? "",
-                    }
-                ))
-            })),
-        };
+        const payload = data.indikator.map((item) => ({
+            kode: kode,
+            kode_opd: kode_opd,
+            tahun: tahun,
+            kode_indikator: item.kode_indikator,
+            indikator: item.indikator,
+            target: item.target,
+            satuan: item.satuan,
+        }));
 
         try {
             let url = `matrix_renja/indikator/${menu}/upsert`;
@@ -194,7 +177,7 @@ export const ModalIndikatorMatrixRenja: React.FC<modal> = ({ isOpen, onClose, Da
                                     </div>
                                     <div className="flex gap-2 justify-between my-2 p-3 border border-gray-200 rounded-lg">
                                         <Controller
-                                            name={`indikator.${index}.target.0.target`}
+                                            name={`indikator.${index}.target`}
                                             control={control}
                                             render={({ field }) => (
                                                 <div className="flex flex-col py-1 w-full">
@@ -211,7 +194,7 @@ export const ModalIndikatorMatrixRenja: React.FC<modal> = ({ isOpen, onClose, Da
                                             )}
                                         />
                                         <Controller
-                                            name={`indikator.${index}.target.0.satuan`}
+                                            name={`indikator.${index}.satuan`}
                                             control={control}
                                             render={({ field }) => (
                                                 <div className="flex flex-col py-1 w-full">
@@ -234,7 +217,8 @@ export const ModalIndikatorMatrixRenja: React.FC<modal> = ({ isOpen, onClose, Da
                                 onClick={() => append({
                                     kode_indikator: "",
                                     indikator: "",
-                                    target: [{ id: "", indikator_id: "", target: "", satuan: "" }]
+                                    target: "",
+                                    satuan: ""
                                 })}
                                 className="bg-blue-500 text-white px-4 py-2 rounded"
                             >

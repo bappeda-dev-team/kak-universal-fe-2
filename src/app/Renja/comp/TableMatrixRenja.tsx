@@ -40,7 +40,8 @@ interface Indikator {
     kode_opd: string;
     indikator: string;
     tahun: string;
-    target: Target[];
+    target: string;
+    satuan: string;
     status_target_renja: boolean;
 }
 interface Target {
@@ -337,10 +338,8 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                 : [{
                     id: "",
                     indikator: "-",
-                    target: [{
-                        target: "-",
-                        satuan: "-"
-                    }]
+                    target: "-",
+                    satuan: "-"
                 }]
         };
     });
@@ -411,21 +410,11 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                                             </div>
                                         </td>
                                         <td className="border-r border-b px-6 py-4 w-full">
-                                            {i.target.length > 0
-                                                ? i.target.map((t, idx) => (
-                                                    <div key={idx}>{t.target}</div>
-                                                ))
-                                                : "-"
-                                            }
+                                            {i.target}
                                         </td>
 
                                         <td className="border-r border-b px-6 py-4 w-full">
-                                            {i.target.length > 0
-                                                ? i.target.map((t, idx) => (
-                                                    <div key={idx}>{t.satuan}</div>
-                                                ))
-                                                : "-"
-                                            }
+                                            {i.satuan}
                                         </td>
 
                                         {/* KOLOM PAGU: Hanya muncul di baris pertama tiap tahun (idx === 0) */}
