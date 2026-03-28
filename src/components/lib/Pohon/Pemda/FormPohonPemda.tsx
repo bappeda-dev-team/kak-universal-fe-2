@@ -383,7 +383,7 @@ export const FormPohonPemda: React.FC<{
                                                     }
                                                     <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
                                                 </div>
-                                                <div className="flex flex-col items-center">
+                                                {/* <div className="flex flex-col items-center">
                                                     {HariKerja ?
                                                         <button
                                                             type="button"
@@ -400,7 +400,7 @@ export const FormPohonPemda: React.FC<{
                                                         ></button>
                                                     }
                                                     <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
-                                                </div>
+                                                </div> */}
                                                 <div className="flex flex-col items-center">
                                                     {UnggulanPusat ?
                                                         <button
@@ -1506,7 +1506,7 @@ export const FormEditPohon: React.FC<{
                                         }
                                         <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
                                     </div>
-                                    <div className="flex flex-col items-center">
+                                    {/* <div className="flex flex-col items-center">
                                         {HariKerja ?
                                             <button
                                                 type="button"
@@ -1523,7 +1523,7 @@ export const FormEditPohon: React.FC<{
                                             ></button>
                                         }
                                         <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
-                                    </div>
+                                    </div> */}
                                     <div className="flex flex-col items-center">
                                         {UnggulanPusat ?
                                             <button
