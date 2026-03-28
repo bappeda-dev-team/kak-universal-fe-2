@@ -3,10 +3,12 @@
 import { FiHome } from "react-icons/fi";
 import { useBrandingContext } from "@/context/BrandingContext";
 // import Table from "@/components/pages/tujuanopd/Table";
+import TableTujuan from "../../comp/TableTujuan";
 
 const RenjaPenetapanTujuanPage = () => {
 
     const {branding} = useBrandingContext();
+        const opd = (branding?.user?.roles == "super_admin" || branding?.user?.roles == "reviewer") ? branding?.opd?.value : branding?.user?.kode_opd;
 
     return (
         <>
@@ -24,7 +26,11 @@ const RenjaPenetapanTujuanPage = () => {
                         <h1 className="uppercase font-bold ml-1">{branding?.tahun?.label || ""}</h1>
                     </div>
                 </div>
-            
+                <TableTujuan 
+                    tahun={String(branding?.tahun?.value) || ""}
+                    kode_opd={opd}
+                    menu="penetapan"
+                />
             </div>
         </>
     )
