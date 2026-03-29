@@ -170,9 +170,6 @@ const TableIkuRenja: React.FC<table> = ({ tahun, kode_opd, menu }) => {
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Rumus Perhitungan</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Sumber Data</th>
                             <th className="border-l border-b px-6 py-3 min-w-[100px]">{tahun || ""}</th>
-
-                        </tr>
-                        <tr className={`${TableAktif ? "bg-emerald-600" : "bg-orange-600"} text-white`}>
                             <th className="border-l border-b px-6 py-3 min-w-[50px]">Target</th>
                             <th className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</th>
                         </tr>
