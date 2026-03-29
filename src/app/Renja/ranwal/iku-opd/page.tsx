@@ -26,12 +26,12 @@ const RenjaRanwalIkuPage = () => {
                         <h1 className="uppercase font-bold ml-1">{branding?.tahun?.label || ""}</h1>
                     </div>
                 </div>
-                <Maintenance />
-                {/* <TableIkuRenja 
+                {/* <Maintenance /> */}
+                <TableIkuRenja 
                     tahun={branding?.tahun?.value || 0}
                     kode_opd={opd}
                     menu="ranwal"
-                /> */}
+                />
             </div>
         </>
     )

@@ -57,7 +57,7 @@ const TableIkuRenja: React.FC<table> = ({ tahun, kode_opd, menu }) => {
             setError(false);
             setDataNull(false);
             try {
-                const response = await fetch(`${branding?.api_perencanaan}/indikator_utama/${menu}/${kode_opd}/${tahun}`, {
+                const response = await fetch(`${branding?.api_perencanaan}/iku_renja_opd/${menu}/${kode_opd}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ const TableIkuRenja: React.FC<table> = ({ tahun, kode_opd, menu }) => {
         // console.log(formData);
         try {
             setProses(true);
-            const response = await fetch(`${branding?.api_perencanaan}/indikator_utama/status/${id}`, {
+            const response = await fetch(`${branding?.api_perencanaan}/indikator_utama/opd/status/${id}`, {
                 method: "PUT",
                 headers: {
                     Authorization: `${token}`,
