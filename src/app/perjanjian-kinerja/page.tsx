@@ -24,6 +24,7 @@ const PerjanjianKinerja = () => {
     const [token, setToken] = useState<string | null>(null)
     const [kodeOpd, setKodeOpd] = useState<string | null>(null)
     const [tahun, setTahun] = useState<number | null>(null)
+    const [roleUser, setRoleUser] = useState<string[]>([])
 
     useEffect(() => {
         const opdTahun = getOpdTahunNew()
@@ -40,6 +41,9 @@ const PerjanjianKinerja = () => {
         // set kode opd
         if (opdTahun?.opd != null) {
             setKodeOpd(opdTahun.opd.value)
+        }
+        if (opdTahun?.roles != null) {
+            setRoleUser(opdTahun.roles)
         }
     }, [])
 
@@ -121,6 +125,10 @@ const PerjanjianKinerja = () => {
         setShowPreview(true)
     }
 
+    const getCandidates = (pk: any, levelPk: number): RekinOption[] => {
+        return buildCandidates(data, pk, levelPk)
+    }
+
 
     if (tahun == null) {
         return <TahunNull />
@@ -171,7 +179,9 @@ const PerjanjianKinerja = () => {
                         <TablePk
                             data={data}
                             search={search}
+                            roleUser={roleUser}
                             onPreviewPk={handlePreviewPk}
+                            getCandidates={getCandidates}
                             onSelectAtasan={({ nipBawahan }) => {
                                 const candidates = extractUniqueAtasanFromData(
                                     data,
@@ -185,42 +195,7 @@ const PerjanjianKinerja = () => {
                                 setShowPilihAtasanModal(true)
                             }}
                             onSelectPk={({ pk, levelPk }) => {
-                                let candidates: RekinOption[] = []
-                                if (levelPk == 4) {
-                                    candidates = data.sasaran_pemdas.map(sp => ({
-                                        id: String(sp.id_sasaran_pemda),
-                                        rekin: sp.sasaran_pemda,
-                                        nipPegawai: sp.nip_kepala_pemda,
-                                        namaPegawai: sp.nama_kepala_pemda
-                                    }))
-                                } else {
-                                    // logic ambil rekin atasan selain level 1
-                                    const targetAtasanLevel = levelPk - 1
-
-                                    candidates =
-                                        data.pk_item
-                                            .filter((l) => l.level_pk === targetAtasanLevel)
-                                            .flatMap((l) =>
-                                                l.pegawais.flatMap((p) =>
-                                                    p.pks
-                                                        .filter(
-                                                            (pkAtasan) =>
-                                                                pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_pemilik_pk
-                                                                &&
-                                                                pkAtasan.id_pohon === pk.id_parent_pohon
-                                                                &&
-                                                                pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_atasan
-                                                        )
-                                                        .map((pkAtasan) => ({
-                                                            id: pkAtasan.id_rekin_pemilik_pk,
-                                                            rekin: pkAtasan.rekin_pemilik_pk,
-                                                            namaPegawai: p.nama_pegawai,
-                                                            nipPegawai: p.nip,
-                                                        }))
-                                                )
-                                            )
-                                }
-
+                                const candidates = buildCandidates(data, pk, levelPk)
                                 setRekinAtasanList(candidates)
 
                                 setSelectedPk({
@@ -380,7 +355,7 @@ export default PerjanjianKinerja;
 
 
 // MODAL
-type RekinOption = {
+export type RekinOption = {
     id: string
     rekin: string
     namaPegawai: string
@@ -496,7 +471,6 @@ function extractUniqueAtasanFromData(
 }
 
 type PkPegawaiContext = {
-    level: number
     kode_opd: string
     nama_opd: string
     tahun: number
@@ -512,7 +486,6 @@ function findPkPegawaiWithContext(
         const pegawai = level.pegawais.find(p => p.nip === nipBawahan)
         if (pegawai) {
             return {
-                level: level.level_pk,
                 kode_opd: data.kode_opd,
                 nama_opd: data.nama_opd,
                 tahun: data.tahun,
@@ -522,4 +495,43 @@ function findPkPegawaiWithContext(
     }
 
     return null
+}
+
+const buildCandidates = (
+    data: any,
+    pk: any,
+    levelPk: number
+): RekinOption[] => {
+    const sasaranPemdas = data.sasaran_pemdas || []
+
+    // LEVEL 4 -> sasaran pemda
+    if (levelPk === 4) {
+        return sasaranPemdas.map((sp: any) => ({
+            id: String(sp.id_sasaran_pemda),
+            rekin: sp.sasaran_pemda,
+            nipPegawai: sp.nip_kepala_pemda,
+            namaPegawai: sp.nama_kepala_pemda,
+        }))
+    }
+
+    const targetAtasanLevel = levelPk - 1
+
+    return data.pk_item
+        .filter((l: any) => l.level_pk === targetAtasanLevel)
+        .flatMap((l: any) =>
+            l.pegawais.flatMap((p: any) =>
+                p.pks
+                    .filter((pkAtasan: any) =>
+                        pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_pemilik_pk &&
+                        pkAtasan.id_pohon === pk.id_parent_pohon &&
+                        pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_atasan
+                    )
+                    .map((pkAtasan: any) => ({
+                        id: pkAtasan.id_rekin_pemilik_pk,
+                        rekin: pkAtasan.rekin_pemilik_pk,
+                        namaPegawai: p.nama_pegawai,
+                        nipPegawai: p.nip,
+                    }))
+            )
+        )
 }
