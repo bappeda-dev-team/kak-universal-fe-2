@@ -7,7 +7,7 @@ import { TbPencil, TbTrash, TbCircleX, TbCircleCheck, TbMistOff, TbMist, TbCircl
 import { ButtonBlackBorder, ButtonSkyBorder, ButtonGreen, ButtonRed } from "@/components/global/Button";
 import { AlertQuestion, AlertNotification } from "@/components/global/Alert";
 import { useBrandingContext } from "@/context/BrandingContext";
-import { ModalProgramUnggulan } from "./ModalProgramUnggulan";
+import { ModalProgramPrioritasPusat } from "./ModalProgramPrioritasPusat";
 
 interface Table {
     tahun_awal: string;
@@ -37,6 +37,8 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
     const [ModalEdit, setModalEdit] = useState<boolean>(false);
     const [ModalBaru, setModalBaru] = useState<boolean>(false);
 
+    const [Dummy, setDummy] = useState<any[]>([]);
+    
     const handleModalEdit = (data: ProgramUnggulan | null) => {
         if (ModalEdit) {
             setModalEdit(false);
@@ -154,7 +156,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                                 </td>
                             </tr>
                         ) : (
-                            Data.map((item: ProgramUnggulan, index: number) => (
+                            Dummy.map((item: ProgramUnggulan, index: number) => (
                                 <tr key={index}>
                                     <td className="border-x border-b border-green-500 py-4 px-3 text-center">{index + 1}</td>
                                     <td className="border-r border-b border-green-500 px-6 py-4 font-semibold">{item.nama_program_unggulan || "-"}</td>
@@ -202,7 +204,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                 </table>
             </div>
             {ModalBaru &&
-                <ModalProgramUnggulan
+                <ModalProgramPrioritasPusat
                     jenis="baru"
                     onClose={() => handleModalBaru()}
                     isOpen={ModalBaru}
@@ -212,7 +214,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                 />
             }
             {ModalEdit &&
-                <ModalProgramUnggulan
+                <ModalProgramPrioritasPusat
                     jenis="edit"
                     onClose={() => handleModalEdit(null)}
                     isOpen={ModalEdit}

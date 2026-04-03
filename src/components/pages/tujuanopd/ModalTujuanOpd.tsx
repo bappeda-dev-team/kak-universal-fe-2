@@ -51,13 +51,15 @@ interface modal {
     id?: number; // id tujuan opd
     periode?: number; // id periode
     tahun?: number; // tahun value header
+    tahun_awal: number;
+    tahun_akhir: number;
     tahun_list?: string[];
     kode_opd?: string;
     special?: boolean;
     onSuccess: () => void;
 }
 
-export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd, periode, metode, tahun, tahun_list, special, onSuccess }) => {
+export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd, periode, metode, tahun, tahun_awal, tahun_akhir, tahun_list, special, onSuccess }) => {
 
     const {
         control,
@@ -193,6 +195,8 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
         const formDataNew = {
             //key : value
             kode_bidang_urusan: BidangUrusan?.value,
+            tahun_awal: String(tahun_awal),
+            tahun_akhir: String(tahun_akhir),
             periode_id: special === true ? Periode?.value : periode,
             kode_opd: kode_opd,
             tujuan: TujuanOpd,
@@ -215,6 +219,8 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
             kode_bidang_urusan: BidangUrusan?.value,
             tujuan: TujuanOpd,
             periode_id: periode,
+            tahun_awal: String(tahun_awal),
+            tahun_akhir: String(tahun_akhir),
             indikator: data.indikator.map((ind) => ({
                 indikator: ind.indikator,
                 definisi_operasional: ind.definisi_operasional,
@@ -237,9 +243,9 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
         try {
             let url = "";
             if (metode === "lama") {
-                url = `tujuan_opd/update/${id}`;
+                url = `tujuan_opd/renstra/update/${id}`;
             } else if (metode === "baru") {
-                url = `tujuan_opd/create`;
+                url = `tujuan_opd/renstra/create`;
             } else {
                 url = '';
             }
