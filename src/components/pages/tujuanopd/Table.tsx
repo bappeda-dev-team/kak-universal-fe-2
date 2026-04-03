@@ -116,9 +116,9 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         let url = '';
         if (User?.roles == 'super_admin') {
-            url = `tujuan_opd/findall/${SelectedOpd?.value}/tahunawal/${tahun_awal}/tahunakhir/${tahun_akhir}/jenisperiode/${jenis}`
+            url = `tujuan_opd/renstra/${SelectedOpd?.value}/${tahun_awal}/${tahun_akhir}`
         } else {
-            url = `tujuan_opd/findall/${User?.kode_opd}/tahunawal/${tahun_awal}/tahunakhir/${tahun_akhir}/jenisperiode/${jenis}`
+            url = `tujuan_opd/renstra/${User?.kode_opd}/${tahun_awal}/${tahun_akhir}`
         }
         const fetchTujuanOpd = async () => {
             setLoading(true)
@@ -362,6 +362,8 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                     metode="baru"
                     kode_opd={User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd}
                     tahun={Tahun?.value}
+                    tahun_awal={Number(tahun_awal)}
+                    tahun_akhir={Number(tahun_akhir)}
                     tahun_list={tahun_list}
                     periode={id_periode}
                     isOpen={isOpenNewTujuan}
@@ -371,6 +373,8 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                 {/* MODAL EDIT TUJUAN */}
                 <ModalTujuanOpd
                     metode="lama"
+                    tahun_awal={Number(tahun_awal)}
+                    tahun_akhir={Number(tahun_akhir)}
                     kode_opd={User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd}
                     id={IdTujuan}
                     tahun={Tahun?.value}
