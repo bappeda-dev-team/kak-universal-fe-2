@@ -7,7 +7,7 @@ import { TbPencil, TbTrash, TbCircleX, TbCircleCheck, TbMistOff, TbMist, TbCircl
 import { ButtonBlackBorder, ButtonSkyBorder, ButtonGreen, ButtonRed } from "@/components/global/Button";
 import { AlertQuestion, AlertNotification } from "@/components/global/Alert";
 import { useBrandingContext } from "@/context/BrandingContext";
-import { ModalProgramUnggulan } from "./ModalProgramUnggulan";
+import { ModalProgramPrioritasPusat } from "./ModalProgramPrioritasPusat";
 
 interface Table {
     tahun_awal: string;
@@ -202,7 +202,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                 </table>
             </div>
             {ModalBaru &&
-                <ModalProgramUnggulan
+                <ModalProgramPrioritasPusat
                     jenis="baru"
                     onClose={() => handleModalBaru()}
                     isOpen={ModalBaru}
@@ -212,7 +212,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                 />
             }
             {ModalEdit &&
-                <ModalProgramUnggulan
+                <ModalProgramPrioritasPusat
                     jenis="edit"
                     onClose={() => handleModalEdit(null)}
                     isOpen={ModalEdit}
