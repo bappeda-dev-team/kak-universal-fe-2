@@ -28,6 +28,7 @@ interface matrix {
     urusan: Renja[];
 }
 type combinedData = Anggaran & Partial<Indikator>;
+
 interface Anggaran {
     tahun: string;
     pagu_indikatif: number;
@@ -317,7 +318,7 @@ interface Tr {
     jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
     type: "laporan" | "opd";
     menu: "ranwal" | "rankhir" | "penetapan";
-    fetchTrigger: () => void;
+    fetchTrigger(): void;
 }
 export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama, anggaran, indikator, fetchTrigger }) => {
 
@@ -329,9 +330,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
 
     const combinedData = anggaran.map((a) => {
         // Ambil SEMUA indikator yang tahunnya sama
-        const matchingIndikators = indikator.filter(
-            (i) => i.tahun === a.tahun
-        );
+        const matchingIndikators = indikator.filter((i) => i.tahun === a.tahun);
         return {
             ...a,
             // Simpan sebagai array di dalam objek anggaran
@@ -339,8 +338,8 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                 : [{
                     id: "",
                     indikator: "-",
-                    target: "",
-                    satuan: ""
+                    target: "-",
+                    satuan: "-"
                 }]
         };
     });
@@ -410,8 +409,13 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                                                 {i.indikator || "-"}
                                             </div>
                                         </td>
-                                        <td className="border-r border-b px-6 py-4 text-center">{i.target || "-"}</td>
-                                        <td className="border-r border-b px-6 py-4 text-center">{i.satuan || "-"}</td>
+                                        <td className="border-r border-b px-6 py-4 w-full">
+                                            {i.target}
+                                        </td>
+
+                                        <td className="border-r border-b px-6 py-4 w-full">
+                                            {i.satuan}
+                                        </td>
 
                                         {/* KOLOM PAGU: Hanya muncul di baris pertama tiap tahun (idx === 0) */}
                                         {idx === 0 && (
