@@ -51,8 +51,8 @@ interface modal {
     id?: number; // id tujuan opd
     periode?: number; // id periode
     tahun?: number; // tahun value header
-    tahun_awal: number;
-    tahun_akhir: number;
+    tahun_awal?: number;
+    tahun_akhir?: number;
     tahun_list?: string[];
     kode_opd?: string;
     special?: boolean;
@@ -195,8 +195,8 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
         const formDataNew = {
             //key : value
             kode_bidang_urusan: BidangUrusan?.value,
-            tahun_awal: String(tahun_awal),
-            tahun_akhir: String(tahun_akhir),
+            tahun_awal: special === true ? Periode?.tahun_awal : String(tahun_awal),
+            tahun_akhir: special === true ? Periode?.tahun_akhir : String(tahun_akhir),
             periode_id: special === true ? Periode?.value : periode,
             kode_opd: kode_opd,
             tujuan: TujuanOpd,
