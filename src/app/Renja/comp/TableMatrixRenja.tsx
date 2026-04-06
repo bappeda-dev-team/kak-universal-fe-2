@@ -136,6 +136,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                             tahun={String(tahun) || "0"}
                                             jenis="Urusan"
                                             type={jenis}
+                                            menu={menu}
                                         />
                                         <tbody>
                                             <TrMatrix
@@ -158,6 +159,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                             tahun={String(tahun) || "0"}
                                                             jenis="Bidang Urusan"
                                                             type={jenis}
+                                                            menu={menu}
                                                         />
                                                         <tbody>
                                                             <TrMatrix
@@ -180,6 +182,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                             tahun={String(tahun) || "0"}
                                                                             jenis="Program"
                                                                             type={jenis}
+                                                                            menu={menu}
                                                                         />
                                                                         <tbody>
                                                                             <TrMatrix
@@ -202,6 +205,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                                             tahun={String(tahun) || "0"}
                                                                                             jenis="Kegiatan"
                                                                                             type={jenis}
+                                                                                            menu={menu}
                                                                                         />
                                                                                         <tbody>
                                                                                             <TrMatrix
@@ -222,6 +226,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                                                     tahun={String(tahun) || "0"}
                                                                                                     jenis="Sub Kegiatan"
                                                                                                     type={jenis}
+                                                                                                    menu={menu}
                                                                                                 />
                                                                                                 {k.subkegiatan.map((sk: Renja, sk_index: number) => (
                                                                                                     <React.Fragment key={sk_index}>
@@ -268,9 +273,10 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
 interface Thead {
     jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
     type: "laporan" | "opd";
+    menu: "ranwal" | "rankhir" | "penetapan";
     tahun: string;
 }
-export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type }) => {
+export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type, menu }) => {
     return (
         <thead>
             <tr className={`
@@ -282,7 +288,7 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type }) => {
             `}>
                 <td rowSpan={2} className="border-r border-b px-6 py-4 w-[200px]">Kode</td>
                 <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[200px]">{jenis}</td>
-                <td colSpan={type === "opd" ? 5 : 4} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{tahun || 0}</td>
+                <td colSpan={(type === "opd" && menu != "ranwal") ? 5 : 4} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{tahun || 0}</td>
 
             </tr>
             <tr className={`
@@ -293,14 +299,14 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type }) => {
                 ${jenis === "Sub Kegiatan" && "bg-emerald-500 text-white"}
             `}>
                 {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
-                    <td colSpan={type === "opd" ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
+                    <td colSpan={(type === "opd" && menu != "ranwal") ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
                     :
                     <>
                         <td className="border-l border-b px-6 py-3 min-w-[300px] text-center">indikator</td>
                         <td className="border-l border-b px-6 py-3 min-w-[50px]">Target</td>
                         <td className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</td>
                         <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
-                        {type === "opd" &&
+                        {(type === "opd" && menu != "ranwal") &&
                             <td className="border-l border-b px-6 py-3 min-w-[50px] text-center">Aksi</td>
                         }
                     </>
@@ -385,7 +391,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                                     Rp.{formatRupiah(i.pagu_indikatif)}
                                 </span>
                             </td>
-                            {type === "opd" &&
+                            {(type === "opd" && menu !== "ranwal") &&
                                 <td className={`border-r border-b px-6 py-4 w-full`}></td>
                             }
                         </React.Fragment>
@@ -444,7 +450,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                                                     rowSpan={totalRowsInYear}
                                                     className="border-r border-b px-6 py-4 text-center align-middle"
                                                 >
-                                                    {type === "opd" &&
+                                                    {(type === "opd" && menu !== "ranwal") &&
                                                         <ButtonSkyBorder
                                                             className="flex items-center gap-1"
                                                             onClick={() => handleModalIndikator(indikator)}
