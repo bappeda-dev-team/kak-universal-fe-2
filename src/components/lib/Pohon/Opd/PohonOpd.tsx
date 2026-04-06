@@ -61,6 +61,7 @@ interface KeteranganTagging {
     id: number;
     id_tagging: number;
     kode_program_unggulan: string;
+    nama_program_prioritas: string;
     keterangan_tagging_program: string;
     tahun: string;
 }
