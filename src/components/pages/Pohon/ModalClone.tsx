@@ -154,33 +154,20 @@ export const ModalClone: React.FC<modal> = ({ isOpen, onClose, onSuccess, id, ta
                         onSubmit={handleSubmit(onSubmit)}
                     >
                         <div className="w-max-[500px] py-2 mb-2 border-b-2 border-gray-300 text-center uppercase font-bold">
-                            Clone Pohon Kinerja {jenis === 'pemda' ? "Pemda" : "OPD"}
+                            Clone Pohon Kinerja {jenis}
                         </div>
-                        {jenis === 'pemda' &&
                             <div className="flex flex-col py-3">
                                 <label
-                                    className="uppercase text-xs font-bold text-gray-700 my-2"
-                                    htmlFor="nama_pohon"
-                                >
-                                    Nama Tematik
-                                </label>
-                                <div className="border px-4 py-2 rounded-lg">{nama_pohon}</div>
-                            </div>
-                        }
-                        {jenis === 'opd' &&
-                            <div className="flex flex-col py-3">
-                                <label
-                                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                                    className="uppercase text-xs font-bold text-gray-700 my-1"
                                     htmlFor="nama_opd"
                                 >
-                                    Nama OPD
+                                    {jenis === "opd" ? "Nama OPD" : "Nama Tematik"}
                                 </label>
-                                <div className="border px-4 py-2 rounded-lg">{nama_opd}</div>
+                                <div className="border px-4 py-2 rounded-lg">{jenis === "opd" ? nama_opd : nama_pohon}</div>
                             </div>
-                        }
                         <div className="flex flex-col py-3">
                             <label
-                                className="uppercase text-xs font-bold text-gray-700 my-2"
+                                className="uppercase text-xs font-bold text-gray-700 my-1"
                                 htmlFor="tahun_objek"
                             >
                                 Tahun Sekarang
@@ -189,7 +176,7 @@ export const ModalClone: React.FC<modal> = ({ isOpen, onClose, onSuccess, id, ta
                         </div>
                         <div className="flex flex-col justify-center pr-2 pb-5">
                             <label
-                                className="uppercase text-xs font-bold text-gray-700 my-2"
+                                className="uppercase text-xs font-bold text-gray-700 my-1"
                                 htmlFor="tahun_tujuan"
                             >
                                 Tahun Tujuan Clone
@@ -228,20 +215,22 @@ export const ModalClone: React.FC<modal> = ({ isOpen, onClose, onSuccess, id, ta
                                 )}
                             />
                         </div>
-                        <ButtonSky type="submit" className="w-full my-3" disabled={Proses}>
-                            {Proses ?
-                                <>
-                                    <LoadingButtonClip />
-                                    <span>Cloning</span>
-                                </>
-                                :
-                                <>
-                                    <TbDeviceFloppy />
-                                    <span>Clone</span>
-                                </>
-                            }
+                        <ButtonSky type="submit" className="w-full mt-3" disabled={Proses}>
+                            <div className="flex items-center gap-1">
+                                {Proses ?
+                                    <>
+                                        <LoadingButtonClip />
+                                        <span>Cloning</span>
+                                    </>
+                                    :
+                                    <>
+                                        <TbDeviceFloppy />
+                                        <span>Clone</span>
+                                    </>
+                                }
+                            </div>
                         </ButtonSky>
-                        <ButtonRed className="flex items-center gap-1 w-full my-3" onClick={handleClose} disabled={Proses}>
+                        <ButtonRed className="flex items-center gap-1 w-full mb-3 mt-1" onClick={handleClose} disabled={Proses}>
                             <TbX />
                             Batal
                         </ButtonRed>

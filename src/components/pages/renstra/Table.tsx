@@ -3,15 +3,17 @@
 import { getToken } from "@/components/lib/Cookie";
 import React, { useEffect, useState } from "react";
 import { ButtonGreenBorder, ButtonSkyBorder } from "@/components/global/Button";
-import { TbPencil } from "react-icons/tb";
+import { TbCirclePlus, TbPencil } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
-import { ModalMatrix } from "./ModalMatrix";
+import { ModalMatrix, ModalEditMatrix } from "./ModalMatrix";
+import { ModalPaguAnggaran } from "./ModalPaguAnggaran";
 
 interface renstra {
     nama: string;
     kode: string;
     jenis: string;
     indikator: Indikator[];
+    anggaran: Anggaran[];
     bidang_urusan?: renstra[];
     program?: renstra[]
     kegiatan?: renstra[]
@@ -24,21 +26,30 @@ interface matrix {
     pagu_total: pagu[];
     urusan: renstra[];
 }
+type combinedData = Anggaran & Partial<Indikator>;
+interface Anggaran {
+    tahun: string;
+    pagu_indikatif: number;
+}
 interface Indikator {
-    id: string;
+    kode_indikator: string;
     kode: string;
     kode_opd: string;
     indikator: string;
-    pagu_anggaran: number;
     tahun: string;
-    target: Target[];
-}
-interface Target {
-    id: string;
-    indikator_id: string;
     target: string;
     satuan: string;
 }
+interface IndikatorForm {
+    kode: string;
+    kode_indikator?: string;
+    kode_opd: string;
+    indikator: string;
+    tahun: string;
+    target: string;
+    satuan: string;
+}
+
 interface pagu {
     tahun: string;
     pagu_indikatif: number;
@@ -56,7 +67,8 @@ interface Thead {
     type: "laporan" | "opd";
 }
 interface Tr {
-    indikator: any[];
+    indikator: Indikator[];
+    anggaran: Anggaran[];
     nama: string;
     kode: string;
     kode_opd: string;
@@ -111,7 +123,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
 
     if (DataNull) {
         return (
-            <h1 className="p-5 text-red-500 font-semibold">Sub Kegiatan OPD belum di pilih pada periode tahun {tahun_awal} sampai {tahun_akhir}</h1>
+            <h1 className="p-5 text-sky-500 font-semibold">Sub Kegiatan OPD belum di pilih pada periode tahun {tahun_awal} sampai {tahun_akhir}</h1>
         )
     }
     if (Loading) {
@@ -133,9 +145,9 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                         />
                     </div>
                     <div className="overflow-auto m-2 rounded-t-xl border">
-                        {item.urusan.length === 0 ? 
+                        {item.urusan.length === 0 ?
                             <h1 className="p-5">Sub Kegiatan di periode {tahun_awal} - {tahun_akhir} belum di gunakan di rencana kinerja</h1>
-                        :
+                            :
                             <table className="w-full">
                                 {item.urusan.map((u: renstra, u_index: number) => (
                                     <React.Fragment key={u_index}>
@@ -149,6 +161,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                 jenis="Urusan"
                                                 type={jenis}
                                                 indikator={u.indikator}
+                                                anggaran={u.anggaran}
                                                 kode={u.kode}
                                                 nama={u.nama}
                                                 kode_opd={item.kode_opd}
@@ -169,6 +182,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                 jenis="Bidang Urusan"
                                                                 type={jenis}
                                                                 indikator={br.indikator}
+                                                                anggaran={u.anggaran}
                                                                 kode={br.kode}
                                                                 nama={br.nama}
                                                                 kode_opd={kode_opd}
@@ -189,6 +203,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                                 jenis="Program"
                                                                                 type={jenis}
                                                                                 indikator={p.indikator}
+                                                                                anggaran={u.anggaran}
                                                                                 kode={p.kode}
                                                                                 nama={p.nama}
                                                                                 kode_opd={kode_opd}
@@ -209,6 +224,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                                                 jenis="Kegiatan"
                                                                                                 type={jenis}
                                                                                                 indikator={k.indikator}
+                                                                                                anggaran={u.anggaran}
                                                                                                 kode={k.kode}
                                                                                                 nama={k.nama}
                                                                                                 kode_opd={kode_opd}
@@ -229,6 +245,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                                                                 jenis="Sub Kegiatan"
                                                                                                                 type={jenis}
                                                                                                                 indikator={sk.indikator}
+                                                                                                                anggaran={u.anggaran}
                                                                                                                 kode={sk.kode}
                                                                                                                 nama={sk.nama}
                                                                                                                 kode_opd={kode_opd}
@@ -274,7 +291,7 @@ export const TheadMatrix: React.FC<Thead> = ({ jenis, type, tahun_list }) => {
                 <td rowSpan={2} className="border-r border-b px-6 py-4 w-[200px]">Kode</td>
                 <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[200px]">{jenis}</td>
                 {tahun_list.map((item: any) => (
-                    <td key={item} colSpan={type === "opd" ? 5 : 4} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{item}</td>
+                    <td key={item} colSpan={type === "opd" ? 3 : 2} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{item}</td>
                 ))}
 
             </tr>
@@ -288,19 +305,17 @@ export const TheadMatrix: React.FC<Thead> = ({ jenis, type, tahun_list }) => {
                 {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
                     tahun_list.map((item: string) => (
                         <React.Fragment key={item}>
-                            <td colSpan={type === "opd" ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
+                            <td colSpan={type === "opd" ? 3 : 2} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
                         </React.Fragment>
                     ))
                     :
                     tahun_list.map((item: string) => (
                         <React.Fragment key={item}>
-                            <td className="border-l border-b px-6 py-3 min-w-[300px] text-center">indikator</td>
-                            <td className="border-l border-b px-6 py-3 min-w-[50px]">Target</td>
-                            <td className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</td>
-                            <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
+                            <td className="border-l border-b px-6 py-3 min-w-[300px] text-center">indikator/target/satuan</td>
                             {type === "opd" &&
                                 <td className="border-l border-b px-6 py-3 min-w-[50px] text-center">Aksi</td>
                             }
+                            <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
                         </React.Fragment>
                     ))
                 }
@@ -308,127 +323,202 @@ export const TheadMatrix: React.FC<Thead> = ({ jenis, type, tahun_list }) => {
         </thead>
     )
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indikator, fetchTrigger }) => {
+export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indikator, anggaran, fetchTrigger }) => {
 
     const [ModalTambah, setModalTambah] = useState<boolean>(false);
     const [ModalEdit, setModalEdit] = useState<boolean>(false);
+    const [DataModal, setDataModal] = useState<IndikatorForm[]>([]);
+    const [Indikator, setIndikator] = useState<string>("");
+    const [Target, setTarget] = useState<string>("");
+    const [Satuan, setSatuan] = useState<string>("");
+
+    const [Pagu, setPagu] = useState<number | null>(null);
+    const [ModalPagu, setModalPagu] = useState<boolean>(false);
 
     const [TahunN, setTahunN] = useState<string>('');
     const [IdIndikator, setIdIndikator] = useState<string>('');
 
-    const handleModalTambah = (tahun: string) => {
+    const combinedData = anggaran.map((itemAnggaran) => {
+        // Ambil SEMUA indikator yang tahunnya sama
+        const matchingIndikators = indikator.filter(
+            (itemIndikator) => itemIndikator.tahun === itemAnggaran.tahun
+        );
+
+        return {
+            ...itemAnggaran,
+            // Simpan sebagai array di dalam objek anggaran
+            list_indikator: matchingIndikators.length > 0 ? matchingIndikators : [{
+                kode_indikator: "",
+                indikator: "-",
+                target: "",
+                satuan: "",
+                kode: kode,
+                kode_opd: kode_opd,
+                tahun: "",
+            }]
+        };
+    });
+
+    const handleModalTambah = (tahun: string, data: IndikatorForm[]) => {
         if (ModalTambah) {
             setModalTambah(false);
             setTahunN('');
+            setDataModal(data);
         } else {
             setModalTambah(true);
             setTahunN(tahun);
+            setDataModal(data);
         }
     }
+
+    const handleModalEdit = (id: string, tahun: string, indikator: string, target: string, satuan: string) => {
+        if (ModalEdit) {
+            setModalEdit(false);
+            setTahunN('');
+            setIdIndikator('');
+            setIndikator(indikator);
+            setTarget(target);
+            setSatuan(satuan);
+        } else {
+            setModalEdit(true);
+            setTahunN(tahun);
+            setIdIndikator(id);
+            setIndikator(indikator);
+            setTarget(target);
+            setSatuan(satuan);
+
+        }
+    }
+
+    const handleModalPagu = (pagu: number, tahun: string) => {
+        if (ModalPagu) {
+            setModalPagu(false);
+            setPagu(pagu);
+            setTahunN(tahun);
+        } else {
+            setModalPagu(true);
+            setPagu(pagu);
+            setTahunN(tahun);
+        }
+    }
+
     function formatRupiah(angka: number) {
         if (typeof angka !== 'number') {
             return String(angka); // Jika bukan angka, kembalikan sebagai string
         }
         return angka.toLocaleString('id-ID'); // 'id-ID' untuk format Indonesia
     }
-
-    const handleModalEdit = (id: string, tahun: string) => {
-        if (ModalEdit) {
-            setModalEdit(false);
-            setTahunN('');
-            setIdIndikator('')
-        } else {
-            setModalEdit(true);
-            setTahunN(tahun);
-            setIdIndikator(id);
-        }
-    }
-
     return (
         // terdapat error hidrasi disini
         <>
             {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
                 <tr>
-                    <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
-                    <td className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
-                    {indikator.map((i: Indikator, index: number) => (
-                        <React.Fragment key={i.id || index}>
-                            <td className={`border-b px-6 py-4 w-full text-center`}></td>
-                            <td className={`border-b px-6 py-4 w-full text-center`}></td>
+                    <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode || ""}</td>
+                    <td className={`border-r border-b px-6 py-4 w-full`}>{nama || ""}</td>
+                    {combinedData.map((i: combinedData, index: number) => (
+                        <React.Fragment key={i.kode_indikator || index}>
                             <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
-                            <td className={`border-b px-6 py-4 w-full`}>Rp.{formatRupiah(i.pagu_anggaran)}</td>
-                            {type === "opd" &&
-                                <td className={`border-r border-b px-6 py-4 w-full`}></td>
-                            }
+                            <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
+                            <td className={`border-r border-b px-6 py-4 w-full text-center`}>Rp.{formatRupiah(i.pagu_indikatif || 0)}</td>
                         </React.Fragment>
                     ))}
                 </tr>
                 :
                 <tr>
-                    <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
-                    <td className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
-                    {indikator.map((i: Indikator, index: number) => (
-                        <React.Fragment key={i.id || index}>
-                            <td className={`border-r border-b px-6 py-4 w-full`}>{i.indikator || "-"}</td>
-                            {i.target.map((t: Target, sub_index: number) => (
-                                <React.Fragment key={sub_index}>
-                                    <td className={`border-r border-b px-6 py-4 w-full text-center`}>{t.target || "-"}</td>
-                                    <td className={`border-r border-b px-6 py-4 w-full text-center`}>{t.satuan || "-"}</td>
-                                </React.Fragment>
-                            ))}
-                            <td className={`border-r border-b px-6 py-4 w-full`}>Rp.{formatRupiah(i.pagu_anggaran)}</td>
-                            {type === "opd" &&
-                                <td className={`border-r border-b px-6 py-4 w-full`}>
-                                    {i.id !== "" ?
-                                        <ButtonGreenBorder
-                                            className="flex items-center gap-1"
-                                            onClick={() => handleModalEdit(i.id, i.tahun)}
+                    <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode || ""}</td>
+                    <td className={`border-r border-b px-6 py-4 w-full`}>{nama || ""}</td>
+                    {combinedData.map((a, index) => (
+                        <React.Fragment key={index}>
+                            {/* Kolom Indikator & Target */}
+                            <td className="border-r border-b px-6 py-4">
+                                {a.list_indikator.map((ind, idx) => (
+                                    <div key={ind.kode_indikator || idx} className={idx > 0 ? "border-t mt-2 pt-2" : ""}>
+                                        <p className="font-medium">{ind.indikator || ""}</p>
+
+                                        {/* Render Target di dalam sini jika ingin menyatu */}
+                                        <div className="flex gap-1 text-sm text-gray-500">
+                                            <span>{ind.target || ""}</span>
+                                            <span>{ind.satuan || ""}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </td>
+                            <td className="border-r border-b px-6 py-4">
+                                <ButtonSkyBorder
+                                    className="flex items-center gap-1"
+                                    onClick={() => handleModalTambah(a.tahun, a.list_indikator)}
+                                >
+                                    <TbCirclePlus />
+                                    <p className="text-sm">Indikator</p>
+                                </ButtonSkyBorder>
+                            </td>
+
+                            {/* Kolom Pagu (Biasanya pagu anggaran nempel ke tahun, bukan ke per indikator) */}
+                            <td className="border-r border-b px-6 py-4">
+                                <div className="flex flex-col items-center gap-2">
+                                    Rp.{formatRupiah(a.pagu_indikatif || 0)}
+                                    {jenis === "Sub Kegiatan" &&
+                                        <button
+                                            type="button"
+                                            onClick={() => handleModalPagu(a.pagu_indikatif, a.tahun)}
+                                            className="text-sky-400 border border-sky-300 hover:text-sky-600 p-1 rounded-full hover:bg-sky-100 transition-colors"
+                                            title="Edit Pagu Anggaran"
                                         >
-                                            <TbPencil />
-                                            Edit
-                                        </ButtonGreenBorder>
-                                        :
-                                        <ButtonSkyBorder
-                                            className="flex items-center gap-1"
-                                            onClick={() => handleModalTambah(i.tahun)}
-                                        >
-                                            <TbPencil />
-                                            Edit
-                                        </ButtonSkyBorder>
+                                            <TbPencil size={14} />
+                                        </button>
                                     }
-                                </td>
-                            }
+                                </div>
+                            </td>
                         </React.Fragment>
                     ))}
                 </tr>
             }
             {/* MODAL TAMBAH */}
-            <ModalMatrix
-                isOpen={ModalTambah}
-                onClose={() => handleModalTambah('')}
-                metode="baru"
-                nama={nama}
-                jenis={jenis}
-                pagu={jenis === 'Sub Kegiatan' ? 'pagu' : 'non-pagu'}
-                kode={kode}
-                kode_opd={kode_opd}
-                tahun={TahunN}
-                onSuccess={fetchTrigger}
-            />
+            {ModalTambah &&
+                <ModalMatrix
+                    isOpen={ModalTambah}
+                    onClose={() => handleModalTambah('', [])}
+                    metode="baru"
+                    nama={nama}
+                    jenis={jenis}
+                    Data={DataModal}
+                    kode={kode}
+                    kode_opd={kode_opd}
+                    tahun={TahunN}
+                    onSuccess={fetchTrigger}
+                />
+            }
             {/* MODAL EDIT */}
-            <ModalMatrix
-                id={IdIndikator}
-                isOpen={ModalEdit}
-                onClose={() => handleModalEdit('', '')}
-                metode="lama"
-                nama={nama}
-                jenis={jenis}
-                pagu={jenis === 'Sub Kegiatan' ? 'pagu' : 'non-pagu'}
-                kode={kode}
-                kode_opd={kode_opd}
-                tahun={TahunN}
-                onSuccess={fetchTrigger}
-            />
+            {ModalEdit &&
+                <ModalEditMatrix
+                    id={IdIndikator}
+                    isOpen={ModalEdit}
+                    onClose={() => handleModalEdit('', '', "", "", "")}
+                    nama={nama}
+                    jenis={jenis}
+                    indikator={Indikator}
+                    target={Target}
+                    satuan={Satuan}
+                    kode={kode}
+                    kode_opd={kode_opd}
+                    tahun={TahunN}
+                    onSuccess={fetchTrigger}
+                />
+            }
+            {/* MODAL PAGU */}
+            {ModalPagu &&
+                <ModalPaguAnggaran
+                    isOpen={ModalPagu}
+                    onClose={() => handleModalPagu(0, '')}
+                    nama={nama}
+                    jenis={jenis}
+                    pagu={Pagu || 0}
+                    kode={kode}
+                    kode_opd={kode_opd}
+                    tahun={TahunN}
+                    onSuccess={fetchTrigger}
+                />
+            }
         </>
     )
 }
