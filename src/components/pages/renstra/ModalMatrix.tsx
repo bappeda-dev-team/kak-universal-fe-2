@@ -7,6 +7,7 @@ import { ButtonSky, ButtonRed } from '@/components/global/Button';
 import { getToken } from "@/components/lib/Cookie";
 import { LoadingButtonClip, LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 interface FormValue {
     indikator: IndikatorForm[];
@@ -14,6 +15,7 @@ interface FormValue {
 
 interface IndikatorForm {
     kode: string;
+    kode_indikator?: string;
     kode_opd: string;
     indikator: string;
     tahun: string;
@@ -28,15 +30,16 @@ interface modal {
     nama: string;
     jenis: string;
     Data: IndikatorForm[];
-    id?: string;
     kode: string;
     tahun?: string;
     kode_opd?: string;
     onSuccess: () => void;
 }
 
-export const ModalMatrix: React.FC<modal> = ({ isOpen, onClose, id, kode, nama, jenis, kode_opd, Data, metode, tahun, onSuccess }) => {
+export const ModalMatrix: React.FC<modal> = ({ isOpen, onClose, kode, nama, jenis, kode_opd, Data, metode, tahun, onSuccess }) => {
 
+    const { branding } = useBrandingContext();
+    console.log("data modal : ", Data);
     const { control, handleSubmit, reset } = useForm<FormValue>({
         defaultValues: {
             indikator: (Data.length > 0)
@@ -74,8 +77,10 @@ export const ModalMatrix: React.FC<modal> = ({ isOpen, onClose, id, kode, nama, 
     });
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const payload = data.indikator.map((item) => ({
+            ...(metode === "lama" && {
+                kode_indikator: item.kode_indikator,
+            }),
             kode: kode,
             kode_opd: kode_opd,
             tahun: tahun,
@@ -85,17 +90,10 @@ export const ModalMatrix: React.FC<modal> = ({ isOpen, onClose, id, kode, nama, 
         }));
         // console.log(payload);
         try {
-            let url = "";
-            if (metode === "lama") {
-                url = `matrix_renstra/indikator/update_indikator/${id}`;
-            } else if (metode === "baru") {
-                url = `matrix_renstra/indikator/create_indikator`;
-            } else {
-                url = '';
-            }
+            let url = `matrix_renstra/indikator/upsert`;
             setProses(true);
-            const response = await fetch(`${API_URL}/${url}`, {
-                method: metode === 'lama' ? "PUT" : "POST",
+            const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
+                method: "POST",
                 headers: {
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
@@ -153,7 +151,7 @@ export const ModalMatrix: React.FC<modal> = ({ isOpen, onClose, id, kode, nama, 
                                     <div className="border px-4 py-2 rounded-lg">{nama}</div>
                                 </div>
                                 {fields?.map((field, index: number) => (
-                                    <div key={index} className="flex flex-col my-2 py-2 px-5 border border-sky-700 rounded-lg">
+                                    <div key={field.id} className="flex flex-col my-2 py-2 px-5 border border-sky-700 rounded-lg">
                                         <div className="flex items-center justify-between">
                                             <h1 className="uppercase font-bold text-sky-700">Indikator ke {index + 1}</h1>
                                             <button
@@ -185,43 +183,38 @@ export const ModalMatrix: React.FC<modal> = ({ isOpen, onClose, id, kode, nama, 
                                                 )}
                                             />
                                         </div>
-                                        <div className="flex flex-col py-3">
-                                            <label
-                                                className="uppercase text-xs font-bold text-gray-700 my-2"
-                                                htmlFor="target"
-                                            >
-                                                Target:
-                                            </label>
+                                        <div className="flex gap-2 justify-between my-2 p-3 border border-gray-200 rounded-lg">
                                             <Controller
                                                 name={`indikator.${index}.target`}
                                                 control={control}
                                                 render={({ field }) => (
-                                                    <textarea
-                                                        {...field}
-                                                        className="border px-4 py-2 rounded-lg"
-                                                        id="target"
-                                                        placeholder="masukkan Target"
-                                                    />
+                                                    <div className="flex flex-col py-1 w-full">
+                                                        <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                            Target :
+                                                        </label>
+                                                        <input
+                                                            {...field}
+                                                            type="text"
+                                                            className="border px-4 py-2 rounded-lg"
+                                                            placeholder="Masukkan target"
+                                                        />
+                                                    </div>
                                                 )}
                                             />
-                                        </div>
-                                        <div className="flex flex-col py-3">
-                                            <label
-                                                className="uppercase text-xs font-bold text-gray-700 my-2"
-                                                htmlFor="satuan"
-                                            >
-                                                Satuan:
-                                            </label>
                                             <Controller
                                                 name={`indikator.${index}.satuan`}
                                                 control={control}
                                                 render={({ field }) => (
-                                                    <textarea
-                                                        {...field}
-                                                        className="border px-4 py-2 rounded-lg"
-                                                        id="satuan"
-                                                        placeholder="masukkan Satuan"
-                                                    />
+                                                    <div className="flex flex-col py-1 w-full">
+                                                        <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                            Satuan :
+                                                        </label>
+                                                        <input
+                                                            {...field}
+                                                            className="border px-4 py-2 rounded-lg"
+                                                            placeholder="Masukkan satuan"
+                                                        />
+                                                    </div>
                                                 )}
                                             />
                                         </div>

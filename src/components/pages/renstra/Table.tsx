@@ -32,27 +32,24 @@ interface Anggaran {
     pagu_indikatif: number;
 }
 interface Indikator {
-    id?: string;
+    kode_indikator: string;
     kode: string;
     kode_opd: string;
     indikator: string;
     tahun: string;
-    target: Target[];
+    target: string;
+    satuan: string;
 }
 interface IndikatorForm {
     kode: string;
+    kode_indikator?: string;
     kode_opd: string;
     indikator: string;
     tahun: string;
     target: string;
     satuan: string;
 }
-interface Target {
-    id: string;
-    indikator_id: string;
-    target: string;
-    satuan: string;
-}
+
 interface pagu {
     tahun: string;
     pagu_indikatif: number;
@@ -351,20 +348,26 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indi
             ...itemAnggaran,
             // Simpan sebagai array di dalam objek anggaran
             list_indikator: matchingIndikators.length > 0 ? matchingIndikators : [{
-                id: "",
+                kode_indikator: "",
                 indikator: "-",
-                target: []
+                target: "",
+                satuan: "",
+                kode: kode,
+                kode_opd: kode_opd,
+                tahun: "",
             }]
         };
     });
 
-    const handleModalTambah = (tahun: string) => {
+    const handleModalTambah = (tahun: string, data: IndikatorForm[]) => {
         if (ModalTambah) {
             setModalTambah(false);
             setTahunN('');
+            setDataModal(data);
         } else {
             setModalTambah(true);
             setTahunN(tahun);
+            setDataModal(data);
         }
     }
 
@@ -413,13 +416,10 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indi
                     <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode || ""}</td>
                     <td className={`border-r border-b px-6 py-4 w-full`}>{nama || ""}</td>
                     {combinedData.map((i: combinedData, index: number) => (
-                        <React.Fragment key={i.id || index}>
+                        <React.Fragment key={i.kode_indikator || index}>
                             <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
                             <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
-                            <td className={`border-r border-b px-6 py-4 w-full`}>Rp.{formatRupiah(i.pagu_indikatif || 0)}</td>
-                            {type === "opd" &&
-                                <td className={`border-b px-6 py-4 w-full`}></td>
-                            }
+                            <td className={`border-r border-b px-6 py-4 w-full text-center`}>Rp.{formatRupiah(i.pagu_indikatif || 0)}</td>
                         </React.Fragment>
                     ))}
                 </tr>
@@ -432,37 +432,21 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indi
                             {/* Kolom Indikator & Target */}
                             <td className="border-r border-b px-6 py-4">
                                 {a.list_indikator.map((ind, idx) => (
-                                    <div key={ind.id || idx} className={idx > 0 ? "border-t mt-2 pt-2" : ""}>
+                                    <div key={ind.kode_indikator || idx} className={idx > 0 ? "border-t mt-2 pt-2" : ""}>
                                         <p className="font-medium">{ind.indikator || ""}</p>
 
                                         {/* Render Target di dalam sini jika ingin menyatu */}
-                                        <div className="text-sm text-gray-500">
-                                            {(ind.target ?? []).map((t, tidx) => (
-                                                <span key={tidx}>{t.target || ""} {t.satuan || ""}</span>
-                                            ))}
-                                        </div>
-
-                                        {/* Tombol Edit/Tambah per Indikator */}
-                                        <div className="mt-2">
-                                            {ind.id && (
-                                                <div className="flex items-center gap-1">
-                                                    <ButtonGreenBorder 
-                                                        className="flex items-center gap-1"
-                                                        onClick={() => handleModalEdit(ind.id || "", a.tahun, ind.indikator, ind.target[0].target, ind.target[0].satuan)}
-                                                    >
-                                                        <TbPencil />
-                                                        Edit
-                                                    </ButtonGreenBorder>
-                                                </div>
-                                            )}
+                                        <div className="flex gap-1 text-sm text-gray-500">
+                                            <span>{ind.target || ""}</span>
+                                            <span>{ind.satuan || ""}</span>
                                         </div>
                                     </div>
                                 ))}
                             </td>
                             <td className="border-r border-b px-6 py-4">
-                                <ButtonSkyBorder 
+                                <ButtonSkyBorder
                                     className="flex items-center gap-1"
-                                    onClick={() => handleModalTambah(a.tahun)}
+                                    onClick={() => handleModalTambah(a.tahun, a.list_indikator)}
                                 >
                                     <TbCirclePlus />
                                     <p className="text-sm">Indikator</p>
@@ -493,11 +477,11 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indi
             {ModalTambah &&
                 <ModalMatrix
                     isOpen={ModalTambah}
-                    onClose={() => handleModalTambah('')}
+                    onClose={() => handleModalTambah('', [])}
                     metode="baru"
                     nama={nama}
                     jenis={jenis}
-                    Data={[]}
+                    Data={DataModal}
                     kode={kode}
                     kode_opd={kode_opd}
                     tahun={TahunN}
