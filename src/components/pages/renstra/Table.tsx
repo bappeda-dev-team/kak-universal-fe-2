@@ -182,7 +182,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                 jenis="Bidang Urusan"
                                                                 type={jenis}
                                                                 indikator={br.indikator}
-                                                                anggaran={u.anggaran}
+                                                                anggaran={br.anggaran}
                                                                 kode={br.kode}
                                                                 nama={br.nama}
                                                                 kode_opd={kode_opd}
@@ -203,7 +203,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                                 jenis="Program"
                                                                                 type={jenis}
                                                                                 indikator={p.indikator}
-                                                                                anggaran={u.anggaran}
+                                                                                anggaran={p.anggaran}
                                                                                 kode={p.kode}
                                                                                 nama={p.nama}
                                                                                 kode_opd={kode_opd}
@@ -224,7 +224,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                                                 jenis="Kegiatan"
                                                                                                 type={jenis}
                                                                                                 indikator={k.indikator}
-                                                                                                anggaran={u.anggaran}
+                                                                                                anggaran={k.anggaran}
                                                                                                 kode={k.kode}
                                                                                                 nama={k.nama}
                                                                                                 kode_opd={kode_opd}
@@ -245,7 +245,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
                                                                                                                 jenis="Sub Kegiatan"
                                                                                                                 type={jenis}
                                                                                                                 indikator={sk.indikator}
-                                                                                                                anggaran={u.anggaran}
+                                                                                                                anggaran={sk.anggaran}
                                                                                                                 kode={sk.kode}
                                                                                                                 nama={sk.nama}
                                                                                                                 kode_opd={kode_opd}
@@ -337,6 +337,9 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, nama, indi
 
     const [TahunN, setTahunN] = useState<string>('');
     const [IdIndikator, setIdIndikator] = useState<string>('');
+
+    // console.log("indikator", indikator);
+    console.log(`anggaran ${kode} `, anggaran);
 
     const combinedData = anggaran.map((itemAnggaran) => {
         // Ambil SEMUA indikator yang tahunnya sama
