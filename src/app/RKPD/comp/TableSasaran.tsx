@@ -138,7 +138,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
 
     return (
         <>
-            {DataNull ?
+            {Data.length === 0 ?
                 <div className="px-6 py-3 border w-full rounded-xl">
                     Data Kosong / Belum Ditambahkan
                 </div>
