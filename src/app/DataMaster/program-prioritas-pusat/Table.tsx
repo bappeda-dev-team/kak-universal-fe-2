@@ -61,7 +61,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
             setLoading(true)
             try {
-                const response = await fetch(`${API_URL}/program_unggulan/findall/${tahun_awal}/${tahun_akhir}`, {
+                const response = await fetch(`${API_URL}/program_prioritas_pusat/findall?tahun_awal=${tahun_awal}&tahun_akhir=${tahun_akhir}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                 const result = await response.json();
                 const data = result.data;
                 if (result.code === 200) {
-                    if (data.length === 0) {
+                    if (data === null) {
                         setDataNull(true);
                     } else {
                         setDataNull(false);

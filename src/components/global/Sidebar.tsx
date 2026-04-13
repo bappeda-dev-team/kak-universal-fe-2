@@ -394,13 +394,13 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </li>
               </Link>
               <Link href="/DataMaster/programunggulan">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/programunggulan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <li className={`flex items-center gap-x-2 cursor-pointer text-sm p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/programunggulan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbChartPie className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Program Prioritas Daerah</span>
                 </li>
               </Link>
               <Link href="/DataMaster/program-prioritas-pusat">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/program-prioritas-pusat" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <li className={`flex items-center gap-x-2 cursor-pointer text-sm p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/program-prioritas-pusat" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbChartPie className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Program Prioritas Pusat</span>
                 </li>
