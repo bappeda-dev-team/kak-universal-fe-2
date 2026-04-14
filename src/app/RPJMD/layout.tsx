@@ -5,17 +5,17 @@ import { IsLoadingBranding } from "@/components/global/Loading";
 import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import ForbiddenPage from "../forbidden";
 
-interface RenjaLayoutProps {
+interface RPJMDLayoutProps {
     children: React.ReactNode;
 }
 
 export default function RenjaLayout({
     children
-}: RenjaLayoutProps) {
+}: RPJMDLayoutProps) {
 
     const { LoadingBranding, branding } = useBrandingContext();
 
-    const allowedRoles = ["super_admin"];
+    const allowedRoles = ["super_admin", "reviewer"];
 
     const user: string[] = branding?.user?.roles || [];
     const isAuthorized = user.some(role => allowedRoles.includes(role));
@@ -35,7 +35,7 @@ export default function RenjaLayout({
                     </>
                 )
             }
-        } else if(!isAuthorized){
+        } else if (!isAuthorized) {
             return <ForbiddenPage />
         }
         return <>{children}</>

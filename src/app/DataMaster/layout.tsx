@@ -8,7 +8,7 @@ interface DataMasterLayout {
     children: React.ReactNode;
 }
 
-export default function RKPDLayout({
+export default function DataMasterLayout({
     children
 }: DataMasterLayout) {
 
