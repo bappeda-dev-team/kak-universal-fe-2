@@ -30,6 +30,7 @@ export interface PkPegawai {
   nip: string;
   pks: PkAsn[];
   subkegiatan: SubkegiatanRekin[];
+  roles: string[];
 }
 
 export interface SubkegiatanRekin {
