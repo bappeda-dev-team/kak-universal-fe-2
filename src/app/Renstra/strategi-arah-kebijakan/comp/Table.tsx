@@ -2,6 +2,8 @@
 
 import React from "react";
 import { ArahKebijakan, SasaranOpd, ArahKebijakanOpd } from "../type";
+import { ButtonRedBorder } from "@/components/global/Button";
+import { TbEyeClosed } from "react-icons/tb";
 
 interface Table {
     Data: ArahKebijakan[];
@@ -45,7 +47,12 @@ const Table: React.FC<Table> = ({ Data }) => {
                                                     <td className="border-r border-b p-2 border-emerald-500">
                                                         <div className="flex flex-col items-center gap-2">
                                                             {s.arah_kebijakan_opds.map((ar: ArahKebijakanOpd, ar_index: number) => (
-                                                                <p key={ar_index} className="p-1 border border-emerald-500 rounded-lg w-full">{ar_index + 1}. {ar.arah_kebijakan_opd || "-"}</p>
+                                                                <p key={ar_index} className="flex flex-col gap-2 p-1 border border-emerald-500 rounded-lg w-full">
+                                                                    {ar_index + 1}. {ar.arah_kebijakan_opd || "-"}
+                                                                    <ButtonRedBorder className="flex items-center gap-1 text-sm">
+                                                                        <TbEyeClosed /> Sembunyikan
+                                                                    </ButtonRedBorder>
+                                                                </p>
                                                             ))}
                                                         </div>
                                                     </td>

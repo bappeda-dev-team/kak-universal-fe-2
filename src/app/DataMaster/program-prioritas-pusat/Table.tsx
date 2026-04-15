@@ -95,7 +95,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
     const hapusProgramUnggulan = async (id: any) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         try {
-            const response = await fetch(`${API_URL}/program_unggulan/delete/${id}`, {
+            const response = await fetch(`${API_URL}/program_prioritas_pusat/delete/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `${token}`,
@@ -140,7 +140,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                     <thead>
                         <tr className="bg-green-500 text-white">
                             <th className="border-r border-b px-6 py-3 text-center">No</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Program Prioritas Daerah</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Program Prioritas Pusat</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Rencana Implementasi</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Status</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Tahun</th>

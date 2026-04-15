@@ -86,18 +86,12 @@ const StrategiArahKebijakanPage = () => {
                     <h2 className="text-sm max-w-[500px]">{nama_opd || ""}</h2>
                 </div>
                 <div className="mx-3 mb-3">
-                    <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-2">
-                        <div className="w-full">
-                            <TableIsu
-                                Data={Data?.isu_strategis_opds || []}
-                            />
-                        </div>
-                        <div className="w-full">
-                            <TableTujuan
-                                Data={Data?.tujuan_opd || []}
-                            />
-                        </div>
-                    </div>
+                    <TableIsu
+                        Data={Data?.isu_strategis_opds || []}
+                    />
+                    <TableTujuan
+                        Data={Data?.tujuan_opd || []}
+                    />
                     <Table
                         Data={Data?.strategi_arah_kebijakan_opds || []}
                     />

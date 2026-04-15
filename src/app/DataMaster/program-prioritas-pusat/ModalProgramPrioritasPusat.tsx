@@ -65,9 +65,9 @@ export const ModalProgramPrioritasPusat: React.FC<ModalProps> = ({ isOpen, onClo
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         let endpoint = "";
         if (jenis === "edit") {
-            endpoint = `program_unggulan/update/${dataEdit?.id}`;
+            endpoint = `program_prioritas_pusat/update/${dataEdit?.id}`;
         } else if (jenis === "baru") {
-            endpoint = `program_unggulan/create`;
+            endpoint = `program_prioritas_pusat/create`;
         } else {
             endpoint = '';
         }
