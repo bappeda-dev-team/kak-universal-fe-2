@@ -15,8 +15,8 @@ interface Table {
 }
 interface ProgramUnggulan {
     id: number;
-    kode_program_unggulan: string;
-    nama_program_unggulan: string;
+    kode_program_prioritas_pusat: string;
+    nama_program_prioritas_pusat: string;
     is_active: boolean;
     rencana_implementasi: string;
     keterangan: string;
@@ -156,10 +156,10 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                                 </td>
                             </tr>
                         ) : (
-                            Dummy.map((item: ProgramUnggulan, index: number) => (
+                            Data.map((item: ProgramUnggulan, index: number) => (
                                 <tr key={index}>
                                     <td className="border-x border-b border-green-500 py-4 px-3 text-center">{index + 1}</td>
-                                    <td className="border-r border-b border-green-500 px-6 py-4 font-semibold">{item.nama_program_unggulan || "-"}</td>
+                                    <td className="border-r border-b border-green-500 px-6 py-4 font-semibold">{item.nama_program_prioritas_pusat || "-"}</td>
                                     <td className="border-r border-b border-green-500 px-6 py-4">{item.rencana_implementasi || "-"}</td>
                                     <td className="border-r border-b border-green-500 px-6 py-4">
                                         {item.is_active ? 
