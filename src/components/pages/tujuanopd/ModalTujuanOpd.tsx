@@ -237,9 +237,9 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
         try {
             let url = "";
             if (metode === "lama") {
-                url = `tujuan_opd/update/${id}`;
+                url = `tujuan_opd/renstra/update/${id}`;
             } else if (metode === "baru") {
-                url = `tujuan_opd/create`;
+                url = `tujuan_opd/renstra/create`;
             } else {
                 url = '';
             }
