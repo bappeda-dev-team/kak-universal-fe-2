@@ -9,6 +9,7 @@ import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { ModalRencanaKinerja } from "./ModalRencanaKinerja";
 import { ModalCloneRekin } from "./ModalCloneRekin";
 import { useBrandingContext } from "@/context/BrandingContext";
+import { RolePill } from "@/components/global/RolePill";
 
 interface type_rekin {
     id_rencana_kinerja: string;
@@ -163,7 +164,8 @@ export const TablePerencanaan = () => {
                 <div className="flex flex-col items-end">
                     <p>{User?.nama_pegawai || "-"}</p>
                     <p>{User?.nip || "-"}</p>
-                    <p>Roles: {User?.roles || "-"}</p>
+
+                    <RolePill roles={User?.roles} className="[&>span]:text-sm [&>span]:px-3 [&>span]:py-1" />
                 </div>
                 {/* } */}
             </div>
@@ -303,11 +305,7 @@ export const TablePerencanaan = () => {
                                                     halaman_url={`/rencanakinerja/${data.id_rencana_kinerja}`}
                                                 >
                                                     <TbPencilDown className="mr-1" />
-                                                    {User?.roles == 'level_4' ?
-                                                        "Renaksi"
-                                                        :
-                                                        "Rincian"
-                                                    }
+                                                    {User?.roles?.includes("level_4") ? "Rincian" : "Renaksi"}
                                                 </ButtonGreenBorder>
                                             }
                                             <ButtonRedBorder className="w-full"

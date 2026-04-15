@@ -1,5 +1,6 @@
 import type { PkOpdResponse } from "./pk-opd-types";
 import type { RekinOption } from "./page"
+import { RolePill } from "@/components/global/RolePill";
 
 const LEVEL_LABEL: Record<number, string> = {
     4: "Strategic",
@@ -123,22 +124,7 @@ export const TablePk = ({
                                                         {pegawai.nip}
                                                     </p>
 
-                                                    <div className="flex flex-wrap items-center gap-2 mt-1">
-                                                        {pegawai.roles.length > 0 ? (
-                                                            pegawai.roles.map((role: string, i: number) => (
-                                                                <span
-                                                                    key={i}
-                                                                    className={`px-2 py-0.5 text-xs rounded-full ${roleColor(role)}`}
-                                                                >
-                                                                    {role}
-                                                                </span>
-                                                            ))
-                                                        ) : (
-                                                            <span className="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700">
-                                                                ⚠ no roles
-                                                            </span>
-                                                        )}
-                                                    </div>
+                                                    <RolePill roles={pegawai.roles} />
                                                 </div>
                                             </td>
                                         )}
