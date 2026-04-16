@@ -2,84 +2,22 @@
 
 import { ButtonGreen, ButtonRed, ButtonSkyBorder, ButtonBlackBorder } from "@/components/global/Button";
 import React, { useState, useEffect } from "react";
-import { TbCirclePlus, TbPencil, TbRefresh, TbSearch, TbTrash } from "react-icons/tb";
+import { TbCirclePlus, TbPencil, TbPrinter, TbRefresh, TbSearch, TbTrash } from "react-icons/tb";
 import { ModalRenaksiOpd } from "./ModalRenaksiOpd";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { getToken } from "@/components/lib/Cookie";
 import { LoadingButtonClip2, LoadingClip } from "@/components/global/Loading";
-import { ModalIndikator2 } from "../Pohon/ModalIndikator";
+import { ModalIndikator2 } from "@/components/pages/Pohon/ModalIndikator";
+import ModalCetakRenaksiOpd from "./ModalCetakRenaksiOpd";
+import { Sasaran, RencanaKinerja, IndikatorSasaranOpd, SubKegiatan, Rekin } from "../type";
 
 interface Table {
+    nama_opd: string;
     kode_opd: string;
     tahun: number;
 }
-interface RekinAsn {
-    kode_opd: string;
-    tahun: number;
-    token: string;
-    id: number;
-    sasaran: string;
-    indikator: IndikatorSasaranOpd[];
-}
 
-interface IndikatorSasaranOpd {
-    id: string;
-    indikator: string;
-    rumus_perhitungan: string;
-    sumber_data: string;
-    target: {
-        id: string;
-        indikator_id: string;
-        tahun: string;
-        target: string;
-        satuan: string;
-    }
-}
-
-interface Sasaran {
-    id: number;
-    nama_sasaran_opd: string;
-    tahun_awal: string;
-    tahun_akhir: string;
-    jenis_periode: string;
-    indikator: IndikatorSasaranOpd[];
-}
-
-interface SubKegiatan {
-    kode_subkegiatan: string;
-    nama_subkegiatan: string;
-    indikator: {
-        id: string;
-        indikator: string;
-        target: string;
-        satuan: string;
-    }[];
-}
-
-interface RencanaKinerja {
-    id_renaksiopd: number;
-    rekin_id: string;
-    nama_rencana_kinerja: string;
-    nip_pegawai: string;
-    nama_pegawai: string;
-    kode_opd: string;
-    tw1: number;
-    tw2: number;
-    tw3: number;
-    tw4: number;
-    keterangan: string;
-    total_anggaran: number;
-    subkegiatan: SubKegiatan[];
-}
-
-interface Rekin {
-    sasaran_opd_id: number;
-    nama_sasaran_opd: string;
-    tahun_renaksi: string;
-    rencana_kinerja: RencanaKinerja[];
-}
-
-export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
+export const Table: React.FC<Table> = ({ nama_opd, kode_opd, tahun }) => {
 
     const [SasaranOpd, setSasaranOpd] = useState<Sasaran[]>([]);
 
@@ -139,23 +77,23 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
     if (Loading) {
         return (
             <div className="w-full overflow-auto">
-               <LoadingClip className="mx-5 py-5" />     
+                <LoadingClip className="mx-5 py-5" />
             </div>
         )
     }
     if (Error) {
         return (
             <div className="w-full overflow-auto">
-               <h1 className="text-red-500 font-bold mx-5 py-5">Periksa koneksi internet atau database server</h1>   
+                <h1 className="text-red-500 font-bold mx-5 py-5">Periksa koneksi internet atau database server</h1>
             </div>
         )
     }
 
     return (
         <div className="overflow-auto">
-            {DataNull ? 
+            {DataNull ?
                 <h1 className="font-bold mx-5 py-5">Sasaran OPD belum di tambahkan di RENSTRA</h1>
-            :
+                :
                 SasaranOpd.map((data: Sasaran, index: number) => (
                     <div className="my-2" key={data.id || index}>
                         <div
@@ -178,6 +116,7 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                 sasaran={data.nama_sasaran_opd}
                                 indikator={data.indikator}
                                 kode_opd={kode_opd}
+                                nama_opd={nama_opd}
                                 tahun={tahun}
                                 token={token ? token : ""}
                             />
@@ -185,22 +124,35 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                     </div>
                 ))
             }
-            <ModalIndikator2
-                isOpen={IsOpenIndikator}
-                onClose={() => handleIndikator('', [])}
-                isi={IsiModalIndikator}
-                data={Indikator}
-            />
+            {IsOpenIndikator &&
+                <ModalIndikator2
+                    isOpen={IsOpenIndikator}
+                    onClose={() => handleIndikator('', [])}
+                    isi={IsiModalIndikator}
+                    data={Indikator}
+                />
+            }
         </div>
     )
 }
 
-export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, token, kode_opd }) => {
+interface RekinAsn {
+    kode_opd: string;
+    nama_opd: string;
+    tahun: number;
+    token: string;
+    id: number;
+    sasaran: string;
+    indikator: IndikatorSasaranOpd[];
+}
+export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, token, kode_opd, nama_opd }) => {
 
     const [Data, setData] = useState<Rekin[]>([]);
 
     const [ModalTambah, setModaltambah] = useState<boolean>(false);
     const [ModalEdit, setModalEdit] = useState<boolean>(false);
+    const [Cetak, setCetak] = useState<boolean>(false);
+    const [DataCetak, setDataCetak] = useState<any>(null);
 
     const [IdRenaksi, setIdRenaksi] = useState<number>(0);
     const [IdRekin, setIdRekin] = useState<string>('');
@@ -237,6 +189,15 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
             setRekin(rekin);
             setIdRenaksi(id);
             setIndikatorSasaran(indikator);
+        }
+    }
+    const handleCetak = (data: any) => {
+        if (Cetak) {
+            setCetak(false);
+            setDataCetak(data);
+        } else {
+            setCetak(true);
+            setDataCetak(data);
         }
     }
 
@@ -344,13 +305,22 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
 
     return (
         <div className="flex flex-col">
-            <ButtonSkyBorder
-                onClick={() => handleModalTambah(id, sasaran, indikator)}
-                className="flex items-center justify-center gap-1 w-full mb-2"
-            >
-                <TbCirclePlus />
-                Tambah Rencana Aksi OPD
-            </ButtonSkyBorder>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-2">
+                <ButtonSkyBorder
+                    onClick={() => handleModalTambah(id, sasaran, indikator)}
+                    className="flex items-center justify-center gap-1 w-full"
+                >
+                    <TbCirclePlus />
+                    Tambah Rencana Aksi OPD
+                </ButtonSkyBorder>
+                <ButtonBlackBorder
+                    className="flex items-center gap-1 w-full"
+                    onClick={() => handleCetak(Data[0].rencana_kinerja)}
+                >
+                    <TbPrinter />
+                    Cetak
+                </ButtonBlackBorder>
+            </div>
             <div className="overflow-auto rounded-t-xl border">
                 <table className="w-full">
                     <thead>
@@ -442,30 +412,45 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
                         }
                     </tbody>
                 </table>
-                <ModalRenaksiOpd
-                    metode="baru"
-                    isOpen={ModalTambah}
-                    onClose={() => handleModalTambah(0, '', [])}
-                    kode_opd={kode_opd}
-                    tahun={String(tahun)}
-                    id_rekin={IdRekin}
-                    id_sasaran={IdSasaran}
-                    rekin={Rekin}
-                    indikator={IndikatorSasaran ? IndikatorSasaran : []}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
-                />
-                <ModalRenaksiOpd
-                    metode="lama"
-                    isOpen={ModalEdit}
-                    onClose={() => handleModalEdit(0, '', [])}
-                    id={IdRenaksi}
-                    kode_opd={kode_opd}
-                    tahun={String(tahun)}
-                    id_rekin={IdRekin}
-                    rekin={Rekin}
-                    indikator={IndikatorSasaran ? IndikatorSasaran : []}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
-                />
+                {ModalTambah &&
+                    <ModalRenaksiOpd
+                        metode="baru"
+                        isOpen={ModalTambah}
+                        onClose={() => handleModalTambah(0, '', [])}
+                        kode_opd={kode_opd}
+                        tahun={String(tahun)}
+                        id_rekin={IdRekin}
+                        id_sasaran={IdSasaran}
+                        rekin={Rekin}
+                        indikator={IndikatorSasaran ? IndikatorSasaran : []}
+                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                    />
+                }
+                {ModalEdit &&
+                    <ModalRenaksiOpd
+                        metode="lama"
+                        isOpen={ModalEdit}
+                        onClose={() => handleModalEdit(0, '', [])}
+                        id={IdRenaksi}
+                        kode_opd={kode_opd}
+                        tahun={String(tahun)}
+                        id_rekin={IdRekin}
+                        rekin={Rekin}
+                        indikator={IndikatorSasaran ? IndikatorSasaran : []}
+                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                    />
+                }
+                {Cetak &&
+                    <ModalCetakRenaksiOpd
+                        isOpen={Cetak}
+                        onClose={() => setCetak(false)}
+                        Data={DataCetak}
+                        sasaran={sasaran}
+                        indikator={indikator}
+                        nama_opd={nama_opd}
+                        tahun={tahun}
+                    />
+                }
             </div>
         </div>
     )
