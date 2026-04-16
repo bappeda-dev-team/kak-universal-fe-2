@@ -6,27 +6,21 @@ import { LoadingClip } from "@/components/global/Loading";
 import { OpdNull, TahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
-import { ButtonBlackBorder } from "@/components/global/Button";
-import { TbFileDatabase } from "react-icons/tb";
+import { ButtonRedBorder, ButtonSkyBorder, ButtonBlackBorder } from "@/components/global/Button";
+import { TbEyeClosed, TbFileDatabase, TbPrinter } from "react-icons/tb";
+import { Pokin, Tematik } from "../type";
+import ModalCetakLeaderboardRekin from "./ModalCetakLeaderboardRekin";
 
 interface Table {
     tahun: number;
-}
-
-interface Pokin {
-    kode_opd: string;
-    nama_opd: string;
-    tematik: Tematik[];
-    persentase_cascading: string;
-}
-interface Tematik {
-    nama: string;
 }
 
 const Table: React.FC<Table> = ({ tahun }) => {
 
     const [Data, setData] = useState<Pokin[]>([]);
     const [Error, setError] = useState<boolean | null>(null);
+
+    const [Cetak, setCetak] = useState<boolean>(false);
 
     const [Loading, setLoading] = useState<boolean | null>(null);
     const [Proses, setProses] = useState<boolean>(false);
@@ -98,6 +92,13 @@ const Table: React.FC<Table> = ({ tahun }) => {
         //     setProses(false);
         // }
     }
+    const handleModalCetak = () => {
+        if (Cetak) {
+            setCetak(false);
+        } else {
+            setCetak(true);
+        }
+    }
 
     if (Loading) {
         return (
@@ -115,7 +116,16 @@ const Table: React.FC<Table> = ({ tahun }) => {
         return <TahunNull />
     } else {
         return (
-            <>
+            <div className="flex flex-col w-full items-center">
+                <div className="flex justify-start w-full">
+                    <ButtonSkyBorder
+                        className="w-full flex items-center gap-1"
+                        onClick={handleModalCetak}
+                    >
+                        <TbPrinter />
+                        Cetak
+                    </ButtonSkyBorder>
+                </div>
                 <div className="overflow-auto m-2 rounded-t-xl border w-full">
                     <table className="w-full">
                         <thead>
@@ -167,11 +177,11 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                         <td className="border-r border-b font-bold border-orange-500 px-6 py-4 text-center">
                                             <div className="flex items-center-gap-1">
                                                 {item.persentase_cascading === "100%" &&
-                                                    <ButtonBlackBorder 
+                                                    <ButtonBlackBorder
                                                         className="flex items-center gap-1"
                                                         disabled={Proses}
                                                         onClick={() => AlertQuestion("Clone Pokin", `Clone Pokin ke ${branding?.tahun?.value}?`, "question", "Clone", "Batal").then((resp) => {
-                                                            if(resp.isConfirmed){
+                                                            if (resp.isConfirmed) {
                                                                 clonePokinRekin(item.kode_opd);
                                                             }
                                                         })}
@@ -180,6 +190,10 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                                         Clone
                                                     </ButtonBlackBorder>
                                                 }
+                                                <ButtonRedBorder className="flex items-center gap-1">
+                                                    <TbEyeClosed />
+                                                    Hidden
+                                                </ButtonRedBorder>
                                             </div>
                                         </td>
                                     </tr>
@@ -188,7 +202,15 @@ const Table: React.FC<Table> = ({ tahun }) => {
                         </tbody>
                     </table>
                 </div>
-            </>
+                {Cetak &&
+                <ModalCetakLeaderboardRekin 
+                    onClose={handleModalCetak}
+                    isOpen={Cetak}
+                    Data={Data}
+                    tahun={tahun}
+                />
+                }
+            </div>
         )
     }
 }
