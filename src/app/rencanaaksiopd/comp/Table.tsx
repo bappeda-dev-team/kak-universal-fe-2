@@ -45,12 +45,17 @@ export const Table: React.FC<Table> = ({ nama_opd, kode_opd, tahun }) => {
                 const result = await response.json();
                 const data = result.data;
                 // console.log(data);
-                if (data == null) {
-                    setDataNull(true);
-                    setSasaranOpd([]);
+                if(result.code === 200){
+                    if (data == null) {
+                        setDataNull(true);
+                        setSasaranOpd([]);
+                    } else {
+                        setDataNull(false);
+                        setSasaranOpd(data);
+                    }
                 } else {
-                    setDataNull(false);
-                    setSasaranOpd(data);
+                    setError(true);
+                    setSasaranOpd([]);
                 }
             } catch (err) {
                 console.error(err);
@@ -260,12 +265,17 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, to
                 const result = await response.json();
                 const data = result.data;
                 // console.log(data);
-                if (data == null || data == undefined) {
-                    setDataNull(true);
-                    setData([]);
+                if(result.code === 200){
+                    if (data == null || data == undefined) {
+                        setDataNull(true);
+                        setData([]);
+                    } else {
+                        setDataNull(false);
+                        setData(data);
+                    }
                 } else {
-                    setDataNull(false);
-                    setData(data);
+                    setError(true);
+                    setData([]);
                 }
             } catch (err) {
                 console.error(err);
