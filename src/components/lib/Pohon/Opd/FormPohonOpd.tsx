@@ -393,7 +393,7 @@ export const FormPohonOpd: React.FC<{
                                                     className="w-[20px] h-[20px] border border-black rounded-full"
                                                 ></button>
                                             }
-                                            <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
+                                            <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Prioritas Daerah</p>
                                         </div>
                                         <div className="flex flex-col items-center">
                                             {RB ?
@@ -429,7 +429,7 @@ export const FormPohonOpd: React.FC<{
                                                     className="w-[20px] h-[20px] border border-black rounded-full"
                                                 ></button>
                                             }
-                                            <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
+                                            <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Prioritas Nasional</p>
                                         </div>
                                     </div>
                                     {UnggulanBupati &&
@@ -439,11 +439,11 @@ export const FormPohonOpd: React.FC<{
                                             render={({ field }) => (
                                                 <div className="flex flex-col py-3 border border-emerald-500 mt-1 px-2 rounded-lg">
                                                     <label className="uppercase text-xs font-bold text-gray-700 mb-1">
-                                                        Keterangan Program Unggulan Bupati :
+                                                        Keterangan Program Prioritas Daerah :
                                                     </label>
                                                     <Select
                                                         {...field}
-                                                        placeholder="Pilih Program Unggulan"
+                                                        placeholder="Pilih Program Prioritas Daerah"
                                                         value={BupatiValue}
                                                         options={ProgramOption}
                                                         isSearchable
@@ -514,11 +514,11 @@ export const FormPohonOpd: React.FC<{
                                             render={({ field }) => (
                                                 <div className="flex flex-col py-3">
                                                     <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                        Keterangan Program Unggulan Pemerintah Pusat :
+                                                        Keterangan Program Prioritas Nasional :
                                                     </label>
                                                     <Select
                                                         {...field}
-                                                        placeholder="Pilih Program Unggulan"
+                                                        placeholder="Pilih Program Prioritas Nasional"
                                                         value={PusatValue}
                                                         options={ProgramPusatOption}
                                                         isSearchable
@@ -526,7 +526,7 @@ export const FormPohonOpd: React.FC<{
                                                         isMulti
                                                         isLoading={IsLoading}
                                                         onMenuOpen={() => {
-                                                            fetchProgramUnggulan();
+                                                            fetchProgramPusat();
                                                         }}
                                                         onChange={(option) => {
                                                             field.onChange(option || []);
@@ -1143,7 +1143,7 @@ export const FormEditPohon: React.FC<{
                                             className="w-[20px] h-[20px] border border-black rounded-full"
                                         ></button>
                                     }
-                                    <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
+                                    <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Prioritas Daerah</p>
                                 </div>
                                 <div className="flex flex-col items-center">
                                     {RB ?
@@ -1179,7 +1179,7 @@ export const FormEditPohon: React.FC<{
                                             className="w-[20px] h-[20px] border border-black rounded-full"
                                         ></button>
                                     }
-                                    <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
+                                    <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Prioritas Nasional</p>
                                 </div>
                             </div>
                             {UnggulanBupati &&
@@ -1189,11 +1189,11 @@ export const FormEditPohon: React.FC<{
                                     render={({ field }) => (
                                         <div className="flex flex-col py-3 border border-emerald-500 mt-1 px-2 rounded-lg">
                                             <label className="uppercase text-xs font-bold text-gray-700 mb-1">
-                                                Keterangan Program Unggulan Bupati :
+                                                Keterangan Program Prioritas Daerah :
                                             </label>
                                             <Select
                                                 {...field}
-                                                placeholder="Pilih Program Unggulan"
+                                                placeholder="Pilih Program Prioritas Daerah"
                                                 value={BupatiValue}
                                                 options={ProgramOption}
                                                 isSearchable
@@ -1261,18 +1261,18 @@ export const FormEditPohon: React.FC<{
                                     render={({ field }) => (
                                         <div className="flex flex-col py-3">
                                             <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                Keterangan Program Unggulan Pemerintah Pusat :
+                                                Keterangan Program Prioritas Nasional :
                                             </label>
                                             <Select
                                                 {...field}
-                                                placeholder="Pilih Program Unggulan"
+                                                placeholder="Pilih Program Prioritas Nasional"
                                                 value={PusatValue}
                                                 options={ProgramPusatOption}
                                                 isSearchable
                                                 isClearable
                                                 isMulti
                                                 onMenuOpen={() => {
-                                                    fetchProgramUnggulan();
+                                                    fetchProgramPusat();
                                                 }}
                                                 onChange={(option) => {
                                                     field.onChange(option || []);
