@@ -56,6 +56,8 @@ interface rekin {
     nama_rencana_kinerja: string;
     tahun: string;
     status_rencana_kinerja: string;
+    pegawai_id: string;
+    nama_pegawai: string;
     catatan: string;
     operasional_daerah: {
         kode_opd: string;
@@ -135,7 +137,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
             if (result.code === 200) {
                 const rekin = data.map((s: rekin) => ({
                     value: s.id_rencana_kinerja,
-                    label: s.nama_rencana_kinerja,
+                    label: `${s.nama_pegawai} - ${s.nama_rencana_kinerja}`,
                 }));
                 setRenaksiOption(rekin);
             } else {

@@ -175,7 +175,7 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                             {item.persentase_cascading || "0%"}
                                         </td>
                                         <td className="border-r border-b font-bold border-orange-500 px-6 py-4 text-center">
-                                            <div className="flex items-center-gap-1">
+                                            <div className="flex flex-col items-center-gap-1">
                                                 {item.persentase_cascading === "100%" &&
                                                     <ButtonBlackBorder
                                                         className="flex items-center gap-1"
