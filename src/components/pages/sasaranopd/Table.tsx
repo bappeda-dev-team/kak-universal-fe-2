@@ -6,7 +6,7 @@ import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken, getUser, getOpdTahun } from "@/components/lib/Cookie";
-import { TbPencil, TbTrash, TbCirclePlus, TbArrowBadgeDownFilled, TbX } from "react-icons/tb";
+import { TbPencil, TbTrash, TbCirclePlus, TbArrowBadgeDownFilled } from "react-icons/tb";
 import { ModalSasaranOpd } from "./ModalSasaranOpd";
 
 interface OptionTypeString {
@@ -139,7 +139,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                     setPeriodeNotFound(true);
                     setSasaran([]);
                     console.log(result.data);
-                } else if (result.code == 200 || result.code == 201) {
+                } else if(result.code == 200 || result.code == 201){
                     setDataNull(false);
                     setSasaran(data);
                     setError(false);
@@ -342,20 +342,6 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                                                     <tr>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-6 h-[150px]" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
                                                             {item.nama_sasaran_opd || "-"}
-                                                            <div className="flex items center gap-1 border-t border-emerald-500 pt-3">
-                                                                <div className="flex flex-col justify-between  gap-2 h-full w-full">
-                                                                    <button
-                                                                        className="flex justify-between gap-1 rounded-full p-1 bg-red-500 text-white border border-red-500 hover:bg-white hover:text-red-500 hover:border hover:border-red-500"
-                                                                        onClick={() => AlertNotification("Pengembangan", "fitur masih dalam tahap pengembangan", "info", 2000)}
-                                                                    >
-                                                                        <div className="flex gap-1">
-                                                                            <TbX />
-                                                                            <p className="text-xs">Nonaktifkan</p>
-                                                                        </div>
-                                                                        <TbArrowBadgeDownFilled className="-rotate-90" />
-                                                                    </button>
-                                                                </div>
-                                                            </div>
                                                         </td>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-6 h-[150px]" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
                                                             {item.nama_tujuan_opd ?
