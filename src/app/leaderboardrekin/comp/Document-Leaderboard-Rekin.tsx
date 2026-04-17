@@ -3,7 +3,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 import { Font } from '@react-pdf/renderer';
-import { Pokin, Tematik } from '../type';
+import { Pokin, Pohon } from '../type';
 
 Font.register({ family: 'Times-Roman', src: '/font/times.ttf', fontStyle: 'normal', fontWeight: 'normal' });
 Font.registerHyphenationCallback(word => [word]);
@@ -127,7 +127,7 @@ const DocumentLeaderboardRekin: React.FC<Modal> = ({ Data, tahun }) => {
                             {/* Indikator */}
                             <View style={[styles.tableCol, styles.col4, styles.colBorderRight, styles.colBorderBottom]}>
                                 {data.tematik ?
-                                    data.tematik.map((t: Tematik, t_index: number) => (
+                                    data.tematik.map((t: Pohon, t_index: number) => (
                                         <Text style={styles.tableCell} key={t_index}>{t_index + 1}.{t.nama || "-"}</Text>
                                     ))
                                     :

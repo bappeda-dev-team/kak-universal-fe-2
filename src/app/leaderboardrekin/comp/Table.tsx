@@ -3,12 +3,12 @@
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
-import { OpdNull, TahunNull } from "@/components/global/OpdTahunNull";
+import { TahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { ButtonRedBorder, ButtonSkyBorder, ButtonBlackBorder } from "@/components/global/Button";
 import { TbEyeClosed, TbFileDatabase, TbPrinter } from "react-icons/tb";
-import { Pokin, Tematik } from "../type";
+import { Pokin, Pohon } from "../type";
 import ModalCetakLeaderboardRekin from "./ModalCetakLeaderboardRekin";
 
 interface Table {
@@ -99,6 +99,55 @@ const Table: React.FC<Table> = ({ tahun }) => {
             setCetak(true);
         }
     }
+    const hitungTotalBaris = (pohon: Pohon[] | undefined): number => {
+        if (!pohon || pohon.length === 0) return 1; // Minimal 1 baris untuk teks "Tidak ada..."
+
+        let total = 0;
+        pohon.forEach(item => {
+            // Jika punya subsubtematik, hitung jumlahnya. 
+            // Jika tidak, cek subtematik. Jika tidak ada keduanya, hitung 1 baris.
+            const childCount = Math.max(
+                hitungTotalBaris(item.subtematik),
+                hitungTotalBaris(item.subsubtematik)
+            );
+
+            // Dalam kasus Anda, sepertinya strukturnya adalah Tematik -> Sub -> SubSub.
+            // Jika ini adalah hierarki murni, kita harus menjumlahkan semua leaf nodes.
+            total += hitungJumlahLeaf(item);
+        });
+        return total;
+    };
+    const hitungTotalBarisOPD = (tematik: Pohon[] | null | undefined): number => {
+        if (!tematik || tematik.length === 0) return 1;
+
+        return tematik.reduce((acc, t) => {
+            // Hitung baris untuk subtematik, jika null anggap 1 baris
+            const jumlahSub = (t?.subtematik || []).reduce((accSub, st) => {
+                // Hitung baris untuk subsubtematik, jika null anggap 1 baris
+                const jumlahSubSub = st?.subsubtematik?.length || 1;
+                return accSub + jumlahSubSub;
+            }, 0) || 1; // Jika subtematik kosong/null, tetap butuh 1 baris untuk nama tematik
+
+            return acc + jumlahSub;
+        }, 0);
+    };
+
+    // Fungsi spesifik untuk menghitung total baris paling ujung (leaf)
+    const hitungJumlahLeaf = (item: Pohon): number => {
+        let count = 0;
+        if (item.subtematik && item.subtematik.length > 0) {
+            item.subtematik.forEach(sub => {
+                if (sub.subsubtematik && sub.subsubtematik.length > 0) {
+                    count += sub.subsubtematik.length;
+                } else {
+                    count += 1; // baris untuk subtematik itu sendiri
+                }
+            });
+        } else {
+            count = 1; // baris untuk tematik itu sendiri
+        }
+        return count;
+    };
 
     if (Loading) {
         return (
@@ -132,9 +181,11 @@ const Table: React.FC<Table> = ({ tahun }) => {
                             <tr className="bg-orange-500 text-white">
                                 <th className="border-r border-b px-6 py-3 text-center">No</th>
                                 <th className="border-r border-b px-6 py-3 w-[350px]">Perangkat Daerah</th>
-                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Tema</th>
                                 <th className="border-r border-b px-6 py-3 w-[100px]">Persentase Cascading</th>
                                 <th className="border-r border-b px-6 py-3 w-[100px]">Aksi</th>
+                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Tema</th>
+                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Sub Tema</th>
+                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Sub Sub Tema</th>
                             </tr>
                             <tr className="bg-orange-700 text-white">
                                 <th className="border-r border-b px-2 py-1 text-center">1</th>
@@ -142,6 +193,8 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                 <th className="border-r border-b px-2 py-1 text-center">3</th>
                                 <th className="border-r border-b px-2 py-1 text-center">4</th>
                                 <th className="border-r border-b px-2 py-1 text-center">5</th>
+                                <th className="border-r border-b px-2 py-1 text-center">6</th>
+                                <th className="border-r border-b px-2 py-1 text-center">7</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -152,66 +205,134 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                     </td>
                                 </tr>
                                 :
-                                Data.map((item: Pokin, index: number) => (
-                                    <tr key={index}>
-                                        <td className="border-x border-b border-orange-500 py-4 px-3 text-center">
-                                            {index + 1}
-                                        </td>
-                                        <td className="border-r border-b border-orange-500 px-6 py-4">
-                                            {item.nama_opd || "-"}
-                                        </td>
-                                        <td className="border-r border-b border-orange-500 px-6 py-4">
-                                            {item.tematik ?
-                                                item.tematik.map((t: Tematik, index_tematik: number) => (
-                                                    <div key={index_tematik} className="flex items-center">
-                                                        <p className="py-1 px-2 my-2 bg-emerald-600 text-white rounded-lg">{t.nama || "tematik tanpa nama"}</p>
-                                                    </div>
-                                                ))
-                                                :
-                                                <p>-</p>
-                                            }
-                                        </td>
-                                        <td className="border-r border-b font-bold border-orange-500 px-6 py-4 text-center">
-                                            {item.persentase_cascading || "0%"}
-                                        </td>
-                                        <td className="border-r border-b font-bold border-orange-500 px-6 py-4 text-center">
-                                            <div className="flex flex-col items-center gap-1">
-                                                {item.persentase_cascading === "100%" &&
-                                                    <ButtonBlackBorder
-                                                        className="flex items-center gap-1"
-                                                        disabled={Proses}
-                                                        onClick={() => AlertQuestion("Clone Pokin", `Clone Pokin ke ${branding?.tahun?.value}?`, "question", "Clone", "Batal").then((resp) => {
-                                                            if (resp.isConfirmed) {
-                                                                clonePokinRekin(item.kode_opd);
+                                Data.map((item: Pokin, index: number) => {
+                                    // Pastikan tematik adalah array agar reduce tidak error
+                                    const daftarTematik = item.tematik || [];
+                                    const totalBarisOPD = hitungTotalBarisOPD(daftarTematik);
+
+                                    return (
+                                        <React.Fragment key={index}>
+                                            {daftarTematik.length === 0 ? (
+                                                <tr>
+                                                    <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{index + 1}</td>
+                                                    <td className="border-r border-b border-orange-500 px-6 py-4">{item.nama_opd}</td>
+                                                    <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.persentase_cascading}</td>
+                                                    <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                                        <div className="flex flex-col items-center gap-1">
+                                                            {item.persentase_cascading === "100%" &&
+                                                                <ButtonBlackBorder
+                                                                    className="flex items-center gap-1 w-full"
+                                                                    disabled={Proses}
+                                                                    onClick={() => AlertQuestion("Clone Pokin", `Clone Pokin ke ${branding?.tahun?.value}?`, "question", "Clone", "Batal").then((resp) => {
+                                                                        if (resp.isConfirmed) {
+                                                                            clonePokinRekin(item.kode_opd);
+                                                                        }
+                                                                    })}
+                                                                >
+                                                                    <TbFileDatabase />
+                                                                    Clone
+                                                                </ButtonBlackBorder>
                                                             }
-                                                        })}
-                                                    >
-                                                        <TbFileDatabase />
-                                                        Clone
-                                                    </ButtonBlackBorder>
-                                                }
-                                                <ButtonRedBorder 
-                                                    className="flex items-center gap-1"
-                                                    onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
-                                                >
-                                                    <TbEyeClosed />
-                                                    Hidden
-                                                </ButtonRedBorder>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
+                                                            <ButtonRedBorder
+                                                                className="flex items-center gap-1 w-full"
+                                                                onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
+                                                            >
+                                                                <TbEyeClosed />
+                                                                Hidden
+                                                            </ButtonRedBorder>
+                                                        </div>
+                                                    </td>
+                                                    <td colSpan={3} className="border-b border-orange-500 text-white bg-orange-300 px-6 py-4">
+                                                        Tidak terlibat di tematik manapun
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                /* Jika Tematik Ada */
+                                                daftarTematik.map((t, tIdx) => {
+                                                    const daftarSub = t?.subtematik || [];
+                                                    const rowSpanTematik = daftarSub.reduce((acc, st) =>
+                                                        acc + (st?.subsubtematik?.length || 1), 0) || 1;
+
+                                                    return (
+                                                        <React.Fragment key={tIdx}>
+                                                            {(daftarSub.length ? daftarSub : [null]).map((st, stIdx) => {
+                                                                const daftarSubSub = st?.subsubtematik || [];
+                                                                const subsubList = daftarSubSub.length ? daftarSubSub : [null];
+
+                                                                return subsubList.map((sst, sstIdx) => {
+                                                                    const isFirstRowInOPD = tIdx === 0 && stIdx === 0 && sstIdx === 0;
+                                                                    const isFirstRowInTematik = stIdx === 0 && sstIdx === 0;
+                                                                    const isFirstRowInSub = sstIdx === 0;
+
+                                                                    return (
+                                                                        <tr key={`${tIdx}-${stIdx}-${sstIdx}`}>
+                                                                            {isFirstRowInOPD && (
+                                                                                <>
+                                                                                    <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4 text-center">{index + 1}</td>
+                                                                                    <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4">{item.nama_opd}</td>
+                                                                                    <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.persentase_cascading}</td>
+                                                                                    <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                                                                        <div className="flex flex-col items-center gap-1">
+                                                                                            {item.persentase_cascading === "100%" &&
+                                                                                                <ButtonBlackBorder
+                                                                                                    className="flex items-center gap-1 w-full"
+                                                                                                    disabled={Proses}
+                                                                                                    onClick={() => AlertQuestion("Clone Pokin", `Clone Pokin ke ${branding?.tahun?.value}?`, "question", "Clone", "Batal").then((resp) => {
+                                                                                                        if (resp.isConfirmed) {
+                                                                                                            clonePokinRekin(item.kode_opd);
+                                                                                                        }
+                                                                                                    })}
+                                                                                                >
+                                                                                                    <TbFileDatabase />
+                                                                                                    Clone
+                                                                                                </ButtonBlackBorder>
+                                                                                            }
+                                                                                            <ButtonRedBorder
+                                                                                                className="flex items-center gap-1 w-full"
+                                                                                                onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
+                                                                                            >
+                                                                                                <TbEyeClosed />
+                                                                                                Hidden
+                                                                                            </ButtonRedBorder>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </>
+                                                                            )}
+                                                                            {isFirstRowInTematik && (
+                                                                                <td rowSpan={rowSpanTematik} className="border-r border-b border-orange-500 px-6 py-4">
+                                                                                    {t?.nama || "-"}
+                                                                                </td>
+                                                                            )}
+                                                                            {isFirstRowInSub && (
+                                                                                <td rowSpan={subsubList.length} className="border-r border-b border-orange-500 px-6 py-4">
+                                                                                    {st?.nama || "-"}
+                                                                                </td>
+                                                                            )}
+                                                                            <td className="border-b border-orange-500 px-6 py-4">
+                                                                                {sst?.nama || "-"}
+                                                                            </td>
+                                                                        </tr>
+                                                                    );
+                                                                });
+                                                            })}
+                                                        </React.Fragment>
+                                                    );
+                                                })
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })
                             }
                         </tbody>
                     </table>
                 </div>
                 {Cetak &&
-                <ModalCetakLeaderboardRekin 
-                    onClose={handleModalCetak}
-                    isOpen={Cetak}
-                    Data={Data}
-                    tahun={tahun}
-                />
+                    <ModalCetakLeaderboardRekin
+                        onClose={handleModalCetak}
+                        isOpen={Cetak}
+                        Data={Data}
+                        tahun={tahun}
+                    />
                 }
             </div>
         )
