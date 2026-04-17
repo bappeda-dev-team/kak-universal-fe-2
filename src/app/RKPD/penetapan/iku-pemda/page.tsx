@@ -3,11 +3,12 @@
 import { FiHome } from "react-icons/fi";
 import Maintenance from "@/components/global/Maintenance";
 import { useBrandingContext } from "@/context/BrandingContext";
+import TableIkuRKPD from "../../comp/TableIkuRKPD";
 
 const RKPDPenetapanIkuPage = () => {
 
-    const {branding} = useBrandingContext();
-    
+    const { branding } = useBrandingContext();
+
     return (
         <>
             <div className="flex items-center">
@@ -24,7 +25,11 @@ const RKPDPenetapanIkuPage = () => {
                         <h1 className="uppercase font-bold ml-1">{branding?.tahun?.label || ""}</h1>
                     </div>
                 </div>
-                <Maintenance />
+                {/* <Maintenance /> */}
+                <TableIkuRKPD
+                    tahun={branding?.tahun?.value || 0}
+                    menu="ranwal"
+                />
             </div>
         </>
     )

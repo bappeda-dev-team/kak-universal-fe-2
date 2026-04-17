@@ -15,8 +15,8 @@ interface Table {
 }
 interface ProgramUnggulan {
     id: number;
-    kode_program_unggulan: string;
-    nama_program_unggulan: string;
+    kode_program_prioritas_pusat: string;
+    nama_program_prioritas_pusat: string;
     is_active: boolean;
     rencana_implementasi: string;
     keterangan: string;
@@ -61,7 +61,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
             setLoading(true)
             try {
-                const response = await fetch(`${API_URL}/program_unggulan/findall/${tahun_awal}/${tahun_akhir}`, {
+                const response = await fetch(`${API_URL}/program_prioritas_pusat/findall?tahun_awal=${tahun_awal}&tahun_akhir=${tahun_akhir}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                 const result = await response.json();
                 const data = result.data;
                 if (result.code === 200) {
-                    if (data.length === 0) {
+                    if (data === null) {
                         setDataNull(true);
                     } else {
                         setDataNull(false);
@@ -95,7 +95,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
     const hapusProgramUnggulan = async (id: any) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         try {
-            const response = await fetch(`${API_URL}/program_unggulan/delete/${id}`, {
+            const response = await fetch(`${API_URL}/program_prioritas_pusat/delete/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `${token}`,
@@ -140,7 +140,7 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                     <thead>
                         <tr className="bg-green-500 text-white">
                             <th className="border-r border-b px-6 py-3 text-center">No</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Program Prioritas Daerah</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Program Prioritas Pusat</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Rencana Implementasi</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Status</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Tahun</th>
@@ -156,10 +156,10 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                                 </td>
                             </tr>
                         ) : (
-                            Dummy.map((item: ProgramUnggulan, index: number) => (
+                            Data.map((item: ProgramUnggulan, index: number) => (
                                 <tr key={index}>
                                     <td className="border-x border-b border-green-500 py-4 px-3 text-center">{index + 1}</td>
-                                    <td className="border-r border-b border-green-500 px-6 py-4 font-semibold">{item.nama_program_unggulan || "-"}</td>
+                                    <td className="border-r border-b border-green-500 px-6 py-4 font-semibold">{item.nama_program_prioritas_pusat || "-"}</td>
                                     <td className="border-r border-b border-green-500 px-6 py-4">{item.rencana_implementasi || "-"}</td>
                                     <td className="border-r border-b border-green-500 px-6 py-4">
                                         {item.is_active ? 

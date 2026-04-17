@@ -10,8 +10,8 @@ import { useBrandingContext } from "@/context/BrandingContext";
 
 interface ProgramUnggulan {
     id: number;
-    kode_program_unggulan: string;
-    nama_program_unggulan: string;
+    kode_program_prioritas_pusat: string;
+    nama_program_prioritas_pusat: string;
     rencana_implementasi: string;
     keterangan: string;
     tahun_awal: string;
@@ -28,7 +28,7 @@ interface ModalProps {
 }
 
 interface FormValue {
-    nama_program_unggulan: string,
+    nama_program_prioritas_pusat: string,
     rencana_implementasi: string,
     keterangan: string,
     tahun_awal: string,
@@ -38,7 +38,7 @@ interface FormValue {
 export const ModalProgramPrioritasPusat: React.FC<ModalProps> = ({ isOpen, onClose, dataEdit, jenis, onSuccess, tahun_awal, tahun_akhir }) => {
     const { control, handleSubmit, reset, formState:{ errors }} = useForm<FormValue>({
         defaultValues: {
-            nama_program_unggulan: dataEdit?.nama_program_unggulan,
+            nama_program_prioritas_pusat: dataEdit?.nama_program_prioritas_pusat,
             rencana_implementasi: dataEdit?.rencana_implementasi,
             keterangan: dataEdit?.keterangan,
             tahun_awal: tahun_awal,
@@ -52,7 +52,7 @@ export const ModalProgramPrioritasPusat: React.FC<ModalProps> = ({ isOpen, onClo
 
     const handleClose = () => {
         reset({
-            nama_program_unggulan: "",
+            nama_program_prioritas_pusat: "",
             rencana_implementasi: "",
             keterangan: "",
             tahun_awal: "",
@@ -65,15 +65,15 @@ export const ModalProgramPrioritasPusat: React.FC<ModalProps> = ({ isOpen, onClo
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         let endpoint = "";
         if (jenis === "edit") {
-            endpoint = `program_unggulan/update/${dataEdit?.id}`;
+            endpoint = `program_prioritas_pusat/update/${dataEdit?.id}`;
         } else if (jenis === "baru") {
-            endpoint = `program_unggulan/create`;
+            endpoint = `program_prioritas_pusat/create`;
         } else {
             endpoint = '';
         }
         const formData = {
             //key : value
-            nama_program_unggulan: data.nama_program_unggulan,
+            nama_program_prioritas_pusat: data.nama_program_prioritas_pusat,
             rencana_implementasi: data.rencana_implementasi,
             keterangan: data.keterangan,
             tahun_awal: tahun_awal,
@@ -120,7 +120,7 @@ export const ModalProgramPrioritasPusat: React.FC<ModalProps> = ({ isOpen, onClo
                     <div className="flex flex-col py-3">
                         <label
                             className="uppercase text-xs font-bold text-gray-700 my-2"
-                            htmlFor="nama_program_unggulan"
+                            htmlFor="nama_program_prioritas_pusat"
                         >
                             {branding?.client === "KABUPATEN-MAHAKAM-ULU" ? 
                                 "Program Prioritas"
@@ -129,14 +129,14 @@ export const ModalProgramPrioritasPusat: React.FC<ModalProps> = ({ isOpen, onClo
                             }
                         </label>
                         <Controller
-                            name="nama_program_unggulan"
+                            name="nama_program_prioritas_pusat"
                             control={control}
                             rules={{ required: "program harus terisi" }}
                             render={({ field }) => (
                                 <input
                                     {...field}
                                     className="border px-4 py-2 rounded-lg"
-                                    id="nama_program_unggulan"
+                                    id="nama_program_prioritas_pusat"
                                     type="text"
                                     placeholder="masukkan program"
                                     onChange={(e) => {
@@ -145,8 +145,8 @@ export const ModalProgramPrioritasPusat: React.FC<ModalProps> = ({ isOpen, onClo
                                 />
                             )}
                         />
-                        {errors.nama_program_unggulan &&
-                            <p className="text-red-500 italic">{errors.nama_program_unggulan?.message}</p>
+                        {errors.nama_program_prioritas_pusat &&
+                            <p className="text-red-500 italic">{errors.nama_program_prioritas_pusat?.message}</p>
                         }
                     </div>
                     <div className="flex flex-col py-3">

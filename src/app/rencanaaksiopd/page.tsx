@@ -1,6 +1,6 @@
 'use client'
 
-import { Table } from '@/components/pages/rencanaaksiopd/Table';
+import { Table } from './comp/Table';
 import { FiHome } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import { getOpdTahun, getUser } from '@/components/lib/Cookie';
@@ -61,6 +61,7 @@ const RencanaAksiOpd = () => {
                         <Table 
                             tahun={Tahun?.value}
                             kode_opd={(User?.roles == 'super_admin' || User?.roles == 'reviewer') ? SelectedOpd?.value : User?.kode_opd}
+                            nama_opd={(User?.roles == 'super_admin' || User?.roles == 'reviewer') ? SelectedOpd?.label : User?.nama_opd}
                         />
                         // <Maintenance />
                     }
