@@ -73,6 +73,7 @@ export const FormPohonOpd: React.FC<{
     const [RBValue, setRBValue] = useState<OptionTypeString[]>([]);
     const [PusatValue, setPusatValue] = useState<OptionTypeString[]>([]);
     const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
+    const [ProgramPusatOption, setProgramPusatOption] = useState<OptionTypeString[]>([]);
     const [DataAdd, setDataAdd] = useState<any>(null);
     const [IsAdded, setIsAdded] = useState<boolean>(false);
     const [UnggulanBupati, setUnggulanBupati] = useState<boolean>(false);
@@ -137,6 +138,38 @@ export const FormPohonOpd: React.FC<{
                     label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
                 }));
                 setProgramOption(program);
+                // console.log("option : ", program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const fetchProgramPusat = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/program_prioritas_pusat/findbytahun/${Tahun?.value}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            if (data == null) {
+                setProgramPusatOption([]);
+                console.log(`data program unggulan Pusat belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: item.kode_program_unggulan,
+                    label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                }));
+                setProgramPusatOption(program);
                 // console.log("option : ", program);
             }
         } catch (err) {
@@ -487,7 +520,7 @@ export const FormPohonOpd: React.FC<{
                                                         {...field}
                                                         placeholder="Pilih Program Unggulan"
                                                         value={PusatValue}
-                                                        options={ProgramOption}
+                                                        options={ProgramPusatOption}
                                                         isSearchable
                                                         isClearable
                                                         isMulti
@@ -685,6 +718,7 @@ export const FormEditPohon: React.FC<{
     const [Tahun, setTahun] = useState<any>(null);
     const [Pelaksana, setPelaksana] = useState<OptionTypeString[]>([]);
     const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
+    const [ProgramPusatOption, setProgramPusatOption] = useState<OptionTypeString[]>([]);
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
     const [UnggulanBupati, setUnggulanBupati] = useState<boolean>(false);
     // renamed to RB
@@ -949,6 +983,38 @@ export const FormEditPohon: React.FC<{
             setIsLoading(false);
         }
     }
+    const fetchProgramPusat = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/program_prioritas_pusat/findbytahun/${Tahun?.value}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            if (data == null) {
+                setProgramPusatOption([]);
+                console.log(`data program unggulan Pusat belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: item.kode_program_unggulan,
+                    label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                }));
+                setProgramPusatOption(program);
+                // console.log("option : ", program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
     const fetchRb = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
@@ -1201,7 +1267,7 @@ export const FormEditPohon: React.FC<{
                                                 {...field}
                                                 placeholder="Pilih Program Unggulan"
                                                 value={PusatValue}
-                                                options={ProgramOption}
+                                                options={ProgramPusatOption}
                                                 isSearchable
                                                 isClearable
                                                 isMulti

@@ -80,6 +80,7 @@ export const FormPohonPemda: React.FC<{
     const [PusatValue, setPusatValue] = useState<OptionTypeString[]>([]);
     const [OpdOption, setOpdOption] = useState<OptionTypeString[]>([]);
     const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
+    const [ProgramPusatOption, setProgramPusatOption] = useState<OptionTypeString[]>([]);
     const [Tahun, setTahun] = useState<any>(null);
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
     const [DataAdd, setDataAdd] = useState<any>(null);
@@ -166,6 +167,38 @@ export const FormPohonPemda: React.FC<{
                     label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
                 }));
                 setProgramOption(program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const fetchProgramPusat = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/program_prioritas_pusat/findbytahun/${Tahun?.value}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            if (data == null) {
+                setProgramPusatOption([]);
+                console.log(`data program unggulan Pusat belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: item.kode_program_unggulan,
+                    label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                }));
+                setProgramPusatOption(program);
+                // console.log("option : ", program);
             }
         } catch (err) {
             console.error(err);
@@ -531,7 +564,7 @@ export const FormPohonPemda: React.FC<{
                                                                 {...field}
                                                                 placeholder="Pilih Program Unggulan"
                                                                 value={PusatValue}
-                                                                options={ProgramOption}
+                                                                options={ProgramPusatOption}
                                                                 isSearchable
                                                                 isClearable
                                                                 isMulti
@@ -1109,6 +1142,7 @@ export const FormEditPohon: React.FC<{
     const [Tahun, setTahun] = useState<any>(null);
     const [Pelaksana, setPelaksana] = useState<OptionTypeString[]>([]);
     const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
+    const [ProgramPusatOption, setProgramPusatOption] = useState<OptionTypeString[]>([]);
     const [BupatiValue, setBupatiValue] = useState<OptionTypeString[]>([]);
     // const [RBValue, setRBValue] = useState<OptionTypeString[]>([]);
     const [RBValue, setRBValue] = useState<OptionTypeString[]>([]);
@@ -1123,7 +1157,7 @@ export const FormEditPohon: React.FC<{
     const [Proses, setProses] = useState<boolean>(false);
     const [ProsesDetail, setProsesDetail] = useState<boolean>(false);
     const token = getToken();
-    const {branding} = useBrandingContext();
+    const { branding } = useBrandingContext();
 
     useEffect(() => {
         const data = getOpdTahun();
@@ -1304,6 +1338,38 @@ export const FormEditPohon: React.FC<{
                     label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
                 }));
                 setProgramOption(program);
+                // console.log("option : ", program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const fetchProgramPusat = async () => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/program_prioritas_pusat/findbytahun/${Tahun?.value}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('cant fetch data opd');
+            }
+            const data = await response.json();
+            if (data == null) {
+                setProgramPusatOption([]);
+                console.log(`data program unggulan Pusat belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.map((item: any) => ({
+                    value: item.kode_program_unggulan,
+                    label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                }));
+                setProgramPusatOption(program);
                 // console.log("option : ", program);
             }
         } catch (err) {
@@ -1679,12 +1745,12 @@ export const FormEditPohon: React.FC<{
                                                     {...field}
                                                     placeholder="Pilih Program Unggulan"
                                                     value={PusatValue}
-                                                    options={ProgramOption}
+                                                    options={ProgramPusatOption}
                                                     isSearchable
                                                     isClearable
                                                     isMulti
                                                     onMenuOpen={() => {
-                                                        if (ProgramOption.length === 0) {
+                                                        if (ProgramPusatOption.length === 0) {
                                                             fetchProgramUnggulan();
                                                         }
                                                     }}
