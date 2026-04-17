@@ -133,12 +133,14 @@ export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) 
                 {/* BODY */}
                 <div className="flex flex-col justify-center my-3">
                     <TablePohonLaporan item={tema} tipe="non-cetak" />
-                    <div className="mt-3">
-                        <Pagu
-                            jenis={tema.jenis_pohon}
-                            anggaran={tema.total_anggaran || tema.pagu_anggaran || tema.pagu || '0'}
-                        />
-                    </div>
+                    {tema.jenis_pohon != "Operational N" &&
+                        <div className="mt-3">
+                            <Pagu
+                                jenis={tema.jenis_pohon}
+                                anggaran={tema.total_anggaran || tema.pagu_anggaran || tema.pagu || '0'}
+                            />
+                        </div>
+                    }
                     {(tema.program) &&
                         <div className="mt-5">
                             <ProgramKegiatan

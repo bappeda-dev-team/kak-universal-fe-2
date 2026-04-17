@@ -139,7 +139,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                     setPeriodeNotFound(true);
                     setSasaran([]);
                     console.log(result.data);
-                } else if(result.code == 200 || result.code == 201){
+                } else if (result.code == 200 || result.code == 201) {
                     setDataNull(false);
                     setSasaran(data);
                     setError(false);
@@ -391,12 +391,21 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                                                                 <td className="border-x border-b border-emerald-500 px-6 py-6">{i.definisi_operasional || "-"}</td>
                                                                 <td className="border-x border-b border-emerald-500 px-6 py-6">{i.rumus_perhitungan || "-"}</td>
                                                                 <td className="border-x border-b border-emerald-500 px-6 py-6">{i.sumber_data || "-"}</td>
-                                                                {i.target.map((t: Target) => (
-                                                                    <React.Fragment key={t.id}>
-                                                                        <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.target || "-"}</td>
-                                                                        <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.satuan || "-"}</td>
-                                                                    </React.Fragment>
-                                                                ))}
+                                                                {i.target.length === 0 ?
+                                                                    [...Array(6)].map((_, em_index: number) => (
+                                                                        <React.Fragment key={em_index}>
+                                                                            <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">-</td>
+                                                                            <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">-</td>
+                                                                        </React.Fragment>
+                                                                    ))
+                                                                    :
+                                                                    i.target.map((t: Target) => (
+                                                                        <React.Fragment key={t.id}>
+                                                                            <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.target || "-"}</td>
+                                                                            <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.satuan || "-"}</td>
+                                                                        </React.Fragment>
+                                                                    ))
+                                                                }
                                                             </tr>
                                                         ))
                                                     )}
