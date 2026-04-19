@@ -6,6 +6,5 @@ export interface Pokin {
 }
 export interface Pohon {
     nama: string;
-    subtematik?: Pohon[];
-    subsubtematik?: Pohon[];
+    child?: Pohon[];
 }
