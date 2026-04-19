@@ -107,8 +107,8 @@ const Table: React.FC<Table> = ({ tahun }) => {
             // Jika punya subsubtematik, hitung jumlahnya. 
             // Jika tidak, cek subtematik. Jika tidak ada keduanya, hitung 1 baris.
             const childCount = Math.max(
-                hitungTotalBaris(item.subtematik),
-                hitungTotalBaris(item.subsubtematik)
+                hitungTotalBaris(item.child),
+                hitungTotalBaris(item.child)
             );
 
             // Dalam kasus Anda, sepertinya strukturnya adalah Tematik -> Sub -> SubSub.
@@ -122,9 +122,9 @@ const Table: React.FC<Table> = ({ tahun }) => {
 
         return tematik.reduce((acc, t) => {
             // Hitung baris untuk subtematik, jika null anggap 1 baris
-            const jumlahSub = (t?.subtematik || []).reduce((accSub, st) => {
+            const jumlahSub = (t?.child || []).reduce((accSub, st) => {
                 // Hitung baris untuk subsubtematik, jika null anggap 1 baris
-                const jumlahSubSub = st?.subsubtematik?.length || 1;
+                const jumlahSubSub = st?.child?.length || 1;
                 return accSub + jumlahSubSub;
             }, 0) || 1; // Jika subtematik kosong/null, tetap butuh 1 baris untuk nama tematik
 
@@ -135,10 +135,10 @@ const Table: React.FC<Table> = ({ tahun }) => {
     // Fungsi spesifik untuk menghitung total baris paling ujung (leaf)
     const hitungJumlahLeaf = (item: Pohon): number => {
         let count = 0;
-        if (item.subtematik && item.subtematik.length > 0) {
-            item.subtematik.forEach(sub => {
-                if (sub.subsubtematik && sub.subsubtematik.length > 0) {
-                    count += sub.subsubtematik.length;
+        if (item.child && item.child.length > 0) {
+            item.child.forEach(sub => {
+                if (sub.child && sub.child.length > 0) {
+                    count += sub.child.length;
                 } else {
                     count += 1; // baris untuk subtematik itu sendiri
                 }
@@ -249,14 +249,14 @@ const Table: React.FC<Table> = ({ tahun }) => {
                                             ) : (
                                                 /* Jika Tematik Ada */
                                                 daftarTematik.map((t, tIdx) => {
-                                                    const daftarSub = t?.subtematik || [];
+                                                    const daftarSub = t?.child || [];
                                                     const rowSpanTematik = daftarSub.reduce((acc, st) =>
-                                                        acc + (st?.subsubtematik?.length || 1), 0) || 1;
+                                                        acc + (st?.child?.length || 1), 0) || 1;
 
                                                     return (
                                                         <React.Fragment key={tIdx}>
                                                             {(daftarSub.length ? daftarSub : [null]).map((st, stIdx) => {
-                                                                const daftarSubSub = st?.subsubtematik || [];
+                                                                const daftarSubSub = st?.child || [];
                                                                 const subsubList = daftarSubSub.length ? daftarSubSub : [null];
 
                                                                 return subsubList.map((sst, sstIdx) => {
