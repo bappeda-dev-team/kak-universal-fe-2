@@ -15,134 +15,173 @@ interface Modal {
 
 const styles = StyleSheet.create({
     page: {
-        paddingVertical: 30, // px-20
-        paddingHorizontal: 38, // py-5
+        padding: 40,
         fontFamily: "Times-Roman",
+        backgroundColor: '#ffffff',
     },
     heading: {
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: 'bold',
         textTransform: 'uppercase',
         textAlign: 'center',
-        marginBottom: 5,
+        marginBottom: 2,
     },
-    // --- Gaya Tabel Umum ---
-    table: {
-        width: 'auto',
-        marginBottom: 20,
-        borderWidth: 1,
-    },
-    tableRow: {
-        flexDirection: 'row',
-        alignItems: 'stretch', // Pastikan sel mengisi tinggi baris
-    },
-    tableColHeader: {
-        padding: 5,
-        backgroundColor: 'white', // Latar belakang abu-abu untuk header
-        fontWeight: 'bold',
+    subHeading: {
+        fontSize: 12,
         textAlign: 'center',
-        justifyContent: 'center', // Center content vertically
-        alignItems: 'center', // Center content horizontally
+        marginBottom: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#000',
+        paddingBottom: 10,
     },
-    tableCol: {
-        justifyContent: 'flex-start', // Center content vertically
-        alignItems: 'flex-start', // Default align text to start
-        textAlign: 'left',
-        hyphens: 'none',
-        padding: 10
+    // Container Utama per Item (Card)
+    card: {
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#000',
+        padding: 10,
     },
-    tableColCenter: {
+    // Baris Header OPD
+    opdHeader: {
+        flexDirection: 'row',
+        backgroundColor: '#f0f0f0',
+        borderBottomWidth: 1,
+        borderBottomColor: '#000',
+        margin: -10, // Menutup padding card
+        marginBottom: 10,
+        padding: 8,
         alignItems: 'center',
-        justifyContent: 'center'
     },
-    colBorderRight: {
-        borderRightWidth: 1,
+    noBadge: {
+        width: 25,
+        fontSize: 10,
+        fontWeight: 'bold',
     },
-    colBorderBottom: {
-        borderBottom: 1,
-    },
-    tableCell: {
-        fontSize: 8, // Ukuran font untuk konten sel
+    namaOpd: {
+        flex: 1,
+        fontSize: 10,
+        fontWeight: 'bold',
         textAlign: 'left',
-        hyphens: 'none',
     },
-
-    // --- Lebar Kolom Spesifik ---
-    col1: { width: '5%' },
-    col2: { width: '20%' },
-    col3: { width: '30%' },
-    col4: { width: '45%' },
+    // Row untuk Info Persentase & Tematik
+    infoRow: {
+        flexDirection: 'row',
+        marginBottom: 5,
+        paddingVertical: 3,
+    },
+    label: {
+        width: 120,
+        fontSize: 9,
+        fontWeight: 'bold',
+    },
+    value: {
+        flex: 1,
+        fontSize: 9,
+        textAlign: 'left',
+    },
+    // Khusus Persentase agar Rata Tengah di areanya
+    valueCenter: {
+        flex: 1,
+        fontSize: 11,
+        fontWeight: 'bold',
+        textAlign: 'center', // Sesuai permintaan Anda
+        color: '#000',
+    },
+    tematikContainer: {
+        marginTop: 5,
+        paddingLeft: 10,
+    },
+    tematikItem: {
+        fontSize: 8,
+        marginBottom: 2,
+        textAlign: 'left',
+    },
+    level1: { // Sub Tematik
+        fontSize: 8,
+        marginLeft: 12,
+        marginTop: 2,
+        color: '#333',
+        textAlign: 'left',
+    },
+    level2: { // Sub Sub Tematik
+        fontSize: 7.5,
+        marginLeft: 24,
+        marginTop: 1,
+        color: '#555',
+        fontStyle: 'italic',
+        textAlign: 'left',
+    },
+    labelTematik: {
+        fontSize: 8,
+        fontWeight: 'bold',
+        textAlign: 'left',
+    }
 });
 
 const DocumentLeaderboardRekin: React.FC<Modal> = ({ Data, tahun }) => {
     return (
         <Document title={`Leaderboard Rekin tahun ${tahun || ""}`}>
             <Page size="A4" style={styles.page}>
-                <Text style={styles.heading}>
-                    Leaderboard Rekin
-                </Text>
-                <Text style={styles.heading}>
-                    Tahun {tahun || ""}
-                </Text>
-                <View style={styles.table}>
-                    {/* HEADER */}
-                    <View style={styles.tableRow}>
-                        <View style={[styles.tableColHeader, styles.col1, styles.colBorderRight, styles.colBorderBottom]}>
-                            <Text style={styles.tableCell}>No</Text>
+                <Text style={styles.heading}>Leaderboard Rekin</Text>
+                <Text style={styles.subHeading}>Tahun {tahun || ""}</Text>
+
+                {Data.map((data, index) => (
+                    <View key={index} style={styles.card} wrap={false}>
+                        {/* Bagian Header Card: No & Nama OPD */}
+                        <View style={styles.opdHeader}>
+                            <Text style={styles.noBadge}>{index + 1}.</Text>
+                            <Text style={styles.namaOpd}>{data.nama_opd || "-"}</Text>
                         </View>
-                        <View style={[styles.tableColHeader, styles.col3, styles.colBorderRight, styles.colBorderBottom]}>
-                            <Text style={styles.tableCell}>Perangkat Daerah</Text>
+
+                        {/* Bagian Persentase - Rata Tengah */}
+                        <View style={styles.infoRow}>
+                            <Text style={styles.label}>Persentase Cascading</Text>
+                            <Text style={styles.value}>: </Text>
+                            <Text style={styles.valueCenter}>
+                                {data.persentase_cascading || "0%"}
+                            </Text>
                         </View>
-                        <View style={[styles.tableColHeader, styles.col4, styles.colBorderRight, styles.colBorderBottom]}>
-                            <Text style={styles.tableCell}>Tema</Text>
+
+                        {/* Bagian Tematik - Rata Kiri */}
+                        <View style={styles.infoRow}>
+                            <Text style={styles.label}>Tematik</Text>
+                            <Text style={styles.value}>: </Text>
                         </View>
-                        <View style={[styles.tableColHeader, styles.col2, styles.colBorderBottom]}>
-                            <Text style={styles.tableCell}>Persentase Cascading</Text>
+
+                        <View style={styles.tematikContainer}>
+                            {data.tematik && data.tematik.length > 0 ? (
+                                data.tematik.map((t, t_index) => (
+                                    <View key={t_index} style={{ marginBottom: 4 }}>
+                                        {/* Lapis 0: Tematik Utama */}
+                                        <Text style={styles.labelTematik}>
+                                            {t_index + 1}. {t.nama || "-"}
+                                        </Text>
+
+                                        {/* Lapis 1: Sub Tematik */}
+                                        {t.child && t.child.map((sub, s_index) => (
+                                            <View key={s_index}>
+                                                <Text style={styles.level1}>
+                                                    {String.fromCharCode(97 + s_index)}. Sub Tematik {s_index + 1} : {sub.nama || "-"}
+                                                </Text>
+
+                                                {/* Lapis 2: Sub Sub Tematik */}
+                                                {sub.child && sub.child.map((subSub, ss_index) => (
+                                                    <Text key={ss_index} style={styles.level2}>
+                                                        • Sub Sub Tematik {ss_index + 1} : {subSub.nama || "-"}
+                                                    </Text>
+                                                ))}
+                                            </View>
+                                        ))}
+                                    </View>
+                                ))
+                            ) : (
+                                <Text style={styles.level1}>Tidak terlibat di tematik manapun</Text>
+                            )}
                         </View>
                     </View>
-                    <View style={styles.tableRow}>
-                        <View style={[styles.tableColHeader, styles.col1, styles.colBorderRight, styles.colBorderBottom]}>
-                            <Text style={styles.tableCell}>(1)</Text>
-                        </View>
-                        <View style={[styles.tableColHeader, styles.col3, styles.colBorderRight, styles.colBorderBottom]}>
-                            <Text style={styles.tableCell}>(2)</Text>
-                        </View>
-                        <View style={[styles.tableColHeader, styles.col4, styles.colBorderRight, styles.colBorderBottom]}>
-                            <Text style={styles.tableCell}>(3)</Text>
-                        </View>
-                        <View style={[styles.tableColHeader, styles.col2, styles.colBorderBottom]}>
-                            <Text style={styles.tableCell}>(4)</Text>
-                        </View>
-                    </View>
-                    {Data.map((data: Pokin, index: number) => (
-                        <View key={index} style={styles.tableRow} wrap={false} >
-                            {/* NO */}
-                            <View style={[styles.tableCol, styles.col1, styles.colBorderRight, styles.colBorderBottom]}>
-                                <Text style={styles.tableCell}>{index + 1}</Text>
-                            </View>
-                            {/* Aksi/kegiatan */}
-                            <View style={[styles.tableCol, styles.col3, styles.colBorderRight, styles.colBorderBottom]}>
-                                <Text style={styles.tableCell}>{data.nama_opd || ""}</Text>
-                            </View>
-                            {/* Indikator */}
-                            <View style={[styles.tableCol, styles.col4, styles.colBorderRight, styles.colBorderBottom]}>
-                                {data.tematik ?
-                                    data.tematik.map((t: Pohon, t_index: number) => (
-                                        <Text style={styles.tableCell} key={t_index}>{t_index + 1}.{t.nama || "-"}</Text>
-                                    ))
-                                    :
-                                    <Text style={styles.tableCell}>-</Text>
-                                }
-                            </View>
-                            {/* Target Satuan */}
-                            <View style={[styles.tableColCenter, styles.col2, styles.colBorderBottom]}>
-                                <Text style={styles.tableCell}>{data.persentase_cascading || 0}</Text>
-                            </View>
-                        </View>
-                    ))}
-                </View>
+                ))}
             </Page>
-        </Document >
+        </Document>
     );
 }
 
