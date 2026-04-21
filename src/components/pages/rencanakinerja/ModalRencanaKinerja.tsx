@@ -184,7 +184,7 @@ export const ModalRencanaKinerja: React.FC<ModalProps> = ({ isOpen, onClose, id,
                     reset({
                         id_pohon: {
                             value: data.id_pohon,
-                            label: data.nama_pohon,
+                            label: `${data.id_pohon} - ${data.nama_pohon}`,
                         },
                         nama_rencana_kinerja: data.nama_rencana_kinerja,
                         catatan: data.catatan,
@@ -342,7 +342,7 @@ export const ModalRencanaKinerja: React.FC<ModalProps> = ({ isOpen, onClose, id,
             const data = await response.json();
             const pokin = data.data.map((item: any) => ({
                 value: item.id,
-                label: `${item.nama_pohon} - ${item.jenis_pohon}`,
+                label: `${item.id} - ${item.nama_pohon} - ${item.jenis_pohon}`,
                 nama_pohon: item.nama_pohon,
                 jenis_pohon: item.jenis_pohon,
                 level_pohon: item.level_pohon,
