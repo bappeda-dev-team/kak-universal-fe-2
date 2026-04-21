@@ -451,25 +451,6 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                         )}
                                     />
                                 </div>
-                                <div className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
-                                    <Controller
-                                        name={`indikator.${index}.definisi_operasional`}
-                                        control={control}
-                                        defaultValue={field.definisi_operasional}
-                                        render={({ field }) => (
-                                            <div className="flex flex-col py-3">
-                                                <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                    Definisi Operasional :
-                                                </label>
-                                                <input
-                                                    {...field}
-                                                    className="border px-4 py-2 rounded-lg"
-                                                    placeholder={`Masukkan Definisi Operasional`}
-                                                />
-                                            </div>
-                                        )}
-                                    />
-                                </div>
                                 <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
                                     <Controller
                                         name={`indikator.${index}.rumus_perhitungan`}
