@@ -49,7 +49,7 @@ export const DraggableModal:React.FC<Modal> = ({ show, onClose, children }) => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, handleMouseMove]);
 
   if (!show) return null;
 

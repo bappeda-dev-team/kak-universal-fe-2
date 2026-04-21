@@ -7,7 +7,7 @@ import { useBrandingContext } from "@/context/BrandingContext";
 const RKPDPenetapanTujuanPage = () => {
 
     const {branding} = useBrandingContext();
-    
+
     return (
         <>
             <div className="flex items-center">

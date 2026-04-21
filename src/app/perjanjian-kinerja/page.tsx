@@ -99,7 +99,7 @@ const PerjanjianKinerja = () => {
 
         fetchData()
         return () => controller.abort()
-    }, [token, kodeOpd, tahun])
+    }, [token, kodeOpd, tahun, apiPerencanaan])
 
     // STATE MODAL CETAK PREVIEW
     const [showPreview, setShowPreview] = useState(false)

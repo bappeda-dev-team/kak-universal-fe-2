@@ -75,8 +75,9 @@ interface Review {
 
 export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, show_all, show_detail, set_show_all }) => {
 
-    const {branding} = useBrandingContext();
-    
+    const token = getToken();
+    const { branding } = useBrandingContext();
+
     const [childPohons, setChildPohons] = useState(tema.childs || []);
     const [formList, setFormList] = useState<number[]>([]); // List of form IDs
     const [PutList, setPutList] = useState<number[]>([]); // List of form IDs
@@ -91,7 +92,6 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
     const [Edited, setEdited] = useState<any | null>(null);
     const [Deleted, setDeleted] = useState<boolean>(false);
     const [User, setUser] = useState<any>(null);
-    const token = getToken();
     const [IsCetak, setIsCetak] = useState<boolean>(false);
 
     useEffect(() => {
@@ -517,7 +517,7 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                     {/* } */}
                                 </div>
                                 {/* footer */}
-                                <div className="flex justify-evenly my-3 py-3 hide-on-capture">
+                                <div className="flex flex-wrap justify-evenly my-3 py-3 hide-on-capture">
                                     {(tema.level_pohon != 4 && (
                                         User?.roles == 'super_admin' ||
                                         User?.roles == 'admin_opd' ||
@@ -602,7 +602,7 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                                     Ambil (Clone)
                                                 </ButtonGreenBorder>
                                             }
-                                            <ButtonGreenBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-gradient-to-r rounded-lg`}
+                                            <ButtonGreenBorder className={`my-1 px-3 bg-white flex justify-center items-center py-1 bg-gradient-to-r rounded-lg`}
                                                 onClick={newChild}
                                             >
                                                 <TbCirclePlus className='mr-1' />
@@ -946,7 +946,7 @@ export const TablePohon = (props: any) => {
                                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                                             `}
                                                         >
                                                             Target/Satuan {index + 1}
@@ -957,7 +957,7 @@ export const TablePohon = (props: any) => {
                                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                                             `}
                                                         >
                                                             {data.target ? data.target : "-"} / {data.satuan ? data.satuan : "-"}
@@ -972,7 +972,7 @@ export const TablePohon = (props: any) => {
                                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                                             `}
                                                     >
                                                         Target/Satuan
@@ -983,7 +983,7 @@ export const TablePohon = (props: any) => {
                                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                                             `}
                                                     >
                                                         -
@@ -1028,7 +1028,7 @@ export const TablePohon = (props: any) => {
                                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                                             `}
                                                         >
                                                             Target/Satuan
@@ -1039,7 +1039,7 @@ export const TablePohon = (props: any) => {
                                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                                             `}
                                                         >
                                                             {data.target ? data.target : "-"} / {data.satuan ? data.satuan : "-"}
@@ -1054,7 +1054,7 @@ export const TablePohon = (props: any) => {
                                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                                             `}
                                                     >
                                                         Target/Satuan
@@ -1065,7 +1065,7 @@ export const TablePohon = (props: any) => {
                                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                                             `}
                                                     >
                                                         -
@@ -1107,7 +1107,7 @@ export const TablePohon = (props: any) => {
                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                             `}
                                         >
                                             Target/Satuan
@@ -1118,7 +1118,7 @@ export const TablePohon = (props: any) => {
                                                 ${jenis === "Tactical" && "border-blue-500"}
                                                 ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                 ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                                ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                             `}
                                         >
                                             -
@@ -1134,7 +1134,7 @@ export const TablePohon = (props: any) => {
                                             ${jenis === "Tactical" && "border-blue-500"}
                                             ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                             ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                         `}
                                     >
                                         Perangkat Daerah
@@ -1145,7 +1145,7 @@ export const TablePohon = (props: any) => {
                                             ${jenis === "Tactical" && "border-blue-500"}
                                             ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                             ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                         `}
                                     >
                                         {opd ? opd : "-"}
@@ -1160,7 +1160,7 @@ export const TablePohon = (props: any) => {
                                             ${jenis === "Tactical" && "border-blue-500"}
                                             ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                             ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                         `}
                                     >
                                         Perangkat Daerah
@@ -1171,7 +1171,7 @@ export const TablePohon = (props: any) => {
                                             ${jenis === "Tactical" && "border-blue-500"}
                                             ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                             ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                            ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                         `}
                                     >
                                         {nama_opd ? nama_opd : "-"}
@@ -1185,7 +1185,7 @@ export const TablePohon = (props: any) => {
                                         ${jenis === "Tactical" && "border-blue-500"}
                                         ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                         ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                     `}
                                 >
                                     Keterangan
@@ -1196,7 +1196,7 @@ export const TablePohon = (props: any) => {
                                         ${jenis === "Tactical" && "border-blue-500"}
                                         ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                         ${(jenis === "Strategic Pemda" || jenis === "Tactical Pemda" || jenis === "Operational Pemda") && "border-black"}
-                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}    
+                                        ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                     `}
                                 >
                                     {keterangan ? keterangan : "-"}
@@ -1210,7 +1210,7 @@ export const TablePohon = (props: any) => {
                                             ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                             ${jenis === "Strategic" && "border-red-700"}
                                             ${jenis === "Tactical" && "border-blue-500"}
-                                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"} 
+                                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                         `}
                                     >
                                         Status
@@ -1221,7 +1221,7 @@ export const TablePohon = (props: any) => {
                                             ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                             ${jenis === "Strategic" && "border-red-700"}
                                             ${jenis === "Tactical" && "border-blue-500"}
-                                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"} 
+                                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                         `}
                                     >
                                         {status === 'menunggu_disetujui' ? (
@@ -1315,7 +1315,7 @@ export const TablePohon = (props: any) => {
                                                     ${jenis === "Operational Pemda" && "border-black"}
                                                     ${jenis === "Strategic" && "border-red-700"}
                                                     ${jenis === "Tactical" && "border-blue-500"}
-                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
+                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                 `}
                                             >
                                                 review
@@ -1327,7 +1327,7 @@ export const TablePohon = (props: any) => {
                                                     ${jenis === "Operational Pemda" && "border-black"}
                                                     ${jenis === "Strategic" && "border-red-700"}
                                                     ${jenis === "Tactical" && "border-blue-500"}
-                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
+                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                 `}
                                             >
                                                 <div className="flex items-start justify-between gap-1">
@@ -1341,7 +1341,7 @@ export const TablePohon = (props: any) => {
                                                     ${jenis === "Operational Pemda" && "border-black"}
                                                     ${jenis === "Strategic" && "border-red-700"}
                                                     ${jenis === "Tactical" && "border-blue-500"}
-                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
+                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                 `}
                                             >
                                                 <div className="flex items-center justify-center gap-1">
@@ -1359,7 +1359,7 @@ export const TablePohon = (props: any) => {
                                                     ${jenis === "Operational Pemda" && "border-black"}
                                                     ${jenis === "Strategic" && "border-red-700"}
                                                     ${jenis === "Tactical" && "border-blue-500"}
-                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
+                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                 `}
                                             >
                                                 Keterangan
@@ -1371,7 +1371,7 @@ export const TablePohon = (props: any) => {
                                                     ${jenis === "Operational Pemda" && "border-black"}
                                                     ${jenis === "Strategic" && "border-red-700"}
                                                     ${jenis === "Tactical" && "border-blue-500"}
-                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
+                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                 `}
                                             >
                                                 <p>
@@ -1388,7 +1388,7 @@ export const TablePohon = (props: any) => {
                                                     ${jenis === "Operational Pemda" && "border-black"}
                                                     ${jenis === "Strategic" && "border-red-700"}
                                                     ${jenis === "Tactical" && "border-blue-500"}
-                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
+                                                    ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}
                                                 `}
                                             >
                                                 <div className="flex items-center justify-center gap-1"
@@ -1547,7 +1547,7 @@ export const TableCrosscuting = (props: any) => {
                                                         Target/Satuan
                                                     </td>
                                                     <td
-                                                        className={`min-w-[300px] border px-2 py-3 bg-white text-start   
+                                                        className={`min-w-[300px] border px-2 py-3 bg-white text-start
                                                         `}
                                                     >
                                                         -
@@ -1637,7 +1637,7 @@ export const TableCrosscuting = (props: any) => {
                                     Jenis Pohon
                                 </td>
                                 <td
-                                    className={`min-w-[300px] border px-2 py-3 bg-white text-start 
+                                    className={`min-w-[300px] border px-2 py-3 bg-white text-start
                                         ${(data.jenis_pohon === "Strategic" || data.jenis_pohon === "Strategic Crosscutting") && 'text-red-700'}
                                         ${(data.jenis_pohon === "Tactical" || data.jenis_pohon === "Tactical Crosscutting") && 'text-blue-500'}
                                         ${(data.jenis_pohon === "Operational" || data.jenis_pohon === "Operational Crosscutting") && 'text-green-500'}

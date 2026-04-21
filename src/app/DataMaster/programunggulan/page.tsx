@@ -75,12 +75,12 @@ const MasterProgramUnggulan = () => {
             <div className="flex items-center">
                 <a href="/" className="mr-1"><FiHome /></a>
                 <p className="mr-1">/ Data Master</p>
-                <p className="mr-1">/ Program Unggulan</p>
+                <p className="mr-1">/ Program Prioritas Daerah</p>
             </div>
             <div className="mt-3 rounded-xl shadow-lg border">
                 <div className="flex items-center justify-between border-b px-5 py-5">
                     <div className="flex flex-wrap items-end">
-                        <h1 className="uppercase font-bold">Daftar Program Unggulan</h1>
+                        <h1 className="uppercase font-bold">Daftar Program Prioritas Daerah</h1>
                         <h1 className="uppercase font-bold ml-1">(Periode {Periode?.tahun_awal} - {Periode?.tahun_akhir})</h1>
                     </div>
                     <Select

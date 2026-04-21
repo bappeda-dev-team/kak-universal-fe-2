@@ -131,14 +131,14 @@ const Table: React.FC<Table> = ({ tahun_akhir, tahun_awal }) => {
                 onClick={handleModalBaru}
             >
                 <TbCirclePlus />
-                Tambah Program Unggulan
+                Tambah Program
             </ButtonSkyBorder>
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
                     <thead>
                         <tr className="bg-green-500 text-white">
                             <th className="border-r border-b px-6 py-3 text-center">No</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Program Unggulan / Hebat</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Program Prioritas Daerah</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Rencana Implementasi</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Status</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Tahun</th>

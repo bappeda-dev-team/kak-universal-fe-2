@@ -7,7 +7,6 @@ import { TbCirclePlus, TbUsers } from "react-icons/tb";
 import { FiHome } from "react-icons/fi";
 
 const MasterUser = () => {
-
     const router = useRouter();
     
     return (

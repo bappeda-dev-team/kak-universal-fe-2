@@ -11,8 +11,10 @@ import {
   TbCalendar, TbHexagonLetterV, TbHexagonLetterM, TbClipboardText, TbZoomExclamation,
   TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar,
   TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI,
-  TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbDice4Filled,
-  TbCircleFilled, TbClipboardTypography, TbFileCheck, TbFileImport, TbRubberStamp
+  TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbFileImport,
+  TbFileCheck, TbRubberStamp, TbAB2,
+  TbDice4Filled,
+  TbCircleFilled
 } from "react-icons/tb";
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
@@ -82,9 +84,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       // sub menu
       setMasterProgramKegiatan(false);
     }
-    if (
-      url.startsWith("/DataMaster/masterprogramkegiatan")
-    ) {
+    if (url.startsWith("/DataMaster/masterprogramkegiatan")) {
       setMasterProgramKegiatan(true);
     }
     //DATA MASTER OPD
@@ -101,15 +101,10 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
     }
     //PERENCANAAN PEMDA
     if (
-      url === "/CSF" || url === "/outcome" || url === "/intermediate" ||
       url.startsWith("/RKPD") ||
+      url.startsWith("/RPJMD") ||
       url === "/tematikpemda" ||
-      url === "/pohonkinerjapemda" ||
-      url === "/visi" ||
-      url === "/misi" ||
-      url === "/tujuanpemda" ||
-      url === "/sasaranpemda" ||
-      url === "/ikupemda"
+      url === "/pohonkinerjapemda"
     ) {
       setDataMaster(false);
       setDataMasterOpd(false);
@@ -167,21 +162,35 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setTematikKota(false);
       setRKPD(false);
     }
-    if (
-      url.startsWith("/RKPD")
-    ) {
-      // sub menu
+    // RKPD RANWAL
+    if (url.startsWith("/RKPD/ranwal")) {
       setRPJMD(false);
-      setTematikKota(false);
       setRKPD(true);
+      setRKPDRanwal(true);
+      setRKPDRankir(false);
+      setRKPDPenetapan(false);
+    }
+    // RKPD RANKIR
+    if (url.startsWith("/RKPD/rankir")) {
+      setRPJMD(false);
+      setRKPD(true);
+      setRKPDRanwal(false);
+      setRKPDRankir(true);
+      setRKPDPenetapan(false);
+    }
+    // RKPD PENETAPAN
+    if (url.startsWith("/RKPD/penetapan")) {
+      setRPJMD(false);
+      setRKPD(true);
+      setRKPDRanwal(false);
+      setRKPDRankir(false);
+      setRKPDPenetapan(true);
     }
     //PERENCANAAN OPD
     if (
       url === "/pohonkinerjaopd" ||
       url === "/pohoncascadingopd" ||
-      url === "/permasalahanopd" ||
-      url === "/isustrategisopd" ||
-      url === "/tujuanopd" || url === "/sasaranopd" || url === "/ikuopd" || url === "/matrix-renstra" ||
+      url.startsWith("/Renstra") ||
       url.startsWith("/Renja") ||
       url === "/rencanaaksiopd"
     ) {
@@ -195,23 +204,39 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setRenstra(false);
       setRenja(false);
     }
-    if (
-      url === "/permasalahanopd" ||
-      url === "/isustrategisopd" ||
-      url === "/tujuanopd" ||
-      url === "/sasaranopd" ||
-      url === "/ikuopd" ||
-      url === "/matrix-renstra"
-    ) {
+    // RENSTRA
+    if (url.startsWith("/Renstra")) {
       setRenstra(true);
       setRenja(false);
+      setRenjaRanwal(false);
+      setRenjaRankir(false);
+      setRenjaPenetapan(false);
     }
-    if (
-      url.startsWith("/Renja")
-    ) {
+    // RENJA RANWAL
+    if (url.startsWith("/Renja/ranwal")) {
       setRenstra(false);
       setRenja(true);
+      setRenjaRanwal(true);
+      setRenjaRankir(false);
+      setRenjaPenetapan(false);
     }
+    // RENJA RANKIR
+    if (url.startsWith("/Renja/rankir")) {
+      setRenstra(false);
+      setRenja(true);
+      setRenjaRanwal(false);
+      setRenjaRankir(true);
+      setRenjaPenetapan(false);
+    }
+    // RENJA PENETAPAN
+    if (url.startsWith("/Renja/penetapan")) {
+      setRenstra(false);
+      setRenja(true);
+      setRenjaRanwal(false);
+      setRenjaRankir(false);
+      setRenjaPenetapan(true);
+    }
+
     //PERENCANAAN ASN
     if (
       url === "/musrenbang" ||
@@ -254,7 +279,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       url === `/laporantaggingpohon` ||
       url === `/laporancascadingpemda` ||
       url === `/controlpokin` ||
-      url === `/laporanrb` ||
+      url === `/perjanjian-kinerja` ||
       url === `/leaderboardrekin` ||
       url === "/laporancascadingopd"
     ) {
@@ -417,9 +442,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </li>
               </Link>
               <Link href="/DataMaster/programunggulan">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/programunggulan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <li className={`flex items-center gap-x-2 cursor-pointer text-sm p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/programunggulan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbChartPie className="text-2xl" />
-                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Program Prioritas Daerah</span>
+                  <button type="button" title="Program Prioritas Daerah" className={`${!isOpen && 'hidden'} text-left duration-200`}>Program Prioritas Daerah</button>
                 </li>
               </Link>
               <Link href="/DataMaster/program-prioritas-pusat">
@@ -543,38 +568,6 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Tematik</span>
                     </li>
                   </Link>
-                  {/* LABEL TEMATIK (CSF, Outcome, intermediate) */}
-                  {/* <li
-                    className={`flex justify-between items-center font-medium gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
-                    onClick={() => setTematikKota(TematikKota ? false : true)}
-                  >
-                    <div className="flex items-center gap-2">
-                      <TbCalendarShare className="text-xl" />
-                      <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Isu Stategis</span>
-                    </div>
-                    <TbChevronRight className={`transition-all duration-200 ease-in-out ${TematikKota ? "rotate-90" : ""}`} />
-                  </li> */}
-                  {/* SUB MENU TEMATIK (CSF, Outcome, Intermediate) */}
-                  <div className={`transition-all duration-300 ease-in-out ${TematikKota ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                    <Link href="/CSF">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/CSF" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                        <TbHexagonLetterC className="text-xl" />
-                        <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>CSF</span>
-                      </li>
-                    </Link>
-                    <Link href="/outcome">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/outcome" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                        <TbHexagonLetterO className="text-xl" />
-                        <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Outcome</span>
-                      </li>
-                    </Link>
-                    <Link href="/intermediate">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/intermediate" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                        <TbHexagonLetterI className="text-xl" />
-                        <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Intermediate</span>
-                      </li>
-                    </Link>
-                  </div>
                   <Link href="/pohonkinerjapemda">
                     <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/pohonkinerjapemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbBinaryTree className="text-xl" />
@@ -594,34 +587,40 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   </li>
                   {/* SUB MENU RPJMD */}
                   <div className={`transition-all duration-300 ease-in-out ${RPJMD ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                    <Link href="/visi">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/visi" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                    <Link href="/RPJMD/visi">
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/RPJMD/visi" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbHexagonLetterV className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Visi</span>
                       </li>
                     </Link>
-                    <Link href="/misi">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/misi" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                    <Link href="/RPJMD/misi">
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/RPJMD/misi" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbHexagonLetterM className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Misi</span>
                       </li>
                     </Link>
-                    <Link href="/tujuanpemda">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/tujuanpemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                    <Link href="/RPJMD/tujuanpemda">
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/RPJMD/tujuanpemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbMapPin className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Tujuan Pemda</span>
                       </li>
                     </Link>
-                    <Link href="/sasaranpemda">
-                      <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/sasaranpemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                    <Link href="/RPJMD/sasaranpemda">
+                      <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/RPJMD/sasaranpemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbTarget className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Sasaran Pemda</span>
                       </li>
                     </Link>
-                    <Link href="/ikupemda">
-                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/ikupemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                    <Link href="/RPJMD/ikupemda">
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/RPJMD/ikupemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbChartBar className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKU</span>
+                      </li>
+                    </Link>
+                    <Link href="/RPJMD/strategi-arah-kebijakan">
+                      <li className={`flex items-center gap-x-2 cursor-pointer text-sm p-2 rounded-xl ${url === "/RPJMD/strategi-arah-kebijakan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                        <TbAB2 className="text-3xl" />
+                        <button type='button' title="Strategi & Arah Kebijakan" className={`${!isOpen && 'hidden'} text-left duration-200`}>Strategi & Arah Kebijakan</button>
                       </li>
                     </Link>
                   </div>
@@ -792,40 +791,46 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               </li>
               {/* SUBS MENU RENSTRA */}
               <div className={`transition-all duration-300 ease-in-out ${Renstra ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                <Link href="/permasalahanopd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/permasalahanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/Renstra/permasalahanopd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/permasalahanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbAlertTriangle className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Permasalahan</span>
                   </li>
                 </Link>
-                <Link href="/isustrategisopd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/isustrategisopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/Renstra/isustrategisopd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/isustrategisopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbFocus2 className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Isu Strategis</span>
                   </li>
                 </Link>
-                <Link href="/tujuanopd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/tujuanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/Renstra/tujuanopd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/tujuanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbMapPin className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Tujuan OPD</span>
                   </li>
                 </Link>
-                <Link href="/sasaranopd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/sasaranopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/Renstra/sasaranopd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/sasaranopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbTarget className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Sasaran OPD</span>
                   </li>
                 </Link>
-                <Link href="/ikuopd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/ikuopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/Renstra/ikuopd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/ikuopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbChartBar className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKU OPD</span>
                   </li>
                 </Link>
-                <Link href="/matrix-renstra">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/matrix-renstra" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/Renstra/matrix-renstra">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/matrix-renstra" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbShoppingCartDollar className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Matrix Renstra</span>
+                  </li>
+                </Link>
+                <Link href="/Renstra/strategi-arah-kebijakan">
+                  <li className={`flex items-center gap-x-2 cursor-pointer text-sm p-2 rounded-xl ${url === "/Renstra/strategi-arah-kebijakan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                    <TbAB2 className="text-3xl" />
+                    <button type='button' title="Strategi & Arah Kebijakan" className={`${!isOpen && 'hidden'} text-left duration-200`}>Strategi & Arah Kebijakan</button>
                   </li>
                 </Link>
               </div>
@@ -1157,7 +1162,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             </div>
             <Link href="/perjanjian-kinerja">
               <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/perjanjian-kinerja" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                <TbClipboardTypography className="text-xl" />
+                <TbChecklist className="text-xl" />
                 <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Perjanjian Kinerja</span>
               </li>
             </Link>

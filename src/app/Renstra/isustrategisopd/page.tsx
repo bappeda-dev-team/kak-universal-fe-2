@@ -4,9 +4,7 @@ import TableIsuStrategis from './TableIsuStrategis';
 import TablePermasalahan from './TablePermasalahan';
 import { useBrandingContext } from '@/context/BrandingContext';
 import { FiHome } from 'react-icons/fi';
-import { useEffect, useState } from 'react';
 import { OpdTahunNull, TahunNull } from '@/components/global/OpdTahunNull';
-import { getUser, getPeriode, getToken, setCookie } from '@/components/lib/Cookie';
 import { IsLoadingBranding } from '@/components/global/Loading';
 
 const IsuStrategis = () => {

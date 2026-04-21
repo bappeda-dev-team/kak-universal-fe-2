@@ -188,15 +188,15 @@ export const FormEditCascading: React.FC<{
 
             const filteredPegawai = responseData
                 .filter((pegawai: any) => {
-                    return pegawai.role?.some((r: any) => r.role === "level_3" || r.role === "level_4");
+                    return pegawai.role.some((r: any) => r.role === "level_3" || r.role === "level_4");
                 }).map((pegawai: any) => ({
                     value: pegawai.pegawai_id,
                     label: pegawai.nama_pegawai,
                 }));
-            console.log(filteredPegawai);
+                console.log(filteredPegawai);
             setPelaksanaOption(filteredPegawai);
         } catch (err) {
-            console.log(err);
+            console.log('gagal mendapatkan data opd');
         } finally {
             setIsLoading(false);
         }
@@ -265,7 +265,7 @@ export const FormEditCascading: React.FC<{
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const pelaksanaIds = Pelaksana?.map((pelaksana) => ({
-            pegawai_id: pelaksana.value, // Ubah `value` menjadi `pegawai_id`
+            pegawai_id: String(pelaksana.value), // Ubah `value` menjadi `pegawai_id`
         })) || [];
         const formData = {
             //key : value
@@ -367,8 +367,8 @@ export const FormEditCascading: React.FC<{
                                                             } else if (level === 5) {
                                                                 fetchPelaksana('level_2');
                                                             } else if (level === 6) {
-                                                                // fetchPelaksana('level_3');
                                                                 fetchPelaksana3dan4();
+                                                                // fetchPelaksana('level_3');
                                                             } else if (level >= 7) {
                                                                 fetchPelaksana('level_4');
                                                             } else {

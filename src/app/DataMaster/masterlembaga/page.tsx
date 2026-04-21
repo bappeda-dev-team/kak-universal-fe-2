@@ -1,7 +1,7 @@
 import { FiHome } from "react-icons/fi";
 import Table from "@/components/pages/datamaster/masterlembaga/Table";
 
-const masterjabatan = () => {
+const PageMasterLembaga = () => {
     return(
         <>
             <div className="flex items-center">
@@ -32,4 +32,4 @@ const masterjabatan = () => {
     )
 }
 
-export default masterjabatan;
+export default PageMasterLembaga;

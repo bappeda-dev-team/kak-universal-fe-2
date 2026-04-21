@@ -399,6 +399,7 @@ export const FormPohonPemda: React.FC<{
                                     <Controller
                                         name="nama_pohon"
                                         control={control}
+                                        rules={{ required: "wajib terisi" }}
                                         render={({ field }) => (
                                             <input
                                                 {...field}
@@ -415,6 +416,13 @@ export const FormPohonPemda: React.FC<{
                                             />
                                         )}
                                     />
+                                    {errors.nama_pohon ?
+                                        <h1 className="text-red-500">
+                                            {errors.nama_pohon.message}
+                                        </h1>
+                                        :
+                                        <h1 className="text-slate-300 text-xs">*nama pohon wajib terisi</h1>
+                                    }
                                 </div>
                                 {/* TAGGING */}
                                 {level > 2 &&
@@ -1577,6 +1585,7 @@ export const FormEditPohon: React.FC<{
                             <Controller
                                 name="nama_pohon"
                                 control={control}
+                                rules={{ required: "wajib terisi" }}
                                 render={({ field }) => (
                                     <input
                                         {...field}
@@ -1593,6 +1602,13 @@ export const FormEditPohon: React.FC<{
                                     />
                                 )}
                             />
+                            {errors.nama_pohon ?
+                                <h1 className="text-red-500">
+                                    {errors.nama_pohon.message}
+                                </h1>
+                                :
+                                <h1 className="text-slate-300 text-xs">*nama pohon wajib terisi</h1>
+                            }
                         </div>
                         {/* TAGGING */}
                         {level > 2 &&

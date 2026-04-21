@@ -557,7 +557,7 @@ export const FormEditUser = () => {
             }
         }
         fetchUser();
-    }, [id, reset, token]);
+    }, [id, reset, token, activeOptions]);
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;

@@ -56,7 +56,7 @@ const Table = () => {
             }
         }
         fetchBidangUrusanOpd();
-    }, [branding, opd, FetchTrigger]);
+    }, [branding, opd, FetchTrigger, token]);
 
     const hapusBidangUrusan = async (id: any) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;

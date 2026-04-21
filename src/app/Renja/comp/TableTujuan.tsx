@@ -101,7 +101,7 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
             }
         }
         fetchTujuan();
-    }, [kode_opd, tahun, token, router, FetchTrigger])
+    }, [kode_opd, tahun, token, router, FetchTrigger, branding?.api_perencanaan, menu])
 
     const handleFetchTrigger = () => { setFetchTrigger((prev) => !prev) }
     const handleTambahIndikator = (tujuan_id: number) => {

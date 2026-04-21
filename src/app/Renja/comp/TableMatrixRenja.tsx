@@ -100,7 +100,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
             }
         }
         fetchMatrix();
-    }, [kode_opd, tahun, token, FetchTrigger]);
+    }, [kode_opd, tahun, token, FetchTrigger, menu]);
 
     if (DataNull) {
         return (

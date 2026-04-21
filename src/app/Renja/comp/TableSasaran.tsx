@@ -124,7 +124,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
             fetchSasaranOpd();
 
         }
-    }, [token, branding, tahun, kode_opd, router, FetchTrigger]);
+    }, [token, branding, tahun, kode_opd, router, FetchTrigger, menu]);
 
     const handleFetchTrigger = () => { setFetchTrigger((prev) => !prev) }
     const handleTambahIndikator = (tujuan_id: string) => {

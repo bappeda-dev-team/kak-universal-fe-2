@@ -85,7 +85,7 @@ const TableIkuRenja: React.FC<table> = ({ tahun, kode_opd, menu }) => {
         if (Tahun != undefined) {
             fetchIkuRenja();
         }
-    }, [token, Tahun, kode_opd, TableNonAktif, TableAktif]);
+    }, [token, Tahun, kode_opd, TableNonAktif, TableAktif, branding?.api_perencanaan, menu, router, tahun]);
 
     const UpdateStatusIku = async (id: string,) => {
         const formData = {

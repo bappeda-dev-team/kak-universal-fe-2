@@ -51,13 +51,15 @@ interface modal {
     id?: number; // id tujuan opd
     periode?: number; // id periode
     tahun?: number; // tahun value header
+    tahun_awal?: number;
+    tahun_akhir?: number;
     tahun_list?: string[];
     kode_opd?: string;
     special?: boolean;
     onSuccess: () => void;
 }
 
-export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd, periode, metode, tahun, tahun_list, special, onSuccess }) => {
+export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd, periode, metode, tahun, tahun_awal, tahun_akhir, tahun_list, special, onSuccess }) => {
 
     const {
         control,
@@ -193,6 +195,8 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
         const formDataNew = {
             //key : value
             kode_bidang_urusan: BidangUrusan?.value,
+            tahun_awal: special === true ? Periode?.tahun_awal : String(tahun_awal),
+            tahun_akhir: special === true ? Periode?.tahun_akhir : String(tahun_akhir),
             periode_id: special === true ? Periode?.value : periode,
             kode_opd: kode_opd,
             tujuan: TujuanOpd,
@@ -215,6 +219,8 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
             kode_bidang_urusan: BidangUrusan?.value,
             tujuan: TujuanOpd,
             periode_id: periode,
+            tahun_awal: String(tahun_awal),
+            tahun_akhir: String(tahun_akhir),
             indikator: data.indikator.map((ind) => ({
                 indikator: ind.indikator,
                 definisi_operasional: ind.definisi_operasional,
@@ -446,6 +452,25 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                     />
                                 </div>
                                 <div className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                    <Controller
+                                        name={`indikator.${index}.definisi_operasional`}
+                                        control={control}
+                                        defaultValue={field.definisi_operasional}
+                                        render={({ field }) => (
+                                            <div className="flex flex-col py-3">
+                                                <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                    Definisi Operasional :
+                                                </label>
+                                                <input
+                                                    {...field}
+                                                    className="border px-4 py-2 rounded-lg"
+                                                    placeholder={`Masukkan Definisi Operasional`}
+                                                />
+                                            </div>
+                                        )}
+                                    />
+                                </div>
+                                <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
                                     <Controller
                                         name={`indikator.${index}.rumus_perhitungan`}
                                         control={control}

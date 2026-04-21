@@ -354,6 +354,7 @@ export const FormPohonOpd: React.FC<{
                                     <Controller
                                         name="nama_pohon"
                                         control={control}
+                                        rules={{ required: "wajib terisi" }}
                                         render={({ field }) => (
                                             <input
                                                 {...field}
@@ -370,6 +371,13 @@ export const FormPohonOpd: React.FC<{
                                             />
                                         )}
                                     />
+                                    {errors.nama_pohon ?
+                                        <h1 className="text-red-500">
+                                            {errors.nama_pohon.message}
+                                        </h1>
+                                        :
+                                        <h1 className="text-slate-300 text-xs">*nama pohon wajib terisi</h1>
+                                    }
                                 </div>
                                 {/* TAGGING */}
                                 <label className="uppercase text-xs font-bold text-gray-700 my-2">
@@ -1003,8 +1011,8 @@ export const FormEditPohon: React.FC<{
                 console.log(`data program unggulan Pusat belum di tambahkan / kosong`);
             } else {
                 const program = data.data.map((item: any) => ({
-                    value: item.kode_program_unggulan,
-                    label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                    value: item.kode_program_prioritas_pusat,
+                    label: `${item.nama_program_prioritas_pusat} - ${item.rencana_implementasi}`,
                 }));
                 setProgramPusatOption(program);
                 // console.log("option : ", program);
@@ -1104,6 +1112,7 @@ export const FormEditPohon: React.FC<{
                             <Controller
                                 name="nama_pohon"
                                 control={control}
+                                rules={{ required: "wajib terisi" }}
                                 render={({ field }) => (
                                     <input
                                         {...field}
@@ -1120,6 +1129,13 @@ export const FormEditPohon: React.FC<{
                                     />
                                 )}
                             />
+                            {errors.nama_pohon ?
+                                <h1 className="text-red-500">
+                                    {errors.nama_pohon.message}
+                                </h1>
+                                :
+                                <h1 className="text-slate-300 text-xs">*nama pohon wajib terisi</h1>
+                            }
                         </div>
                         {/* TAGGING */}
                         <label className="uppercase text-xs font-bold text-gray-700 my-2">
@@ -1272,7 +1288,9 @@ export const FormEditPohon: React.FC<{
                                                 isClearable
                                                 isMulti
                                                 onMenuOpen={() => {
-                                                    fetchProgramPusat();
+                                                    if (ProgramOption.length === 0) {
+                                                        fetchProgramPusat();
+                                                    }
                                                 }}
                                                 onChange={(option) => {
                                                     field.onChange(option || []);

@@ -76,7 +76,7 @@ export const ModalMasterJabatan: React.FC<modal> = ({ isOpen, onClose, onSuccess
             }
         };
         fetchOpd();
-    }, [branding])
+    }, [branding, token])
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const formData = {

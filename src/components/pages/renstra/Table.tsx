@@ -281,7 +281,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
 export const TheadMatrix: React.FC<Thead> = ({ jenis, type, tahun_list }) => {
     return (
         <thead>
-            <tr className={` 
+            <tr className={`
                 ${jenis === "Urusan" && "bg-white text-black"}
                 ${jenis === "Bidang Urusan" && "bg-red-500 text-white"}
                 ${jenis === "Program" && "bg-blue-500 text-white"}
