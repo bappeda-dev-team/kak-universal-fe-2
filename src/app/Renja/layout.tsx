@@ -15,7 +15,7 @@ export default function RenjaLayout({
 
     const { LoadingBranding, branding } = useBrandingContext();
 
-    const allowedRoles = ["super_admin"];
+    const allowedRoles = ["super_admin", "admin_opd"];
 
     const user: string[] = branding?.user?.roles || [];
     const isAuthorized = user.some(role => allowedRoles.includes(role));
