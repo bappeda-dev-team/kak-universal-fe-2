@@ -12,55 +12,6 @@ interface TableTema {
 }
 
 const TableTema: React.FC<TableTema> = ({ Data }) => {
-
-    const Dummy = [
-        {
-            "nama": "BERSAHAJA DALAM TATA KELOLA PEMERINTAHAN",
-            "child": [
-                {
-                    "nama": "MENINGKATKAN KUALITAS LAYANAN PUBLIK ",
-                    "child": [
-                        {
-                            "nama": "Peningkatan Kualitas Pelayanan Publik Pada Mal Pelayanan Publik",
-                            "child": []
-                        },
-                        {
-                            "nama": "Peningkatan Kualitas Pelayanan Publik Pada Mal Pelayanan Publik",
-                            "child": []
-                        }
-                    ]
-                },
-                {
-                    "nama": "MENINGKATKAN KUALITAS LAYANAN PUBLIK 2",
-                    "child": []
-                }
-            ]
-        },
-        {
-            "nama": "BERSAHAJA PADA PEMBANGUNAN EKONOMI",
-            "child": [
-                {
-                    "nama": "Meningkatkan Pertumbuhan Investasi Daerah 1",
-                    "child": []
-                },
-                {
-                    "nama": "Meningkatkan Pertumbuhan Investasi Daerah 2",
-                    "child": []
-                },
-                {
-                    "nama": "Meningkatkan Pertumbuhan Investasi Daerah 3",
-                    "child": []
-                }
-            ]
-        },
-        {
-            "nama": "BERSAHAJA PADA PEMBANGUNAN EKONOMI NO CHILD",
-            "child": [
-
-            ]
-        }
-    ]
-
     return (
         <div className="flex flex-col w-full items-center">
             <div className="overflow-auto m-2 rounded-t-xl border w-full">
@@ -87,7 +38,7 @@ const TableTema: React.FC<TableTema> = ({ Data }) => {
                                 </td>
                             </tr>
                             :
-                            Dummy?.map((tema: Tema, index: number) => {
+                            Data?.map((tema: Tema, index: number) => {
 
                                 const panjangSubTema = tema.child.length === 0 ? 1 : tema.child.length
                                 const panjangSubSubTema = tema.child.reduce((acc: number, st: Tema) => {
