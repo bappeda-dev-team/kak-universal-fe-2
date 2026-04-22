@@ -12,6 +12,55 @@ interface TableTema {
 }
 
 const TableTema: React.FC<TableTema> = ({ Data }) => {
+
+    const Dummy = [
+        {
+            "nama": "BERSAHAJA DALAM TATA KELOLA PEMERINTAHAN",
+            "child": [
+                {
+                    "nama": "MENINGKATKAN KUALITAS LAYANAN PUBLIK ",
+                    "child": [
+                        {
+                            "nama": "Peningkatan Kualitas Pelayanan Publik Pada Mal Pelayanan Publik",
+                            "child": []
+                        },
+                        {
+                            "nama": "Peningkatan Kualitas Pelayanan Publik Pada Mal Pelayanan Publik",
+                            "child": []
+                        }
+                    ]
+                },
+                {
+                    "nama": "MENINGKATKAN KUALITAS LAYANAN PUBLIK 2",
+                    "child": []
+                }
+            ]
+        },
+        {
+            "nama": "BERSAHAJA PADA PEMBANGUNAN EKONOMI",
+            "child": [
+                {
+                    "nama": "Meningkatkan Pertumbuhan Investasi Daerah 1",
+                    "child": []
+                },
+                {
+                    "nama": "Meningkatkan Pertumbuhan Investasi Daerah 2",
+                    "child": []
+                },
+                {
+                    "nama": "Meningkatkan Pertumbuhan Investasi Daerah 3",
+                    "child": []
+                }
+            ]
+        },
+        {
+            "nama": "BERSAHAJA PADA PEMBANGUNAN EKONOMI NO CHILD",
+            "child": [
+
+            ]
+        }
+    ]
+
     return (
         <div className="flex flex-col w-full items-center">
             <div className="overflow-auto m-2 rounded-t-xl border w-full">
@@ -33,21 +82,63 @@ const TableTema: React.FC<TableTema> = ({ Data }) => {
                     <tbody>
                         {Data?.length === 0 ?
                             <tr>
-                                <td className="border-r border-b border-emerald-500 px-6 py-4">
+                                <td colSpan={4} className="border-r border-b border-emerald-500 px-6 py-4">
                                     Tidak terlibat di tematik manapun
                                 </td>
                             </tr>
                             :
-                            Data?.map((item: Tema, index: number) => (
-                                <React.Fragment key={index}>
-                                    <tr>
-                                        <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{index + 1}</td>
-                                        <td className="border-r border-b border-emerald-500 px-6 py-4">{item.nama || "-"}</td>
-                                        <td className="border-r border-b border-emerald-500 px-6 py-4">-</td>
-                                        <td className="border-b border-emerald-500 px-6 py-4">-</td>
-                                    </tr>
-                                </React.Fragment>
-                            ))
+                            Dummy?.map((tema: Tema, index: number) => {
+
+                                const panjangSubTema = tema.child.length === 0 ? 1 : tema.child.length
+                                const panjangSubSubTema = tema.child.reduce((acc: number, st: Tema) => {
+                                    const subSubTemaLength = st.child.length === 0 ? 1 : st.child.length
+                                    return acc + subSubTemaLength
+                                }, 0)
+                                const Total = panjangSubTema + panjangSubSubTema + 1;
+                                console.log(`${tema.nama} sub sub tema: `, panjangSubSubTema)
+
+
+                                return (
+                                    <React.Fragment key={index}>
+                                        <tr>
+                                            <td rowSpan={Total} className="border-r border-b border-emerald-500 px-6 py-4 text-center">{index + 1}</td>
+                                            <td rowSpan={Total} className="border-r border-b border-emerald-500 px-6 py-4 font-bold">{tema.nama || "-"}</td>
+                                        </tr>
+                                        {tema.child.length === 0 ?
+                                            <tr>
+                                                <td className="border-b border-r border-emerald-500 px-6 py-4">-</td>
+                                                <td className="border-b border-emerald-500 px-6 py-4">-</td>
+                                            </tr>
+                                            :
+                                            tema.child.map((s: Tema, s_index: number) => {
+
+                                                const subLength = s.child.length === 0 ? 1 : s.child.length;
+
+                                                return (
+                                                    (
+                                                        <React.Fragment key={s_index}>
+                                                            <tr>
+                                                                <td rowSpan={subLength + 1} className="border-r border-b border-emerald-500 px-6 py-4">{s.nama || "-"}</td>
+                                                            </tr>
+                                                            {s.child.length === 0 ?
+                                                                <tr>
+                                                                    <td className="border-b border-emerald-500 px-6 py-4">-</td>
+                                                                </tr>
+                                                                :
+                                                                s.child.map((ss: Tema, ss_index: number) => (
+                                                                    <tr key={ss_index}>
+                                                                        <td className="border-b border-emerald-500 px-6 py-4">{ss.nama || "-"}</td>
+                                                                    </tr>
+                                                                ))
+                                                            }
+                                                        </React.Fragment>
+                                                    )
+                                                )
+                                            })
+                                        }
+                                    </React.Fragment>
+                                )
+                            })
                         }
                     </tbody>
                 </table>
