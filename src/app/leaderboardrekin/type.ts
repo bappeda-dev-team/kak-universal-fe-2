@@ -3,6 +3,7 @@ export interface Pokin {
     nama_opd: string;
     tematik: Pohon[];
     persentase_cascading: string;
+    is_hidden: boolean;
 }
 export interface Pohon {
     nama: string;
