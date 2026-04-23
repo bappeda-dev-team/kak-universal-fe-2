@@ -504,7 +504,7 @@ const buildCandidates = (
 ): RekinOption[] => {
     const sasaranPemdas = data.sasaran_pemdas || []
 
-    // LEVEL 4 -> sasaran pemda
+    // 🔹 LEVEL 4 → sasaran pemda
     if (levelPk === 4) {
         return sasaranPemdas.map((sp: any) => ({
             id: String(sp.id_sasaran_pemda),
@@ -514,25 +514,74 @@ const buildCandidates = (
         }))
     }
 
-    // level 7 dst bisa ke operasional (level 6)
-    const targetAtasanLevel = levelPk > 6 ? 6 : levelPk - 1
+    // 🔹 index semua pk biar cepat lookup (id_pohon -> pk)
+    const pkById = new Map<number, any>()
 
-    return data.pk_item
-        .filter((l: any) => l.level_pk === targetAtasanLevel)
-        .flatMap((l: any) =>
-            l.pegawais.flatMap((p: any) =>
-                p.pks
-                    .filter((pkAtasan: any) =>
-                        pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_pemilik_pk &&
-                        pkAtasan.id_pohon === pk.id_parent_pohon &&
-                        pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_atasan
-                    )
-                    .map((pkAtasan: any) => ({
-                        id: pkAtasan.id_rekin_pemilik_pk,
-                        rekin: pkAtasan.rekin_pemilik_pk,
-                        namaPegawai: p.nama_pegawai,
-                        nipPegawai: p.nip,
-                    }))
-            )
+    data.pk_item.forEach((l: any) => {
+        l.pegawais.forEach((p: any) => {
+            p.pks.forEach((item: any) => {
+                pkById.set(item.id_pohon, {
+                    ...item,
+                    pegawai: p
+                })
+            })
+        })
+    })
+
+    // 🔹 tentukan target level
+    let targetLevel: number | number[]
+
+    switch (true) {
+        case levelPk === 5:
+            targetLevel = 4
+            break
+
+        case levelPk === 6:
+            targetLevel = [4, 5]
+            break
+
+        case levelPk > 6:
+            targetLevel = 6
+            break
+
+        default:
+            targetLevel = levelPk - 1
+    }
+
+    // 🔹 fungsi naik ke atas
+    const findAncestors = (startPk: any): any[] => {
+        const result: any[] = []
+        let current = startPk
+
+        while (current) {
+            current = pkById.get(current.id_parent_pohon)
+
+            if (!current) break
+
+            const match = Array.isArray(targetLevel)
+                ? targetLevel.includes(current.level_pk)
+                : current.level_pk === targetLevel
+
+            if (match) {
+                result.push(current)
+            }
+        }
+
+        return result
+    }
+
+    // 🔹 ambil kandidat dari chain
+    const candidates = findAncestors(pk)
+        .filter((pkAtasan: any) =>
+            pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_pemilik_pk &&
+            pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_atasan
         )
+        .map((pkAtasan: any) => ({
+            id: pkAtasan.id_rekin_pemilik_pk,
+            rekin: pkAtasan.rekin_pemilik_pk,
+            namaPegawai: pkAtasan.pegawai.nama_pegawai,
+            nipPegawai: pkAtasan.pegawai.nip,
+        }))
+
+    return candidates
 }

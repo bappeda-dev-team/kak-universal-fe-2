@@ -7,6 +7,8 @@ const LEVEL_LABEL: Record<number, string> = {
     5: "Tactical",
     6: "Operational",
     7: "Operational N",
+    8: "Operational N 1",
+    9: "Operational N 2",
 }
 
 function translateLevel(level: number): string {
@@ -300,21 +302,3 @@ const HubungkanAtasanButton = ({
     );
 }
 
-const roleColor = (role: string) => {
-    switch (role) {
-        case "super_admin":
-            return "bg-blue-700 text-slate-200"
-        case "level_1":
-            return "bg-red-100 text-red-700"
-        case "level_2":
-            return "bg-blue-100 text-blue-700"
-        case "level_3":
-            return "bg-green-100 text-green-700"
-        case "admin_opd":
-            return "bg-yellow-100 text-yellow-700"
-        case "admin_kecamatan":
-            return "bg-yellow-100 text-yellow-700"
-        default:
-            return "bg-slate-100 text-slate-700"
-    }
-}
