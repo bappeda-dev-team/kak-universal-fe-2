@@ -62,6 +62,21 @@ export const Table: React.FC<Table> = ({ tahun }) => {
         }
     }, [token, tahun]);
 
+    const handleUpdate = (dataUpdate: Pokin) => {
+        setData(prev => {
+            const updated = prev.map(p =>
+                p.kode_opd === dataUpdate.kode_opd
+                    ? { ...p, ...dataUpdate }
+                    : p
+            );
+
+            const DataFilter = updated.filter(item => item.is_hidden === false);
+            setDataCetak(DataFilter);
+
+            return updated;
+        });
+    };
+
     const handleModalCetak = () => {
         if (Cetak) {
             setCetak(false);
@@ -118,10 +133,11 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                 <th className="border-r border-b px-2 py-1 text-center">7</th>
                             </tr>
                         </thead>
-                        <Body 
+                        <Body
                             Data={Data || []}
                             tahun={tahun}
                             token={token || ""}
+                            onUpdate={handleUpdate}
                         />
                     </table>
                 </div>
@@ -142,9 +158,10 @@ interface Body {
     Data: Pokin[];
     tahun: number;
     token: string;
+    onUpdate: (data: Pokin) => void;
 }
 
-export const Body: React.FC<Body> = ({ Data, tahun, token }) => {
+export const Body: React.FC<Body> = ({ Data, tahun, token, onUpdate }) => {
 
     const { branding } = useBrandingContext();
     const [LoadingHidden, setLoadingHidden] = useState<boolean | null>(null);
@@ -222,6 +239,7 @@ export const Body: React.FC<Body> = ({ Data, tahun, token }) => {
             if (result.code === 200) {
                 AlertNotification("Berhasil", "", "success", 2000);
                 onSuccess();
+                onUpdate(result.data)
             } else {
                 AlertNotification("Gagal", `${result.data}`, "error", 2000);
             }
