@@ -514,7 +514,8 @@ const buildCandidates = (
         }))
     }
 
-    const targetAtasanLevel = levelPk - 1
+    // level 7 dst bisa ke operasional (level 6)
+    const targetAtasanLevel = levelPk > 6 ? 6 : levelPk - 1
 
     return data.pk_item
         .filter((l: any) => l.level_pk === targetAtasanLevel)
