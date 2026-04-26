@@ -70,9 +70,10 @@ export const Table: React.FC<Table> = ({ tahun }) => {
         const fetchDataTagging = async () => {
             setLoading(true)
             const API_URL_TAGGING = process.env.NEXT_PUBLIC_API_URL_TAGGING;
+            console.log("nama tagging nya : ", NamaTagging);
             try {
                 const response = await fetch(`${API_URL_TAGGING}/laporan/tagging_pokin?nama_tagging=${encodeURIComponent(NamaTagging)}&tahun=${tahun}`, {
-                // const response = await fetch(`${API_URL_TAGGING}/laporan/tagging_pokin?nama_tagging=Program%20Unggulan%20Bupati&tahun=2025 `, {
+                    // const response = await fetch(`${API_URL_TAGGING}/laporan/tagging_pokin?nama_tagging=Program%20Unggulan%20Bupati&tahun=2025 `, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -124,7 +125,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                     onClick={() => setNamaTagging("Program Unggulan Bupati")}
                 >
                     <TbCircleCheckFilled />
-                    Program Unggulan Bupati
+                    Program Prioritas Daerah
                 </button>
                 <button
                     className={`flex items-center gap-1 p-2 border ${NamaTagging === "RB" ? 'bg-sky-500 text-white' : 'border-sky-500 text-sky-500'} rounded-lg hover:bg-sky-500 hover:text-white
@@ -140,7 +141,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                     onClick={() => setNamaTagging("Program Unggulan Pemerintah Pusat")}
                 >
                     <TbCircleCheckFilled />
-                    Program Unggulan Pemerintah Pusat
+                    Program Priorotas Pusat
                 </button>
             </div>
             {NamaTagging === "" ?
@@ -151,7 +152,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                         <thead>
                             <tr className="bg-emerald-500 text-white">
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 w-[50px]">No</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">{DataTagging?.nama_tagging || "Tagging"}</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">{namaTagging(DataTagging?.nama_tagging || "") || "Tagging"}</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Perangkat Daerah</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pohon</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Level Pohon</th>
@@ -246,4 +247,18 @@ export const Table: React.FC<Table> = ({ tahun }) => {
             }
         </div>
     )
+}
+
+
+export const namaTagging = (nama: string) => {
+    switch (nama) {
+        case 'Program Unggulan Bupati':
+            return 'Program Prioritas Daerah';
+        case 'RB':
+            return 'RB';
+        case 'Program Unggulan Pemerintah Pusat':
+            return 'Program Prioritas Pusat'
+        default:
+            return '-'
+    }
 }
