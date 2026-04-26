@@ -18,9 +18,9 @@ const Table: React.FC<Table> = ({ Data }) => {
                     <thead>
                         <tr className="bg-emerald-500 text-white">
                             <th className="border-r border-b px-6 py-3 text-center">No</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Tujuan Pemda</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Sasaran Pemda</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Strategic Pemda</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Tujuan OPD</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Sasaran OPD</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Strategic OPD</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Arah Kebijakan</th>
                         </tr>
                     </thead>
