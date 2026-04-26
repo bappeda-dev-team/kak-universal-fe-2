@@ -321,6 +321,7 @@ export const Body: React.FC<Body> = ({ Data, tahun, token, onUpdate }) => {
                                             {item.persentase_cascading === "100%" &&
                                                 <ButtonBlackBorder
                                                     className="flex items-center gap-1 w-full"
+                                                    type="button"
                                                     disabled={Proses}
                                                     onClick={() => AlertQuestion("Clone Pokin", `Clone Pokin ke ${branding?.tahun?.value}?`, "question", "Clone", "Batal").then((resp) => {
                                                         if (resp.isConfirmed) {
@@ -334,6 +335,7 @@ export const Body: React.FC<Body> = ({ Data, tahun, token, onUpdate }) => {
                                             }
                                             {Hidden ?
                                                 <ButtonSkyBorder
+                                                    type="button"
                                                     className="flex items-center gap-1 w-full"
                                                     onClick={() => hiddenLeader(!item.is_hidden, item.kode_opd, handleHidden)}
                                                 >
@@ -396,13 +398,24 @@ export const Body: React.FC<Body> = ({ Data, tahun, token, onUpdate }) => {
                                                                                     Clone
                                                                                 </ButtonBlackBorder>
                                                                             }
-                                                                            <ButtonRedBorder
-                                                                                className="flex items-center gap-1 w-full"
-                                                                                onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
-                                                                            >
-                                                                                <TbEyeClosed />
-                                                                                Hidden
-                                                                            </ButtonRedBorder>
+                                                                            {Hidden ?
+                                                                                <ButtonSkyBorder
+                                                                                    type="button"
+                                                                                    className="flex items-center gap-1 w-full"
+                                                                                    onClick={() => hiddenLeader(!item.is_hidden, item.kode_opd, handleHidden)}
+                                                                                >
+                                                                                    <TbEye />
+                                                                                    Show
+                                                                                </ButtonSkyBorder>
+                                                                                :
+                                                                                <ButtonRedBorder
+                                                                                    className="flex items-center gap-1 w-full"
+                                                                                    onClick={() => hiddenLeader(!item.is_hidden, item.kode_opd, handleHidden)}
+                                                                                >
+                                                                                    <TbEyeClosed />
+                                                                                    Hidden
+                                                                                </ButtonRedBorder>
+                                                                            }
                                                                         </div>
                                                                     </td>
                                                                 </>
