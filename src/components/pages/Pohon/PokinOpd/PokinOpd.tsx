@@ -52,7 +52,7 @@ interface TujuanOpd {
 }
 
 const PokinOpd = () => {
-    const {branding} = useBrandingContext();
+    const { branding } = useBrandingContext();
     const nama_opd = branding?.user?.roles == "super_admin" ? branding?.opd?.label : branding?.user?.nama_opd;
     const kode_opd = branding?.user?.roles == "super_admin" ? branding?.opd?.value : branding?.user?.kode_opd;
 
@@ -81,7 +81,7 @@ const PokinOpd = () => {
     const [StrategicPemdaLength, setStrategicPemdaLenght] = useState<number>(0);
     const [TacticalPemdaLength, setTacticalPemdaLenght] = useState<number>(0);
     const [OperationalPemdaLength, setOperationalPemdaLenght] = useState<number>(0);
-    
+
     //pohon cross opd lain
     const [LoadingTotalCrosscutting, setLoadingTotalCrosscutting] = useState<boolean>(false);
     const [PohonCrosscutting, setPohonCrosscutting] = useState<boolean>(false);
@@ -564,10 +564,10 @@ const PokinOpd = () => {
                                     </tbody>
                                 </table>
                             </div>
-                            <ModalPohonPemda 
-                                isOpen={PohonPemda} 
-                                isLevel={LevelPemda} 
-                                onClose={() => { handleModalPohonPemda(4) }} 
+                            <ModalPohonPemda
+                                isOpen={PohonPemda}
+                                isLevel={LevelPemda}
+                                onClose={() => { handleModalPohonPemda(4) }}
                                 onSuccess={handleTriggerAfterPokinOutside}
                             />
                         </div>
@@ -592,9 +592,9 @@ const PokinOpd = () => {
                                             </td>
                                             <td className='border-r border-t px-2 py-1 bg-white text-center rounded-tr-lg w-full'>
                                                 <h1 className="font-semibold">
-                                                    {LoadingTotalCrosscutting ? 
+                                                    {LoadingTotalCrosscutting ?
                                                         <LoadingButtonClip2 />
-                                                    :
+                                                        :
                                                         CrossDitolak ? CrossDitolak : 0
                                                     }
                                                 </h1>
@@ -613,9 +613,9 @@ const PokinOpd = () => {
                                             </td>
                                             <td className='border-r border-b px-2 py-1 bg-white text-center rounded-br-lg w-full'>
                                                 <h1 className="font-semibold">
-                                                    {LoadingTotalCrosscutting ? 
+                                                    {LoadingTotalCrosscutting ?
                                                         <LoadingButtonClip2 />
-                                                    :
+                                                        :
                                                         CrossPending ? CrossPending : 0
                                                     }
                                                 </h1>
@@ -624,14 +624,18 @@ const PokinOpd = () => {
                                     </tbody>
                                 </table>
                             </div>
-                            <ButtonSkyBorder className="w-full" onClick={handleModalCrosscutting}>
+                            <ButtonSkyBorder
+                                className="w-full"
+                                // onClick={handleModalCrosscutting}
+                                onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
+                            >
                                 <TbSettings className='mr-1' />
                                 Edit
                             </ButtonSkyBorder>
-                            <ModalPohonCrosscutting 
+                            <ModalPohonCrosscutting
                                 isOpen={PohonCrosscutting}
-                                onClose={handleModalCrosscutting} 
-                                onSuccess={handleTriggerAfterPokinOutside} 
+                                onClose={handleModalCrosscutting}
+                                onSuccess={handleTriggerAfterPokinOutside}
                             />
                         </div>
                     </div>
@@ -799,7 +803,7 @@ const PokinOpd = () => {
                                                 onCancel={() => setFormList(formList.filter((id) => id !== formId))}
                                                 deleteTrigger={() => setDeleted((prev) => !prev)}
                                                 fetchTrigger={() => setTriggerAfterPokinOutside((prev) => !prev)}
-                                                />
+                                            />
                                         </React.Fragment>
                                     ))}
                                 </ul>
