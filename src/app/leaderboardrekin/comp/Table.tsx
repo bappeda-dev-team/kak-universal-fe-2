@@ -380,7 +380,16 @@ export const Body: React.FC<Body> = ({ Data, tahun, token, onUpdate }) => {
                                                             {isFirstRowInOPD && (
                                                                 <>
                                                                     <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4 text-center">{index + 1}</td>
-                                                                    <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4">{item.nama_opd}</td>
+                                                                    <td className="border-r border-b border-orange-500 px-6 py-4">
+                                                                        <div className="flex flex-col gap-2">
+                                                                            {item.nama_opd}
+                                                                            {Hidden &&
+                                                                                <h1 className="flex items-center justify-center gap-1 text-sm bg-red-500 text-white p-1 rounded-lg ">
+                                                                                    Disembunyikan
+                                                                                </h1>
+                                                                            }
+                                                                        </div>
+                                                                    </td>
                                                                     <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.persentase_cascading}</td>
                                                                     <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4 text-center">
                                                                         <div className="flex flex-col items-center gap-1">
