@@ -117,7 +117,7 @@ const Table = () => {
             if (!response.ok) {
                 alert("response !ok saat hapus data tujuan pemda")
             }
-            AlertNotification("Berhasil", "Data Tujuan Pemda Berhasil Dihapus", "success", 1000);
+            AlertNotification("Berhasil", "Data Visi Berhasil Dihapus", "success", 1000);
             fetchVisi(JenisPeriode ? JenisPeriode?.value : "RPJMD");
             // setFetchTrigger((prev) => !prev);
         } catch (err) {
