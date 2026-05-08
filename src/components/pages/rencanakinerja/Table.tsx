@@ -305,7 +305,7 @@ export const TablePerencanaan = () => {
                                                     halaman_url={`/rencanakinerja/${data.id_rencana_kinerja}`}
                                                 >
                                                     <TbPencilDown className="mr-1" />
-                                                    {User?.roles?.includes("level_4") ? "Rincian" : "Renaksi"}
+                                                    {User?.roles == "level_4" ? "Renaksi" : "Rincian"}
                                                 </ButtonGreenBorder>
                                             }
                                             <ButtonRedBorder className="w-full"
