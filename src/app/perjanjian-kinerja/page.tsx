@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { FiHome } from "react-icons/fi";
 import { useBrandingContext } from '@/context/BrandingContext';
-import type { PkOpdResponse, PkPegawai } from "./pk-opd-types";
+import type { PkOpdResponse, PkPegawai, PkAsn, PkOpdByLevel, SasaranPemda, AtasanCandidate } from "./pk-opd-types";
 import { getToken, getOpdTahunNew } from "@/components/lib/Cookie";
 import { AlertNotification } from "@/components/global/Alert";
 import { TablePk } from "./table-pk";
@@ -125,7 +125,7 @@ const PerjanjianKinerja = () => {
         setShowPreview(true)
     }
 
-    const getCandidates = (pk: any, levelPk: number): RekinOption[] => {
+    const getCandidates = (pk: PkAsn, levelPk: number): RekinOption[] => {
         return buildCandidates(data, pk, levelPk)
     }
 
@@ -449,21 +449,21 @@ function extractUniqueAtasanFromData(
     nipBawahan: string
 ): AtasanOption[] {
 
-    const pegawai = data.pk_item
-        .flatMap(l => l.pegawais)
-        .find(p => p.nip === nipBawahan)
+    const pegawai: PkPegawai | undefined =
+        data.pk_item
+            .flatMap((l: PkOpdByLevel): PkPegawai[] => l.pegawais)
+            .find((p: PkPegawai): boolean => p.nip === nipBawahan)
 
     if (!pegawai) return []
 
     return Array.from(
         new Map(
-            pegawai.pks
-                .filter(pk => pk.nip_atasan)
-                .map(pk => [
-                    pk.nip_atasan, // UNIQUE KEY
+            pegawai.atasan_candidates
+                .map((atasan: AtasanCandidate) => [
+                    atasan.id_pegawai, // UNIQUE KEY
                     {
-                        nip: pk.nip_atasan,
-                        nama: pk.nama_atasan
+                        nip: atasan.id_pegawai,
+                        nama: atasan.nama_pegawai
                     },
                 ])
         ).values()
@@ -498,15 +498,15 @@ function findPkPegawaiWithContext(
 }
 
 const buildCandidates = (
-    data: any,
-    pk: any,
+    data: PkOpdResponse | null,
+    pk: PkAsn,
     levelPk: number
-): RekinOption[] => {
-    const sasaranPemdas = data.sasaran_pemdas || []
+): RekinOption[] | [] => {
+    const sasaranPemdas = data?.sasaran_pemdas || []
 
     // LEVEL 4 -> sasaran pemda
     if (levelPk === 4) {
-        return sasaranPemdas.map((sp: any) => ({
+        return sasaranPemdas.map((sp: SasaranPemda) => ({
             id: String(sp.id_sasaran_pemda),
             rekin: sp.sasaran_pemda,
             nipPegawai: sp.nip_kepala_pemda,
@@ -516,22 +516,25 @@ const buildCandidates = (
 
     const targetAtasanLevel = levelPk - 1
 
-    return data.pk_item
-        .filter((l: any) => l.level_pk === targetAtasanLevel)
-        .flatMap((l: any) =>
-            l.pegawais.flatMap((p: any) =>
-                p.pks
-                    .filter((pkAtasan: any) =>
-                        pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_pemilik_pk &&
-                        pkAtasan.id_pohon === pk.id_parent_pohon &&
-                        pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_atasan
-                    )
-                    .map((pkAtasan: any) => ({
-                        id: pkAtasan.id_rekin_pemilik_pk,
-                        rekin: pkAtasan.rekin_pemilik_pk,
-                        namaPegawai: p.nama_pegawai,
-                        nipPegawai: p.nip,
-                    }))
-            )
-        )
+    const result: RekinOption[] =
+        data?.pk_item
+            ?.filter((l: PkOpdByLevel) => l.level_pk === targetAtasanLevel)
+            ?.flatMap((l: PkOpdByLevel) =>
+                l.pegawais.flatMap((p: PkPegawai) =>
+                    p.pks
+                        .filter((pkAtasan: PkAsn) =>
+                            pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_pemilik_pk &&
+                            pkAtasan.id_pohon === pk.id_parent_pohon &&
+                            pkAtasan.id_rekin_pemilik_pk !== pk.id_rekin_atasan
+                        )
+                        .map((pkAtasan: PkAsn): RekinOption => ({
+                            id: pkAtasan.id_rekin_pemilik_pk,
+                            rekin: pkAtasan.rekin_pemilik_pk,
+                            namaPegawai: p.nama_pegawai,
+                            nipPegawai: p.nip,
+                        }))
+                )
+            ) ?? []
+
+    return result;
 }
