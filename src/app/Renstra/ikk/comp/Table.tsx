@@ -58,7 +58,11 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                 });
                 const result = await response.json();
                 if (result.code === 200) {
-                    setData(result.data);
+                    if(result.data === null){
+                        setData([]);
+                    } else {
+                        setData(result.data);
+                    }
                 } else {
                     setError(true);
                     setData([]);
@@ -200,7 +204,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {Data.length === 0 ?
+                                {(Data.length === 0) ?
                                     <tr>
                                         <td className="px-6 py-3" colSpan={30}>
                                             Data Kosong / Belum Ditambahkan
