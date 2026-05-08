@@ -380,7 +380,7 @@ export const Body: React.FC<Body> = ({ Data, tahun, token, onUpdate }) => {
                                                             {isFirstRowInOPD && (
                                                                 <>
                                                                     <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4 text-center">{index + 1}</td>
-                                                                    <td className="border-r border-b border-orange-500 px-6 py-4">
+                                                                    <td rowSpan={totalBarisOPD} className="border-r border-b border-orange-500 px-6 py-4">
                                                                         <div className="flex flex-col gap-2">
                                                                             {item.nama_opd}
                                                                             {Hidden &&
