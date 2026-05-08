@@ -58,7 +58,11 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                 });
                 const result = await response.json();
                 if (result.code === 200) {
-                    setData(result.data);
+                    if (result.data === null) {
+                        setData([]);
+                    } else {
+                        setData(result.data);
+                    }
                 } else {
                     setError(true);
                     setData([]);
@@ -82,7 +86,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
         setFetchTrigger((prev) => !prev);
     }
     const handleJenis = () => {
-        if(Jenis === 5){
+        if (Jenis === 5) {
             setJenis(6);
         } else {
             setJenis(5);
@@ -110,7 +114,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                 },
             })
             const result = await response.json();
-            if(result.code === 200){
+            if (result.code === 200) {
                 setData(Data.filter((data: any) => (data.id !== id)))
                 AlertNotification("Berhasil", "Data IKK Berhasil Dihapus", "success", 1000);
             } else {
@@ -146,7 +150,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                             className={`border border-sky-600 rounded-lg px-2 py-1 ${Jenis === 5 ? 'bg-sky-500 text-white' : 'text-sky-600'}`}
                             type="button"
                             onClick={handleJenis}
-                            >
+                        >
                             Outcome (tactical)
                         </button>
                         <button
