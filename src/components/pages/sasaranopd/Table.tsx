@@ -1,12 +1,12 @@
 'use client'
 
-import { ButtonRed, ButtonGreen, ButtonSky } from "@/components/global/Button";
+import { ButtonRed, ButtonGreen, ButtonRedBorder, ButtonSkyBorder } from "@/components/global/Button";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken, getUser, getOpdTahun } from "@/components/lib/Cookie";
-import { TbPencil, TbTrash, TbCirclePlus, TbArrowBadgeDownFilled } from "react-icons/tb";
+import { TbPencil, TbTrash, TbCirclePlus, TbArrowBadgeDownFilled, TbEyeClosed, TbEye } from "react-icons/tb";
 import { ModalSasaranOpd } from "./ModalSasaranOpd";
 
 interface OptionTypeString {
@@ -341,7 +341,13 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                                                 <React.Fragment key={item.id}>
                                                     <tr>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-6 h-[150px]" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
-                                                            {item.nama_sasaran_opd || "-"}
+                                                            <div className="flex flex-col items-center gap-3">
+                                                                {item.nama_sasaran_opd || "-"}
+                                                                {/* <div className="flex items-center gap-1 py-1 px-3 rounded-xl bg-red-300 text-red-700">
+                                                                    <TbEyeClosed />
+                                                                    disembunyikan
+                                                                </div> */}
+                                                            </div>
                                                         </td>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-6 h-[150px]" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
                                                             {item.nama_tujuan_opd ?
@@ -373,6 +379,18 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                                                                         <TbTrash />
                                                                         Hapus
                                                                     </ButtonRed>
+                                                                    <ButtonRedBorder
+                                                                        type="button"
+                                                                        className="flex items-center gap-1"
+                                                                        onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
+                                                                    >
+                                                                        <TbEyeClosed />
+                                                                        Hidden
+                                                                    </ButtonRedBorder>
+                                                                    {/* <ButtonSkyBorder type="button" className="w-full flex items-center gap-1">
+                                                                        <TbEye />
+                                                                        Show
+                                                                    </ButtonSkyBorder> */}
                                                                 </div>
                                                             </td>
                                                         }
