@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FiHome } from "react-icons/fi";
-import Table from "./comp/Table";
+import { Table } from "./comp/Table";
 import { getOpdTahun, getUser } from "@/components/lib/Cookie";
 
 const IkuOpd = () => {
@@ -42,12 +42,12 @@ const IkuOpd = () => {
                 <a href="/" className="mr-1"><FiHome /></a>
                 <p className="mr-1">/ Perencanaan OPD</p>
                 <p className="mr-1">/ Renstra</p>
-                <p className="mr-1">/ IKK OPD</p>
+                <p className="mr-1">/ IKD OPD</p>
             </div>
             <div className="mt-3 rounded-xl shadow-lg border">
                 <div className="flex flex-col justify-between border-b px-5 py-5">
                     <div className="flex flex-wrap items-end">
-                        <h1 className="uppercase font-bold">Indikator Kinerja Kunci</h1>
+                        <h1 className="uppercase font-bold">Indikator Kinerja Daerah</h1>
                         <h1 className="uppercase font-bold ml-1">{Tahun? Tahun?.label : ""}</h1>
                     </div>
                     <div className="flex flex-wrap items-end">
@@ -57,6 +57,7 @@ const IkuOpd = () => {
                 <div className="p-1">
                     <Table 
                         kode_opd={kode_opd}
+                        tahun={Tahun?.value}
                     />
                 </div>
             </div>
