@@ -126,7 +126,7 @@ export const TablePk = ({
                                                         {pegawai.nip}
                                                     </p>
 
-                                                    <RolePill roles={pegawai.roles} />
+                                                    <RolePill roles={pegawai.roles || []} />
                                                 </div>
                                             </td>
                                         )}
