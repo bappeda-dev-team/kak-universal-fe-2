@@ -12,7 +12,7 @@ import {
   TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar,
   TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI,
   TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbFileImport,
-  TbFileCheck, TbRubberStamp, TbAB2, TbLockSquareRounded
+  TbFileCheck, TbRubberStamp, TbAB2, TbLockSquareRounded, TbLockSquare
 } from "react-icons/tb";
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
@@ -758,8 +758,14 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </Link>
                 <Link href="/Renstra/ikk">
                   <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/ikk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                    <TbLockSquareRounded className="text-xl" />
+                    <TbLockSquare className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKK OPD</span>
+                  </li>
+                </Link>
+                <Link href="/Renstra/ikd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/ikd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                    <TbLockSquareRounded className="text-xl" />
+                    <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKD OPD</span>
                   </li>
                 </Link>
                 <Link href="/Renstra/matrix-renstra">
