@@ -32,6 +32,7 @@ type combinedData = Anggaran & Partial<Indikator>;
 interface Anggaran {
     tahun: string;
     pagu_indikatif: number;
+    jenis_pagu: string;
 }
 interface Indikator {
     id: string;
@@ -53,6 +54,7 @@ interface Target {
 interface pagu {
     tahun: string;
     pagu_indikatif: number;
+    jenis_pagu: string;
 }
 interface table {
     jenis: "laporan" | "opd";
@@ -387,9 +389,16 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                             <td className={`border-b px-6 py-4 w-full text-center`}></td>
                             <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
                             <td className={`border-b px-6 py-4 w-full text-center`}>
-                                <span className="font-semibold text-sm">
-                                    Rp.{formatRupiah(i.pagu_indikatif)}
-                                </span>
+                                <div className="flex flex-col items-center gap-1">
+                                    {menu === "penetapan" &&
+                                        <p className="p-1 px-2 text-sm rounded-lg bg-slate-300 text-slate-700">
+                                            {i.jenis_pagu || 'unknown'}
+                                        </p>
+                                    }
+                                    <span className="font-semibold text-sm">
+                                        Rp.{formatRupiah(i.pagu_indikatif)}
+                                    </span>
+                                </div>
                             </td>
                             {(type === "opd" && menu !== "ranwal") &&
                                 <td className={`border-r border-b px-6 py-4 w-full`}></td>
@@ -431,6 +440,11 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                                                     className="border-r border-b px-6 py-4 text-center align-middle"
                                                 >
                                                     <div className="flex flex-col items-center gap-2">
+                                                        {menu === "penetapan" &&
+                                                            <p className="p-1 px-2 text-sm rounded-lg bg-slate-300 text-slate-700">
+                                                                {c.jenis_pagu || 'unknown'}
+                                                            </p>
+                                                        }
                                                         <span className="font-semibold text-sm">
                                                             Rp.{formatRupiah(c.pagu_indikatif || 0)}
                                                         </span>
