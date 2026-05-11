@@ -433,6 +433,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master RB</span>
                 </li>
               </Link>
+              <Link href="/DataMaster/ikk">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/ikk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbLockSquare className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master IKK</span>
+                </li>
+              </Link>
               <Link href="/bidang-urusan-opd">
                 <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/bidang-urusan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbFileDelta className="text-xl" />

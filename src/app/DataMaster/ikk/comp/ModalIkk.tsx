@@ -11,7 +11,7 @@ import { OptionTypeString } from "@/types";
 
 interface FormValue {
     kode_bidang_urusan: OptionTypeString | null;
-    jenis: string;
+    jenis: OptionTypeString | null;
     nama_indikator: string;
     target: string;
     satuan: string;
@@ -35,12 +35,11 @@ interface modal {
     onClose: () => void;
     Data: IKK | null;
     jenis: 'tambah' | 'edit';
-    jenis_data: "outcome" | "output";
     kode_opd: string;
     onSuccess: () => void;
 }
 
-export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, jenis_data, kode_opd, Data, onSuccess }) => {
+export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, kode_opd, Data, onSuccess }) => {
 
     const {
         control,
@@ -54,7 +53,12 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, jenis_data, 
                     label: Data?.nama_bidang_urusan
                 }
                 : null,
-            jenis: jenis_data,
+            jenis: Data?.jenis
+                ? {
+                    value: Data?.jenis,
+                    label: Data?.jenis
+                }
+                : null,
             nama_indikator: Data?.nama_indikator || "",
             target: Data?.target || '',
             satuan: Data?.satuan || '',
@@ -92,12 +96,17 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, jenis_data, 
         }
     }
 
+    const OptionJenis = [
+        {value: "output", label: "output"},
+        {value: "outcome", label: "outcome"}
+    ]
+
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const formData = {
             //key : value
             kode_bidang_urusan: data.kode_bidang_urusan?.value,
-            jenis: data.jenis,
+            jenis: data.jenis?.value,
             nama_indikator: data.nama_indikator,
             target: data.target,
             satuan: data.satuan,
@@ -183,9 +192,31 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, jenis_data, 
                                 className="uppercase text-xs font-bold text-gray-700 my-2"
                                 htmlFor="jenis"
                             >
-                                Jenis
+                                Jenis:
                             </label>
-                            <div className="border px-4 py-2 rounded-lg italic">{jenis_data || "-"}</div>
+                            <Controller
+                                name="jenis"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        {...field}
+                                        id="jenis"
+                                        placeholder="Pilih Jenis"
+                                        options={OptionJenis}
+                                        isLoading={Loading}
+                                        styles={{
+                                            control: (baseStyles, state) => ({
+                                                ...baseStyles,
+                                                borderRadius: '8px',
+                                                borderColor: 'black', // Warna default border menjadi merah
+                                                '&:hover': {
+                                                    borderColor: '#3673CA', // Warna border tetap merah saat hover
+                                                },
+                                            }),
+                                        }}
+                                    />
+                                )}
+                            />
                         </div>
                         <div className="flex flex-col py-3">
                             <label
