@@ -206,7 +206,7 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
                     <Text>{data?.pegawai.jabatan_pegawai || ""}</Text>
                 </View>
                 <TableRekin rekin={data?.pegawai.pks || []} />
-                {data?.pegawai?.item_pk &&
+                {(data?.pegawai?.item_pk && data?.pegawai?.level_pk < 7) &&
                     <TableProgram
                         data={data?.pegawai?.item_pk || []}
                         jenis_item={data?.pegawai?.jenis_item || ""}
