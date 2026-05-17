@@ -35,6 +35,7 @@ export interface SasaranOPD {
 
 export interface ProgramOPD {
     id: number;
+    tactical_id: number;
     parent: number;
     nama_program: string;
 }
@@ -54,4 +55,5 @@ export interface IkdFindall {
     pelaksana: Pelaksana[];
     sasaran_opd: SasaranOPD[];
     program_opd: ProgramOPD[];
+    program_opd_terpilih: ProgramOPD[];
 }
