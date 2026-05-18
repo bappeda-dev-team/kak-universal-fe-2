@@ -20,7 +20,7 @@ interface modal {
     onClose: () => void;
     Data: IkdFindall | null;
     kode_opd: string;
-    onSuccess: () => void;
+    onSuccess: (data: ProgramOPD) => void;
 }
 
 export const ModalProgramIKD: React.FC<modal> = ({ isOpen, onClose, Data, kode_opd, onSuccess }) => {
@@ -71,7 +71,7 @@ export const ModalProgramIKD: React.FC<modal> = ({ isOpen, onClose, Data, kode_o
             const result = await response.json();
             if (result.code === 201) {
                 AlertNotification("Berhasil", "Berhasil menambahkan Permasalahan", "success", 1000);
-                onSuccess();
+                onSuccess(result.data);
                 onClose();
             } else {
                 AlertNotification("Gagal", `${result.data}`, "error", 2000);

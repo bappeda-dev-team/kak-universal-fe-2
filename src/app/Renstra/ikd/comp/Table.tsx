@@ -19,11 +19,7 @@ interface Table {
 export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
 
     const [Data, setData] = useState<IkdFindall[]>([]);
-    const [Program, setProgram] = useState<ProgramOPD[]>([]);
     const [Error, setError] = useState<boolean | null>(null);
-
-    const [DataProgram, setDataProgram] = useState<IkdFindall | null>(null);
-    const [ModalOpen, setModalOpen] = useState<boolean>(false);
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
@@ -46,15 +42,12 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                 if (result.code === 200) {
                     if (result.data === null) {
                         setData([]);
-                        setProgram([]);
                     } else {
                         setData(result.data);
-                        setProgram(result.data.program_opd_terpilih);
                     }
                 } else {
                     setError(true);
                     setData([]);
-                    setProgram([]);
                 }
             } catch (err) {
                 setError(true);
@@ -103,38 +96,6 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                         No Level
                     </div>
                 )
-        }
-    }
-
-    const hapusProgram = async (id: any) => {
-        try {
-            const response = await fetch(`${branding?.api_perencanaan}/ikd/select_program_opd/delete/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const data = await response.json();
-            if (data.code === 200) {
-                AlertNotification("Berhasil", "Program Di hapus", "success", 1000);
-                setProgram(Program.filter((data) => data.id !== id));
-            } else {
-                AlertNotification("Gagal", `${data.data}`, "error", 3000, true);
-            }
-        } catch (err) {
-            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
-            console.error(err);
-        }
-    };
-
-    const handleModal = (program: IkdFindall | null) => {
-        if (ModalOpen) {
-            setModalOpen(false);
-            setDataProgram(program);
-        } else {
-            setModalOpen(true);
-            setDataProgram(program);
         }
     }
     const refresh = () => {
@@ -203,14 +164,14 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                     Data.map((item: IkdFindall, index: number) => (
                                         <React.Fragment key={index}>
                                             <tr>
-                                                <td rowSpan={item.program_opd_terpilih.length != 0 ? item.program_opd_terpilih.length + 1 : 2} className="border border-emerald-500 px-4 py-4 text-center">{index + 1}</td>
-                                                <td rowSpan={item.program_opd_terpilih.length != 0 ? item.program_opd_terpilih.length + 1 : 2} className="border-x border-b border-emerald-500 px-6 py-4">
+                                                <td className="border border-emerald-500 px-4 py-4 text-center">{index + 1}</td>
+                                                <td className="border-x border-b border-emerald-500 px-6 py-4">
                                                     <div className="flex flex-col gap-1">
                                                         {item.nama_pohon || ""}
                                                         {JenisPohon(item.jenis_pohon || "")}
                                                     </div>
                                                 </td>
-                                                <td rowSpan={item.program_opd_terpilih.length != 0 ? item.program_opd_terpilih.length + 1 : 2} className="border-x border-b border-emerald-500 px-6 py-4">
+                                                <td className="border-x border-b border-emerald-500 px-6 py-4">
                                                     {item.pelaksana.length != 0 ?
                                                         <div className="flex flex-col items-center gap-3">
                                                             {item.pelaksana.map((p: Pelaksana, p_index) => (
@@ -224,7 +185,7 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                                         <p className="text-red-300">Pelaksana Belum di pilih</p>
                                                     }
                                                 </td>
-                                                <td rowSpan={item.program_opd_terpilih.length != 0 ? item.program_opd_terpilih.length + 1 : 2} className="border-x border-b border-emerald-500 px-6 py-4">
+                                                <td className="border-x border-b border-emerald-500 px-6 py-4">
                                                     {item.sasaran_opd.length != 0 ?
                                                         item.sasaran_opd.map((s: SasaranOPD, s_index) => (
                                                             <p key={s_index}>{s.nama_sasaran_opd || ""}</p>
@@ -233,42 +194,8 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                                         <p className="text-red-300">Sasaran OPD belum di buat</p>
                                                     }
                                                 </td>
-                                                <td rowSpan={item.program_opd_terpilih.length != 0 ? item.program_opd_terpilih.length + 1 : 2} className="border-x border-b border-emerald-500 px-6 py-4">
-                                                    <ButtonSkyBorder onClick={() => handleModal(item)}>
-                                                        Tambah Program
-                                                    </ButtonSkyBorder>
-                                                </td>
+                                                <TrProgram Data={item} kode_opd={kode_opd} Program={item.program_opd_terpilih || []} />
                                             </tr>
-                                            {item.program_opd_terpilih.length != 0 ?
-                                                item.program_opd_terpilih.map((p: ProgramOPD, pr_index: number) => (
-                                                    <tr key={pr_index}>
-                                                        <td className="border-x border-b border-emerald-500 px-6 py-4">
-                                                            <div className="flex items-center gap-1">
-                                                                <p>{p.nama_program || ""}</p>
-                                                                <button
-                                                                    type="button"
-                                                                    className='flex items-center gap-1 rounded-full border border-red-500 p-1 text-red-500 hover:bg-red-300 hover:text-white'
-                                                                    onClick={() => {
-                                                                        AlertQuestion("Hapus?", "Hapus Program?", "question", "Hapus", "Batal").then((result) => {
-                                                                            if (result.isConfirmed) {
-                                                                                hapusProgram(p.id);
-                                                                            }
-                                                                        });
-                                                                    }}
-                                                                >
-                                                                    <TbTrash />
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))
-                                                :
-                                                <tr>
-                                                    <td className="border-x border-b border-emerald-500 px-6 py-4">
-                                                        <p className="text-red-300">Program OPD belum di pilih</p>
-                                                    </td>
-                                                </tr>
-                                            }
                                         </React.Fragment>
                                     ))
                                 }
@@ -276,13 +203,118 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                         </table>
                     </div>
                 </div>
+            </>
+        )
+    }
+}
+
+interface TrProgram {
+    Data: IkdFindall;
+    Program: ProgramOPD[];
+    kode_opd: string;
+}
+export const TrProgram: React.FC<TrProgram> = ({ Data, Program, kode_opd }) => {
+
+    const { branding } = useBrandingContext();
+    const token = getToken();
+    const [ProgramTerpilih, setProgramTerpilih] = useState<ProgramOPD[]>(Program || []);
+
+    const [DataIkd, setDataIkd] = useState<IkdFindall | null>(null);
+    const [ModalOpen, setModalOpen] = useState<boolean>(false);
+
+    const handleModal = (program: IkdFindall | null) => {
+        if (ModalOpen) {
+            setModalOpen(false);
+            setDataIkd(program);
+        } else {
+            setModalOpen(true);
+            setDataIkd(program);
+        }
+    }
+
+    const handleUpdate = (data: ProgramOPD) => {
+        setProgramTerpilih((prev) => [...prev, data]);
+    }
+
+    const hapusProgram = async (id: any) => {
+        try {
+            const response = await fetch(`${branding?.api_perencanaan}/ikd/select_program_opd/delete/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (data.code === 200) {
+                AlertNotification("Berhasil", "Program Di hapus", "success", 1000);
+                setProgramTerpilih(ProgramTerpilih.filter((data) => data.id !== id));
+            } else {
+                AlertNotification("Gagal", `${data.data}`, "error", 3000, true);
+            }
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
+            console.error(err);
+        }
+    };
+
+    if (ProgramTerpilih?.length != 0) {
+        return (
+            <>
+                <td className="border-x border-b border-emerald-500 px-6 py-4">
+                    <ButtonSkyBorder onClick={() => handleModal(Data)}>
+                        Tambah Program
+                    </ButtonSkyBorder>
+                </td>
+                <td className="border-x border-b border-emerald-500">
+                    {ProgramTerpilih.map((p: ProgramOPD, pr_index: number) => (
+                        <div className={`flex items-center gap-1 px-6 py-4 ${pr_index != ProgramTerpilih.length - 1 && "border-b border-emerald-500"}`} key={pr_index}>
+                            <p>{p.nama_program || ""}</p>
+                            <button
+                                type="button"
+                                className='flex items-center gap-1 rounded-full border border-red-500 p-1 text-red-500 hover:bg-red-300 hover:text-white'
+                                onClick={() => {
+                                    AlertQuestion("Hapus?", "Hapus Program?", "question", "Hapus", "Batal").then((result) => {
+                                        if (result.isConfirmed) {
+                                            hapusProgram(p.id);
+                                        }
+                                    });
+                                }}
+                            >
+                                <TbTrash />
+                            </button>
+                        </div>
+                    ))}
+                </td>
                 {ModalOpen &&
                     <ModalProgramIKD
                         isOpen={ModalOpen}
                         onClose={() => handleModal(null)}
-                        Data={DataProgram}
+                        Data={DataIkd}
                         kode_opd={kode_opd}
-                        onSuccess={refresh}
+                        onSuccess={(data) => handleUpdate(data)}
+                    />
+                }
+            </>
+        )
+    } else {
+        return (
+            <>
+                <td className="border-x border-b border-emerald-500 px-6 py-4">
+                    <ButtonSkyBorder onClick={() => handleModal(Data)}>
+                        Tambah Program
+                    </ButtonSkyBorder>
+                </td>
+                <td className="border-x border-b border-emerald-500 px-6 py-4">
+                    <p className="text-red-300">Program OPD belum di pilih</p>
+                </td>
+                {ModalOpen &&
+                    <ModalProgramIKD
+                        isOpen={ModalOpen}
+                        onClose={() => handleModal(null)}
+                        Data={DataIkd}
+                        kode_opd={kode_opd}
+                        onSuccess={handleUpdate}
                     />
                 }
             </>
