@@ -12,7 +12,8 @@ import {
   TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar,
   TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI,
   TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbFileImport,
-  TbFileCheck, TbRubberStamp, TbAB2, TbDice4Filled, TbCircleFilled, TbLockSquareRounded, TbLockSquare
+  TbFileCheck, TbRubberStamp, TbAB2, TbDice4Filled, TbCircleFilled, TbLockSquareRounded, TbLockSquare,
+  TbUserSearch, TbLockSquareRoundedFilled
 } from "react-icons/tb";
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
@@ -113,6 +114,10 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setRPJMD(false);
       setRKPD(false);
       setTematikKota(false);
+    }
+    if(url.startsWith("/RPJMD")){
+      setRPJMD(true);
+      setRKPD(false);
     }
     // RKPD RANWAL
     if (url.startsWith("/RKPD/ranwal")) {
@@ -403,6 +408,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Pegawai</span>
                 </li>
               </Link>
+              <Link href="/DataMaster/cari-pegawai">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/cari-pegawai" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbUserSearch className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Cari Pegawai</span>
+                </li>
+              </Link>
               <Link href="/DataMaster/masterperiode">
                 <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/masterperiode" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbCalendar className="text-xl" />
@@ -431,6 +442,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbDice4Filled className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master RB</span>
+                </li>
+              </Link>
+              <Link href="/DataMaster/ikk">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/ikk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbLockSquare className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master IKK</span>
                 </li>
               </Link>
               <Link href="/bidang-urusan-opd">
@@ -613,6 +630,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                       <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/RPJMD/ikupemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbChartBar className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKU</span>
+                      </li>
+                    </Link>
+                    <Link href="/RPJMD/ikd">
+                      <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/RPJMD/ikd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                        <TbLockSquareRoundedFilled className="text-xl" />
+                        <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKD</span>
                       </li>
                     </Link>
                     <Link href="/RPJMD/strategi-arah-kebijakan">

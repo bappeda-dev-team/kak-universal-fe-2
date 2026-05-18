@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from "react";
+import { getUser } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { IsLoadingBranding } from "@/components/global/Loading";
 import ForbiddenPage from "../forbidden";
@@ -12,12 +14,31 @@ export default function DataMasterLayout({
     children
 }: DataMasterLayout) {
 
-    const { LoadingBranding, branding } = useBrandingContext();
+    const { LoadingBranding } = useBrandingContext();
+    const [User, setUser] = useState<any>(null);
+    const [LoadingUser, setLoadingUser] = useState<boolean>(false);
 
-    if (LoadingBranding) {
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                setLoadingUser(true);
+                const user = await getUser();
+                if (user) {
+                    setUser(user.user);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoadingUser(false);
+            }
+        };
+        fetchUser();
+    }, []);
+
+    if (LoadingBranding || LoadingUser) {
         return <IsLoadingBranding />;
     } else {
-        if (branding?.user?.roles == "super_admin") {
+        if (User?.roles == "super_admin") {
             return <>{children}</>
         } else {
             return <ForbiddenPage />

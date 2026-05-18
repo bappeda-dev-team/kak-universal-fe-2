@@ -1,46 +1,26 @@
 'use client'
 
-import { useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { Controller, SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 import { ButtonSky, ButtonRed } from '@/components/global/Button';
 import { getToken, getUser } from "@/components/lib/Cookie";
 import { AlertNotification } from "@/components/global/Alert";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import Select from 'react-select';
 import { OptionTypeString } from "@/types";
+import { IkkFindall, FormValue, Indikator, Target } from "../type";
 
-interface FormValue {
-    kode_bidang_urusan: OptionTypeString | null;
-    jenis: string;
-    nama_indikator: string;
-    target: string;
-    satuan: string;
-    keterangan: string;
-}
-interface IKK {
-    id: number;
-    kode_bidang_urusan: string;
-    nama_bidang_urusan: string;
-    nama_opd: string;
-    jenis: "output" | string;
-    nama_indikator: string;
-    target: string;
-    satuan: string;
-    keterangan: string;
-    created_at: string; // ISO 8601 Date String
-    updated_at: string; // ISO 8601 Date String
-}
 interface modal {
     isOpen: boolean;
     onClose: () => void;
-    Data: IKK | null;
+    Data: IkkFindall | null;
     jenis: 'tambah' | 'edit';
-    jenis_data: "outcome" | "output";
     kode_opd: string;
+    tahun: number;
     onSuccess: () => void;
 }
 
-export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, jenis_data, kode_opd, Data, onSuccess }) => {
+export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, tahun, kode_opd, Data, onSuccess }) => {
 
     const {
         control,
@@ -51,15 +31,30 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, jenis_data, 
             kode_bidang_urusan: Data?.kode_bidang_urusan
                 ? {
                     value: Data?.kode_bidang_urusan,
-                    label: Data?.nama_bidang_urusan
+                    label: `(${Data?.kode_bidang_urusan}) ${Data?.nama_bidang_urusan}`
                 }
                 : null,
-            jenis: jenis_data,
-            nama_indikator: Data?.nama_indikator || "",
-            target: Data?.target || '',
-            satuan: Data?.satuan || '',
-            keterangan: Data?.keterangan || ''
+            jenis: Data?.jenis
+                ? {
+                    value: Data?.jenis,
+                    label: Data?.jenis
+                }
+                : null,
+            keterangan: Data?.keterangan || '',
+            indikators: Data?.indikators?.map((i: Indikator) => ({
+                indikator: i.indikator,
+                targets: i.targets.map((t: Target) => ({
+                    target: t.target,
+                    satuan: t.satuan,
+                })) 
+            }))
+            ,
         }
+    });
+
+    const { fields } = useFieldArray({
+        control,
+        name: "indikators",
     });
 
     const [Proses, setProses] = useState<boolean>(false);
@@ -92,16 +87,27 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, jenis_data, 
         }
     }
 
+    const OptionJenis = [
+        { value: "output", label: "output" },
+        { value: "outcome", label: "outcome" }
+    ]
+
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const formData = {
             //key : value
             kode_bidang_urusan: data.kode_bidang_urusan?.value,
-            jenis: data.jenis,
-            nama_indikator: data.nama_indikator,
-            target: data.target,
-            satuan: data.satuan,
+            jenis: data.jenis?.value,
+            kode_opd: kode_opd,
+            tahun: tahun,
             keterangan: data.keterangan,
+            indikators: data?.indikators.map((i: Indikator) => ({
+                indikator: i.indikator,
+                targets: i.targets.map((t: Target) => ({
+                    target: t.target,
+                    satuan: t.satuan
+                }))
+            }))
         };
         // console.log(formData);
         try {
@@ -183,74 +189,92 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, jenis_data, 
                                 className="uppercase text-xs font-bold text-gray-700 my-2"
                                 htmlFor="jenis"
                             >
-                                Jenis
-                            </label>
-                            <div className="border px-4 py-2 rounded-lg italic">{jenis_data || "-"}</div>
-                        </div>
-                        <div className="flex flex-col py-3">
-                            <label
-                                className="uppercase text-xs font-bold text-gray-700 my-2"
-                                htmlFor="nama_indikator"
-                            >
-                                Nama Indikator:
+                                Jenis:
                             </label>
                             <Controller
-                                name="nama_indikator"
+                                name="jenis"
                                 control={control}
                                 render={({ field }) => (
-                                    <textarea
+                                    <Select
                                         {...field}
-                                        className="border px-4 py-2 rounded-lg"
-                                        id="nama_indikator"
-                                        placeholder="masukkan Nama Indikator"
+                                        id="jenis"
+                                        placeholder="Pilih Jenis"
+                                        options={OptionJenis}
+                                        isLoading={Loading}
+                                        styles={{
+                                            control: (baseStyles, state) => ({
+                                                ...baseStyles,
+                                                borderRadius: '8px',
+                                                borderColor: 'black', // Warna default border menjadi merah
+                                                '&:hover': {
+                                                    borderColor: '#3673CA', // Warna border tetap merah saat hover
+                                                },
+                                            }),
+                                        }}
                                     />
                                 )}
                             />
                         </div>
-                        <div className="flex gap-2">
-                            <div className="flex flex-col py-3 w-full">
-                                <label
-                                    className="uppercase text-xs font-bold text-gray-700 my-2"
-                                    htmlFor="target"
-                                >
-                                    Target:
-                                </label>
+                        {fields.map((field, index) => (
+                            <div key={field.id} className="flex flex-col border border-gray-700 my-2 py-2 px-2 rounded-lg">
                                 <Controller
-                                    name={`target`}
+                                    name={`indikators.${index}.indikator`}
                                     control={control}
+                                    defaultValue={field.indikator}
                                     render={({ field }) => (
-                                        <input
-                                            {...field}
-                                            type='text'
-                                            className="border px-4 py-2 rounded-lg"
-                                            id="target"
-                                            placeholder="masukkan Target"
-                                        />
+                                        <div className="flex flex-col py-3">
+                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                Nama Indikator :
+                                            </label>
+                                            <input
+                                                {...field}
+                                                className="border px-4 py-2 rounded-lg"
+                                                placeholder={`Masukkan nama indikator`}
+                                            />
+                                        </div>
                                     )}
                                 />
-                            </div>
-                            <div className="flex flex-col py-3 w-full">
-                                <label
-                                    className="uppercase text-xs font-bold text-gray-700 my-2"
-                                    htmlFor="satuan"
-                                >
-                                    Satuan:
-                                </label>
-                                <Controller
-                                    name={`satuan`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <input
-                                            {...field}
-                                            type='text'
-                                            className="border px-4 py-2 rounded-lg"
-                                            id="satuan"
-                                            placeholder="masukkan Satuan"
+                                {field.targets.map((_, subindex) => (
+                                    <div key={subindex} className="flex items-center gap-1 w-full">
+                                        <Controller
+                                            name={`indikators.${index}.targets.${subindex}.target`}
+                                            control={control}
+                                            defaultValue={_.target}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col py-3 w-full">
+                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                        Target :
+                                                    </label>
+                                                    <input
+                                                        {...field}
+                                                        type="text"
+                                                        className="border px-4 py-2 rounded-lg"
+                                                        placeholder="Masukkan target"
+                                                    />
+                                                </div>
+                                            )}
                                         />
-                                    )}
-                                />
+                                        <Controller
+                                            name={`indikators.${index}.targets.${subindex}.satuan`}
+                                            control={control}
+                                            defaultValue={_.satuan}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col py-3 w-full">
+                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                        Satuan :
+                                                    </label>
+                                                    <input
+                                                        {...field}
+                                                        className="border px-4 py-2 rounded-lg"
+                                                        placeholder="Masukkan satuan"
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                ))}
                             </div>
-                        </div>
+                        ))}
                         <div className="flex flex-col py-3">
                             <label
                                 className="uppercase text-xs font-bold text-gray-700 my-2"
