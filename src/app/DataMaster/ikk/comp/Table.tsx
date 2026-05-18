@@ -8,6 +8,7 @@ import { useBrandingContext } from "@/context/BrandingContext";
 import { ButtonSkyBorder, ButtonBlackBorder, ButtonGreenBorder, ButtonRedBorder } from "@/components/global/Button";
 import { TbCirclePlus, TbRefresh } from "react-icons/tb";
 import { ModalIkk } from "./ModalIkk";
+import { IkkFindall } from "../type";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TbTrash, TbPencil } from "react-icons/tb";
 
@@ -15,26 +16,12 @@ interface Table {
     kode_opd: string;
 }
 
-interface IKK {
-    id: number;
-    kode_bidang_urusan: string;
-    nama_bidang_urusan: string;
-    nama_opd: string;
-    jenis: "output" | string;
-    nama_indikator: string;
-    target: string;
-    satuan: string;
-    keterangan: string;
-    created_at: string; // ISO 8601 Date String
-    updated_at: string; // ISO 8601 Date String
-}
-
 const Table: React.FC<Table> = ({ kode_opd }) => {
 
-    const [Data, setData] = useState<IKK[]>([]);
+    const [Data, setData] = useState<IkkFindall[]>([]);
     const [Error, setError] = useState<boolean | null>(null);
 
-    const [DataModal, setDataModal] = useState<IKK | null>(null);
+    const [DataModal, setDataModal] = useState<IkkFindall | null>(null);
     const [ModalOpen, setModalOpen] = useState<boolean>(false);
     const [JenisModal, setJenisModal] = useState<'tambah' | 'edit'>('tambah');
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
@@ -59,7 +46,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                     if (result.data === null) {
                         setData([]);
                     } else {
-                        setData(result.data);
+                        setData(result.data.ikks);
                     }
                 } else {
                     setError(true);
@@ -83,7 +70,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
     const refresh = () => {
         setFetchTrigger((prev) => !prev);
     }
-    const handleModalOpen = (jenis: 'tambah' | 'edit', data: IKK | null) => {
+    const handleModalOpen = (jenis: 'tambah' | 'edit', data: IkkFindall | null) => {
         if (ModalOpen) {
             setModalOpen(false);
             setJenisModal(jenis);
@@ -161,7 +148,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                                     <th className="border-r border-b px-6 py-3 w-[100px]">Jenis</th>
                                     <th className="border-r border-b px-6 py-3 w-[300px]">Indikator</th>
                                     <th className="border-l border-b px-6 py-3 w-[200px]">Target</th>
-                                    <th className="border-l border-b px-6 py-3 w-[200px]">Satuan</th>
+                                    <th className="border-l border-b px-6 py-3 w-[100px]">Satuan</th>
                                     <th className="border-l border-b px-6 py-3 w-[200px]">Keterangan</th>
                                     <th className="border-l border-b px-6 py-3 w-[100px]">Aksi</th>
                                 </tr>
@@ -184,14 +171,14 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                                         </td>
                                     </tr>
                                     :
-                                    Data.map((item: IKK, index: number) => (
+                                    Data.map((item: IkkFindall, index: number) => (
                                         <tr key={index}>
                                             <td className="border border-emerald-500 px-4 py-4 text-center">{index + 1}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">({item.kode_bidang_urusan || "no code"}) {item.nama_bidang_urusan || "nama bidang urusan tidak diketahui"}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">{item.jenis || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.nama_indikator || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.target || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.satuan || ""}</td>
+                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0].indikator || ""}</td>
+                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0].targets[0].target || ""}</td>
+                                            <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">{item.indikators[0].targets[0].satuan || ""}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">{item.keterangan || ""}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">
                                                 <div className="flex flex-col justify-center items-center gap-2">
@@ -228,6 +215,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                         Data={DataModal}
                         jenis={JenisModal}
                         kode_opd={kode_opd}
+                        tahun={branding?.tahun?.value}
                         onSuccess={refresh}
                     />
                 }
