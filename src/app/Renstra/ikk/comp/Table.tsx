@@ -20,12 +20,18 @@ interface IKK {
     nama_bidang_urusan: string;
     nama_opd: string;
     jenis: "output" | string;
-    nama_indikator: string;
+    indikators: Indikator[];
+    keterangan: string;
+    created_at: string;
+    updated_at: string;
+}
+interface Indikator {
+    indikator: string;
+    targets: Target[];
+}
+interface Target {
     target: string;
     satuan: string;
-    keterangan: string;
-    created_at: string; // ISO 8601 Date String
-    updated_at: string; // ISO 8601 Date String
 }
 
 const Table: React.FC<Table> = ({ kode_opd }) => {
@@ -56,7 +62,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                     if (result.data === null) {
                         setData([]);
                     } else {
-                        setData(result.data);
+                        setData(result.data.ikks);
                     }
                 } else {
                     setError(true);
@@ -167,9 +173,9 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                                             <td className="border border-emerald-500 px-4 py-4 text-center">{index + 1}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">({item.kode_bidang_urusan || "no code"}) {item.nama_bidang_urusan || "nama bidang urusan tidak diketahui"}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">{item.jenis || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.nama_indikator || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.target || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.satuan || ""}</td>
+                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0].indikator || ""}</td>
+                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0].targets[0].target || ""}</td>
+                                            <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">{item.indikators[0].targets[0].satuan || ""}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">{item.keterangan || ""}</td>
                                         </tr>
                                     ))
