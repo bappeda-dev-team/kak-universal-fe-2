@@ -73,6 +73,14 @@ interface Review {
     keterangan: string;
     nama_pegawai: string;
 }
+interface CrosscuttingDiterima {
+    id_crosscutting: number;
+    keterangan_crosscutting: string;
+    nama_pohon_asal: string;
+    kode_opd_asal: string;
+    nama_opd_asal: string;
+    status: string;
+}
 interface CrosscuttingDikirim {
     id_crosscutting: number;
     keterangan_crosscutting: string;
@@ -91,6 +99,7 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
     const [formList, setFormList] = useState<number[]>([]);
     const [PutList, setPutList] = useState<number[]>([]);
     const [CrossDikirim, setCrossDikirim] = useState<CrosscuttingDikirim[]>(tema.crosscutting_dikirim || []);
+    const [CrossDiterima, setCrossDiterima] = useState<CrosscuttingDiterima[]>(tema.crosscutting || []);
     const [edit, setEdit] = useState<boolean>(false);
     const [DetailCross, setDetailCross] = useState<boolean>(false);
     const [Show, setShow] = useState<boolean>(false);
@@ -166,7 +175,6 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
     };
     const hapusPohonCross = async (id: any) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        // console.log("id yang dihapus : ", id, "ori : ", ori);
         try {
             const response = await fetch(`${API_URL}/crosscutting_opd/delete/${id}`, {
                 method: "DELETE",
@@ -202,10 +210,10 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
             })
             const data = await response.json();
             if (data.code == 400) {
-                AlertNotification("Gagal", "Crosscutting hanya bisa dihapus saat setelah disetujui", "error", 3000, true);
+                AlertNotification("Gagal", `${data.data}`, "error", 3000, true);
             } else if (data.code == 200) {
                 AlertNotification("Berhasil", "Data Crosscutting Di hapus", "success", 1000);
-                fetchTrigger();
+                setCrossDiterima(CrossDiterima.filter((data) => data.id_crosscutting !== id));
             }
         } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
@@ -261,7 +269,7 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                         <h1>{tema.jenis_pohon} {tema.id}</h1>
                                     }
                                 </div>
-                                {tema.crosscutting &&
+                                {CrossDiterima.length > 0 &&
                                     <div className="flex text-white justify-center items-center font-bold gap-1 rounded-lg py-2 bg-yellow-500">
                                         <TbAB2 size={20} />
                                         Pohon Pilihan Crosscutting
@@ -504,12 +512,12 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                     </div>
                                 }
                                 {/* CROSSCUTTING DITERIMA */}
-                                {(tema.crosscutting && tema.crosscutting.length != null) &&
+                                {CrossDiterima.length > 0 &&
                                     <div className='bg-white border-2 border-yellow-500 rounded-lg'>
                                         <h1 className='font-light pt-1 text-sm text-slate-600'>*Pohon ini menjadi wadah pilihan untuk menjawab crosscutting dari OPD lain</h1>
                                         <h1 className='font-bold pt-2 text-yellow-600'>Crosscutting Diterima :</h1>
                                         <div className="flex flex-col justify-center my-3">
-                                            {tema.crosscutting.map((cr: any, cr_index: number) => (
+                                            {tema.crosscutting.map((cr: CrosscuttingDiterima, cr_index: number) => (
                                                 <div key={cr_index} className='flex flex-col rounded border border-yellow-500 gap-1 p-2 my-1 mx-2'>
                                                     <div className="flex justify-center gap-2">
                                                         <h1 className='text-yellow-700 font-semibold'>{cr.nama_opd_asal || "opd tidak diketahui"}</h1>

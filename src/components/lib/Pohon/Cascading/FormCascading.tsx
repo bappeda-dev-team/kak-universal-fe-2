@@ -184,19 +184,20 @@ export const FormEditCascading: React.FC<{
                 },
             });
             const data = await response.json();
-            const responseData = data.data; 
+            const responseData = data.data;
 
             const filteredPegawai = responseData
                 .filter((pegawai: any) => {
-                    return pegawai.role.some((r: any) => r.role === "level_3" || r.role === "level_4");
+                    const users = pegawai.role || []
+                    return users.some((r: any) => r.role === "level_3" || r.role === "level_4");
                 }).map((pegawai: any) => ({
                     value: pegawai.pegawai_id,
                     label: pegawai.nama_pegawai,
                 }));
-                console.log(filteredPegawai);
+            // console.log(filteredPegawai);
             setPelaksanaOption(filteredPegawai);
         } catch (err) {
-            console.log('gagal mendapatkan data opd');
+            console.error(err, 'gagal mendapatkan data opd')
         } finally {
             setIsLoading(false);
         }
