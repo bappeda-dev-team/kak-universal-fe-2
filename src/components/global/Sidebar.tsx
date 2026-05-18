@@ -12,7 +12,7 @@ import {
   TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar,
   TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI,
   TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbFileImport,
-  TbFileCheck, TbRubberStamp, TbAB2, TbLockSquareRounded, TbLockSquare
+  TbFileCheck, TbRubberStamp, TbAB2, TbLockSquareRounded, TbLockSquare, TbLockSquareRoundedFilled
 } from "react-icons/tb";
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
@@ -110,6 +110,10 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setRPJMD(false);
       setRKPD(false);
       setTematikKota(false);
+    }
+    if (url.startsWith("/RPJMD")) {
+      setRPJMD(true);
+      setRKPD(false);
     }
     if (url.startsWith("/RPJMD")) {
       // sub menu
@@ -558,6 +562,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                         <TbChartBar className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKU</span>
                       </li>
+                      <Link href="/RPJMD/ikd">
+                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/RPJMD/ikd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                          <TbLockSquareRoundedFilled className="text-xl" />
+                          <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKD</span>
+                        </li>
+                      </Link>
                     </Link>
                     <Link href="/RPJMD/strategi-arah-kebijakan">
                       <li className={`flex items-center gap-x-2 cursor-pointer text-sm p-2 rounded-xl ${url === "/RPJMD/strategi-arah-kebijakan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
