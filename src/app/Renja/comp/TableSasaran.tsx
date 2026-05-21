@@ -1,11 +1,10 @@
 'use client'
 
-import { ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder } from "@/components/global/Button";
-import { TbCirclePlus, TbPencil, TbTrash } from "react-icons/tb";
+import { ButtonBlackBorder, ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder } from "@/components/global/Button";
+import { TbCirclePlus, TbPencil, TbTrash, TbRefresh, TbLockOpen, TbLockFilled, TbLockCancel } from "react-icons/tb";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
-import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { useRouter } from "next/navigation";
@@ -81,6 +80,8 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
     const router = useRouter();
     const token = getToken();
     const { branding } = useBrandingContext();
+
+    const [Lock, setLock] = useState<boolean>(false);
 
     useEffect(() => {
         let url = `sasaran_opd/${menu}/${kode_opd}/${tahun}`;
@@ -181,10 +182,44 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
 
     return (
         <>
+            {menu === "penetapan" &&
+                <div className="px-3 py-2">
+                    <div className={`flex items-center justify-between p-2 text-white rounded-lg ${Lock ? "bg-red-500" : "bg-emerald-500"}`}>
+                        {Lock ?
+                            <div className="flex items-center gap-1">
+                                <TbLockFilled />
+                                <p>Data terkunci tidak bisa di ubah</p>
+                            </div>
+                            :
+                            <div className="flex items-center gap-1">
+                                <TbLockOpen />
+                                <p>Data terbuka dan bisa di ubah</p>
+                            </div>
+                        }
+                        {Lock ?
+                            <ButtonBlackBorder className="bg-white flex items-center gap-1">
+                                <TbLockOpen />
+                                Buka Kunci
+                            </ButtonBlackBorder>
+                            :
+                            <div className="flex items-center gap-1">
+                                <ButtonSkyBorder className="bg-white flex items-center gap-1">
+                                    <TbRefresh />
+                                    Sync
+                                </ButtonSkyBorder>
+                                <ButtonBlackBorder className="bg-white flex items-center gap-1">
+                                    <TbLockFilled />
+                                    Kunci Data
+                                </ButtonBlackBorder>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
                     <thead>
-                        <tr className="bg-emerald-500 text-white">
+                        <tr className={`${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Strategic OPD</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Pemilik</th>
@@ -197,7 +232,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Sumber Data</th>
                             <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{tahun || ""}</th>
                         </tr>
-                        <tr className="bg-emerald-500 text-white">
+                        <tr className={`${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
                             <th className="border-l border-b px-6 py-3 min-w-[50px]">Target</th>
                             <th className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</th>
                         </tr>
@@ -220,15 +255,15 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                                     <React.Fragment key={index}>
                                         {/* Baris Utama */}
                                         <tr>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4 text-center" rowSpan={data.sasaran_opd.length === 0 ? 2 : TotalRow}>
+                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-4 text-center`} rowSpan={data.sasaran_opd.length === 0 ? 2 : TotalRow}>
                                                 {index + 1}
                                             </td>
-                                            <td className="border-r border-b border-emerald-500 px-6 py-4" rowSpan={data.sasaran_opd.length === 0 ? 2 : TotalRow}>
+                                            <td className={`border-r border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-4`} rowSpan={data.sasaran_opd.length === 0 ? 2 : TotalRow}>
                                                 <div className="flex flex-col gap-2">
                                                     {data.nama_pohon || "-"}
                                                 </div>
                                             </td>
-                                            <td className="border-r border-b border-emerald-500 px-6 py-4" rowSpan={data.sasaran_opd.length === 0 ? 2 : TotalRow}>
+                                            <td className={`border-r border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-4`} rowSpan={data.sasaran_opd.length === 0 ? 2 : TotalRow}>
                                                 {data.pelaksana.length == 0 ?
                                                     <p className="text-red-500">Pelaksana Belum Di Pilih</p>
                                                     :
@@ -242,67 +277,81 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                                             data.sasaran_opd.map((item: SasaranOpd) => (
                                                 <React.Fragment key={item.id}>
                                                     <tr>
-                                                        <td className="border-x border-b border-emerald-500 px-6 py-6 h-[150px]" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-[150px]`} rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
                                                             {item.nama_sasaran_opd || "-"}
                                                         </td>
-                                                        <td className="border-x border-b border-emerald-500 px-6 py-6 h-[150px]" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-[150px]`} rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
                                                             {item.nama_tujuan_opd ?
                                                                 <p>{item.nama_tujuan_opd || "-"}</p>
                                                                 :
                                                                 <p className="italic text-red-300 font-thin">tujuan opd belum di pilih</p>
                                                             }
                                                         </td>
-                                                        <td className="border-x border-b border-emerald-500 px-6 py-6 h-full" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
-                                                            <div className="flex justify-center">
-                                                                <ButtonSkyBorder
-                                                                    className="flex items-center gap-1"
-                                                                    onClick={() => handleTambahIndikator(item.id)}
-                                                                >
-                                                                    <TbCirclePlus />
-                                                                    Indikator
-                                                                </ButtonSkyBorder>
-                                                            </div>
+                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-full`} rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                            {Lock ?
+                                                                <div className="text-red-500 flex items-center justify-center">
+                                                                    <TbLockCancel size={30}/>
+                                                                </div>
+                                                                :
+                                                                <div className="flex justify-center">
+                                                                    <ButtonSkyBorder
+                                                                        className="flex items-center gap-1"
+                                                                        onClick={() => handleTambahIndikator(item.id)}
+                                                                    >
+                                                                        <TbCirclePlus />
+                                                                        Indikator
+                                                                    </ButtonSkyBorder>
+                                                                </div>
+                                                            }
                                                         </td>
                                                     </tr>
                                                     {/* INDIKATOR */}
                                                     {item.indikator.length === 0 ? (
                                                         <React.Fragment>
                                                             <tr>
-                                                                <td colSpan={30} className="border-x border-b border-emerald-500 px-6 py-6 bg-yellow-500 text-white">indikator sasaran opd belum di tambahkan</td>
+                                                                <td colSpan={30} className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 bg-yellow-500 text-white`}>indikator sasaran opd belum di tambahkan</td>
                                                             </tr>
                                                         </React.Fragment>
                                                     ) : (
                                                         item.indikator.map((i: Indikator) => (
                                                             <tr key={i.id}>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-6">
+                                                                <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>
                                                                     <div className="flex flex-col gap-2">
                                                                         <p>{i.indikator || "-"}</p>
                                                                         <div className="flex items-center justify-center gap-1 pt-2 border-t border-gray-300">
-                                                                            <ButtonGreenBorder
-                                                                                onClick={() => handleEditIndikator(i)}
-                                                                                className="rounded-full"
-                                                                            >
-                                                                                <TbPencil />
-                                                                            </ButtonGreenBorder>
-                                                                            <ButtonRedBorder
-                                                                                onClick={() => AlertQuestion("Hapus", "Hapus Indikator ini?", "question", "Hapus", "Batal").then((resp) => {
-                                                                                    if (resp.isConfirmed) {
-                                                                                        hapusIndikator(i.kode_indikator);
-                                                                                    }
-                                                                                })}
-                                                                            >
-                                                                                <TbTrash />
-                                                                            </ButtonRedBorder>
+                                                                            {Lock ?
+                                                                                <div className="text-red-500 flex items-center justify-center">
+                                                                                    <TbLockCancel size={30}/>
+                                                                                </div>
+                                                                                :
+                                                                                <>
+                                                                                    <ButtonGreenBorder
+                                                                                        onClick={() => handleEditIndikator(i)}
+                                                                                        className="rounded-full"
+                                                                                    >
+                                                                                        <TbPencil />
+                                                                                    </ButtonGreenBorder>
+                                                                                    <ButtonRedBorder
+                                                                                        onClick={() => AlertQuestion("Hapus", "Hapus Indikator ini?", "question", "Hapus", "Batal").then((resp) => {
+                                                                                            if (resp.isConfirmed) {
+                                                                                                hapusIndikator(i.kode_indikator);
+                                                                                            }
+                                                                                        })}
+                                                                                    >
+                                                                                        <TbTrash />
+                                                                                    </ButtonRedBorder>
+                                                                                </>
+                                                                            }
                                                                         </div>
                                                                     </div>
                                                                 </td>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-6">{i.definisi_operasional || "-"}</td>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-6">{i.rumus_perhitungan || "-"}</td>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-6">{i.sumber_data || "-"}</td>
+                                                                <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.definisi_operasional || "-"}</td>
+                                                                <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.rumus_perhitungan || "-"}</td>
+                                                                <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.sumber_data || "-"}</td>
                                                                 {i.target.map((t: Target) => (
                                                                     <React.Fragment key={t.id}>
-                                                                        <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.target || "-"}</td>
-                                                                        <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.satuan || "-"}</td>
+                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
+                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
                                                                     </React.Fragment>
                                                                 ))}
                                                             </tr>
@@ -312,7 +361,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                                             ))
                                             :
                                             <tr>
-                                                <td className="border-r border-b border-emerald-500 px-6 py-4 bg-red-400 text-white" colSpan={30}>
+                                                <td className={`border-r border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-4 bg-red-400 text-white`} colSpan={30}>
                                                     Sasaran OPD belum di buat
                                                 </td>
                                             </tr>
@@ -335,7 +384,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                     />
                 }
                 {ModalEditIndikator &&
-                    <ModalEditIndikatorRenja 
+                    <ModalEditIndikatorRenja
                         isOpen={ModalEditIndikator}
                         onClose={() => handleEditIndikator(null)}
                         onSuccess={() => handleFetchTrigger()}

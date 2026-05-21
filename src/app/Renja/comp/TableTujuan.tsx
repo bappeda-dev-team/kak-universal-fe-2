@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { getToken } from "@/components/lib/Cookie";
-import { ButtonSkyBorder, ButtonGreenBorder, ButtonRedBorder } from "@/components/global/Button";
+import { ButtonSky, ButtonSkyBorder, ButtonGreenBorder, ButtonRedBorder, ButtonBlackBorder } from "@/components/global/Button";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { useRouter } from "next/navigation";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { ModalIndikatorRenja, ModalEditIndikatorRenja } from "./ModalIndikatorRenja";
-import { TbCirclePlus, TbPencil, TbTrash } from "react-icons/tb";
+import { TbCirclePlus, TbLockFilled, TbLockOpen, TbPencil, TbRefresh, TbTrash } from "react-icons/tb";
 
 interface Target {
     id: string;
@@ -70,6 +70,8 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
     const [Proses, setProses] = useState<boolean>(false);
     const token = getToken();
     const router = useRouter();
+
+    const [Lock, setLock] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchTujuan = async () => {
@@ -158,10 +160,44 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
 
     return (
         <>
+            {menu === "penetapan" &&
+                <div className="px-3 py-2">
+                    <div className={`flex items-center justify-between p-2 text-white rounded-lg ${Lock ? "bg-red-500" : "bg-emerald-500"}`}>
+                        {Lock ?
+                            <div className="flex items-center gap-1">
+                                <TbLockFilled />
+                                <p>Data terkunci tidak bisa di ubah</p>
+                            </div>
+                            :
+                            <div className="flex items-center gap-1">
+                                <TbLockOpen />
+                                <p>Data terbuka dan bisa di ubah</p>
+                            </div>
+                        }
+                        {Lock ?
+                            <ButtonBlackBorder className="bg-white flex items-center gap-1">
+                                <TbLockOpen />
+                                Buka Kunci
+                            </ButtonBlackBorder>
+                            :
+                            <div className="flex items-center gap-1">
+                                <ButtonSkyBorder className="bg-white flex items-center gap-1">
+                                    <TbRefresh />
+                                    Sync
+                                </ButtonSkyBorder>
+                                <ButtonBlackBorder className="bg-white flex items-center gap-1">
+                                    <TbLockFilled />
+                                    Kunci Data
+                                </ButtonBlackBorder>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
                     <thead>
-                        <tr className="text-xm bg-emerald-500 text-white">
+                        <tr className={`text-xm ${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 max-w-[100px] text-center">No</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Urusan & Bidang Urusan</td>
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Tujuan OPD</td>
@@ -172,7 +208,7 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                             <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
                             <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{branding?.tahun?.value || 0}</th>
                         </tr>
-                        <tr className="bg-emerald-500 text-white">
+                        <tr className={`${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
                             <th className="border-l border-b px-6 py-3 min-w-[50px]">Target</th>
                             <th className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</th>
                         </tr>
@@ -190,12 +226,12 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                                 return (
                                     <React.Fragment key={index}>
                                         <tr>
-                                            <td rowSpan={TotalRow} className="border-x border-b border-emerald-500 py-4 px-3 text-center">
+                                            <td rowSpan={TotalRow} className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} py-4 px-3 text-center`}>
                                                 {index + 1}
                                             </td>
-                                            <td rowSpan={TotalRow} className="border-r border-b border-emerald-500 px-6 py-4">
+                                            <td rowSpan={TotalRow} className={`border-r border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-4`}>
                                                 <div className="flex flex-col gap-2">
-                                                    <p className="border-b border-emerald-500 pb-2">{item.urusan ? `${item.kode_urusan} - ${item.urusan}` : "-"}</p>
+                                                    <p className={`border-b ${Lock ? "border-red-500" : "border-emerald-500"} pb-2`}>{item.urusan ? `${item.kode_urusan} - ${item.urusan}` : "-"}</p>
                                                     <p>{item.kode_bidang_urusan ? `${item.kode_bidang_urusan} - ${item.nama_bidang_urusan}` : "-"}</p>
                                                 </div>
                                             </td>
@@ -203,12 +239,12 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                                         {item.tujuan_opd.map((item: TujuanOpd) => (
                                             <React.Fragment key={item.id_tujuan_opd}>
                                                 <tr>
-                                                    <td className="border-x border-b border-emerald-500 px-6 py-6 h-full" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-full`} rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
                                                         <p className="flex min-h-[100px] bg-white items-center">
                                                             {item.tujuan || "-"}
                                                         </p>
                                                     </td>
-                                                    <td className="border-x border-b border-emerald-500 px-6 py-6 h-full" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-full`} rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
                                                         <div className="flex justify-center">
                                                             <ButtonSkyBorder
                                                                 className="flex items-center gap-1"
@@ -224,13 +260,13 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                                                 {item.indikator.length === 0 ? (
                                                     <React.Fragment>
                                                         <tr>
-                                                            <td colSpan={30} className="border-x border-b border-emerald-500 px-6 py-6 bg-yellow-500 text-white">indikator tujuan belum di tambahkan</td>
+                                                            <td colSpan={30} className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 bg-yellow-500 text-white`}>indikator tujuan belum di tambahkan</td>
                                                         </tr>
                                                     </React.Fragment>
                                                 ) : (
                                                     item.indikator.map((i: Indikator) => (
                                                         <tr key={i.id}>
-                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">
+                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>
                                                                 <div className="flex flex-col gap-2">
                                                                     <p>{i.indikator || "-"}</p>
                                                                     <div className="flex items-center justify-center gap-1 pt-2 border-t border-gray-300">
@@ -252,13 +288,13 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">{i.definisi_operasional || "-"}</td>
-                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">{i.rumus_perhitungan || "-"}</td>
-                                                            <td className="border-x border-b border-emerald-500 px-6 py-6">{i.sumber_data || "-"}</td>
+                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.definisi_operasional || "-"}</td>
+                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.rumus_perhitungan || "-"}</td>
+                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.sumber_data || "-"}</td>
                                                             {i.target.map((t: Target) => (
                                                                 <React.Fragment key={t.id}>
-                                                                    <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.target || "-"}</td>
-                                                                    <td className="border-x border-b border-emerald-500 px-6 py-6 text-center">{t.satuan || "-"}</td>
+                                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
+                                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
                                                                 </React.Fragment>
                                                             ))}
                                                         </tr>

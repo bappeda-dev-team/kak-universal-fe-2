@@ -383,7 +383,7 @@ const PokinOpd = () => {
                 <div className="flex flex-col p-5 border-2 rounded-t-xl mt-2">
                     <h1>Pohon Kinerja</h1>
                 </div>
-                <div className="flex flex-col p-5 border-b-2 border-x-2 rounded-b-xl">
+                <div className="flex text-red-500 flex-col p-5 border-b-2 border-x-2 rounded-b-xl">
                     {error}
                 </div>
             </>
