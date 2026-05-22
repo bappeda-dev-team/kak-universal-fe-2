@@ -9,6 +9,7 @@ import { LoadingButtonClip } from "@/components/global/Loading";
 import Select from 'react-select';
 import { OptionTypeString } from "@/types";
 import { IkkFindall, FormValue, Indikator, Target } from "../type";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 interface modal {
     isOpen: boolean;
@@ -46,11 +47,12 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, tahun, kode_
                 targets: i.targets.map((t: Target) => ({
                     target: t.target,
                     satuan: t.satuan,
-                })) 
+                }))
             }))
             ,
         }
     });
+    const { branding } = useBrandingContext();
 
     const { fields } = useFieldArray({
         control,
@@ -93,7 +95,6 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, tahun, kode_
     ]
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const formData = {
             //key : value
             kode_bidang_urusan: data.kode_bidang_urusan?.value,
@@ -112,8 +113,16 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, tahun, kode_
         // console.log(formData);
         try {
             setProses(true);
-            const response = await fetch(`${API_URL}/ikk/create`, {
-                method: "POST",
+            let url = ""
+            if (jenis === "tambah") {
+                url = "ikk/create";
+            } else if (jenis === "edit") {
+                url = `ikk/update/${Data?.id}`;
+            } else {
+                url = '';
+            }
+            const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
+                method: jenis === "tambah" ? "POST" : "PUT",
                 headers: {
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
@@ -121,8 +130,8 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, tahun, kode_
                 body: JSON.stringify(formData),
             });
             const result = await response.json();
-            if (result.code === 201) {
-                AlertNotification("Berhasil", "Berhasil menambahkan Permasalahan", "success", 1000);
+            if (result.code === 201 || result.code === 200) {
+                AlertNotification("Berhasil", `Berhasil ${jenis === "edit" ? "mengubah" : "menambah"} IKK`, "success", 1000);
                 onSuccess();
                 onClose();
             } else {

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { ButtonSky, ButtonRed, ButtonSkyBorder, ButtonRedBorder } from '@/components/global/Button';
+import { ButtonGreenBorder, ButtonSky, ButtonRed, ButtonSkyBorder, ButtonRedBorder } from '@/components/global/Button';
 import { Controller, SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 import { getOpdTahun } from '../../Cookie';
 import { AlertNotification } from '@/components/global/Alert';
@@ -32,6 +32,10 @@ interface FormValue {
     pohon?: OptionType;
     indikator: indikator[];
     tagging: Tagging[];
+    ikk: Ikk[];
+}
+interface Ikk {
+    ikk_id: OptionType | null;
 }
 interface Tagging {
     nama_tagging: string;
@@ -74,6 +78,8 @@ export const FormPohonOpd: React.FC<{
     const [PusatValue, setPusatValue] = useState<OptionTypeString[]>([]);
     const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
     const [ProgramPusatOption, setProgramPusatOption] = useState<OptionTypeString[]>([]);
+    const [Ikk, setIkk] = useState<any>(null);
+    const [IkkOption, setIkkOption] = useState<any[]>([]);
     const [DataAdd, setDataAdd] = useState<any>(null);
     const [IsAdded, setIsAdded] = useState<boolean>(false);
     const [UnggulanBupati, setUnggulanBupati] = useState<boolean>(false);
@@ -86,6 +92,8 @@ export const FormPohonOpd: React.FC<{
     const [user, setUser] = useState<any>(null);
     const token = getToken();
     const { branding } = useBrandingContext();
+
+    const kode_opd = user?.roles == "super_admin" ? SelectedOpd?.value : user?.kode_opd;
 
     useEffect(() => {
         const fetchUser = getUser();
@@ -112,6 +120,10 @@ export const FormPohonOpd: React.FC<{
     const { fields, append, remove } = useFieldArray({
         control,
         name: "indikator",
+    });
+    const { fields: fieldsIkk, append: appendIkk, remove: removeIkk } = useFieldArray({
+        control,
+        name: "ikk",
     });
 
     const fetchProgramUnggulan = async () => {
@@ -210,6 +222,34 @@ export const FormPohonOpd: React.FC<{
             setIsLoading(false);
         }
     }
+    const fetchIkk = async () => {
+        const levelIkk = level + 1;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${branding?.api_perencanaan}/ikk/findpokin/${levelIkk}/${kode_opd}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (data == null) {
+                setIkkOption([]);
+                console.log(`data IKK belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.ikks.map((item: any) => ({
+                    value: item.id,
+                    label: item.indikators[0].indikator,
+                }));
+                setIkkOption(program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -264,6 +304,9 @@ export const FormPohonOpd: React.FC<{
                 })),
             }),
             tagging: taggingData,
+            ikk: data.ikk.map((ikk) => ({
+                ikk_id: ikk.ikk_id?.value,
+            }))
         };
         // console.log(formData);
         try {
@@ -457,7 +500,6 @@ export const FormPohonOpd: React.FC<{
                                                         isSearchable
                                                         onMenuOpen={() => {
                                                             fetchProgramUnggulan();
-
                                                         }}
                                                         isClearable
                                                         isMulti
@@ -644,6 +686,62 @@ export const FormPohonOpd: React.FC<{
                                     <TbCirclePlus />
                                     Tambah Indikator
                                 </ButtonSkyBorder>
+                                {fieldsIkk.map((fields, index) => (
+                                    <div key={fields.id} className="flex flex-col my-2 py-2 px-5 border border-sky-700 rounded-lg">
+                                        <Controller
+                                            name={`ikk.${index}.ikk_id`}
+                                            control={control}
+                                            defaultValue={fields.ikk_id}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col py-3">
+                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                        Nama Indikator Kinerja Kunci {index + 1} :
+                                                    </label>
+                                                    <Select
+                                                        {...field}
+                                                        placeholder="Pilih Indikator Kinerja Kunci"
+                                                        value={Ikk}
+                                                        options={IkkOption}
+                                                        isSearchable
+                                                        isClearable
+                                                        isLoading={IsLoading}
+                                                        onMenuOpen={() => {
+                                                            fetchIkk();
+                                                        }}
+                                                        onChange={(option) => {
+                                                            field.onChange(option || []);
+                                                            setIkk(option);
+                                                        }}
+                                                        styles={{
+                                                            control: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                borderRadius: '8px',
+                                                                textAlign: 'start',
+                                                            })
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+                                        {index >= 0 && (
+                                            <ButtonRedBorder
+                                                type="button"
+                                                onClick={() => removeIkk(index)}
+                                                className="w-[200px] my-3"
+                                            >
+                                                Hapus
+                                            </ButtonRedBorder>
+                                        )}
+                                    </div>
+                                ))}
+                                <ButtonGreenBorder
+                                    className="flex items-center gap-1 mb-3 mt-2 w-full"
+                                    type="button"
+                                    onClick={() => appendIkk({ ikk_id: null })}
+                                >
+                                    <TbCirclePlus />
+                                    Tambah Indikator Kinerja Kunci
+                                </ButtonGreenBorder>
                                 <div className="flex flex-col pb-3 pt-1 border-t-2">
                                     <label
                                         className="uppercase text-xs font-bold text-gray-700 my-2"
@@ -727,6 +825,8 @@ export const FormEditPohon: React.FC<{
     const [Pelaksana, setPelaksana] = useState<OptionTypeString[]>([]);
     const [ProgramOption, setProgramOption] = useState<OptionTypeString[]>([]);
     const [ProgramPusatOption, setProgramPusatOption] = useState<OptionTypeString[]>([]);
+    const [Ikk, setIkk] = useState<any>(null);
+    const [IkkOption, setIkkOption] = useState<any[]>([]);
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
     const [UnggulanBupati, setUnggulanBupati] = useState<boolean>(false);
     // renamed to RB
@@ -739,6 +839,8 @@ export const FormEditPohon: React.FC<{
     const [user, setUser] = useState<any>(null);
     const token = getToken();
     const { branding } = useBrandingContext();
+
+    const kode_opd = user?.roles == "super_admin" ? SelectedOpd?.value : user?.kode_opd;
 
     useEffect(() => {
         const fetchUser = getUser();
@@ -765,6 +867,10 @@ export const FormEditPohon: React.FC<{
     const { fields, append, remove, replace } = useFieldArray({
         control,
         name: "indikator",
+    });
+    const { fields: fieldsIkk, append: appendIkk, remove: removeIkk } = useFieldArray({
+        control,
+        name: "ikk",
     });
 
     useEffect(() => {
@@ -1048,6 +1154,33 @@ export const FormEditPohon: React.FC<{
                 }));
                 setProgramOption(program);
                 // console.log("option : ", program);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const fetchIkk = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${branding?.api_perencanaan}/ikk/findpokin/${level}/${kode_opd}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (data == null) {
+                setIkkOption([]);
+                console.log(`data IKK belum di tambahkan / kosong`);
+            } else {
+                const program = data.data.ikks.map((item: any) => ({
+                    value: item.id,
+                    label: item.indikators[0].indikator,
+                }));
+                setIkkOption(program);
             }
         } catch (err) {
             console.error(err);
@@ -1400,6 +1533,62 @@ export const FormEditPohon: React.FC<{
                             <TbCirclePlus />
                             Tambah Indikator
                         </ButtonSkyBorder>
+                        {fieldsIkk.map((fields, index) => (
+                            <div key={fields.id} className="flex flex-col my-2 py-2 px-5 border border-sky-700 rounded-lg">
+                                <Controller
+                                    name={`ikk.${index}.ikk_id`}
+                                    control={control}
+                                    defaultValue={fields.ikk_id}
+                                    render={({ field }) => (
+                                        <div className="flex flex-col py-3">
+                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                Nama Indikator Kinerja Kunci {index + 1} :
+                                            </label>
+                                            <Select
+                                                {...field}
+                                                placeholder="Pilih Indikator Kinerja Kunci"
+                                                value={Ikk}
+                                                options={IkkOption}
+                                                isSearchable
+                                                isClearable
+                                                isLoading={IsLoading}
+                                                onMenuOpen={() => {
+                                                    fetchIkk();
+                                                }}
+                                                onChange={(option) => {
+                                                    field.onChange(option || []);
+                                                    setIkk(option);
+                                                }}
+                                                styles={{
+                                                    control: (baseStyles) => ({
+                                                        ...baseStyles,
+                                                        borderRadius: '8px',
+                                                        textAlign: 'start',
+                                                    })
+                                                }}
+                                            />
+                                        </div>
+                                    )}
+                                />
+                                {index >= 0 && (
+                                    <ButtonRedBorder
+                                        type="button"
+                                        onClick={() => removeIkk(index)}
+                                        className="w-[200px] my-3"
+                                    >
+                                        Hapus
+                                    </ButtonRedBorder>
+                                )}
+                            </div>
+                        ))}
+                        <ButtonGreenBorder
+                            className="flex items-center gap-1 mb-3 mt-2 w-full"
+                            type="button"
+                            onClick={() => appendIkk({ ikk_id: null })}
+                        >
+                            <TbCirclePlus />
+                            Tambah Indikator Kinerja Kunci
+                        </ButtonGreenBorder>
                         <div className="flex flex-col pb-3 pt-1 border-t-2">
                             <label
                                 className="uppercase text-xs font-bold text-gray-700 my-2"
