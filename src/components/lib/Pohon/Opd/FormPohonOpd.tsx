@@ -11,6 +11,7 @@ import { LoadingButtonClip, LoadingSync } from '@/components/global/Loading';
 import { TbCirclePlus, TbCircleX, TbDeviceFloppy, TbCheck } from 'react-icons/tb';
 import Select from 'react-select';
 import { useBrandingContext } from '@/context/BrandingContext';
+import { IkkFindall } from '@/app/DataMaster/ikk/type';
 
 interface OptionTypeString {
     value: string;
@@ -734,14 +735,16 @@ export const FormPohonOpd: React.FC<{
                                         )}
                                     </div>
                                 ))}
-                                <ButtonGreenBorder
-                                    className="flex items-center gap-1 mb-3 mt-2 w-full"
-                                    type="button"
-                                    onClick={() => appendIkk({ ikk_id: null })}
-                                >
-                                    <TbCirclePlus />
-                                    Tambah Indikator Kinerja Kunci
-                                </ButtonGreenBorder>
+                                {fieldsIkk.length === 0 &&
+                                    <ButtonGreenBorder
+                                        className="flex items-center gap-1 mb-3 mt-2 w-full"
+                                        type="button"
+                                        onClick={() => appendIkk({ ikk_id: null })}
+                                    >
+                                        <TbCirclePlus />
+                                        Tambah Indikator Kinerja Kunci
+                                    </ButtonGreenBorder>
+                                }
                                 <div className="flex flex-col pb-3 pt-1 border-t-2">
                                     <label
                                         className="uppercase text-xs font-bold text-gray-700 my-2"
@@ -943,6 +946,21 @@ export const FormEditPohon: React.FC<{
                     setRB(!!rbTag);
                     setUnggulanPusat(!!unggulanPusatTag);
                 }
+                if(data.ikk){
+                    const ikk = {
+                        value: data.ikk[0].id,
+                        label: data.ikk[0].indikators[0].indikator,
+                    }
+                    reset({
+                        ikk: data.ikk.map((i: IkkFindall) => ({
+                            ikk_id: {
+                                value: i.id,
+                                label: i.indikators[0].indikator
+                            }
+                        })) 
+                    })
+                    setIkk(ikk);
+                }
 
                 reset({
                     nama_pohon: data.nama_pohon || '',
@@ -1033,6 +1051,9 @@ export const FormEditPohon: React.FC<{
                 })),
             }),
             tagging: taggingData,
+            ikk: data.ikk.map((ikk) => ({
+                ikk_id: ikk.ikk_id?.value,
+            }))
         };
         // console.log(formData);
         try {
@@ -1581,14 +1602,16 @@ export const FormEditPohon: React.FC<{
                                 )}
                             </div>
                         ))}
-                        <ButtonGreenBorder
-                            className="flex items-center gap-1 mb-3 mt-2 w-full"
-                            type="button"
-                            onClick={() => appendIkk({ ikk_id: null })}
-                        >
-                            <TbCirclePlus />
-                            Tambah Indikator Kinerja Kunci
-                        </ButtonGreenBorder>
+                        {fieldsIkk.length === 0 &&
+                            <ButtonGreenBorder
+                                className="flex items-center gap-1 mb-3 mt-2 w-full"
+                                type="button"
+                                onClick={() => appendIkk({ ikk_id: null })}
+                            >
+                                <TbCirclePlus />
+                                Tambah Indikator Kinerja Kunci
+                            </ButtonGreenBorder>
+                        }
                         <div className="flex flex-col pb-3 pt-1 border-t-2">
                             <label
                                 className="uppercase text-xs font-bold text-gray-700 my-2"
