@@ -15,6 +15,7 @@ import { ModalCetak } from '@/components/pages/Pohon/ModalCetak';
 import { LoadingClip } from '@/components/global/Loading';
 import { FormAmbilPohonOpd } from './FormAmbilPohonOpd';
 import { useBrandingContext } from '@/context/BrandingContext';
+import { IkkFindall } from '@/app/DataMaster/ikk/type';
 
 interface pohon {
     tema: any;
@@ -36,21 +37,6 @@ interface Indikator {
     nama_indikator: string;
     targets: Target[];
 }
-
-interface Cross {
-    id: number;
-    parent: string;
-    nama_pohon: string;
-    jenis_pohon: string;
-    level_pohon: number;
-    kode_opd: string;
-    nama_opd: string;
-    keterangan: string;
-    tahun: string;
-    status: string;
-    indikator: Indikator[];
-}
-
 interface Tagging {
     id: number;
     id_pokin: number;
@@ -785,6 +771,7 @@ export const TablePohon = (props: any) => {
     const review = props.item.jumlah_review;
     const User = props.user;
     const ShowDetail = props.ShowDetail;
+    const ikk = props.item.ikk;
 
     // REVIEW
     const [IsNewReview, setIsNewReview] = useState<boolean>(false);
@@ -792,7 +779,6 @@ export const TablePohon = (props: any) => {
     const [idReview, setIdReview] = useState<number | null>(null);
     const [Review, setReview] = useState<Review[]>([]);
 
-    const [Proses, setProses] = useState<boolean>(false);
     const [Show, setShow] = useState<boolean>(false);
     const [ShowReview, setShowReview] = useState<boolean>(false);
     const [LoadingReview, setLoadingReview] = useState<boolean>(false);
@@ -1272,6 +1258,9 @@ export const TablePohon = (props: any) => {
                     }
                 </tbody>
             </table>
+            {(Show && ikk && (ikk.length != 0)) &&
+                <TableIkk ikk={ikk} jenis={jenis}/>
+            }
             <div className="flex mt-2 w-full justify-center bg-white p-3 rounded-lg hide-on-capture">
                 <ButtonGreenBorder className='w-full' onClick={() => setShow((prev) => !prev)}>
                     {Show ?
@@ -1403,8 +1392,7 @@ export const TablePohon = (props: any) => {
                                 ))}
                             </table>
                         </div>
-            )
-            }
+            )}
             {/* BUTTON REVIEW */}
             <div
                 className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white hide-on-capture
@@ -1547,6 +1535,36 @@ export const TableCrosscuting = (props: any) => {
         </div>
     );
 };
+export const TableIkk = (props: any) => {
+
+    const { ikk, jenis } = props;
+
+    const tactical = (jenis === "Tactical" || jenis === "Tactical Pemda")
+
+    return (
+        <div className={`mt-2 p-2 bg-white rounded-lg border ${tactical ? "border-blue-500" : "border-emerald-500"}`}>
+            <h1 className={`font-semibold ${tactical ? "text-blue-500" : "text-emerald-500"}`}>Indikator Kinerja Kunci</h1>
+            {ikk.map((item: IkkFindall, index: number) => (
+                <table className='w-full my-3' key={index}>
+                    <tbody>
+                        <tr>
+                            <td className={`px-4 py-2 border ${tactical ? "border-blue-500" : "border-emerald-500"}`}>Bidang Urusan</td>
+                            <td className={`px-4 py-2 border ${tactical ? "border-blue-500" : "border-emerald-500"}`}>({item.kode_bidang_urusan || "-"}) - {item.nama_bidang_urusan || 'bidang urusan tidak diketahui'}</td>
+                        </tr>
+                        <tr className={`${tactical ? "bg-blue-200" : "bg-emerald-200"}`}>
+                            <td className={`px-4 py-2 border ${tactical ? "border-blue-500" : "border-emerald-500"}`}>Indikator</td>
+                            <td className={`px-4 py-2 border ${tactical ? "border-blue-500" : "border-emerald-500"}`}>{item.indikators[0].indikator || "-"}</td>
+                        </tr>
+                        <tr>
+                            <td className={`px-4 py-2 border ${tactical ? "border-blue-500" : "border-emerald-500"}`}>Target/Satuan</td>
+                            <td className={`px-4 py-2 border ${tactical ? "border-blue-500" : "border-emerald-500"}`}>{item.indikators[0].targets[0].target || "-"} / {item.indikators[0].targets[0].satuan || "-"}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            ))}
+        </div>
+    )
+}
 
 export const newChildButtonName = (jenis: string): string => {
     switch (jenis) {

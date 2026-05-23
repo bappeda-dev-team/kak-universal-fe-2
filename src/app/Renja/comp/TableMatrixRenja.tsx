@@ -2,8 +2,8 @@
 
 import { getToken } from "@/components/lib/Cookie";
 import React, { useEffect, useState } from "react";
-import { ButtonGreenBorder, ButtonSkyBorder } from "@/components/global/Button";
-import { TbPencil, TbCirclePlus } from "react-icons/tb";
+import { ButtonBlackBorder, ButtonSkyBorder } from "@/components/global/Button";
+import { TbLockCancel, TbPencil, TbCirclePlus, TbLockOpen, TbLockFilled, TbRefresh } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
 import { ModalIndikatorMatrixRenja } from "./ModalIndikatorMatrixRenja";
 import { ModalAnggaranMatrixRenja } from "./ModalAnggaranMatrixRenja";
@@ -73,6 +73,8 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const token = getToken();
 
+    const [Lock, setLock] = useState<boolean>(false);
+
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchMatrix = async () => {
@@ -119,6 +121,40 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
 
     return (
         <>
+            {menu === "penetapan" &&
+                <div className="px-3 py-2">
+                    <div className={`flex items-center justify-between p-2 text-white rounded-lg ${Lock ? "bg-red-500" : "bg-emerald-500"}`}>
+                        {Lock ?
+                            <div className="flex items-center gap-1">
+                                <TbLockFilled />
+                                <p>Data terkunci tidak bisa di ubah</p>
+                            </div>
+                            :
+                            <div className="flex items-center gap-1">
+                                <TbLockOpen />
+                                <p>Data terbuka dan bisa di ubah</p>
+                            </div>
+                        }
+                        {Lock ?
+                            <ButtonBlackBorder className="bg-white flex items-center gap-1">
+                                <TbLockOpen />
+                                Buka Kunci
+                            </ButtonBlackBorder>
+                            :
+                            <div className="flex items-center gap-1">
+                                <ButtonSkyBorder className="bg-white flex items-center gap-1">
+                                    <TbRefresh />
+                                    Sync
+                                </ButtonSkyBorder>
+                                <ButtonBlackBorder className="bg-white flex items-center gap-1">
+                                    <TbLockFilled />
+                                    Kunci Data
+                                </ButtonBlackBorder>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
             {Matrix.map((item: matrix, index: number) => (
                 <React.Fragment key={index}>
                     <div className="overflow-auto m-2 rounded-xl border">
@@ -150,6 +186,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                 nama={u.nama}
                                                 kode_opd={item.kode_opd}
                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                lock={Lock}
                                                 menu={menu}
                                             />
                                         </tbody>
@@ -173,6 +210,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                 nama={br.nama}
                                                                 kode_opd={kode_opd}
                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                                lock={Lock}
                                                                 menu={menu}
                                                             />
                                                         </tbody>
@@ -196,6 +234,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                                 nama={p.nama}
                                                                                 kode_opd={kode_opd}
                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                                                lock={Lock}
                                                                                 menu={menu}
                                                                             />
                                                                         </tbody>
@@ -219,6 +258,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                                                 nama={k.nama}
                                                                                                 kode_opd={kode_opd}
                                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                                                                lock={Lock}
                                                                                                 menu={menu}
                                                                                             />
                                                                                         </tbody>
@@ -242,6 +282,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                                                                 nama={sk.nama}
                                                                                                                 kode_opd={kode_opd}
                                                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                                                                                                                lock={Lock}
                                                                                                                 menu={menu}
                                                                                                             />
                                                                                                         </tbody>
@@ -326,9 +367,10 @@ interface Tr {
     jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
     type: "laporan" | "opd";
     menu: "ranwal" | "rankhir" | "penetapan";
+    lock: boolean
     fetchTrigger(): void;
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama, anggaran, indikator, fetchTrigger }) => {
+export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama, anggaran, indikator, lock, fetchTrigger }) => {
 
     const { branding } = useBrandingContext();
     const [ModalPagu, setModalPagu] = useState<boolean>(false);
@@ -448,16 +490,24 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                                                         <span className="font-semibold text-sm">
                                                             Rp.{formatRupiah(c.pagu_indikatif || 0)}
                                                         </span>
-                                                        {(jenis === "Sub Kegiatan" && menu === "penetapan") && (
-                                                            <button
-                                                                type="button"
-                                                                className="text-sky-400 border border-sky-300 hover:text-sky-600 p-1 rounded-full hover:bg-sky-100 transition-colors"
-                                                                title="Edit Pagu Anggaran"
-                                                                onClick={() => handleModalPagu(c.pagu_indikatif || 0)}
-                                                            >
-                                                                <TbPencil size={14} />
-                                                            </button>
-                                                        )}
+                                                        {jenis === "Sub Kegiatan" ?
+                                                            menu === "penetapan" &&
+                                                                lock ?
+                                                                <div className="text-red-500 flex items-center justify-center">
+                                                                    <TbLockCancel size={20} />
+                                                                </div>
+                                                                :
+                                                                <button
+                                                                    type="button"
+                                                                    className="text-sky-400 border border-sky-300 hover:text-sky-600 p-1 rounded-full hover:bg-sky-100 transition-colors"
+                                                                    title="Edit Pagu Anggaran"
+                                                                    onClick={() => handleModalPagu(c.pagu_indikatif || 0)}
+                                                                >
+                                                                    <TbPencil size={14} />
+                                                                </button>
+                                                            :
+                                                            <></>
+                                                        }
                                                     </div>
                                                 </td>
                                                 <td
@@ -465,6 +515,11 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                                                     className="border-r border-b px-6 py-4 text-center align-middle"
                                                 >
                                                     {(type === "opd" && menu !== "ranwal") &&
+                                                        (menu === "penetapan" && lock) ?
+                                                        <div className="text-red-500 flex items-center justify-center">
+                                                            <TbLockCancel size={30} />
+                                                        </div>
+                                                        :
                                                         <ButtonSkyBorder
                                                             className="flex items-center gap-1"
                                                             onClick={() => handleModalIndikator(indikator)}
