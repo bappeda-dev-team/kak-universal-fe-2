@@ -6,7 +6,7 @@ import { OpdNull, TahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { ButtonBlackBorder, ButtonSkyBorder } from "@/components/global/Button";
-import { TbRefresh, TbTrash } from "react-icons/tb";
+import { TbLock, TbRefresh, TbTrash } from "react-icons/tb";
 import { IkdFindall, SasaranOPD, Pelaksana, ProgramOPD } from "../type";
 import { ModalProgramIKD } from "./ModalProgramIKD";
 import { AlertQuestion, AlertNotification } from "@/components/global/Alert";
@@ -269,20 +269,26 @@ export const TrProgram: React.FC<TrProgram> = ({ Data, Program, kode_opd }) => {
                 <td className="border-x border-b border-emerald-500">
                     {ProgramTerpilih.map((p: ProgramOPD, pr_index: number) => (
                         <div className={`flex items-center gap-1 px-6 py-4 ${pr_index != ProgramTerpilih.length - 1 && "border-b border-emerald-500"}`} key={pr_index}>
-                            <p>{p.nama_program || ""}</p>
-                            <button
-                                type="button"
-                                className='flex items-center gap-1 rounded-full border border-red-500 p-1 text-red-500 hover:bg-red-300 hover:text-white'
-                                onClick={() => {
-                                    AlertQuestion("Hapus?", "Hapus Program?", "question", "Hapus", "Batal").then((result) => {
-                                        if (result.isConfirmed) {
-                                            hapusProgram(p.id);
-                                        }
-                                    });
-                                }}
-                            >
-                                <TbTrash />
-                            </button>
+                            <div className={`flex items-center gap-2 ${p.is_locked && "p-2 rounded-lg bg-yellow-500"}`}>
+                                <p>{p.nama_program || ""}</p>
+                                {p.is_locked ?
+                                    <TbLock size={25} />
+                                    :
+                                    <button
+                                        type="button"
+                                        className='flex items-center gap-1 rounded-full border border-red-500 p-1 text-red-500 hover:bg-red-300 hover:text-white'
+                                        onClick={() => {
+                                            AlertQuestion("Hapus?", "Hapus Program?", "question", "Hapus", "Batal").then((result) => {
+                                                if (result.isConfirmed) {
+                                                    hapusProgram(p.id);
+                                                }
+                                            });
+                                        }}
+                                    >
+                                        <TbTrash />
+                                    </button>
+                                }
+                            </div>
                         </div>
                     ))}
                 </td>

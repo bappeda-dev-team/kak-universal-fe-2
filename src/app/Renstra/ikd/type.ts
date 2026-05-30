@@ -38,6 +38,7 @@ export interface ProgramOPD {
     tactical_id: number;
     parent: number;
     nama_program: string;
+    is_locked: boolean;
 }
 
 export interface IkdFindall {
