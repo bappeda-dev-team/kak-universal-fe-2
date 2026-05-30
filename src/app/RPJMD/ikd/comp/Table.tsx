@@ -6,9 +6,8 @@ import { OpdNull, TahunNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { ButtonBlackBorder, ButtonSkyBorder } from "@/components/global/Button";
-import { TbLockSquareRounded, TbRefresh, TbTrash } from "react-icons/tb";
+import { TbLock, TbLockOpen, TbLockSquareRounded, TbRefresh, TbTrash } from "react-icons/tb";
 import { IkdFindall, SasaranOPD, Pelaksana, ProgramOPD } from "../type";
-import { ModalProgramIKD } from "./ModalProgramIKD";
 import { AlertQuestion, AlertNotification } from "@/components/global/Alert";
 
 interface Table {
@@ -22,6 +21,7 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
     const [Error, setError] = useState<boolean | null>(null);
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+    const [Lock, setLock] = useState<boolean>(false);
 
     const [Loading, setLoading] = useState<boolean | null>(null);
     const token = getToken();
@@ -141,8 +141,7 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                     <th className="border-r border-b px-6 py-3 min-w-[250px]">Nama Pohon</th>
                                     <th className="border-r border-b px-6 py-3 min-w-[200px]">Pelaksana</th>
                                     <th className="border-l border-b px-6 py-3 min-w-[200px]">Sasaran OPD</th>
-                                    <th className="border-l border-b px-6 py-3 min-w-[200px]">Program OPD</th>
-                                    <th className="border-l border-b px-6 py-3 min-w-[150px]">Aksi</th>
+                                    <th className="border-l border-b px-6 py-3 min-w-[350px]">Program OPD</th>
                                 </tr>
                                 <tr className="bg-emerald-700 text-white">
                                     <th className="border-r border-b px-2 py-1 text-center">1</th>
@@ -150,7 +149,6 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                     <th className="border-r border-b px-2 py-1 text-center">3</th>
                                     <th className="border-r border-b px-2 py-1 text-center">4</th>
                                     <th className="border-l border-b px-2 py-1 text-center">5</th>
-                                    <th className="border-l border-b px-2 py-1 text-center">6</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -198,37 +196,21 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
                                                             <p className="text-red-300">Sasaran OPD belum di buat</p>
                                                         }
                                                     </td>
-                                                    <td className="border-x border-b border-emerald-500">
+                                                    <td className={`border-x border-b border-emerald-500 ${Lock && "bg-red-300"}`}>
                                                         {item.program_opd_terpilih.length != 0 ?
                                                             item.program_opd_terpilih.map((p: ProgramOPD, pr_index: number) => (
-                                                                <div className={`flex items-center gap-1 px-6 py-4 ${pr_index != item.program_opd_terpilih.length - 1 && "border-b border-emerald-500"}`} key={pr_index}>
-                                                                    <p>{p.nama_program || ""}</p>
-                                                                </div>
+                                                                <React.Fragment key={pr_index}>
+                                                                    <ProgramTerpilih
+                                                                        program={p}
+                                                                        pr_index={pr_index}
+                                                                        program_length={item.program_opd_terpilih.length - 1}
+                                                                    />
+                                                                </React.Fragment>
                                                             ))
                                                             :
                                                             <p className="text-red-300 px-6 py-4">Program belum di pilih</p>
                                                         }
                                                     </td>
-                                                    {LockButton ?
-                                                        <td className="border-x border-b border-emerald-500 px-6 py-4">
-                                                            <ButtonBlackBorder 
-                                                                className="w-full flex items-center gap-1"
-                                                                onClick={() => AlertQuestion("Kunci?", "", "question", "Kunci", "Batal").then((result) => {
-                                                                    if(result.isConfirmed){
-                                                                        AlertNotification("Dalam Pengembangan", "", "info", 2000);
-                                                                    }
-                                                                })}
-                                                            >
-                                                                <TbLockSquareRounded />
-                                                                Lock
-                                                            </ButtonBlackBorder>
-                                                        </td>
-                                                        :
-                                                        <td className="border-x border-b text-red-300 border-emerald-500 px-6 py-4">
-                                                            Data IKD Belum Lengkap
-                                                        </td>
-
-                                                    }
                                                 </tr>
                                             </React.Fragment>
                                         )
@@ -241,4 +223,68 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
             </>
         )
     }
+}
+
+interface ProgramTerpilih {
+    program: ProgramOPD;
+    pr_index: number;
+    program_length: number;
+}
+export const ProgramTerpilih: React.FC<ProgramTerpilih> = ({ program, pr_index, program_length }) => {
+
+    const [Lock, setLock] = useState<boolean>(program.is_locked);
+    const { branding } = useBrandingContext();
+    const token = getToken();
+
+    const handleLock = async (lock: boolean) => {
+        let url = '';
+        if (lock) {
+            url = `ikd/select_program_opd/lock/${program.id}`
+        } else {
+            url = `ikd/select_program_opd/unlock/${program.id}`
+        }
+        try {
+            const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
+                method: "PUT",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const result = await response.json();
+            if(result.code === 200 || result.code === 201){
+                setLock((prev) => !prev);
+                AlertNotification("Berhasil", "", "success", 2000, true)
+            } else {
+                AlertNotification("Gagal", `${result.data}`, "success", 2000, true)
+            }
+        } catch (err){
+            console.log(err);
+            AlertNotification("Gagal", `${err}`, "success", 2000, true)
+        }
+    }
+
+    return (
+        <div className={`flex items-center gap-1 px-6 py-4 ${pr_index != program_length && "border-b border-emerald-500"}`} key={pr_index}>
+            <div className={`p-3 w-full flex justify-between items-center gap-2 rounded-lg ${Lock ? "bg-red-500 text-white" : "border border-emerald-500"}`}>
+                {program.nama_program || ""}
+                <button
+                    type="button"
+                    title={`${Lock ? "buka kunci" : "kunci"}`}
+                    className={`p-2 rounded-full border cursor-pointer ${Lock ? "border-red-300 hover:bg-red-300" : "border-emerald-500 hover:bg-emerald-300"}`}
+                    onClick={() => AlertQuestion(`${Lock ? "Buka Kunci" : "Kunci"}`, "", "question", "Ya", "Batal").then((result) => {
+                        if (result.isConfirmed) {
+                            handleLock(Lock);
+                        }
+                    })}
+                >
+                    {Lock ?
+                        <TbLockOpen />
+                        :
+                        <TbLock />
+                    }
+                </button>
+            </div>
+        </div>
+    )
 }
