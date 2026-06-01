@@ -123,21 +123,21 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
         return (
             <>
                 <div className="flex flex-wrap justify-end items-center gap-1 px-1">
-                        <ButtonBlackBorder
-                            className="flex items-center gap-1"
-                            onClick={refresh}
-                        >
-                            <TbRefresh />
-                            Refresh
-                        </ButtonBlackBorder>
-                        <ButtonSkyBorder
-                            className="flex items-center gap-1"
-                            onClick={() => handleModalOpen('tambah', null)}
-                        >
-                            <TbCirclePlus />
-                            Tambah Data
-                        </ButtonSkyBorder>
-                    </div>
+                    <ButtonBlackBorder
+                        className="flex items-center gap-1"
+                        onClick={refresh}
+                    >
+                        <TbRefresh />
+                        Refresh
+                    </ButtonBlackBorder>
+                    <ButtonSkyBorder
+                        className="flex items-center gap-1"
+                        onClick={() => handleModalOpen('tambah', null)}
+                    >
+                        <TbCirclePlus />
+                        Tambah Data
+                    </ButtonSkyBorder>
+                </div>
                 <div className="flex flex-col items-center gap-1 w-full">
                     <div className="overflow-auto m-2 rounded-t-xl border w-full">
                         <table className="w-full">
@@ -176,10 +176,16 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                                             <td className="border border-emerald-500 px-4 py-4 text-center">{index + 1}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">({item.kode_bidang_urusan || "no code"}) {item.nama_bidang_urusan || "nama bidang urusan tidak diketahui"}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">{item.jenis || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0].indikator || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0].targets[0].target || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">{item.indikators[0].targets[0].satuan || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.keterangan || ""}</td>
+                                            {item.indikators.length === 0 ?
+                                                <td className="border-x border-b border-emerald-500 px-6 py-4 bg-yellow-400" colSpan={3}>Indikator belum di tambahkan</td>
+                                                :
+                                                <>
+                                                    <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0]?.indikator || "-"}</td>
+                                                    <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0]?.targets[0].target || "-"}</td>
+                                                    <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">{item.indikators[0]?.targets[0].satuan || "-"}</td>
+                                                </>
+                                            }
+                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.keterangan || "-"}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">
                                                 <div className="flex flex-col justify-center items-center gap-2">
                                                     <ButtonGreenBorder
