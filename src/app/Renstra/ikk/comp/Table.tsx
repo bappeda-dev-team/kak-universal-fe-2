@@ -173,9 +173,15 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                                             <td className="border border-emerald-500 px-4 py-4 text-center">{index + 1}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">({item.kode_bidang_urusan || "no code"}) {item.nama_bidang_urusan || "nama bidang urusan tidak diketahui"}</td>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">{item.jenis || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0].indikator || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0].targets[0].target || ""}</td>
-                                            <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">{item.indikators[0].targets[0].satuan || ""}</td>
+                                            {item.indikators.length === 0 ?
+                                                <td className="border-x border-b border-emerald-500 px-6 py-4 bg-yellow-400" colSpan={3}>Indikator belum di tambahkan</td>
+                                                :
+                                                <>
+                                                    <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0]?.indikator || "-"}</td>
+                                                    <td className="border-x border-b border-emerald-500 px-6 py-4">{item.indikators[0]?.targets[0].target || "-"}</td>
+                                                    <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">{item.indikators[0]?.targets[0].satuan || "-"}</td>
+                                                </>
+                                            }
                                             <td className="border-x border-b border-emerald-500 px-6 py-4">{item.keterangan || ""}</td>
                                         </tr>
                                     ))
