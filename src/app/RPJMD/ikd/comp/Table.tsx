@@ -239,9 +239,9 @@ export const ProgramTerpilih: React.FC<ProgramTerpilih> = ({ program, pr_index, 
     const handleLock = async (lock: boolean) => {
         let url = '';
         if (lock) {
-            url = `ikd/select_program_opd/lock/${program.id}`
-        } else {
             url = `ikd/select_program_opd/unlock/${program.id}`
+        } else {
+            url = `ikd/select_program_opd/lock/${program.id}`
         }
         try {
             const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
