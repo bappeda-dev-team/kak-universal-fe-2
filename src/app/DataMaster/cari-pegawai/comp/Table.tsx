@@ -59,6 +59,37 @@ const Table = () => {
             setKodeOpd(kode_opd);
         }
     }
+
+    const fetchPegawai = async () => {
+        setLoading(true)
+        try {
+            const response = await fetch(`${branding.api_perencanaan}/pegawai/findall?nip=${searchQuery}`, {
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const result = await response.json();
+            const data = result.data;
+            if (data == null) {
+                setDataNull(true);
+                setPegawai([]);
+            } else if (result.code === 401) {
+                setError(true);
+            } else {
+                setDataNull(false);
+                setPegawai(data);
+                setError(false);
+            }
+            setPegawai(data);
+        } catch (err) {
+            setError(true);
+            console.error(err)
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const handleModalJabatan = (Data: pegawai | null) => {
         if (ModalJabatanOpen) {
             setModalJabatanOpen(false);
@@ -105,82 +136,94 @@ const Table = () => {
 
     return (
         <>
-            <div className="mt-3 rounded-xl shadow-lg border">
-                <div className="w-full flex flex-wrap gap-2 items-center uppercase px-3 py-2">
-                    <div className="w-full flex px-2 items-center">
-                        <TbSearch className="absolute ml-4 text-slate-500" />
-                        <input
-                            type="text"
-                            placeholder="Cari Nama Pegawai / NIP /Email / "
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full py-2 pl-10 pr-2 border rounded-lg border-gray-300"
-                        />
-                    </div>
+            <div className="w-full flex gap-2 items-center uppercase px-3 py-2">
+                <div className="w-full flex px-2 items-center">
+                    <TbSearch className="absolute ml-4 text-slate-500" />
+                    <input
+                        type="text"
+                        placeholder="Masukkan NIP Lengkap"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full py-2 pl-10 pr-2 border rounded-lg border-gray-300"
+                    />
                 </div>
-                <div className="overflow-auto mx-3 my-2 rounded-t-xl border">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="bg-[#99CEF5] text-white">
-                                <th className="border-r border-b px-6 py-3 min-w-[50px]">No</th>
-                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama</th>
-                                <th className="border-r border-b px-6 py-3 min-w-[200px]">NIP</th>
-                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Jabatan</th>
-                                <th className="border-r border-b px-6 py-3 min-w-[100px]">Kode OPD</th>
-                                <th className="border-r border-b px-6 py-3 min-w-[300px]">Perangkat Daerah</th>
-                                <th className="border-l border-b px-6 py-3 min-w-[100px]">Aksi</th>
+                <ButtonBlackBorder
+                    className="flex items-center gap-1"
+                    onClick={() => {
+                        if(searchQuery !== ""){
+                            fetchPegawai()
+                        } else {
+                            AlertNotification("NIP Tidak Boleh Kosong", "", "error", 1000);
+                        }
+                    }
+                    }
+                >
+                    <TbSearch />
+                    Cari
+                </ButtonBlackBorder>
+            </div>
+            <div className="overflow-auto mx-3 my-2 rounded-t-xl border">
+                <table className="w-full">
+                    <thead>
+                        <tr className="bg-[#99CEF5] text-white">
+                            <th className="border-r border-b px-6 py-3 min-w-[50px]">No</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">NIP</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Jabatan</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Perangkat Daerah</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[100px]">Kode OPD</th>
+                            <th className="border-l border-b px-6 py-3 min-w-[100px]">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {(DataNull || Pegawai.length === 0) ?
+                            <tr>
+                                <td className="px-6 py-3 uppercase" colSpan={13}>
+                                    Tidak Ditemukan
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {(DataNull || Pegawai.length === 0) ?
-                                <tr>
-                                    <td className="px-6 py-3 uppercase" colSpan={13}>
-                                        Tidak Ditemukan
+                            :
+                            Pegawai.map((data, index) => (
+                                <tr key={data?.id}>
+                                    <td className="border-r border-b px-6 py-4">{index + 1}</td>
+                                    <td className="border-r border-b px-6 py-4">{data?.nama_pegawai ? data.nama_pegawai : "-"}</td>
+                                    <td className="border-r border-b px-6 py-4 text-center">{data?.nip ? data.nip : "-"}</td>
+                                    <td className="border-r border-b px-6 py-4 text-center">{data?.nama_jabatan ? data.nama_jabatan : "-"}</td>
+                                    <td className="border-r border-b px-6 py-4">{data?.nama_opd ? data.nama_opd : "-"}</td>
+                                    <td className="border-r border-b px-6 py-4">{data?.kode_opd ? data.kode_opd : "-"}</td>
+                                    <td className="border-r border-b px-6 py-4">
+                                        <div className="flex flex-col jutify-center items-center gap-2">
+                                            <ButtonGreen
+                                                className="w-full"
+                                                onClick={() => handleModal("edit", data, data?.nama_opd, data?.kode_opd)}
+                                            >
+                                                Edit
+                                            </ButtonGreen>
+                                            <ButtonBlack
+                                                className="w-full"
+                                                onClick={() => handleModalJabatan(data)}
+                                            >
+                                                Jabatan
+                                            </ButtonBlack>
+                                            <ButtonRed
+                                                className="w-full"
+                                                onClick={() => {
+                                                    AlertQuestion("Hapus?", "Hapus Pegawai yang dipilih?", "question", "Hapus", "Batal").then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            hapusPegawai(data.id);
+                                                        }
+                                                    });
+                                                }}
+                                            >
+                                                Hapus
+                                            </ButtonRed>
+                                        </div>
                                     </td>
                                 </tr>
-                                :
-                                Pegawai.map((data, index) => (
-                                    <tr key={data?.id}>
-                                        <td className="border-r border-b px-6 py-4">{index + 1}</td>
-                                        <td className="border-r border-b px-6 py-4">{data?.nama_pegawai ? data.nama_pegawai : "-"}</td>
-                                        <td className="border-r border-b px-6 py-4 text-center">{data?.nip ? data.nip : "-"}</td>
-                                        <td className="border-r border-b px-6 py-4 text-center">{data?.nama_jabatan ? data.nama_jabatan : "-"}</td>
-                                        <td className="border-r border-b px-6 py-4">{data?.kode_opd ? data.kode_opd : "-"}</td>
-                                        <td className="border-r border-b px-6 py-4">{data?.nama_opd ? data.nama_opd : "-"}</td>
-                                        <td className="border-r border-b px-6 py-4">
-                                            <div className="flex flex-col jutify-center items-center gap-2">
-                                                <ButtonGreen
-                                                    className="w-full"
-                                                    onClick={() => handleModal("edit", data, data?.nama_opd, data?.kode_opd)}
-                                                >
-                                                    Edit
-                                                </ButtonGreen>
-                                                <ButtonBlack
-                                                    className="w-full"
-                                                    onClick={() => handleModalJabatan(data)}
-                                                >
-                                                    Jabatan
-                                                </ButtonBlack>
-                                                <ButtonRed
-                                                    className="w-full"
-                                                    onClick={() => {
-                                                        AlertQuestion("Hapus?", "Hapus Pegawai yang dipilih?", "question", "Hapus", "Batal").then((result) => {
-                                                            if (result.isConfirmed) {
-                                                                hapusPegawai(data.id);
-                                                            }
-                                                        });
-                                                    }}
-                                                >
-                                                    Hapus
-                                                </ButtonRed>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                            ))
+                        }
+                    </tbody>
+                </table>
             </div>
             {ModalOpen &&
                 <ModalMasterPegawai
