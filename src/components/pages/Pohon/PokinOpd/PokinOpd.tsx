@@ -736,17 +736,10 @@ const PokinOpd = () => {
                                             className='flex flex-wrap items-center justify-center gap-1'
                                             onClick={() => {
                                                 AlertNotification("Dalam Perbaikan", "Cetak Per Pohon langsung di Strategic, Tactical atau Operational", "info", 2000);
-                                                // setShowAllDetail(true);
-                                                // AlertQuestion2("Sembunyikan Sidebar untuk hasil cetak penuh", "", "warning", "Cetak", "Batal").then((result) => {
-                                                //     if (result.isConfirmed) {
-                                                //         handleDownloadPdf();
-                                                //         console.log(containerRef.current);
-                                                //     }
-                                                // })
                                             }}
                                         >
                                             <TbPrinter className='mr-1' />
-                                            Cetak Penuh Pohon Kinerja
+                                            Cetak Tujuan OPD
                                         </ButtonSky>
                                         {Clone &&
                                             <ModalClone

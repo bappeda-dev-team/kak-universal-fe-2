@@ -3,7 +3,7 @@
 import { useBrandingContext } from "@/context/BrandingContext";
 import { IsLoadingBranding } from "@/components/global/Loading";
 import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
-import ForbiddenPage from "../forbidden";
+import ForbiddenPage from "@/app/forbidden";
 
 interface RPJMDLayoutProps {
     children: React.ReactNode;

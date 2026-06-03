@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
-import NamaJabatan from '../../components/cetak/nama-jabatan';
-import TTD from '../../components/cetak/tanda-tangan';
-import TableRekin from '../../components/cetak/table-rekin';
-import TableProgram from '../../components/cetak/table-program';
+import NamaJabatan from '@/components/cetak/nama-jabatan';
+import TTD from '@/components/cetak/tanda-tangan';
+import TableRekin from '@/components/cetak/table-rekin';
+import TableProgram from '@/components/cetak/table-program';
 import { Font } from '@react-pdf/renderer';
 // import type { PkPegawai } from './pk-opd-types';
 
