@@ -1,6 +1,6 @@
 const CetakTujuanOpdPokin = () => {
     return (
-        <>Halaman Cetak Pokin</>
+        <>Halaman Cetak Pokin Sedang dalam pengembangan</>
     )
 }
 
