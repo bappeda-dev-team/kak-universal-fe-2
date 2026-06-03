@@ -16,9 +16,10 @@ const CetakPokinTematik = () => {
     const [Pohon, setPohon] = useState<any>(null);
     const [Loading, setLoading] = useState<boolean>(false);
     const [LoadingCetak, setLoadingCetak] = useState<boolean>(false);
-
+    
     const token = getToken();
     const modalRef = useRef<HTMLDivElement | null>(null);
+    const linkDownload = Pohon === null ? `tematik` : `${Pohon?.tema || "tanpa-nama"}`
 
     const handleDownloadPdf = async () => {
         if (!modalRef.current) return;
@@ -60,7 +61,7 @@ const CetakPokinTematik = () => {
             const imgData = newCanvas.toDataURL("image/png");
             const link = document.createElement("a");
             link.href = imgData;
-            link.download = `cek_tematik.jpg`;
+            link.download = linkDownload;
             link.click();
         } catch (error) {
             alert("Error capturing the element");
