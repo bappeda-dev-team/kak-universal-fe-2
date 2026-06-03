@@ -7,6 +7,7 @@ import { PohonPemdaCetak } from "./comp/PohonPemdaCetak";
 import { useState, useEffect, useRef } from "react";
 import { getToken } from "@/components/lib/Cookie";
 import { LoadingClip } from "@/components/global/Loading";
+import { LoadingButtonClip } from "@/components/global/Loading";
 import html2canvas from "html2canvas";
 
 const CetakPokinTematik = () => {
@@ -112,8 +113,17 @@ const CetakPokinTematik = () => {
                         className="w-full flex items-center gap-1"
                         onClick={handleDownloadPdf}
                     >
-                        <TbPrinter />
-                        Download
+                        {LoadingCetak ? 
+                            <>
+                                <LoadingButtonClip />
+                                Loading
+                            </>
+                            :
+                            <>
+                                <TbPrinter />
+                                Download
+                            </>
+                        }
                     </ButtonBlackBorder>
                 </div>
                 {Pohon === null ?
