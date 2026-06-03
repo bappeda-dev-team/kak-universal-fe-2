@@ -15,7 +15,7 @@ import { ModalCetak } from '@/components/pages/Pohon/ModalCetak';
 import { LoadingClip } from '@/components/global/Loading';
 import { FormAmbilPohonOpd } from './FormAmbilPohonOpd';
 import { useBrandingContext } from '@/context/BrandingContext';
-import { IkkFindall } from '@/app/DataMaster/ikk/type';
+import { IkkFindall } from '@/app/(main)/DataMaster/ikk/type';
 
 interface pohon {
     tema: any;
