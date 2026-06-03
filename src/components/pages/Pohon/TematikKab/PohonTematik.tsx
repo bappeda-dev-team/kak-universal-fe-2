@@ -1,5 +1,6 @@
 'use client'
 
+// @ts-ignore: allow side-effect CSS import without type declarations
 import '@/components/pages/Pohon/treeflex.css'
 import { useState, useEffect, useRef } from 'react';
 import { LoadingBeat } from '@/components/global/Loading';
