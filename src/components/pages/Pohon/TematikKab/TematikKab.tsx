@@ -215,21 +215,6 @@ const TematikKab = () => {
                                 'Tampilkan Semua Pohon'
                             }
                         </ButtonBlackBorder>
-                        <ButtonSky
-                            onClick={() => {
-                                AlertQuestion2("Sembunyikan Sidebar untuk hasil cetak penuh", "", "warning", "Cetak", "Batal").then((result) => {
-                                    if (result.isConfirmed) {
-                                        handleDownloadPdf();
-                                        if (!containerRef.current) {
-                                            AlertNotification("REF NULL", "", "error", 1000);
-                                        }
-                                    }
-                                });
-                            }}
-                        >
-                            <TbPrinter className='mr-1' />
-                            Cetak Pohon Kinerja
-                        </ButtonSky>
                     </>
                 }
             </div>

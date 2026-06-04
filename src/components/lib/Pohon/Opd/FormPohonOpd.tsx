@@ -11,7 +11,7 @@ import { LoadingButtonClip, LoadingSync } from '@/components/global/Loading';
 import { TbCirclePlus, TbCircleX, TbDeviceFloppy, TbCheck } from 'react-icons/tb';
 import Select from 'react-select';
 import { useBrandingContext } from '@/context/BrandingContext';
-import { IkkFindall } from '@/app/DataMaster/ikk/type';
+import { IkkFindall } from '@/app/(main)/DataMaster/ikk/type';
 
 interface OptionTypeString {
     value: string;

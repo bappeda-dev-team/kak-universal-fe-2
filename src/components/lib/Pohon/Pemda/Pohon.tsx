@@ -8,6 +8,8 @@ import { ModalReview } from '@/components/pages/Pohon/ModalReview';
 import { LoadingClip } from '@/components/global/Loading';
 import { ModalClone } from '@/components/pages/Pohon/ModalClone';
 import { ModalCetak } from '@/components/pages/Pohon/ModalCetak';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface pohon {
     tema: any;
@@ -53,6 +55,8 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
     const [edit, setEdit] = useState<boolean>(false);
     const [Deleted, setDeleted] = useState<boolean>(false);
     const [Edited, setEdited] = useState<any | null>(null);
+
+    const router = useRouter();
     const token = getToken();
 
     // SHOW ALL
@@ -434,8 +438,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                                         ))}
                                                     </table>
                                                 </div>
-                                    )
-                                    }
+                                    )}
                                     {/* BUTTON REVIEW */}
                                     <div
                                         className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white border-black hide-on-capture
@@ -487,6 +490,16 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                             }}
                                         />
                                     </div>
+                                    {tema.level_pohon === 0 &&
+                                    <Link href={`/cetak/pokin-tematik/${tema.id}`} target="_blank" rel="noopener noreferrer">
+                                        <ButtonSky
+                                            className='w-full flex items-center gap-1'
+                                        >
+                                            <TbPrinter />
+                                            Cetak Tematik
+                                        </ButtonSky>
+                                    </Link>
+                                    }
                                     {/* BUTTON ACTION INSIDE BOX */}
                                     {user != 'reviewer' &&
                                         <div

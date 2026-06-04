@@ -18,6 +18,7 @@ import {
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
+// @ts-ignore: allow side-effect CSS import without type declarations
 import "@/app/globals.css";
 import { logout, getUser } from '../lib/Cookie';
 import { useBrandingContext } from '@/context/BrandingContext';
