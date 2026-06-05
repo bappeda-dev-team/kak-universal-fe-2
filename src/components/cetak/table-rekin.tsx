@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, StyleSheet } from '@react-pdf/renderer';
-import type { PkAsn } from '@/app/perjanjian-kinerja/pk-opd-types';
+import type { PkAsn } from '@/app/(main)/perjanjian-kinerja/pk-opd-types';
 
 const styles = StyleSheet.create({
   page: {
