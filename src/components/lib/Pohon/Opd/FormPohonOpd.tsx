@@ -344,181 +344,185 @@ export const FormPohonOpd: React.FC<{
                                     }
                                 </div>
                                 {/* TAGGING */}
-                                <label className="uppercase text-xs font-bold text-gray-700 my-2">
-                                    Tagging :
-                                </label>
-                                <div className="border border-sky-500 rounded-lg p-3">
-                                    <div className="grid grid-flow-col gap-2 items-center">
-                                        <div className="flex flex-col items-center">
-                                            {UnggulanBupati ?
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUnggulanBupati(false)}
-                                                    className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                                >
-                                                    <TbCheck />
-                                                </button>
-                                                :
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUnggulanBupati(true)}
-                                                    className="w-[20px] h-[20px] border border-black rounded-full"
-                                                ></button>
+                                {level === 5 &&
+                                    <>
+                                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                            Tagging :
+                                        </label>
+                                        <div className="border border-sky-500 rounded-lg p-3">
+                                            <div className="grid grid-flow-col gap-2 items-center">
+                                                <div className="flex flex-col items-center">
+                                                    {UnggulanBupati ?
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setUnggulanBupati(false)}
+                                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                                        >
+                                                            <TbCheck />
+                                                        </button>
+                                                        :
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setUnggulanBupati(true)}
+                                                            className="w-[20px] h-[20px] border border-black rounded-full"
+                                                        ></button>
+                                                    }
+                                                    <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
+                                                </div>
+                                                {/* <div className="flex flex-col items-center">
+                                                {HariKerja ?
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setHariKerja(false)}
+                                                        className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                                    >
+                                                        <TbCheck />
+                                                    </button>
+                                                    :
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setHariKerja(true)}
+                                                        className="w-[20px] h-[20px] border border-black rounded-full"
+                                                    ></button>
+                                                }
+                                                <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
+                                            </div> */}
+                                                <div className="flex flex-col items-center">
+                                                    {UnggulanPusat ?
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setUnggulanPusat(false)}
+                                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                                        >
+                                                            <TbCheck />
+                                                        </button>
+                                                        :
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setUnggulanPusat(true)}
+                                                            className="w-[20px] h-[20px] border border-black rounded-full"
+                                                        ></button>
+                                                    }
+                                                    <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
+                                                </div>
+                                            </div>
+                                            {UnggulanBupati &&
+                                                <Controller
+                                                    name={`tagging.0.keterangan_tagging_program`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <div className="flex flex-col py-3 border border-emerald-500 mt-1 px-2 rounded-lg">
+                                                            <label className="uppercase text-xs font-bold text-gray-700 mb-1">
+                                                                Keterangan Program Unggulan Bupati :
+                                                            </label>
+                                                            <Select
+                                                                {...field}
+                                                                placeholder="Pilih Program Unggulan"
+                                                                value={BupatiValue}
+                                                                options={ProgramOption}
+                                                                isSearchable
+                                                                onMenuOpen={() => {
+                                                                    if (ProgramOption.length === 0) {
+                                                                        fetchProgramUnggulan();
+                                                                    }
+                                                                }}
+                                                                isClearable
+                                                                isMulti
+                                                                onChange={(option) => {
+                                                                    field.onChange(option || []);
+                                                                    setBupatiValue(option as OptionTypeString[]);
+                                                                }}
+                                                                styles={{
+                                                                    control: (baseStyles) => ({
+                                                                        ...baseStyles,
+                                                                        borderRadius: '8px',
+                                                                        textAlign: 'start',
+                                                                    })
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                />
                                             }
-                                            <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
+                                            {HariKerja &&
+                                                <Controller
+                                                    name={`tagging.1.keterangan_tagging_program`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <div className="flex flex-col py-3">
+                                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                                Keterangan 100 Hari Kerja Bupati :
+                                                            </label>
+                                                            <Select
+                                                                {...field}
+                                                                placeholder="Pilih Program Unggulan"
+                                                                value={HariKerjaValue}
+                                                                options={ProgramOption}
+                                                                isSearchable
+                                                                isClearable
+                                                                isMulti
+                                                                onMenuOpen={() => {
+                                                                    if (ProgramOption.length === 0) {
+                                                                        fetchProgramUnggulan();
+                                                                    }
+                                                                }}
+                                                                onChange={(option) => {
+                                                                    field.onChange(option || []);
+                                                                    setHariKerjaValue(option as OptionTypeString[]);
+                                                                }}
+                                                                styles={{
+                                                                    control: (baseStyles) => ({
+                                                                        ...baseStyles,
+                                                                        borderRadius: '8px',
+                                                                        textAlign: 'start',
+                                                                    })
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                />
+                                            }
+                                            {UnggulanPusat &&
+                                                <Controller
+                                                    name={`tagging.2.keterangan_tagging_program`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <div className="flex flex-col py-3">
+                                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                                Keterangan Program Unggulan Pemerintah Pusat :
+                                                            </label>
+                                                            <Select
+                                                                {...field}
+                                                                placeholder="Pilih Program Unggulan"
+                                                                value={PusatValue}
+                                                                options={ProgramOption}
+                                                                isSearchable
+                                                                isClearable
+                                                                isMulti
+                                                                onMenuOpen={() => {
+                                                                    if (ProgramOption.length === 0) {
+                                                                        fetchProgramPusat();
+                                                                    }
+                                                                }}
+                                                                onChange={(option) => {
+                                                                    field.onChange(option || []);
+                                                                    setPusatValue(option as OptionTypeString[]);
+                                                                }}
+                                                                styles={{
+                                                                    control: (baseStyles) => ({
+                                                                        ...baseStyles,
+                                                                        borderRadius: '8px',
+                                                                        textAlign: 'start',
+                                                                    })
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                />
+                                            }
                                         </div>
-                                        {/* <div className="flex flex-col items-center">
-                                            {HariKerja ?
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setHariKerja(false)}
-                                                    className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                                >
-                                                    <TbCheck />
-                                                </button>
-                                                :
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setHariKerja(true)}
-                                                    className="w-[20px] h-[20px] border border-black rounded-full"
-                                                ></button>
-                                            }
-                                            <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
-                                        </div> */}
-                                        <div className="flex flex-col items-center">
-                                            {UnggulanPusat ?
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUnggulanPusat(false)}
-                                                    className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                                >
-                                                    <TbCheck />
-                                                </button>
-                                                :
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setUnggulanPusat(true)}
-                                                    className="w-[20px] h-[20px] border border-black rounded-full"
-                                                ></button>
-                                            }
-                                            <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
-                                        </div>
-                                    </div>
-                                    {UnggulanBupati &&
-                                        <Controller
-                                            name={`tagging.0.keterangan_tagging_program`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="flex flex-col py-3 border border-emerald-500 mt-1 px-2 rounded-lg">
-                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-1">
-                                                        Keterangan Program Unggulan Bupati :
-                                                    </label>
-                                                    <Select
-                                                        {...field}
-                                                        placeholder="Pilih Program Unggulan"
-                                                        value={BupatiValue}
-                                                        options={ProgramOption}
-                                                        isSearchable
-                                                        onMenuOpen={() => {
-                                                            if (ProgramOption.length === 0) {
-                                                                fetchProgramUnggulan();
-                                                            }
-                                                        }}
-                                                        isClearable
-                                                        isMulti
-                                                        onChange={(option) => {
-                                                            field.onChange(option || []);
-                                                            setBupatiValue(option as OptionTypeString[]);
-                                                        }}
-                                                        styles={{
-                                                            control: (baseStyles) => ({
-                                                                ...baseStyles,
-                                                                borderRadius: '8px',
-                                                                textAlign: 'start',
-                                                            })
-                                                        }}
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                    }
-                                    {HariKerja &&
-                                        <Controller
-                                            name={`tagging.1.keterangan_tagging_program`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="flex flex-col py-3">
-                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                        Keterangan 100 Hari Kerja Bupati :
-                                                    </label>
-                                                    <Select
-                                                        {...field}
-                                                        placeholder="Pilih Program Unggulan"
-                                                        value={HariKerjaValue}
-                                                        options={ProgramOption}
-                                                        isSearchable
-                                                        isClearable
-                                                        isMulti
-                                                        onMenuOpen={() => {
-                                                            if (ProgramOption.length === 0) {
-                                                                fetchProgramUnggulan();
-                                                            }
-                                                        }}
-                                                        onChange={(option) => {
-                                                            field.onChange(option || []);
-                                                            setHariKerjaValue(option as OptionTypeString[]);
-                                                        }}
-                                                        styles={{
-                                                            control: (baseStyles) => ({
-                                                                ...baseStyles,
-                                                                borderRadius: '8px',
-                                                                textAlign: 'start',
-                                                            })
-                                                        }}
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                    }
-                                    {UnggulanPusat &&
-                                        <Controller
-                                            name={`tagging.2.keterangan_tagging_program`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="flex flex-col py-3">
-                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                        Keterangan Program Unggulan Pemerintah Pusat :
-                                                    </label>
-                                                    <Select
-                                                        {...field}
-                                                        placeholder="Pilih Program Unggulan"
-                                                        value={PusatValue}
-                                                        options={ProgramOption}
-                                                        isSearchable
-                                                        isClearable
-                                                        isMulti
-                                                        onMenuOpen={() => {
-                                                            if (ProgramOption.length === 0) {
-                                                                fetchProgramPusat();
-                                                            }
-                                                        }}
-                                                        onChange={(option) => {
-                                                            field.onChange(option || []);
-                                                            setPusatValue(option as OptionTypeString[]);
-                                                        }}
-                                                        styles={{
-                                                            control: (baseStyles) => ({
-                                                                ...baseStyles,
-                                                                borderRadius: '8px',
-                                                                textAlign: 'start',
-                                                            })
-                                                        }}
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                    }
-                                </div>
+                                    </>
+                                }
                                 <label className="uppercase text-base font-bold text-sky-700 my-2">
                                     {level == 4 ?
                                         <h1>Indikator Tactical :</h1>
@@ -1067,181 +1071,185 @@ export const FormEditPohon: React.FC<{
                             }
                         </div>
                         {/* TAGGING */}
-                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
-                            Tagging :
-                        </label>
-                        <div className="border border-sky-500 rounded-lg p-3">
-                            <div className="grid grid-flow-col gap-2 items-center">
-                                <div className="flex flex-col items-center">
-                                    {UnggulanBupati ?
-                                        <button
-                                            type="button"
-                                            onClick={() => setUnggulanBupati(false)}
-                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                        >
-                                            <TbCheck />
-                                        </button>
-                                        :
-                                        <button
-                                            type="button"
-                                            onClick={() => setUnggulanBupati(true)}
-                                            className="w-[20px] h-[20px] border border-black rounded-full"
-                                        ></button>
+                        {level === 6 &&
+                            <>
+                                <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                    Tagging :
+                                </label>
+                                <div className="border border-sky-500 rounded-lg p-3">
+                                    <div className="grid grid-flow-col gap-2 items-center">
+                                        <div className="flex flex-col items-center">
+                                            {UnggulanBupati ?
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setUnggulanBupati(false)}
+                                                    className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                                >
+                                                    <TbCheck />
+                                                </button>
+                                                :
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setUnggulanBupati(true)}
+                                                    className="w-[20px] h-[20px] border border-black rounded-full"
+                                                ></button>
+                                            }
+                                            <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
+                                        </div>
+                                        {/* <div className="flex flex-col items-center">
+                                            {HariKerja ?
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setHariKerja(false)}
+                                                    className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                                >
+                                                    <TbCheck />
+                                                </button>
+                                                :
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setHariKerja(true)}
+                                                    className="w-[20px] h-[20px] border border-black rounded-full"
+                                                ></button>
+                                            }
+                                            <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
+                                        </div> */}
+                                        <div className="flex flex-col items-center">
+                                            {UnggulanPusat ?
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setUnggulanPusat(false)}
+                                                    className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
+                                                >
+                                                    <TbCheck />
+                                                </button>
+                                                :
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setUnggulanPusat(true)}
+                                                    className="w-[20px] h-[20px] border border-black rounded-full"
+                                                ></button>
+                                            }
+                                            <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
+                                        </div>
+                                    </div>
+                                    {UnggulanBupati &&
+                                        <Controller
+                                            name={`tagging.0.keterangan_tagging_program`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col py-3 border border-emerald-500 mt-1 px-2 rounded-lg">
+                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-1">
+                                                        Keterangan Program Unggulan Bupati :
+                                                    </label>
+                                                    <Select
+                                                        {...field}
+                                                        placeholder="Pilih Program Unggulan"
+                                                        value={BupatiValue}
+                                                        options={ProgramOption}
+                                                        isSearchable
+                                                        isClearable
+                                                        isMulti
+                                                        onMenuOpen={() => {
+                                                            if (ProgramOption.length === 0) {
+                                                                fetchProgramUnggulan();
+                                                            }
+                                                        }}
+                                                        onChange={(option) => {
+                                                            field.onChange(option || []);
+                                                            setBupatiValue(option as OptionTypeString[]);
+                                                        }}
+                                                        styles={{
+                                                            control: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                borderRadius: '8px',
+                                                                textAlign: 'start',
+                                                            })
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
+                                        />
                                     }
-                                    <p onClick={() => setUnggulanBupati((prev) => !prev)} className={`cursor-pointer ${UnggulanBupati && 'text-emerald-500'}`}>Program Bupati</p>
+                                    {HariKerja &&
+                                        <Controller
+                                            name={`tagging.1.keterangan_tagging_program`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col py-3">
+                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                        Keterangan 100 Hari Kerja Bupati :
+                                                    </label>
+                                                    <Select
+                                                        {...field}
+                                                        placeholder="Pilih Program Unggulan"
+                                                        value={HariKerjaValue}
+                                                        options={ProgramOption}
+                                                        isSearchable
+                                                        isClearable
+                                                        isMulti
+                                                        onMenuOpen={() => {
+                                                            if (ProgramOption.length === 0) {
+                                                                fetchProgramUnggulan();
+                                                            }
+                                                        }}
+                                                        onChange={(option) => {
+                                                            field.onChange(option || []);
+                                                            setHariKerjaValue(option as OptionTypeString[]);
+                                                        }}
+                                                        styles={{
+                                                            control: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                borderRadius: '8px',
+                                                                textAlign: 'start',
+                                                            })
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+                                    }
+                                    {UnggulanPusat &&
+                                        <Controller
+                                            name={`tagging.2.keterangan_tagging_program`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <div className="flex flex-col py-3">
+                                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                                        Keterangan Program Unggulan Pemerintah Pusat :
+                                                    </label>
+                                                    <Select
+                                                        {...field}
+                                                        placeholder="Pilih Program Unggulan"
+                                                        value={PusatValue}
+                                                        options={ProgramPusatOption}
+                                                        isSearchable
+                                                        isClearable
+                                                        isMulti
+                                                        onMenuOpen={() => {
+                                                            if (ProgramOption.length === 0) {
+                                                                fetchProgramPusat();
+                                                            }
+                                                        }}
+                                                        onChange={(option) => {
+                                                            field.onChange(option || []);
+                                                            setPusatValue(option as OptionTypeString[]);
+                                                        }}
+                                                        styles={{
+                                                            control: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                borderRadius: '8px',
+                                                                textAlign: 'start',
+                                                            })
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+                                    }
                                 </div>
-                                {/* <div className="flex flex-col items-center">
-                                    {HariKerja ?
-                                        <button
-                                            type="button"
-                                            onClick={() => setHariKerja(false)}
-                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                        >
-                                            <TbCheck />
-                                        </button>
-                                        :
-                                        <button
-                                            type="button"
-                                            onClick={() => setHariKerja(true)}
-                                            className="w-[20px] h-[20px] border border-black rounded-full"
-                                        ></button>
-                                    }
-                                    <p onClick={() => setHariKerja((prev) => !prev)} className={`cursor-pointer ${HariKerja && 'text-emerald-500'}`}>100 Hari Kerja Bupati</p>
-                                </div> */}
-                                <div className="flex flex-col items-center">
-                                    {UnggulanPusat ?
-                                        <button
-                                            type="button"
-                                            onClick={() => setUnggulanPusat(false)}
-                                            className="border w-[20px] h-[20px] bg-emerald-500 rounded-full text-white p-1 flex justify-center items-center"
-                                        >
-                                            <TbCheck />
-                                        </button>
-                                        :
-                                        <button
-                                            type="button"
-                                            onClick={() => setUnggulanPusat(true)}
-                                            className="w-[20px] h-[20px] border border-black rounded-full"
-                                        ></button>
-                                    }
-                                    <p onClick={() => setUnggulanPusat((prev) => !prev)} className={`cursor-pointer ${UnggulanPusat && 'text-emerald-500'}`}>Program Pusat</p>
-                                </div>
-                            </div>
-                            {UnggulanBupati &&
-                                <Controller
-                                    name={`tagging.0.keterangan_tagging_program`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <div className="flex flex-col py-3 border border-emerald-500 mt-1 px-2 rounded-lg">
-                                            <label className="uppercase text-xs font-bold text-gray-700 mb-1">
-                                                Keterangan Program Unggulan Bupati :
-                                            </label>
-                                            <Select
-                                                {...field}
-                                                placeholder="Pilih Program Unggulan"
-                                                value={BupatiValue}
-                                                options={ProgramOption}
-                                                isSearchable
-                                                isClearable
-                                                isMulti
-                                                onMenuOpen={() => {
-                                                    if (ProgramOption.length === 0) {
-                                                        fetchProgramUnggulan();
-                                                    }
-                                                }}
-                                                onChange={(option) => {
-                                                    field.onChange(option || []);
-                                                    setBupatiValue(option as OptionTypeString[]);
-                                                }}
-                                                styles={{
-                                                    control: (baseStyles) => ({
-                                                        ...baseStyles,
-                                                        borderRadius: '8px',
-                                                        textAlign: 'start',
-                                                    })
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                />
-                            }
-                            {HariKerja &&
-                                <Controller
-                                    name={`tagging.1.keterangan_tagging_program`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <div className="flex flex-col py-3">
-                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                Keterangan 100 Hari Kerja Bupati :
-                                            </label>
-                                            <Select
-                                                {...field}
-                                                placeholder="Pilih Program Unggulan"
-                                                value={HariKerjaValue}
-                                                options={ProgramOption}
-                                                isSearchable
-                                                isClearable
-                                                isMulti
-                                                onMenuOpen={() => {
-                                                    if (ProgramOption.length === 0) {
-                                                        fetchProgramUnggulan();
-                                                    }
-                                                }}
-                                                onChange={(option) => {
-                                                    field.onChange(option || []);
-                                                    setHariKerjaValue(option as OptionTypeString[]);
-                                                }}
-                                                styles={{
-                                                    control: (baseStyles) => ({
-                                                        ...baseStyles,
-                                                        borderRadius: '8px',
-                                                        textAlign: 'start',
-                                                    })
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                />
-                            }
-                            {UnggulanPusat &&
-                                <Controller
-                                    name={`tagging.2.keterangan_tagging_program`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <div className="flex flex-col py-3">
-                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                Keterangan Program Unggulan Pemerintah Pusat :
-                                            </label>
-                                            <Select
-                                                {...field}
-                                                placeholder="Pilih Program Unggulan"
-                                                value={PusatValue}
-                                                options={ProgramPusatOption}
-                                                isSearchable
-                                                isClearable
-                                                isMulti
-                                                onMenuOpen={() => {
-                                                    if (ProgramOption.length === 0) {
-                                                        fetchProgramPusat();
-                                                    }
-                                                }}
-                                                onChange={(option) => {
-                                                    field.onChange(option || []);
-                                                    setPusatValue(option as OptionTypeString[]);
-                                                }}
-                                                styles={{
-                                                    control: (baseStyles) => ({
-                                                        ...baseStyles,
-                                                        borderRadius: '8px',
-                                                        textAlign: 'start',
-                                                    })
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                />
-                            }
-                        </div>
+                            </>
+                        }
                         <label className="uppercase text-base font-bold text-sky-700 my-2">
                             {level == 4 ?
                                 <h1>Indikator Strategic :</h1>
