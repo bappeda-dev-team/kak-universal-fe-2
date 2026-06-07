@@ -10,13 +10,14 @@ import {
   TbUser, TbHexagonLetterR, TbBinaryTree2, TbTarget, TbMapPin, TbChartBar, TbCalendarShare,
   TbCalendar, TbHexagonLetterV, TbHexagonLetterM, TbClipboardText, TbZoomExclamation,
   TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar,
-  TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI,
+  TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI, TbUserSearch,
   TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbFileImport,
   TbFileCheck, TbRubberStamp, TbAB2, TbLockSquareRounded, TbLockSquare, TbLockSquareRoundedFilled
 } from "react-icons/tb";
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
 import Link from 'next/link';
+// @ts-ignore: allow side-effect CSS import without type declarations
 import "@/app/globals.css";
 import { logout, getUser } from '../lib/Cookie';
 import { useBrandingContext } from '@/context/BrandingContext';
@@ -361,6 +362,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/masterpegawai" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbUsers className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Pegawai</span>
+                </li>
+              </Link>
+              <Link href="/DataMaster/cari-pegawai">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/cari-pegawai" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbUserSearch className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Cari Pegawai</span>
                 </li>
               </Link>
               <Link href="/DataMaster/masterperiode">

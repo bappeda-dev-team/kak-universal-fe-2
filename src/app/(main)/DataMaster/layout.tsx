@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getUser } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { IsLoadingBranding } from "@/components/global/Loading";
-import ForbiddenPage from "../forbidden";
+import ForbiddenPage from "@/app/forbidden";
 
 interface DataMasterLayout {
     children: React.ReactNode;
