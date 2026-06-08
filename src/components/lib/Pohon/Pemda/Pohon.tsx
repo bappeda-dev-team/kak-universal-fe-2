@@ -527,12 +527,12 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                                     <>
                                                         <button
                                                             className={`border px-3 py-1 rounded-lg flex jutify-center items-center gap-1
-                                                        ${tema.is_active === false ?
+                                                                ${tema.is_active === false ?
                                                                     'border-green-500 text-green-500 hover:bg-green-500 hover:text-white'
                                                                     :
                                                                     'border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
                                                                 }    
-                                                    `}
+                                                            `}
                                                             onClick={() => {
                                                                 AlertQuestion(`${tema.is_active === true ? 'NON AKTIFKAN' : 'AKTIFKAN'}`, `${tema.is_active === false ? 'Aktifkan tematik?' : 'non aktifkan tematik'}`, "question", `${tema.is_active === false ? 'Aktifkan' : 'Non Aktifkan'}`, "Batal").then((result) => {
                                                                     if (result.isConfirmed) {
