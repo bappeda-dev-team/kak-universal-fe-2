@@ -2,8 +2,8 @@
 
 import { getToken } from "@/components/lib/Cookie";
 import React, { useEffect, useState } from "react";
-import { ButtonBlackBorder, ButtonSkyBorder } from "@/components/global/Button";
-import { TbLockCancel, TbPencil, TbCirclePlus, TbLockOpen, TbLockFilled, TbRefresh } from "react-icons/tb";
+import { ButtonSky, ButtonBlackBorder, ButtonSkyBorder } from "@/components/global/Button";
+import { TbLockCancel, TbPencil, TbCirclePlus, TbLockOpen, TbLockFilled, TbRefresh, TbPrinter } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
 import { ModalIndikatorMatrixRenja } from "./ModalIndikatorMatrixRenja";
 import { ModalAnggaranMatrixRenja } from "./ModalAnggaranMatrixRenja";
@@ -136,10 +136,16 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                             </div>
                         }
                         {Lock ?
-                            <ButtonBlackBorder className="bg-white flex items-center gap-1">
-                                <TbLockOpen />
-                                Buka Kunci
-                            </ButtonBlackBorder>
+                            <div className="flex items-center gap-1">
+                                <ButtonSky className="flex items-center gap-1">
+                                    <TbPrinter />
+                                    Cetak
+                                </ButtonSky>
+                                <ButtonBlackBorder className="bg-white flex items-center gap-1">
+                                    <TbLockOpen />
+                                    Buka Kunci
+                                </ButtonBlackBorder>
+                            </div>
                             :
                             <div className="flex items-center gap-1">
                                 <ButtonSkyBorder className="bg-white flex items-center gap-1">

@@ -86,12 +86,12 @@ const StrategiArahKebijakanPage = () => {
                     <h2 className="text-sm max-w-[500px]">{nama_opd || ""}</h2>
                 </div>
                 <div className="mx-3 mb-3">
-                    <TableIsu
+                    {/* <TableIsu
                         Data={Data?.isu_strategis_opds || []}
                     />
                     <TableTujuan
                         Data={Data?.tujuan_opd || []}
-                    />
+                    /> */}
                     <Table
                         Data={Data?.strategi_arah_kebijakan_opds || []}
                     />
