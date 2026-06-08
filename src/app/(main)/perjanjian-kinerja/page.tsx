@@ -475,6 +475,7 @@ type PkPegawaiContext = {
     nama_opd: string
     tahun: number
     pegawai: PkPegawai
+    level: number
 }
 
 function findPkPegawaiWithContext(
@@ -489,6 +490,7 @@ function findPkPegawaiWithContext(
                 kode_opd: data.kode_opd,
                 nama_opd: data.nama_opd,
                 tahun: data.tahun,
+                level: level.level_pk,
                 pegawai,
             }
         }
