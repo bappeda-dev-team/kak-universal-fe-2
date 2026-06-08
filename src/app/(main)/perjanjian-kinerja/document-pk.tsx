@@ -116,8 +116,6 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
         );
     }
 
-    console.log("data pk", data);
-
     return (
         <Document title='dokumen perjanjian kinerja'>
             <Page size="A4" style={styles.page}>
@@ -177,12 +175,13 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
                 {/* TTD */}
                 <View style={[styles.tandaTangan]}>
                     {/* pihak kedua */}
-                    {data.level == 1 ? (
+                    {data.level == 4 ? (
                         <TTD
                             nama={data?.pegawai?.nama_atasan || "-"}
                             nip={""}
                             pihak={data?.pegawai?.jabatan_atasan || "-"}
                             tanggal={false}
+                            isKepalaDaerah={true}
                         />
                     ) :
                         (
@@ -190,7 +189,8 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
                                 nama={data?.pegawai?.nama_atasan || "-"}
                                 nip={data?.pegawai?.nip_atasan || "-"}
                                 pihak="Pihak Kedua"
-                                tanggal={false}
+                                tanggal={true}
+                                isKepalaDaerah={false}
                             />
                         )}
                     {/* pihak pertama */}
@@ -199,6 +199,7 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
                         nip={data?.pegawai.nip || "-"}
                         pihak='Pihak Pertama'
                         tanggal
+                        isKepalaDaerah={false}
                     />
                 </View>
 
@@ -217,12 +218,13 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
                 }
                 <View style={[styles.marginTop, styles.tandaTangan]}>
                     {/* pihak kedua */}
-                    {data.level == 1 ? (
+                    {data.level == 4 ? (
                         <TTD
                             nama={data?.pegawai?.nama_atasan || "-"}
                             nip={""}
                             pihak={data?.pegawai?.jabatan_atasan || "-"}
                             tanggal={false}
+                            isKepalaDaerah={true}
                         />
                     ) :
                         (
@@ -231,6 +233,7 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
                                 nip={data?.pegawai?.nip_atasan || "-"}
                                 pihak={data?.pegawai?.jabatan_atasan || "-"}
                                 tanggal={false}
+                                isKepalaDaerah={false}
                             />
                         )}
                     {/* pihak pertama */}
@@ -239,6 +242,7 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
                         nip={data?.pegawai?.nip || "-"}
                         pihak={data?.pegawai?.jabatan_pegawai || ""}
                         tanggal
+                        isKepalaDaerah={false}
                     />
                 </View>
             </Page>
