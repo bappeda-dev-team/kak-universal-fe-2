@@ -1,14 +1,12 @@
+// @ts-ignore: allow side-effect CSS import without type declarations
+import "../../../treeFlexCetak.css";
 import React, { useEffect, useState } from 'react';
 import { TbEye, TbPrinter } from 'react-icons/tb';
 import { ButtonSky, ButtonGreenBorder, ButtonBlackBorder } from '@/components/global/Button';
-import { ModalCetak } from '@/components/pages/Pohon/ModalCetak';
 import { ModalIndikator } from '@/components/pages/Pohon/ModalIndikator';
-import Link from 'next/link';
 
 interface pohon {
     tema: any;
-    show_all?: boolean;
-    set_show_all: () => void;
 }
 interface ProgramKegiatan {
     jenis: string;
@@ -80,36 +78,17 @@ interface TujuanSasaranPemda {
     periode: Periode;
 }
 
-export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) => {
+export const PohonLaporanPemda: React.FC<pohon> = ({ tema }) => {
 
     const [childPohons, setChildPohons] = useState(tema.childs || []);
-
-    const [IsCetak, setIsCetak] = useState<boolean>(false);
-    const [Show, setShow] = useState<boolean>(false);
-
-    useEffect(() => {
-        if (show_all) {
-            setShow(true);
-        }
-        if (show_all && (Show === false)) {
-            set_show_all();
-        }
-    }, [show_all, Show, set_show_all]);
-
-    const handleShow = () => {
-        setShow((prev) => !prev);
-    }
 
     return (
         <li>
             <div
-                className={`tf-nc tf flex flex-col w-[600px] rounded-lg shadow-lg
-                    ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Sub Tematik") && 'shadow-slate-500'}
-                    ${(tema.jenis_pohon === "Strategic Pemda" || tema.jenis_pohon === "Tactical Pemda" || tema.jenis_pohon === "Operational Pemda") && 'shadow-slate-500'}
-                    ${tema.jenis_pohon === "Strategic" && 'shadow-red-500 bg-red-700'}
-                    ${tema.jenis_pohon === "Tactical" && 'shadow-blue-500 bg-blue-500'}
-                    ${tema.jenis_pohon === "Operational" && 'shadow-green-500 bg-green-500'}
-                    ${(tema.jenis_pohon === "Operational N") && 'shadow-green-500'}
+                className={`tf-nc tf flex flex-col w-[600px] rounded-lg
+                    ${tema.jenis_pohon === "Strategic" && 'bg-red-700'}
+                    ${tema.jenis_pohon === "Tactical" && 'bg-blue-500'}
+                    ${tema.jenis_pohon === "Operational" && 'bg-green-500'}
                     ${(tema.jenis_pohon === "Strategic Crosscutting" || tema.jenis_pohon === "Tactical Crosscutting" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohon === "Operational N Crosscutting") && 'shadow-yellow-700 bg-yellow-700'}
                 `}
             >
@@ -126,9 +105,9 @@ export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) 
                     `}
                 >
                     {tema.jenis_pohon === 'Operational N' ?
-                        <h1>Operational {tema.level_pohon - 6} {tema.id_pohon}</h1>
+                        <h1>Operational {tema.level_pohon - 6}</h1>
                         :
-                        <h1>{tema.jenis_pohon} {tema.id_pohon}</h1>
+                        <h1>{tema.jenis_pohon}</h1>
                     }
                 </div>
                 {/* BODY */}
@@ -174,54 +153,17 @@ export const PohonLaporan: React.FC<pohon> = ({ tema, show_all, set_show_all }) 
                         ))
                     }
                 </div>
-                {/* BUTTON ACTION TAMPILKAN DAN PELAKSANA*/}
-                <div
-                    className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white hide-on-capture
-                        ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Sub Tematik") && "border-black"}
-                        ${(tema.jenis_pohon === "Strategic Pemda" || tema.jenis_pohon === "Tactical Pemda" || tema.jenis_pohon === "Operational Pemda") && 'border-black'}
-                    `}
-                >
-                    {tema.jenis_pohon === "Tematik" ?
-                        <Link href={`/cetak/cascading-tematik/${tema.id_pohon}`} target="_blank" rel="noopener noreferrer">
-                            <ButtonSky
-                                className='w-full flex items-center gap-1'
-                            >
-                                <TbPrinter />
-                                Cetak Tematik
-                            </ButtonSky>
-                        </Link>
-                        :
-                        <ButtonSky className='flex items-center gap-1' onClick={() => setIsCetak(true)}>
-                            <TbPrinter />
-                            Cetak
-                        </ButtonSky>
-                    }
-                    <ButtonBlackBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-gradient-to-r rounded-lg hide-on-capture`}
-                        onClick={handleShow}
-                    >
-                        <TbEye className='mr-1' />
-                        {Show ? 'Sembunyikan' : 'Tampilkan'}
-                    </ButtonBlackBorder>
-                </div>
             </div>
-            <ul style={{ display: Show ? '' : 'none' }}>
+            <ul>
                 {childPohons.map((dahan: any, index: number) => (
-                    <React.Fragment key={index}>
-                        <PohonLaporan
-                            tema={dahan}
-                            key={index}
-                            show_all={show_all}
-                            set_show_all={() => set_show_all()}
-                        />
-                    </React.Fragment>
+                    dahan.level_pohon > 3 ?
+                        <></>
+                        :
+                        <React.Fragment key={index}>
+                            <PohonLaporanPemda tema={dahan} key={index} />
+                        </React.Fragment>
                 ))}
             </ul>
-            <ModalCetak
-                jenis='laporan'
-                onClose={() => setIsCetak(false)}
-                isOpen={IsCetak}
-                pohon={tema}
-            />
         </li>
     )
 }

@@ -1,7 +1,8 @@
+// @ts-ignore: allow side-effect CSS import without type declarations
+import "../../treeFlexCetak.css";
 import React, { useEffect, useState } from 'react';
 import { TbEye, TbPrinter } from 'react-icons/tb';
 import { ButtonSky, ButtonGreenBorder, ButtonBlackBorder } from '@/components/global/Button';
-import { ModalCetak } from '@/components/pages/Pohon/ModalCetak';
 import { ModalIndikator } from '@/components/pages/Pohon/ModalIndikator';
 
 interface pohon {

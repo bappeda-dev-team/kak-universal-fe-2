@@ -1,5 +1,6 @@
 'use client'
 
+// @ts-ignore: allow side-effect CSS import without type declarations
 import './treeflex.css'
 import { getOpdTahun } from '@/components/lib/Cookie';
 import { useState, useEffect } from 'react';

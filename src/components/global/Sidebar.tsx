@@ -969,7 +969,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
           {/* SUB MENU PERENCANAAN ASN */}
           <div className={`transition-all duration-300 ease-in-out ${Perencanaan ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
             {/* LABEL USULAN ASN */}
-            {User?.roles == 'level_3' &&
+            {/* {User?.roles == 'level_3' &&
               <li
                 className="flex items-center gap-x-2 cursor-pointer p-2 hover:bg-slate-500 rounded-xl transition-all duration-300 ease-in-out"
                 onClick={() => setUsulanLaporan(UsulanLaporan ? false : true)}
@@ -977,7 +977,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 <TbApps className="text-xl" />
                 <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Usulan</span>
               </li>
-            }
+            } */}
             {/* subs menu USULAN ASN */}
             <div className={`transition-all duration-300 ease-in-out ${UsulanLaporan ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
               <Link href="/musrenbang">
