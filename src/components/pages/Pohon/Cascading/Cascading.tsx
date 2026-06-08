@@ -1,5 +1,6 @@
 'use client'
 
+// @ts-ignore: allow side-effect CSS import without type declarations
 import '@/components/pages/Pohon/treeflex.css'
 import React, { useState, useEffect, useRef } from 'react';
 import { TbEye, TbHandStop, TbPointer, TbPrinter } from 'react-icons/tb';
@@ -11,6 +12,7 @@ import { PohonLaporan } from '@/components/lib/Pohon/Cascading/PohonLaporan';
 import { ButtonBlackBorder, ButtonSky } from '@/components/global/Button';
 import html2canvas from 'html2canvas';
 import { AlertQuestion2 } from '@/components/global/Alert';
+import Link from 'next/link';
 
 interface cascading {
     jenis: 'laporan' | 'non-laporan';
@@ -337,26 +339,14 @@ const Cascading: React.FC<cascading> = ({ jenis, nama_opd, kode_opd, tahun, user
                                         </tbody>
                                     </table>
                                 </div>
-                                <ButtonSky
-                                    className='w-full mb-2 hide-on-capture'
-                                    disabled={LoadingCetak}
-                                    onClick={() => {
-                                        AlertQuestion2("Sembunyikan Sidebar untuk hasil cetak penuh", "", "warning", "Cetak", "Batal").then((result) => {
-                                            if (result.isConfirmed) {
-                                                handleDownloadPdf();
-                                            }
-                                        })
-                                    }}
-                                >
-                                    {LoadingCetak ?
-                                        <LoadingButtonClip className="mr-1" />
-                                        :
+                                <Link href="/cetak/cascading-opd-tujuan" target="_blank" rel="noopener noreferrer">
+                                    <ButtonSky className='w-full mb-2'>
                                         <TbPrinter className='mr-1' />
-                                    }
-                                    Cetak Penuh Pohon Cascading
-                                </ButtonSky>
+                                        Cetak Tujuan OPD
+                                    </ButtonSky>
+                                </Link>
                                 <ButtonBlackBorder
-                                    className='w-full mb-2 hide-on-capture'
+                                    className='w-full mb-2'
                                     onClick={() => setShowAll(true)}
                                 >
                                     <TbEye className='mr-1' />
