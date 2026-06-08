@@ -3,7 +3,6 @@
 import { ButtonBlackBorder } from "@/components/global/Button";
 import { TbPrinter } from "react-icons/tb";
 import { useParams } from "next/navigation";
-import { PohonOpdCetak } from "../pokin-tujuan-opd/comp/PohonOpdCetak";
 import { PohonLaporanOpd } from "./comp/PohonLaporanOpd";
 import PohonTujuanOpd from "../pokin-tujuan-opd/comp/PohonTujuanOpd";
 import React, { useState, useEffect, useRef } from "react";
@@ -29,7 +28,7 @@ const CetakCascadingOpdTujuan = () => {
 
     const token = getToken();
     const modalRef = useRef<HTMLDivElement | null>(null);
-    const linkDownload = Pohon === null ? `pohon-kosong` : `Cascading Tujuan OPD ${nama_opd} - ${tahun}`
+    const linkDownload = Pohon === null ? `pohon-kosong` : `Pohon Tujuan OPD ${nama_opd} - ${tahun}`
 
     useEffect(() => {
         const fetchUser = getUser();
