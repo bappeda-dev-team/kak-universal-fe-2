@@ -13,8 +13,6 @@ import { getUser, getToken, getOpdTahun } from '@/components/lib/Cookie';
 import { ModalPohonPemda, ModalPohonCrosscutting } from './ModalPohonPemda';
 import { ModalTujuanOpd } from '../../tujuanopd/ModalTujuanOpd';
 import { ModalClone } from '../ModalClone';
-import html2canvas from 'html2canvas';
-import { AlertNotification, AlertQuestion2 } from '@/components/global/Alert';
 import { useBrandingContext } from '@/context/BrandingContext';
 import Link from 'next/link';
 
