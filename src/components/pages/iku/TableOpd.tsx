@@ -48,7 +48,7 @@ const TableOpd: React.FC<table> = ({ kode_opd, tahun_awal, tahun_akhir, jenis, t
     const [Loading, setLoading] = useState<boolean | null>(null);
     const [Proses, setProses] = useState<boolean | null>(null);
     const token = getToken();
-    const {branding} = useBrandingContext();
+    const { branding } = useBrandingContext();
     const Tahun = branding?.tahun ? branding?.tahun?.value : 0;
 
     useEffect(() => {
@@ -100,7 +100,7 @@ const TableOpd: React.FC<table> = ({ kode_opd, tahun_awal, tahun_akhir, jenis, t
         // console.log(formData);
         try {
             setProses(true);
-            const response = await fetch(`${API_URL}/indikator_utama/status/${id}`, {
+            const response = await fetch(`${API_URL}/indikator_utama/opd/status/${id}`, {
                 method: "PUT",
                 headers: {
                     Authorization: `${token}`,
