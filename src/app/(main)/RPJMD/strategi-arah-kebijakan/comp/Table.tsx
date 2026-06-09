@@ -72,10 +72,10 @@ const Table: React.FC<Table> = ({ tahun_awal, tahun_akhir }) => {
 
     return (
         <>
-            <TableIsu 
+            <TableIsu
                 Data={Data?.isu_strategis_pemdas || []}
             />
-            <TableTujuan 
+            <TableTujuan
                 Data={Data?.tujuan_pemda || []}
             />
             <div className="overflow-auto m-2 rounded-t-xl border">
@@ -85,8 +85,15 @@ const Table: React.FC<Table> = ({ tahun_awal, tahun_akhir }) => {
                             <th className="border-r border-b px-6 py-3 text-center">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Tujuan Pemda</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Sasaran Pemda</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Strategic Pemda</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Strategi</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Arah Kebijakan</th>
+                        </tr>
+                        <tr className="bg-emerald-700 text-white">
+                            <th className="border-r border-b text-center">1</th>
+                            <th className="border-r border-b text-center">2</th>
+                            <th className="border-r border-b text-center">3</th>
+                            <th className="border-r border-b text-center">4</th>
+                            <th className="border-r border-b text-center">5</th>
                         </tr>
                     </thead>
                     <tbody>
