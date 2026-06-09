@@ -1,6 +1,7 @@
-import type { PkOpdResponse } from "./pk-opd-types";
+import type { PkOpdResponse, PkAsn } from "./pk-opd-types";
 import type { RekinOption } from "./page"
 import { RolePill } from "@/components/global/RolePill";
+import { KunciPkButton } from "./kunci-pk-button";
 
 const LEVEL_LABEL: Record<number, string> = {
     4: "Strategic",
@@ -28,6 +29,7 @@ type TablePkProps = {
     onPreviewPk: (nipBawahan: string) => void
     roleUser: string[]
     getCandidates: (pk: any, levelPk: number) => RekinOption[]
+    onKunciPk: (pk: PkAsn) => void
 }
 
 export const TablePk = ({
@@ -37,7 +39,8 @@ export const TablePk = ({
     onSelectPk,
     onPreviewPk,
     roleUser,
-    getCandidates
+    getCandidates,
+    onKunciPk
 }: TablePkProps) => {
     let rowNo = 1;
     return (
@@ -240,12 +243,17 @@ export const TablePk = ({
                                                 className="border p-3 text-center w-[150px]"
                                             >
                                                 {!!pegawai.nip_atasan && (
-                                                    <button
-                                                        className="button px-4 py-2 rounded border border-black bg-green-300 hover:bg-green-600 text-black"
-                                                        onClick={() => onPreviewPk(pegawai.nip)}
-                                                    >
-                                                        Cetak PK
-                                                    </button>
+                                                    <div className="flex flex-col gap-2">
+                                                        <button
+                                                            className="button px-4 py-2 rounded border border-black bg-green-300 hover:bg-green-600 text-black"
+                                                            onClick={() => onPreviewPk(pegawai.nip)}
+                                                        >
+                                                            Cetak PK
+                                                        </button>
+                                                        {pk &&
+                                                            <KunciPkButton onClick={() => onKunciPk(pk)} />
+                                                        }
+                                                    </div>
                                                 )}
                                             </td>
                                         )}

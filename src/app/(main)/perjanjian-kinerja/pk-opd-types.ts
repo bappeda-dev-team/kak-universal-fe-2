@@ -89,3 +89,9 @@ export interface TargetRekin {
     target: string;
     satuan: string;
 }
+
+export interface KunciPkRequest {
+    kode_opd: string;
+    tahun: number;
+    id_pegawai: string;
+}

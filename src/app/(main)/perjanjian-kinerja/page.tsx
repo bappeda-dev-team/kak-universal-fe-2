@@ -3,9 +3,9 @@
 import { useEffect, useState, useMemo } from "react";
 import { FiHome } from "react-icons/fi";
 import { useBrandingContext } from '@/context/BrandingContext';
-import type { PkOpdResponse, PkPegawai, PkAsn, PkOpdByLevel, SasaranPemda, AtasanCandidate } from "./pk-opd-types";
+import type { PkOpdResponse, PkPegawai, PkAsn, PkOpdByLevel, SasaranPemda, AtasanCandidate, KunciPkRequest } from "./pk-opd-types";
 import { getToken, getOpdTahunNew } from "@/components/lib/Cookie";
-import { AlertNotification } from "@/components/global/Alert";
+import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TablePk } from "./table-pk";
 import { TahunNull, OpdNull } from "@/components/global/OpdTahunNull";
 import Select from 'react-select';
@@ -13,6 +13,7 @@ import { ModalPilihAtasan } from './modal-pilih-atasan';
 import type { AtasanOption } from './modal-pilih-atasan';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer'
 import DocumentPk from './document-pk'
+import { kunciPk } from "./pk-opd-service";
 
 const PerjanjianKinerja = () => {
     // WARNING PATTERN INI TIDAK BOLEH
@@ -129,6 +130,38 @@ const PerjanjianKinerja = () => {
         return buildCandidates(data, pk, levelPk)
     }
 
+    const handleKunciPk = (pk: PkAsn) => {
+        const formKunciPk: KunciPkRequest = {
+            kode_opd: pk.kode_opd,
+            tahun: pk.tahun,
+            id_pegawai: pk.nip_pemilik_pk
+        };
+        const pemilikPk = pk.nama_pemilik_pk
+
+        AlertQuestion("WARNING", `PK milik ${pemilikPk} akan dikunci, lanjutkan ?`,
+            "warning", "Kunci", "Batal"
+        ).then(async (res) => {
+            if (!res.isConfirmed) {
+                return;
+            }
+
+            try {
+                await kunciPk(formKunciPk)
+
+                AlertNotification("SUCCESS", `PK milik ${pemilikPk} berhasil dikunci`,
+                    "success", 2500, false
+                )
+            } catch (err) {
+                AlertNotification("ERROR",
+                    err instanceof Error
+                        ? err.message
+                        : "Gagal mengunci PK",
+                    "error", 2500, false
+                )
+            }
+        })
+    }
+
 
     if (tahun == null) {
         return <TahunNull />
@@ -207,6 +240,7 @@ const PerjanjianKinerja = () => {
 
                                 setShowModal(true)
                             }}
+                            onKunciPk={handleKunciPk}
                         />
                     </div>
                 </div>
