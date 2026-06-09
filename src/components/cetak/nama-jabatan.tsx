@@ -52,7 +52,7 @@ const NamaJabatan: React.FC<NamaJabatanProps> = ({ nama, jabatan }) => (
     <View style={styles.tableRow}>
       <Text style={styles.column1}>Nama</Text>
       <Text style={styles.column2}>:</Text>
-      <Text style={[styles.column3, styles.uppercase, styles.bold]}>
+      <Text style={[styles.column3, styles.bold]}>
         {nama || "-"}
       </Text>
     </View>
