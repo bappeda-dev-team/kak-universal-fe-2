@@ -1,37 +1,45 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react"
 import Select from 'react-select';
-import { AtasanOption } from "./pk-opd-types";
+import { PkTerpilihProps } from "./pk-opd-types";
 
-// MODAL
-export type SelectAtasanOption = {
+type SelectOption = {
     value: string
     label: string
-    meta: AtasanOption
+    meta: RekinOption
 }
 
-export type ModalPilihAtasanProps = {
+export type RekinOption = {
+    id: string
+    rekin: string
+    namaPegawai: string
+    nipPegawai: string
+}
+
+type HubungkanModalProps = {
     open: boolean
     onClose: () => void
-    onSubmit: (nipAtasan: string) => void
-    atasanList: AtasanOption[]
+    onSubmit: (idRekinAtasan: string, selectedPk: PkTerpilihProps) => void
+    rekinAtasanList: RekinOption[]
+    selectedPk: PkTerpilihProps
 }
 
-export const ModalPilihAtasan = ({
+export const HubungkanModal = ({
     open,
     onClose,
     onSubmit,
-    atasanList,
-}: ModalPilihAtasanProps) => {
-    const [selected, setSelected] = useState<SelectAtasanOption | null>(null)
+    rekinAtasanList,
+    selectedPk,
+}: HubungkanModalProps) => {
+    const [selected, setSelected] = useState<SelectOption | null>(null)
 
-    const options: SelectAtasanOption[] = useMemo(
+    const options: SelectOption[] = useMemo(
         () =>
-            atasanList.map((r) => ({
-                value: r.nip,
-                label: `${r.nama} | ${r.nip}`,
+            rekinAtasanList.map((r) => ({
+                value: r.id,
+                label: `${r.namaPegawai} | ${r.nipPegawai} — ${r.rekin}`,
                 meta: r,
             })),
-        [atasanList]
+        [rekinAtasanList]
     )
 
     if (!open) return null
@@ -40,26 +48,26 @@ export const ModalPilihAtasan = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div className="bg-white rounded-xl w-[500px] p-6 shadow-lg">
                 <h2 className="text-lg font-bold mb-4">
-                    Pilih Atasan
+                    Pilih Rencana Kinerja Atasan
                 </h2>
 
                 <Select
                     options={options}
                     value={selected}
                     onChange={(opt) => setSelected(opt)}
-                    placeholder="Cari nama / NIP ..."
+                    placeholder="Cari nama / NIP / rencana kinerja..."
                     isClearable
                     isSearchable
                     className="mb-4"
                 />
                 {/* PREVIEW */}
                 {selected && (
-                    <div className="flex flex-col gap-2">
-                        <h3 className="font-bold text-lg">Atasan Terpilih: </h3>
-                        <div className="border rounded p-3 bg-slate-50 text-sm mb-5">
-                            <p className="font-semibold">{selected.meta.nama}</p>
-                            <p className="text-slate-600">{selected.meta.nip}</p>
-                        </div>
+                    <div className="border rounded p-3 bg-slate-50 text-sm mb-5">
+                        <p className="font-semibold">{selected.meta.namaPegawai}</p>
+                        <p className="text-slate-600">
+                            NIP: {selected.meta.nipPegawai}
+                        </p>
+                        <p className="mt-2">{selected.meta.rekin}</p>
                     </div>
                 )}
                 <div className="flex justify-end gap-2">
@@ -71,7 +79,7 @@ export const ModalPilihAtasan = ({
                     </button>
                     <button
                         disabled={!selected}
-                        onClick={() => selected && onSubmit(selected.value)}
+                        onClick={() => selected && onSubmit(selected.value, selectedPk)}
                         className={`px-4 py-2 rounded text-white ${selected
                             ? "bg-blue-500 hover:bg-blue-600"
                             : "bg-gray-400 cursor-not-allowed"

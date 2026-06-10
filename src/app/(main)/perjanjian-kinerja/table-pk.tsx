@@ -1,4 +1,4 @@
-import type { PkOpdResponse, PkAsn } from "./pk-opd-types";
+import type { PkOpdResponse, PkAsn, HandleSelectPkProps, HandleSelectAtasanProps } from "./pk-opd-types";
 import type { RekinOption } from "./page"
 import { RolePill } from "@/components/global/RolePill";
 import { KunciPkButton } from "./kunci-pk-button";
@@ -19,13 +19,8 @@ function translateLevel(level: number): string {
 type TablePkProps = {
     data: PkOpdResponse
     search: string
-    onSelectAtasan: (args: {
-        nipBawahan: string
-    }) => void
-    onSelectPk: (args: {
-        pk: any
-        levelPk: number
-    }) => void
+    onSelectAtasan: (args: HandleSelectAtasanProps) => void
+    onSelectPk: (args: HandleSelectPkProps) => void
     onPreviewPk: (nipBawahan: string) => void
     roleUser: string[]
     getCandidates: (pk: any, levelPk: number) => RekinOption[]

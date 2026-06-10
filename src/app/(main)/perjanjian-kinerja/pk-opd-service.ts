@@ -1,16 +1,14 @@
-import { getToken } from "@/components/lib/Cookie";
 import type { KunciPkRequest } from "./pk-opd-types";
-import { useBrandingContext } from '@/context/BrandingContext';
 
-export async function kunciPk(
-    request: KunciPkRequest
-): Promise<void> {
-    const { branding } = useBrandingContext()
+type kunciPkProps = {
+    request: KunciPkRequest,
+    apiUrl: string,
+    token: string | null
+}
 
-    const token = getToken();
-
+export async function kunciPk({ request, apiUrl, token }: kunciPkProps): Promise<void> {
     const response = await fetch(
-        `${branding.api_perencanaan}/pk_opd/kunci_pk`,
+        `${apiUrl}/pk_opd/kunci_pk`,
         {
             method: "POST",
             headers: {
