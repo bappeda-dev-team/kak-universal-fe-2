@@ -1,7 +1,7 @@
-import type { PkOpdResponse, PkAsn, HandleSelectPkProps, HandleSelectAtasanProps } from "./pk-opd-types";
+import type { PkOpdResponse, PkAsn, HandleSelectPkProps, HandleSelectAtasanProps, PkPegawai } from "./pk-opd-types";
 import type { RekinOption } from "./page"
 import { RolePill } from "@/components/global/RolePill";
-import { KunciPkButton } from "./kunci-pk-button";
+import { BukaKunciPkButton, KunciPkButton } from "./kunci-pk-button";
 
 const LEVEL_LABEL: Record<number, string> = {
     4: "Strategic",
@@ -25,6 +25,7 @@ type TablePkProps = {
     roleUser: string[]
     getCandidates: (pk: any, levelPk: number) => RekinOption[]
     onKunciPk: (pk: PkAsn) => void
+    onBukaKunciPk: (pk: PkAsn) => void
 }
 
 export const TablePk = ({
@@ -35,7 +36,8 @@ export const TablePk = ({
     onPreviewPk,
     roleUser,
     getCandidates,
-    onKunciPk
+    onKunciPk,
+    onBukaKunciPk,
 }: TablePkProps) => {
     let rowNo = 1;
     return (
@@ -75,7 +77,7 @@ export const TablePk = ({
                                     .toLowerCase()
                                     .includes(search.toLowerCase())
                             )
-                            .map((pegawai) => {
+                            .map((pegawai: PkPegawai) => {
                                 const pks = pegawai.pks.length > 0 ? pegawai.pks : [null]
                                 const totalPk = pks.length
 
@@ -84,9 +86,11 @@ export const TablePk = ({
                                     pegawai.pks.every((item) =>
                                         item.nip_atasan?.trim() !== ""
                                     )
+                                const pkKunci = pegawai.pk_terkunci
 
                                 return pks.map((pk, idx) => (
                                     <tr
+                                        className={`${pkKunci && 'bg-red-300'}`}
                                         key={`${pegawai.nip}-${pk?.id_rekin_pemilik_pk || idx}`}
                                     >
                                         {/* NO */}
@@ -246,7 +250,11 @@ export const TablePk = ({
                                                             Cetak PK
                                                         </button>
                                                         {pk &&
-                                                            <KunciPkButton onClick={() => onKunciPk(pk)} />
+                                                            (pegawai.pk_terkunci ?
+                                                                <BukaKunciPkButton onClick={() => onBukaKunciPk(pk)} />
+                                                                :
+                                                                <KunciPkButton onClick={() => onKunciPk(pk)} />
+                                                            )
                                                         }
                                                     </div>
                                                 )}

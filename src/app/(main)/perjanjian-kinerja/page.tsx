@@ -9,7 +9,7 @@ import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TablePk } from "./table-pk";
 import { TahunNull, OpdNull } from "@/components/global/OpdTahunNull";
 import { ModalPilihAtasan } from './modal-pilih-atasan';
-import { kunciPk } from "./pk-opd-service";
+import { bukaKunciPk, kunciPk } from "./pk-opd-service";
 import { HubungkanModal } from "./hubungkan-modal";
 import { PreviewPk } from "./preview-pk";
 
@@ -242,13 +242,77 @@ const PerjanjianKinerja = () => {
             }
 
             try {
-                await kunciPk({
+                const response = await kunciPk({
                     request: formKunciPk,
                     apiUrl: apiPerencanaan,
                     token: token
                 })
 
+                setData(prev => {
+                    if (!prev) return prev
+
+                    return updateData(
+                        prev,
+                        response.id_pegawai,
+                        pegawai => (
+                            {
+                                ...pegawai,
+                                pk_terkunci: response.pk_terkunci
+                            }),
+                    )
+                })
+
                 AlertNotification("SUCCESS", `PK milik ${pemilikPk} berhasil dikunci`,
+                    "success", 2500, false
+                )
+            } catch (err) {
+                AlertNotification("ERROR",
+                    err instanceof Error
+                        ? err.message
+                        : "Gagal mengunci PK",
+                    "error", 2500, false
+                )
+            }
+        })
+    }
+
+    const handleBukaKunciPk = (pk: PkAsn) => {
+        const formKunciPk: KunciPkRequest = {
+            kode_opd: pk.kode_opd,
+            tahun: pk.tahun,
+            id_pegawai: pk.nip_pemilik_pk
+        };
+        const pemilikPk = pk.nama_pemilik_pk
+
+        AlertQuestion("WARNING", `Kuncian PK milik ${pemilikPk} akan dibuka, lanjutkan ?`,
+            "warning", "Buka Kunci", "Batal"
+        ).then(async (res) => {
+            if (!res.isConfirmed) {
+                return;
+            }
+
+            try {
+                const response = await bukaKunciPk({
+                    request: formKunciPk,
+                    apiUrl: apiPerencanaan,
+                    token: token
+                })
+
+                setData(prev => {
+                    if (!prev) return prev
+
+                    return updateData(
+                        prev,
+                        response.id_pegawai,
+                        pegawai => (
+                            {
+                                ...pegawai,
+                                pk_terkunci: response.pk_terkunci
+                            }),
+                    )
+                })
+
+                AlertNotification("SUCCESS", `Kuncian PK milik ${pemilikPk} berhasil dibuka`,
                     "success", 2500, false
                 )
             } catch (err) {
@@ -318,6 +382,7 @@ const PerjanjianKinerja = () => {
                             onSelectAtasan={handleSelectAtasan}
                             onSelectPk={handleSelectPk}
                             onKunciPk={handleKunciPk}
+                            onBukaKunciPk={handleBukaKunciPk}
                         />
                     </div>
                 </div>
@@ -456,4 +521,19 @@ const buildCandidates = (
             ) ?? []
 
     return result;
+}
+
+function updateData(data: PkOpdResponse, nip: string, updater: (pegawai: PkPegawai) => PkPegawai): PkOpdResponse {
+    return {
+        ...data,
+        pk_item: data.pk_item.map(item => ({
+            ...item,
+            pegawais: item.pegawais.map(pegawai =>
+                pegawai.nip === nip
+                    ? updater(pegawai)
+                    :
+                    pegawai
+            ),
+        })),
+    }
 }

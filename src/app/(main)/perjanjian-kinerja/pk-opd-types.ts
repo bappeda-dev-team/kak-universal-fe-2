@@ -32,6 +32,7 @@ export interface PkPegawai {
     roles: string[];
     atasan_candidates: AtasanCandidate[];
     pks: PkAsn[]; // rekin
+    pk_terkunci: boolean;
 }
 
 export interface SubkegiatanRekin {
@@ -126,8 +127,14 @@ export type AtasanOption = {
 }
 
 export interface PkTerkunciResponse {
-    IdKunci: number;
-    IdPegawai: string;
-    StatusPk: string;
-    PkTerkunci: boolean;
+    id_kunci: number;
+    id_pegawai: string;
+    status_pk: string;
+    pk_terkunci: boolean;
+}
+
+export interface WebResponse<T> {
+    code: number;
+    status: string;
+    data: T;
 }

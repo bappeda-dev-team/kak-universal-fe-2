@@ -13,3 +13,15 @@ export function KunciPkButton({ onClick }: kunciPkButtonProps) {
         </button>
     );
 }
+
+export function BukaKunciPkButton({ onClick }: kunciPkButtonProps) {
+
+    return (
+        <button
+            className="button px-4 py-2 rounded border border-black bg-blue-300 hover:bg-blue-600 text-black"
+            onClick={onClick}
+        >
+            Buka Kunci PK
+        </button>
+    );
+}
