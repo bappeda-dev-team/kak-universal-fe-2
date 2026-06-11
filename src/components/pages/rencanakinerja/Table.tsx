@@ -3,7 +3,7 @@
 import { ButtonGreenBorder, ButtonRedBorder, ButtonSkyBorder, ButtonBlackBorder } from "@/components/global/Button";
 import React, { useState, useEffect } from "react";
 import { getUser, getToken } from "@/components/lib/Cookie";
-import { TbCirclePlus, TbLayersSelected, TbPencil, TbPencilDown, TbTrash } from "react-icons/tb";
+import { TbCirclePlus, TbFileDescription, TbLayersSelected, TbPencil, TbPencilDown, TbTrash } from "react-icons/tb";
 import { LoadingSync } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { ModalRencanaKinerja } from "./ModalRencanaKinerja";
@@ -164,7 +164,6 @@ export const TablePerencanaan = () => {
                 <div className="flex flex-col items-end">
                     <p>{User?.nama_pegawai || "-"}</p>
                     <p>{User?.nip || "-"}</p>
-
                     <RolePill roles={User?.roles} className="[&>span]:text-sm [&>span]:px-3 [&>span]:py-1" />
                 </div>
                 {/* } */}
@@ -177,8 +176,7 @@ export const TablePerencanaan = () => {
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Pohon Kinerja</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Rencana Kinerja</th>
                             <th className="border-r border-b px-6 py-3 min-w-[100px]">Tahun</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[400px]">Indikator Rencana Kinerja</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">target / Satuan</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[600px]">Indikator Target Satuan Rencana Kinerja</th>
                             <th className="border-r border-b px-6 py-3 min-w-[100px]">Status</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Catatan</th>
                             <th className="border-l border-b px-6 py-3 min-w-[200px]">Aksi</th>
@@ -195,89 +193,44 @@ export const TablePerencanaan = () => {
                             rekin.map((data, index) => (
                                 <tr key={data.id_rencana_kinerja}>
                                     <td className="border-r border-b px-6 py-4">{index + 1}</td>
-                                    <td className="border-r border-b px-6 py-4">{data.nama_pohon || "-"} - {data.id_pohon || "no id"}</td>
+                                    <td className="border-r border-b px-6 py-4">{data.nama_pohon ? data.nama_pohon : "-"}</td>
                                     <td className="border-r border-b px-6 py-4">{data.nama_rencana_kinerja ? data.nama_rencana_kinerja : "-"}</td>
                                     <td className="border-r border-b px-6 py-4 text-center">{data.tahun ? data.tahun : "-"}</td>
                                     {data.indikator != null ?
-                                        <>
-                                            {data.indikator.length > 1 ?
-                                                <td className="border-r border-b text-center">
-                                                    {data.indikator.map((item: any, index: number) => (
-                                                        <div key={index}>
-                                                            {item.nama_indikator ?
-                                                                <div className={`flex items-center justify-between gap-2 py-4 px-6 ${index !== data.indikator.length - 1 && 'border-b'}`}>
-                                                                    <p className="text-start">{item.nama_indikator}</p>
-                                                                    <ButtonGreenBorder
-                                                                        halaman_url={`rencanakinerja/manual_ik/${item.id_indikator}`}
-                                                                        className="min-w-[110px]"
-                                                                    >
-                                                                        Manual IK
-                                                                    </ButtonGreenBorder>
-                                                                </div>
-                                                                :
-                                                                "-"
-                                                            }
+                                        <td className="border-r border-b text-center">
+                                            <div key={index} className="flex flex-col gap-2 p-2">
+                                                {data.indikator.map((item: indikator, index: number) => (
+                                                    <React.Fragment key={index}>
+                                                        <div className={`flex flex-col gap-2 bg-green-100 border border-green-600 rounded-lg p-5`}>
+                                                            <div className="flex items-center justify-between gap-1">
+                                                                <p className="text-start">{item.nama_indikator || "-"}</p>
+                                                                {item.targets ?
+                                                                    item.targets.map((t: target, t_index: number) => (
+                                                                        <div className="flex flex-col border border-green-600 rounded-lg px-4 py-1" key={t_index}>
+                                                                            <p className="border-b border-black">{t.target || "-"}</p>
+                                                                            <p>{t.satuan || "-"}</p>
+                                                                        </div>
+                                                                    ))
+                                                                    :
+                                                                    <div className="flex flex-col border border-green-600 rounded-lg px-4 py-1">
+                                                                        <p>-</p>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                            <ButtonGreenBorder
+                                                                halaman_url={`rencanakinerja/manual_ik/${item.id_indikator}`}
+                                                                className="w-full flex items-center gap-1"
+                                                            >
+                                                                <TbFileDescription />
+                                                                Manual IK
+                                                            </ButtonGreenBorder>
                                                         </div>
-                                                    ))}
-                                                </td>
-                                                :
-                                                <td className="border-r border-b text-center">
-                                                    {data.indikator.map((item: any, index: number) => (
-                                                        <div key={index}>
-                                                            {item.nama_indikator ?
-                                                                <div className={`flex items-center justify-between gap-2 py-4 px-6`}>
-                                                                    <p className="text-start">{item.nama_indikator}</p>
-                                                                    <ButtonGreenBorder
-                                                                        halaman_url={`rencanakinerja/manual_ik/${item.id_indikator}`}
-                                                                        className="min-w-[110px]"
-                                                                    >
-                                                                        Manual IK
-                                                                    </ButtonGreenBorder>
-                                                                </div>
-                                                                :
-                                                                "-"
-                                                            }
-                                                        </div>
-                                                    ))}
-                                                </td>
-                                            }
-                                            {data.indikator.length > 1 ?
-                                                <td className="border-r border-b text-center">
-                                                    {data.indikator.map((item: any, index: number) => (
-                                                        <React.Fragment key={index}>
-                                                            {item.targets ?
-                                                                item.targets.map((t: any) => (
-                                                                    <p key={t.id_target} className={`${index !== data.indikator.length - 1 && "border-b"} py-4 px-6`}>
-                                                                        {t.target ? t.target : "-"} / {t.satuan ? t.satuan : "-"}
-                                                                    </p>
-                                                                ))
-                                                                :
-                                                                <p className={`border-b py-4 px-6`}>-</p>
-                                                            }
-                                                        </React.Fragment>
-                                                    ))}
-                                                </td>
-                                                :
-                                                <td className="border-r border-b px-6 py-4 text-center">
-                                                    {data.indikator.map((item: any, index: number) => (
-                                                        <React.Fragment key={index}>
-                                                            {item.targets ?
-                                                                item.targets.map((t: any) => (
-                                                                    <p key={t.id_target}>
-                                                                        {t.target ? t.target : "-"} / {t.satuan ? t.satuan : "-"}
-                                                                    </p>
-                                                                ))
-                                                                :
-                                                                <p>-</p>
-                                                            }
-                                                        </React.Fragment>
-                                                    ))}
-                                                </td>
-                                            }
-                                        </>
+                                                    </React.Fragment>
+                                                ))}
+                                            </div>
+                                        </td>
                                         :
                                         <>
-                                            <td className="border-r border-b px-6 py-4 text-center">-</td>
                                             <td className="border-r border-b px-6 py-4 text-center">-</td>
                                         </>
                                     }
@@ -305,7 +258,11 @@ export const TablePerencanaan = () => {
                                                     halaman_url={`/rencanakinerja/${data.id_rencana_kinerja}`}
                                                 >
                                                     <TbPencilDown className="mr-1" />
-                                                    {User?.roles == "level_4" ? "Renaksi" : "Rincian"}
+                                                    {User?.roles == 'level_4' ?
+                                                        "Renaksi"
+                                                        :
+                                                        "Rincian"
+                                                    }
                                                 </ButtonGreenBorder>
                                             }
                                             <ButtonRedBorder className="w-full"
