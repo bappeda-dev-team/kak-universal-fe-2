@@ -3,12 +3,13 @@
 import { ButtonGreenBorder, ButtonRedBorder, ButtonSkyBorder, ButtonBlackBorder } from "@/components/global/Button";
 import React, { useState, useEffect } from "react";
 import { getUser, getToken } from "@/components/lib/Cookie";
-import { TbCirclePlus, TbLayersSelected, TbPencil, TbPencilDown, TbTrash } from "react-icons/tb";
+import { TbCirclePlus, TbFileDescription, TbLayersSelected, TbPencil, TbPencilDown, TbTrash } from "react-icons/tb";
 import { LoadingSync } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { ModalRencanaKinerja } from "./ModalRencanaKinerja";
 import { ModalCloneRekin } from "./ModalCloneRekin";
 import { useBrandingContext } from "@/context/BrandingContext";
+import { RolePill } from "@/components/global/RolePill";
 
 interface type_rekin {
     id_rencana_kinerja: string;
@@ -163,7 +164,7 @@ export const TablePerencanaan = () => {
                 <div className="flex flex-col items-end">
                     <p>{User?.nama_pegawai || "-"}</p>
                     <p>{User?.nip || "-"}</p>
-                    <p>Roles: {User?.roles || "-"}</p>
+                    <RolePill roles={User?.roles} className="[&>span]:text-sm [&>span]:px-3 [&>span]:py-1" />
                 </div>
                 {/* } */}
             </div>
@@ -218,8 +219,9 @@ export const TablePerencanaan = () => {
                                                             </div>
                                                             <ButtonGreenBorder
                                                                 halaman_url={`rencanakinerja/manual_ik/${item.id_indikator}`}
-                                                                className="min-w-[110px]"
+                                                                className="w-full flex items-center gap-1"
                                                             >
+                                                                <TbFileDescription />
                                                                 Manual IK
                                                             </ButtonGreenBorder>
                                                         </div>
