@@ -311,7 +311,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                         className="uppercase text-xs font-bold text-gray-700 my-2"
                                         htmlFor="sasaran_pemda"
                                     >
-                                        Strategic Pemda ({jenis_pohon}):
+                                        Pemda ({jenis_pohon}):
                                     </label>
                                     <div className="border px-4 py-2 rounded-lg">{nama_pohon}</div>
                                 </div>

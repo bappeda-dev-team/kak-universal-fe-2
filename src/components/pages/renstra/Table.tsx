@@ -2,8 +2,8 @@
 
 import { getToken } from "@/components/lib/Cookie";
 import React, { useEffect, useState } from "react";
-import { ButtonGreenBorder, ButtonSkyBorder } from "@/components/global/Button";
-import { TbCirclePlus, TbPencil } from "react-icons/tb";
+import { ButtonSkyBorder } from "@/components/global/Button";
+import { TbCirclePlus, TbPencil, TbPrinter } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
 import { ModalMatrix, ModalEditMatrix } from "./ModalMatrix";
 import { ModalPaguAnggaran } from "./ModalPaguAnggaran";
@@ -138,6 +138,10 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
         <>
             {Matrix.map((item: matrix, index: number) => (
                 <React.Fragment key={index}>
+                    <ButtonSkyBorder className="w-full flex items-center gap-1">
+                        <TbPrinter />
+                        Cetak
+                    </ButtonSkyBorder>
                     <div className="overflow-auto m-2 rounded-xl border">
                         <TableTotalPagu
                             tahun_list={tahun_list}
