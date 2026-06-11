@@ -352,7 +352,7 @@ export const Pagu: React.FC<{ jenis: string, anggaran: number }> = ({ jenis, ang
                                 ${(jenis === 'Operational Pemda' || jenis === 'Operational') && 'text-white bg-green-500'}
                                 ${jenis === 'Operational N' && 'text-black border border-green-500'}
                             `}>
-                                Rp. {formatRupiah(anggaran)}
+                                Rp. {formatRupiah(anggaran || 0)}
                             </div>
                         </td>
                     </tr>
