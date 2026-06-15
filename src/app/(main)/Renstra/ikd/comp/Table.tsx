@@ -232,8 +232,8 @@ export const TrProgram: React.FC<TrProgram> = ({ Data, Program, kode_opd }) => {
         }
     }
 
-    const handleUpdate = (data: ProgramOPD) => {
-        setProgramTerpilih((prev) => [...prev, data]);
+    const handleUpdate = (data: ProgramOPD[]) => {
+        setProgramTerpilih((prev) => [...prev, ...data]);
     }
 
     const hapusProgram = async (id: any) => {

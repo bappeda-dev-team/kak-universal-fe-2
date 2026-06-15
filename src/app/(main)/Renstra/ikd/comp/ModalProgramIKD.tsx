@@ -20,7 +20,7 @@ interface modal {
     onClose: () => void;
     Data: IkdFindall | null;
     kode_opd: string;
-    onSuccess: (data: ProgramOPD) => void;
+    onSuccess: (data: ProgramOPD[]) => void;
 }
 
 export const ModalProgramIKD: React.FC<modal> = ({ isOpen, onClose, Data, kode_opd, onSuccess }) => {
@@ -37,6 +37,7 @@ export const ModalProgramIKD: React.FC<modal> = ({ isOpen, onClose, Data, kode_o
         }
     });
     const { branding } = useBrandingContext();
+    const [Program, setProgram] = useState<OptionType[]>([]);
 
     const ConvertedOptionProgram = Data?.program_opd.map((o: ProgramOPD) => ({
         value: o.id,
@@ -52,12 +53,11 @@ export const ModalProgramIKD: React.FC<modal> = ({ isOpen, onClose, Data, kode_o
     }
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const formData = {
-            //key : value
+        const payload = Program.map((item) => ({
             pohon_kinerja_id: Data?.id,
-            program_opd_id: data.program_opd_id?.value,
-        };
-        // console.log(formData);
+            program_opd_id: item?.value,
+        }))
+        // console.log(payload);
         try {
             setProses(true);
             const response = await fetch(`${branding?.api_perencanaan}/ikd/select_program_opd/create`, {
@@ -66,7 +66,7 @@ export const ModalProgramIKD: React.FC<modal> = ({ isOpen, onClose, Data, kode_o
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(payload),
             });
             const result = await response.json();
             if (result.code === 201) {
@@ -114,6 +114,13 @@ export const ModalProgramIKD: React.FC<modal> = ({ isOpen, onClose, Data, kode_o
                                         id="program_opd_id"
                                         placeholder="Pilih Program"
                                         options={ConvertedOptionProgram}
+                                        value={Program}
+                                        isClearable
+                                        isMulti
+                                        onChange={(option) => {
+                                            field.onChange(option);
+                                            setProgram(option as OptionType[]);
+                                        }}
                                         styles={{
                                             control: (baseStyles) => ({
                                                 ...baseStyles,
