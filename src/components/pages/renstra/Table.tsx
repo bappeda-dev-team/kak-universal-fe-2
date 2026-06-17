@@ -2,11 +2,12 @@
 
 import { getToken } from "@/components/lib/Cookie";
 import React, { useEffect, useState } from "react";
-import { ButtonGreenBorder, ButtonSkyBorder } from "@/components/global/Button";
+import { ButtonSkyBorder } from "@/components/global/Button";
 import { TbCirclePlus, TbPencil, TbPrinter } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
 import { ModalMatrix, ModalEditMatrix } from "./ModalMatrix";
 import { ModalPaguAnggaran } from "./ModalPaguAnggaran";
+import { useCetakMatrixRenstra } from "@/app/(main)/Renstra/matrix-renstra/cetak/useCetakMatrixRenstra";
 
 interface renstra {
     nama: string;
@@ -60,6 +61,7 @@ interface table {
     tahun_akhir: string;
     tahun_list: string[];
     kode_opd: string;
+    nama_opd: string;
 }
 interface Thead {
     jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
@@ -81,7 +83,7 @@ interface TablePagu {
     pagu_total: pagu[];
 }
 
-export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, tahun_list, kode_opd }) => {
+export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, tahun_list, kode_opd, nama_opd }) => {
 
     const [Matrix, setMatrix] = useState<matrix[]>([]);
 
@@ -121,6 +123,8 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
         fetchMatrix();
     }, [kode_opd, tahun_awal, tahun_akhir, token, FetchTrigger]);
 
+    const { cetakPdfMatrixRenstra } = useCetakMatrixRenstra(Matrix[0], nama_opd, kode_opd, tahun_awal, tahun_akhir, tahun_list);
+    
     if (DataNull) {
         return (
             <h1 className="p-5 text-sky-500 font-semibold">Sub Kegiatan OPD belum di pilih pada periode tahun {tahun_awal} sampai {tahun_akhir}</h1>
@@ -138,10 +142,15 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
         <>
             {Matrix.map((item: matrix, index: number) => (
                 <React.Fragment key={index}>
-                    <ButtonSkyBorder className="w-full flex items-center gap-1">
-                        <TbPrinter />
-                        Cetak
-                    </ButtonSkyBorder>
+                    <div className="m-2">
+                        <ButtonSkyBorder 
+                            className="w-full flex items-center gap-1"
+                            onClick={cetakPdfMatrixRenstra}
+                        >
+                            <TbPrinter />
+                            Cetak Penuh Matrix Renstra
+                        </ButtonSkyBorder>
+                    </div>
                     <div className="overflow-auto m-2 rounded-xl border">
                         <TableTotalPagu
                             tahun_list={tahun_list}
