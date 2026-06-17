@@ -78,7 +78,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
         if (kode_opd != undefined) {
             fetchOpd();
         }
-    }, [token, Jenis, kode_opd, FetchTrigger]);
+    }, [branding, token, Jenis, kode_opd, FetchTrigger]);
 
     const refresh = () => {
         setFetchTrigger((prev) => !prev);

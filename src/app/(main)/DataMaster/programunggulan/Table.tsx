@@ -311,8 +311,8 @@ export const RowOpd: React.FC<RowOpd> = ({ opd, kode_program }) => {
                     <div className="flex flex-col items-center gap-2">
                         <div className="flex flex-col items-center gap-4">
                             {OpdList.map((item: OpdList, index: number) => (
-                                <div className="flex flex-col items-center gap-1 border border-green-500 rounded-lg p-3">
-                                    <p key={index} className="flex items-center gap-1">
+                                <div key={index} className="flex flex-col items-center gap-1 border border-green-500 rounded-lg p-3">
+                                    <p className="flex items-center gap-1">
                                         {item.nama_opd || "-"}
                                     </p>
                                     <button

@@ -59,7 +59,7 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
         if (kode_opd != undefined) {
             fetchOpd();
         }
-    }, [token, kode_opd, FetchTrigger]);
+    }, [branding, token, kode_opd, tahun, FetchTrigger]);
 
     const JenisPohon = (jenis: string) => {
         switch (jenis) {

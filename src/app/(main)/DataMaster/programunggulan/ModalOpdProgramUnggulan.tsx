@@ -75,7 +75,7 @@ export const ModalOpdProgramUnggulan: React.FC<ModalProps> = ({ isOpen, onClose,
             }
         };
         fetchOpd();
-    }, [isOpen])
+    }, [branding, token, isOpen])
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const opd = Opd.map(item => item.value);
