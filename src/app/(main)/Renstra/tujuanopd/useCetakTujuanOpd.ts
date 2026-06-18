@@ -147,6 +147,10 @@ export function useCetakTujuanOpd(
                             styles: { halign: "left" },
                         },
                         {
+                            content: indikatorItem?.definisi_operasional || "-",
+                            styles: { halign: "left" },
+                        },
+                        {
                             content: indikatorItem?.rumus_perhitungan || "-",
                             styles: { halign: "left" },
                         },
@@ -183,6 +187,7 @@ export function useCetakTujuanOpd(
             { content: "Urusan & Bidang Urusan", rowSpan: 2, styles: { halign: "center" } },
             { content: "Tujuan OPD", rowSpan: 2, styles: { halign: "center" } },
             { content: "Indikator", rowSpan: 2, styles: { halign: "center" } },
+            { content: "Definisi Operasional", rowSpan: 2, styles: { halign: "center" } },
             { content: "Rumus Perhitungan", rowSpan: 2, styles: { halign: "center" } },
             { content: "Sumber Data", rowSpan: 2, styles: { halign: "center" } },
 
