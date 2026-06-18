@@ -1,13 +1,14 @@
 'use client'
 
-import { ButtonRed, ButtonGreen, ButtonSky } from "@/components/global/Button";
+import { ButtonRed, ButtonGreen, ButtonSky, ButtonBlackBorder } from "@/components/global/Button";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken, getUser, getOpdTahun } from "@/components/lib/Cookie";
-import { TbPencil, TbTrash, TbCirclePlus } from "react-icons/tb";
+import { TbPencil, TbTrash, TbCirclePlus, TbPrinter } from "react-icons/tb";
 import { ModalTujuanOpd } from "./ModalTujuanOpd";
+import { useCetakTujuanOpd } from "@/app/(main)/Renstra/tujuanopd/useCetakTujuanOpd";
 
 interface Periode {
     id: number;
@@ -52,13 +53,6 @@ interface tujuan {
     kode_opd: string;
     nama_opd: string;
     tujuan_opd: TujuanOpd[];
-}
-
-interface Periode_Header {
-    id: number;
-    tahun_awal: string;
-    tahun_akhir: string;
-    tahun_list: string[];
 }
 
 interface table {
@@ -112,6 +106,9 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
         }
     }, []);
 
+    const kode_opd = User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd
+    const nama_opd = User?.roles == 'super_admin' ? SelectedOpd?.label : User?.nama_opd
+
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         let url = '';
@@ -138,7 +135,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                     setPeriodeNotFound(true);
                     console.log(result.data);
                     setTujuan([]);
-                } else if(result.code == 200 || result.code == 201){
+                } else if (result.code == 200 || result.code == 201) {
                     setDataNull(false);
                     setTujuan(data);
                     setError(false);
@@ -159,6 +156,8 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
             fetchTujuanOpd();
         }
     }, [token, User, Tahun, FetchTrigger, SelectedOpd, tahun_awal, tahun_akhir, jenis]);
+
+    const { cetakPdfTujuanOpd } = useCetakTujuanOpd(Tujuan, nama_opd, tahun_awal, tahun_akhir, tahun_list)
 
     const hapusTujuanOpd = async (id: number) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -220,7 +219,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
         )
     } else if (Tahun?.value == undefined) {
         return <TahunNull />
-    } else if(User?.roles == 'super_admin'){
+    } else if (User?.roles == 'super_admin') {
         if (SelectedOpd?.value == undefined) {
             return (
                 <>
@@ -240,6 +239,13 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                         <TbCirclePlus className="mr-1" />
                         Tambah Tujuan OPD
                     </ButtonSky>
+                    <ButtonBlackBorder 
+                        className="flex items-center gap-1"
+                        onClick={cetakPdfTujuanOpd}
+                        >
+                        <TbPrinter />
+                        Cetak
+                    </ButtonBlackBorder>
                 </div>
             }
             <div className="overflow-auto m-2 rounded-t-xl border">
@@ -360,7 +366,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                 {/* MODAL EDIT TUJUAN */}
                 <ModalTujuanOpd
                     metode="baru"
-                    kode_opd={User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd}
+                    kode_opd={kode_opd}
                     tahun={Tahun?.value}
                     tahun_awal={Number(tahun_awal)}
                     tahun_akhir={Number(tahun_akhir)}
@@ -375,7 +381,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                     metode="lama"
                     tahun_awal={Number(tahun_awal)}
                     tahun_akhir={Number(tahun_akhir)}
-                    kode_opd={User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd}
+                    kode_opd={kode_opd}
                     id={IdTujuan}
                     tahun={Tahun?.value}
                     tahun_list={tahun_list}
