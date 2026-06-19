@@ -1,13 +1,14 @@
 'use client'
 
-import { ButtonRed, ButtonGreen, ButtonSky } from "@/components/global/Button";
+import { ButtonRed, ButtonGreen, ButtonBlackBorder } from "@/components/global/Button";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken, getUser, getOpdTahun } from "@/components/lib/Cookie";
-import { TbPencil, TbTrash, TbCirclePlus, TbArrowBadgeDownFilled } from "react-icons/tb";
+import { TbPencil, TbTrash, TbCirclePlus, TbArrowBadgeDownFilled, TbPrinter } from "react-icons/tb";
 import { ModalSasaranOpd } from "./ModalSasaranOpd";
+import { useCetakSasaranOpd } from "@/app/(main)/Renstra/sasaranopd/useCetakSasaranOpd";
 
 interface OptionTypeString {
     value: string;
@@ -112,6 +113,9 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
         }
     }, []);
 
+    const kode_opd = User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd;
+    const nama_opd = User?.roles == 'super_admin' ? SelectedOpd?.label : User?.nama_opd;
+
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         let url = '';
@@ -161,6 +165,8 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
 
         }
     }, [token, User, FetchTrigger, tahun_awal, tahun_akhir, jenis, SelectedOpd]);
+
+    const {cetakPdfSasaranOpd} = useCetakSasaranOpd(Sasaran, nama_opd, tahun_awal, tahun_akhir, tahun_list);
 
     const hapusSasaranOpd = async (id: string) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -252,6 +258,15 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
 
     return (
         <>
+            <div className="m-2">
+                <ButtonBlackBorder
+                    className="w-full flex items-center gap-1"
+                    onClick={cetakPdfSasaranOpd}
+                >
+                    <TbPrinter />
+                    Cetak
+                </ButtonBlackBorder>
+            </div>
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
                     <thead>
@@ -435,7 +450,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                     tahun_awal={tahun_awal}
                     tahun_akhir={tahun_akhir}
                     jenis_periode={jenis}
-                    kode_opd={User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd}
+                    kode_opd={kode_opd}
                     isOpen={isOpenNewSasaran}
                     onClose={() => handleModalNewSasaran(0, '')}
                     onSuccess={() => setFetchTrigger((prev) => !prev)}
@@ -451,7 +466,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                     periode={id_periode}
                     tahun_awal={tahun_awal}
                     tahun_akhir={tahun_akhir}
-                    kode_opd={User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd}
+                    kode_opd={kode_opd}
                     jenis_periode={jenis}
                     isOpen={isOpenEditSasaran}
                     onClose={() => handleModalEditSasaran('', 0, '')}
