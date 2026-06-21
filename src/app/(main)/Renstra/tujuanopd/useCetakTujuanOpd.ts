@@ -201,13 +201,15 @@ export function useCetakTujuanOpd(
             "Target",
             "Satuan",
         ]);
+        const headerRow3 = Array.from({ length: 21 }, (_, index) => `${index + 1}`);
 
         autoTable(doc, {
             startY: 38,
             theme: "grid",
             head: [
                 headerRow1,
-                headerRow2
+                headerRow2,
+                headerRow3
             ] as RowInput[],
             body,
             styles: {

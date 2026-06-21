@@ -106,7 +106,7 @@ export function useCetakSasaranOpd(
                         content: `${item.nama_pohon || "-"} (${item.tahun_pohon || 0})`,
                     },
                     {
-                        content: `Pelaksana`,
+                        content: `-`,
                         styles: { halign: "center" },
                     },
                     {
@@ -272,13 +272,15 @@ export function useCetakSasaranOpd(
             "Target",
             "Satuan",
         ]);
+        const headerRow3 = Array.from({ length: 21 }, (_, index) => `${index + 1}`);
 
         autoTable(doc, {
             startY: 38,
             theme: "grid",
             head: [
                 headerRow1,
-                headerRow2
+                headerRow2,
+                headerRow3
             ] as RowInput[],
             body,
             styles: {

@@ -90,7 +90,7 @@ export function useCetakIkuOpd(
 
         const headerRow1 = [
             { content: "No", rowSpan: 2, styles: { halign: "center" } },
-            { content: "Indikator Utama", rowSpan: 2, styles: { halign: "center" } },
+            { content: "Indikator Kinerja Utama", rowSpan: 2, styles: { halign: "center" } },
             { content: "Definisi Operasional", rowSpan: 2, styles: { halign: "center" } },
             { content: "Rumus Perhitungan", rowSpan: 2, styles: { halign: "center" } },
             { content: "Sumber Data", rowSpan: 2, styles: { halign: "center" } },
@@ -105,13 +105,15 @@ export function useCetakIkuOpd(
             "Target",
             "Satuan",
         ]);
+        const headerRow3 = Array.from({ length: 17 }, (_, index) => `${index + 1}`);
 
         autoTable(doc, {
             startY: 38,
             theme: "grid",
             head: [
                 headerRow1,
-                headerRow2
+                headerRow2,
+                headerRow3
             ] as RowInput[],
             body,
             styles: {
