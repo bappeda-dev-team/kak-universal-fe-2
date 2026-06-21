@@ -70,7 +70,7 @@ export function useCetakIkuOpd(
                 // Nomer
                 index + 1,
 
-                item.indikator || "-",
+                { content: `${item.indikator || "-"}\n\n(${item.asal_iku || "unknown"})`, },
                 item.definisi_operasional || "-",
                 item.rumus_perhitungan || "-",
                 item.sumber_data || "-",
@@ -121,6 +121,9 @@ export function useCetakIkuOpd(
                 valign: "middle",
                 lineWidth: 0.1,
                 lineColor: [0, 0, 0],
+            },
+            columnStyles: {
+                1: { cellWidth: 30 },
             },
             headStyles: {
                 fillColor: '#10B981', // emerald

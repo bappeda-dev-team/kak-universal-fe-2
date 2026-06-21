@@ -122,12 +122,6 @@ export const ModalRencanaKinerja: React.FC<ModalProps> = ({ isOpen, onClose, id,
         name: "indikator",
     });
 
-    // useEffect(() => {
-    //     if (fields.length === 0) {
-    //         append({ nama_indikator: "", targets: [{ target: "", satuan: "" }] });
-    //     }
-    // }, [fields, append]);
-
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchIdLevel3 = async () => {
