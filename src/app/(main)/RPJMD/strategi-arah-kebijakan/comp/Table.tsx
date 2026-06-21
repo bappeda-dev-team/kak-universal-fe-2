@@ -99,7 +99,7 @@ const Table: React.FC<Table> = ({ Data }) => {
                               </div>
                             </td>
                           ) : (
-                            <td className="border-r border-b border-emerald-500 bg-red-400 px-6 py-4 font-semibold">
+                            <td className="border-r border-b border-emerald-500 bg-red-400 px-6 py-4 font-semibold text-white">
                               Stategic OPD belum di buat
                             </td>
                           )}
@@ -109,7 +109,7 @@ const Table: React.FC<Table> = ({ Data }) => {
                   ) : (
                     <td
                       colSpan={3}
-                      className="border-r border-b border-emerald-500 px-6 py-4 font-semibold bg-red-300"
+                      className="border-r border-b border-emerald-500 px-6 py-4 font-semibold bg-red-300 text-white"
                     >
                       sasaran pemda belum di buat
                     </td>
