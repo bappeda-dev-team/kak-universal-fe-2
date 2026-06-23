@@ -205,7 +205,7 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
         } else if (isOpen && metode === 'baru') {
             fetchPokinBaru();
         }
-    }, [token, isOpen, metode, tahun, id, replace, reset, id_pohon, jenis_periode]);
+    }, [tahun_list, token, isOpen, metode, tahun, id, replace, reset, id_pohon, jenis_periode]);
 
     const fetchOptionTujuanOpd = async () => {
         setIsLoading(true)

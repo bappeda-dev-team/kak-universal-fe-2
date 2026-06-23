@@ -59,7 +59,7 @@ export const Table: React.FC<Table> = ({ kode_opd, tahun }) => {
         if (kode_opd != undefined) {
             fetchOpd();
         }
-    }, [token, kode_opd, FetchTrigger]);
+    }, [branding, token, kode_opd, tahun, FetchTrigger]);
 
     const JenisPohon = (jenis: string) => {
         switch (jenis) {
@@ -232,8 +232,8 @@ export const TrProgram: React.FC<TrProgram> = ({ Data, Program, kode_opd }) => {
         }
     }
 
-    const handleUpdate = (data: ProgramOPD) => {
-        setProgramTerpilih((prev) => [...prev, data]);
+    const handleUpdate = (data: ProgramOPD[]) => {
+        setProgramTerpilih((prev) => [...prev, ...data]);
     }
 
     const hapusProgram = async (id: any) => {

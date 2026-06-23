@@ -32,6 +32,7 @@ export interface PkPegawai {
     roles: string[];
     atasan_candidates: AtasanCandidate[];
     pks: PkAsn[]; // rekin
+    pk_terkunci: boolean;
 }
 
 export interface SubkegiatanRekin {
@@ -88,4 +89,52 @@ export interface IndikatorRekin {
 export interface TargetRekin {
     target: string;
     satuan: string;
+}
+
+export interface KunciPkRequest {
+    kode_opd: string;
+    tahun: number;
+    id_pegawai: string;
+}
+
+export type PkTerpilihProps = {
+    idRekinPemilik: string
+    idPohon: number
+    kodeOpd: string
+    levelPk: number
+}
+
+export type PkPegawaiContext = {
+    kode_opd: string
+    nama_opd: string
+    tahun: number
+    pegawai: PkPegawai
+    level: number
+}
+
+export type HandleSelectPkProps = {
+    pk: PkAsn;
+    levelPk: number;
+}
+
+export type HandleSelectAtasanProps = {
+    nipBawahan: string;
+}
+
+export type AtasanOption = {
+    nama: string
+    nip: string
+}
+
+export interface PkTerkunciResponse {
+    id_kunci: number;
+    id_pegawai: string;
+    status_pk: string;
+    pk_terkunci: boolean;
+}
+
+export interface WebResponse<T> {
+    code: number;
+    status: string;
+    data: T;
 }

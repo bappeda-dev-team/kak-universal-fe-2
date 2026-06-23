@@ -6,7 +6,7 @@ import { ButtonSky } from "@/components/global/Button";
 import { useState, useEffect } from "react";
 import { getToken, getPeriode, setCookie } from "@/components/lib/Cookie";
 import Select from "react-select";
-import Table from "./Table";
+import { Table } from "./Table";
 
 interface Periode {
     value: number;
@@ -107,12 +107,12 @@ const MasterProgramUnggulan = () => {
                         }}
                     />
                 </div>
-                {Periode ? 
+                {Periode ?
                     <Table
                         tahun_awal={Periode?.tahun_awal || ""}
                         tahun_akhir={Periode?.tahun_akhir || ""}
                     />
-                :
+                    :
                     <div className="m-5">
                         <h1>Pilih Periode terlebih dahulu</h1>
                     </div>

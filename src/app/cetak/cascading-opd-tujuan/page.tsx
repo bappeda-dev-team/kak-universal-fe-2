@@ -3,8 +3,8 @@
 import { ButtonBlackBorder } from "@/components/global/Button";
 import { TbPrinter } from "react-icons/tb";
 import { useParams } from "next/navigation";
-import { PohonOpdCetak } from "./comp/PohonOpdCetak";
-import PohonTujuanOpd from "./comp/PohonTujuanOpd";
+import { PohonLaporanOpd } from "./comp/PohonLaporanOpd";
+import PohonTujuanOpd from "../pokin-tujuan-opd/comp/PohonTujuanOpd";
 import React, { useState, useEffect, useRef } from "react";
 import { getToken, getUser, getOpdTahun } from "@/components/lib/Cookie";
 import { LoadingClip } from "@/components/global/Loading";
@@ -12,7 +12,7 @@ import { LoadingButtonClip } from "@/components/global/Loading";
 import html2canvas from "html2canvas";
 import jsPDF from 'jspdf';
 
-const CetakTujuanOpdPokin = () => {
+const CetakCascadingOpdTujuan = () => {
 
     const { id } = useParams();
     const [Pohon, setPohon] = useState<any>(null);
@@ -99,14 +99,8 @@ const CetakTujuanOpdPokin = () => {
 
             pdf.addImage(imgData, "PNG", 0, 0, newCanvas.width, newCanvas.height);
 
-            pdf.save(
-                `Pokin Tujuan OPD ${nama_opd || "opd unknown"}.pdf`
+            pdf.save(`Cascading & Tujuan OPD ${linkDownload}_${Tahun?.value}.pdf`
             );
-
-            const link = document.createElement("a");
-            link.href = imgData;
-            link.download = linkDownload;
-            link.click();
         } catch (error) {
             alert("Error capturing the element");
             console.error("Error capturing the element:", error);
@@ -122,7 +116,7 @@ const CetakTujuanOpdPokin = () => {
             const API_URL = process.env.NEXT_PUBLIC_API_URL;
             setLoading(true);
             try {
-                let url = `${API_URL}/pohon_kinerja_opd/findall/${kode_opd}/${tahun}`;
+                let url = `${API_URL}/cascading_opd/findall/${kode_opd}/${tahun}`;
                 const response = await fetch(`${url}`, {
                     headers: {
                         Authorization: `${token}`,
@@ -189,7 +183,7 @@ const CetakTujuanOpdPokin = () => {
                                     <ul>
                                         {Pohon?.childs.map((item: any, index: number) => (
                                             <React.Fragment key={index}>
-                                                <PohonOpdCetak tema={item} />
+                                                <PohonLaporanOpd tema={item} />
                                             </React.Fragment>
                                         ))}
                                     </ul>
@@ -203,4 +197,4 @@ const CetakTujuanOpdPokin = () => {
     }
 }
 
-export default CetakTujuanOpdPokin;
+export default CetakCascadingOpdTujuan;

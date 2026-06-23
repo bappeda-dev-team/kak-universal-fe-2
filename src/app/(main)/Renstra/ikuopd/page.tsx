@@ -64,6 +64,9 @@ const IkuOpd = () => {
         }
     }, []);
 
+    const kode_opd = User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd;
+    const nama_opd = User?.roles == 'super_admin' ? SelectedOpd?.label : User?.nama_opd;
+    
     const fetchPeriode = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         try {
@@ -144,7 +147,8 @@ const IkuOpd = () => {
                 </div>
                 {Periode ?
                     <TableOpd
-                        kode_opd={User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd}
+                        kode_opd={kode_opd}
+                        nama_opd={nama_opd}
                         tahun_awal={Periode?.tahun_awal ? Periode?.tahun_awal : ""}
                         tahun_akhir={Periode?.tahun_akhir ? Periode?.tahun_akhir : ""}
                         jenis={Periode?.jenis_periode ? Periode?.jenis_periode : ""}

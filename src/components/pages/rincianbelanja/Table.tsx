@@ -158,7 +158,7 @@ export const TableAsn: React.FC<TableAsn> = ({ tahun, nip }) => {
                                     cek indikator
                                 </ButtonBlackBorder>
                             </div>
-                            <p className="p-2 bg-green-500 rounded-xl min-w-[200px] text-center text-white">{data.total_anggaran ? `Rp.${formatRupiah(data.total_anggaran)}` : "Rp. 0"}</p>
+                            <p className="p-2 bg-green-500 rounded-xl min-w-[200px] text-center text-white cursor-not-allowed">{data.total_anggaran ? `Rp.${formatRupiah(data.total_anggaran)}` : "Rp. 0"}</p>
                         </div>
                         {data.rincian_belanja ? 
                             data.rincian_belanja?.map((r: RincianBelanja, r_index: number) => (
@@ -174,7 +174,7 @@ export const TableAsn: React.FC<TableAsn> = ({ tahun, nip }) => {
                                                 cek indikator
                                             </ButtonBlackBorder>
                                         </div>
-                                        <div className="p-2 bg-green-500 rounded-xl min-w-[200px] text-center text-white">Rp. {formatRupiah(r.total_anggaran)}</div>
+                                        <div className="p-2 bg-green-500 rounded-xl min-w-[200px] text-center text-white cursor-not-allowed">Rp. {formatRupiah(r.total_anggaran)}</div>
                                     </div>
                                     <TableRekinAsn
                                         renaksi={r.rencana_aksi}

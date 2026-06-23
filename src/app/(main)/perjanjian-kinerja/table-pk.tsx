@@ -1,6 +1,8 @@
-import type { PkOpdResponse } from "./pk-opd-types";
+import type { PkOpdResponse, PkAsn, HandleSelectPkProps, HandleSelectAtasanProps, PkPegawai } from "./pk-opd-types";
 import type { RekinOption } from "./page"
 import { RolePill } from "@/components/global/RolePill";
+import { BukaKunciPkButton, KunciPkButton } from "./kunci-pk-button";
+import { TbLink, TbLockBolt, TbPrinter } from "react-icons/tb";
 
 const LEVEL_LABEL: Record<number, string> = {
     4: "Strategic",
@@ -18,16 +20,13 @@ function translateLevel(level: number): string {
 type TablePkProps = {
     data: PkOpdResponse
     search: string
-    onSelectAtasan: (args: {
-        nipBawahan: string
-    }) => void
-    onSelectPk: (args: {
-        pk: any
-        levelPk: number
-    }) => void
+    onSelectAtasan: (args: HandleSelectAtasanProps) => void
+    onSelectPk: (args: HandleSelectPkProps) => void
     onPreviewPk: (nipBawahan: string) => void
     roleUser: string[]
     getCandidates: (pk: any, levelPk: number) => RekinOption[]
+    onKunciPk: (pk: PkAsn) => void
+    onBukaKunciPk: (pk: PkAsn) => void
 }
 
 export const TablePk = ({
@@ -37,11 +36,13 @@ export const TablePk = ({
     onSelectPk,
     onPreviewPk,
     roleUser,
-    getCandidates
+    getCandidates,
+    onKunciPk,
+    onBukaKunciPk,
 }: TablePkProps) => {
     let rowNo = 1;
     return (
-        <table className="w-full border border-slate-300">
+        <table className="w-full border border-white">
             <thead>
                 <tr className="bg-blue-600 text-white text-sm">
                     <th rowSpan={2} className="border p-3 w-[60px]">
@@ -77,7 +78,7 @@ export const TablePk = ({
                                     .toLowerCase()
                                     .includes(search.toLowerCase())
                             )
-                            .map((pegawai) => {
+                            .map((pegawai: PkPegawai) => {
                                 const pks = pegawai.pks.length > 0 ? pegawai.pks : [null]
                                 const totalPk = pks.length
 
@@ -86,16 +87,18 @@ export const TablePk = ({
                                     pegawai.pks.every((item) =>
                                         item.nip_atasan?.trim() !== ""
                                     )
+                                const pkKunci = pegawai.pk_terkunci
 
                                 return pks.map((pk, idx) => (
                                     <tr
+                                        className={`${pkKunci && 'bg-green-100'}`}
                                         key={`${pegawai.nip}-${pk?.id_rekin_pemilik_pk || idx}`}
                                     >
                                         {/* NO */}
                                         {idx === 0 && (
                                             <td
                                                 rowSpan={totalPk}
-                                                className="border p-3 text-center align-top font-semibold"
+                                                className={`border ${pkKunci ? "border-green-600" : "border-blue-500"} p-3 text-center align-top font-semibold`}
                                             >
                                                 {rowNo++}
                                             </td>
@@ -105,9 +108,17 @@ export const TablePk = ({
                                         {idx === 0 && (
                                             <td
                                                 rowSpan={totalPk}
-                                                className="border p-3 text-center align-top w-[100px]"
+                                                className={`border ${pkKunci ? "border-green-600" : "border-blue-500"} p-3 text-center align-top w-[100px]`}
                                             >
-                                                {translateLevel(level.level_pk)}
+                                                <div className="flex flex-col items-center gap-5">
+                                                    {translateLevel(level.level_pk)}
+                                                    {pkKunci &&
+                                                        <div className="flex flex-col items-center gap-1 rounded-full p-3 border border-green-600 bg-green-200">
+                                                            <TbLockBolt size={20} color="green" />
+                                                            <p className="text-sm font-extralight text-green-600">Terkunci</p>
+                                                        </div>
+                                                    }
+                                                </div>
                                             </td>
                                         )}
 
@@ -115,7 +126,7 @@ export const TablePk = ({
                                         {idx === 0 && (
                                             <td
                                                 rowSpan={totalPk}
-                                                className="border p-3 align-top text-base w-[200px]"
+                                                className={`border ${pkKunci ? "border-green-600" : "border-blue-500"} p-3 align-top text-base w-[200px]`}
                                             >
                                                 <div className="pb-3 mb-3 gap-5 flex flex-col">
                                                     <p className="text-base text-slate-800">
@@ -132,7 +143,7 @@ export const TablePk = ({
                                         )}
 
                                         {/* REKIN PEMILIK */}
-                                        <td className="border w-[400px]">
+                                        <td className={`border ${pkKunci ? "border-green-600" : "border-blue-500"} w-[400px]`}>
                                             <p className="px-3 py-5 text-sm font-light">
                                                 {pk?.rekin_pemilik_pk || "-"}
                                             </p>
@@ -140,8 +151,8 @@ export const TablePk = ({
 
                                         {/* REKIN ATASAN */}
                                         {/* REKIN ATASAN */}
-                                        <td className="border p-3 w-[400px]">
-                                            <div className="flex flex-col gap-4">
+                                        <td className={`border ${pkKunci ? "border-green-600" : "border-blue-500"} p-3 w-[400px]`}>
+                                            <div className="flex flex-col items-center gap-2">
                                                 {pk?.rekin_atasan && (
                                                     <div className="pb-3 mb-3 border-b border-blue-700 gap-5 flex flex-col">
                                                         <p className="text-base text-slate-800">
@@ -154,7 +165,7 @@ export const TablePk = ({
                                                     </div>
                                                 )}
 
-                                                {pk && (() => {
+                                                {(pk && !pkKunci) && (() => {
                                                     const candidates = getCandidates(pk, level.level_pk)
                                                     const isReviewer = roleUser.some((r: string) => r === "reviewer")
 
@@ -167,12 +178,12 @@ export const TablePk = ({
                                                     }
 
                                                     if (candidates.length === 0) {
-                                                        let kalimatError = 'Tidak ada rencana kinerja atasan yang dapat dihubungkan, cek laporan cascading opd'
+                                                        let kalimatError = 'Rencana Kinerja Atasan Hanya Ada 1, tidak bisa mengubah'
                                                         if (level.level_pk === 4) {
                                                             kalimatError = 'Tidak dapat menghubungkan, sasaran pemda belum disusun'
                                                         }
                                                         return (
-                                                            <p className="text-xs text-red-400 text-center">
+                                                            <p className="text-xs text-yellow-700 text-center">
                                                                 {kalimatError}
                                                             </p>
                                                         )
@@ -197,7 +208,7 @@ export const TablePk = ({
                                         {idx === 0 && (
                                             <td
                                                 rowSpan={totalPk}
-                                                className="border p-3 w-[200px]"
+                                                className={`border ${pkKunci ? "border-green-600" : "border-blue-500"} p-3 w-[200px]`}
                                             >
                                                 <div className="flex flex-col gap-4 text-center">
                                                     {!!pegawai.nip_atasan && (
@@ -215,10 +226,8 @@ export const TablePk = ({
                                                         <p className="text-xs text-red-400">
                                                             Hubungkan Semua Rekin dahulu
                                                         </p>
-                                                    ) : (
-                                                        !roleUser.some((r: string) =>
-                                                            ["reviewer"].includes(r)
-                                                        ) && (
+                                                    ) : ((!roleUser.some((r: string) => ["reviewer"].includes(r))
+                                                        && !pkKunci) && (
                                                             <HubungkanAtasanButton
                                                                 isLinked={!!pegawai.nip_atasan}
                                                                 onClick={() => {
@@ -237,15 +246,25 @@ export const TablePk = ({
                                         {idx === 0 && (
                                             <td
                                                 rowSpan={totalPk}
-                                                className="border p-3 text-center w-[150px]"
+                                                className={`border ${pkKunci ? "border-green-600" : "border-blue-500"} p-3 text-center w-[150px]`}
                                             >
                                                 {!!pegawai.nip_atasan && (
-                                                    <button
-                                                        className="button px-4 py-2 rounded border border-black bg-green-300 hover:bg-green-600 text-black"
-                                                        onClick={() => onPreviewPk(pegawai.nip)}
-                                                    >
-                                                        Cetak PK
-                                                    </button>
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <button
+                                                            className="w-full flex items-center justify-center gap-1 button px-4 py-2 rounded border border-black bg-green-300 hover:bg-green-600 text-black"
+                                                            onClick={() => onPreviewPk(pegawai.nip)}
+                                                        >
+                                                            <TbPrinter />
+                                                            Cetak
+                                                        </button>
+                                                        {pk &&
+                                                            (pegawai.pk_terkunci ?
+                                                                <BukaKunciPkButton onClick={() => onBukaKunciPk(pk)} />
+                                                                :
+                                                                <KunciPkButton onClick={() => onKunciPk(pk)} />
+                                                            )
+                                                        }
+                                                    </div>
                                                 )}
                                             </td>
                                         )}
@@ -277,13 +296,15 @@ const HubungkanButton = ({
 }: hubungkanButtonProps) => {
     return (
         <button
-            className={`py-1 rounded w-3/4 self-center ${isLinked
+            className={`py-1 rounded w-3/4 flex items-center justify-center gap-1 ${isLinked
                 ? "border border-blue-500 text-blue-500 hover:bg-blue-50"
                 : "bg-blue-500 hover:bg-blue-600 text-white "
                 }`}
             onClick={onClick}
+            title="Hubungkan rencana kinerja atasan dengan rencana kinerja pegawai"
         >
-            {isLinked ? "Ubah" : "Hubungkan Rekin"}
+            <TbLink />
+            {isLinked ? "Ubah" : "Hubungkan"}
         </button>
     );
 }
@@ -294,9 +315,11 @@ const HubungkanAtasanButton = ({
 }: hubungkanButtonProps) => {
     return (
         <button
-            className="px-3 py-1 w-3/4 self-center rounded border border-yellow-500 hover:bg-yellow-600 text-black"
+            className="w-full px-3 py-1 text-sm flex items-center justify-center gap-1 rounded border border-yellow-500 hover:bg-yellow-600 text-black"
             onClick={onClick}
+            title="Pilih atasan untuk bagian tanda tangan PK"
         >
+            <TbLink />
             {isLinked ? "Ubah Atasan" : "Pilih Atasan"}
         </button>
     );

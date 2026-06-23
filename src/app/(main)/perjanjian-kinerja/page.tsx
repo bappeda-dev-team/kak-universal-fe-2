@@ -1,18 +1,17 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { FiHome } from "react-icons/fi";
 import { useBrandingContext } from '@/context/BrandingContext';
-import type { PkOpdResponse, PkPegawai, PkAsn, PkOpdByLevel, SasaranPemda, AtasanCandidate } from "./pk-opd-types";
+import type { PkOpdResponse, PkPegawai, PkAsn, PkOpdByLevel, SasaranPemda, AtasanCandidate, KunciPkRequest, PkTerpilihProps, HandleSelectPkProps, HandleSelectAtasanProps, AtasanOption } from "./pk-opd-types";
 import { getToken, getOpdTahunNew } from "@/components/lib/Cookie";
-import { AlertNotification } from "@/components/global/Alert";
+import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TablePk } from "./table-pk";
 import { TahunNull, OpdNull } from "@/components/global/OpdTahunNull";
-import Select from 'react-select';
 import { ModalPilihAtasan } from './modal-pilih-atasan';
-import type { AtasanOption } from './modal-pilih-atasan';
-import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer'
-import DocumentPk from './document-pk'
+import { bukaKunciPk, kunciPk } from "./pk-opd-service";
+import { HubungkanModal } from "./hubungkan-modal";
+import { PreviewPk } from "./preview-pk";
 
 const PerjanjianKinerja = () => {
     // WARNING PATTERN INI TIDAK BOLEH
@@ -54,12 +53,7 @@ const PerjanjianKinerja = () => {
     const [search, setSearch] = useState("");
 
     const [showModal, setShowModal] = useState(false)
-    const [selectedPk, setSelectedPk] = useState<{
-        idRekinPemilik: string
-        idPohon: number
-        kodeOpd: string
-        levelPk: number
-    } | null>(null)
+    const [selectedPk, setSelectedPk] = useState<PkTerpilihProps | null>(null)
 
     const [rekinAtasanList, setRekinAtasanList] = useState<
         RekinOption[]
@@ -130,6 +124,209 @@ const PerjanjianKinerja = () => {
     }
 
 
+    const handlePilihAtasan = async (nipAtasan: string) => {
+        if (!selectedAtasan) return
+        setSubmitting(true)
+
+        try {
+            const res = await fetch(`${apiPerencanaan}/pk_opd/hubungkan_atasan`, {
+                method: "POST",
+                headers: {
+                    Authorization: `${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    nip_atasan: nipAtasan,
+                    nip_bawahan: selectedAtasan.nipBawahan,
+                    kode_opd: kodeOpd,
+                    tahun: tahun,
+                }),
+            })
+
+            const json = await res.json()
+
+            if (res.ok) {
+                setData(json.data)
+                AlertNotification("Berhasil", "Data Atasan Diupdate", "success", 1000)
+                setShowPilihAtasanModal(false)
+                setSelectedAtasan(null)
+            }
+        } catch (err) {
+            console.error(err)
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    const handleHubungkanPk = async (idRekinAtasan: string, selectedPk: PkTerpilihProps) => {
+        setSubmitting(true)
+
+        try {
+            const res = await fetch(`${apiPerencanaan}/pk_opd/hubungkan`, {
+                method: "POST",
+                headers: {
+                    Authorization: `${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id_rekin_pemilik_pk: selectedPk.idRekinPemilik,
+                    id_rekin_atasan: idRekinAtasan,
+                    id_pohon: selectedPk.idPohon,
+                    kode_opd: selectedPk.kodeOpd,
+                    tahun: tahun,
+                    level_pk: selectedPk.levelPk,
+                }),
+            })
+
+            const json = await res.json()
+
+            if (res.ok) {
+                setData(json.data)
+                AlertNotification("Berhasil", "Data PK Diupdate", "success", 1000)
+                setShowModal(false)
+                setRekinAtasanList([])
+            } else {
+                console.log(json)
+                AlertNotification("PK Gagal disimpan", json.message, "error", 5000, true)
+            }
+        } catch (err) {
+            console.error(err)
+            AlertNotification("Gagal", String(err), "error", 2000)
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    const handleSelectAtasan = ({ nipBawahan }: HandleSelectAtasanProps) => {
+        if (!data) {
+            return
+        }
+        const candidates = extractUniqueAtasanFromData(
+            data,
+            nipBawahan
+        )
+        setAtasanList(candidates)
+
+        setSelectedAtasan({ nipBawahan: nipBawahan })
+
+        setShowPilihAtasanModal(true)
+    }
+
+    const handleSelectPk = ({ pk, levelPk }: HandleSelectPkProps) => {
+        const candidates = buildCandidates(data, pk, levelPk)
+        setRekinAtasanList(candidates)
+
+        setSelectedPk({
+            idRekinPemilik: pk.id_rekin_pemilik_pk,
+            idPohon: pk.id_pohon,
+            kodeOpd: pk.kode_opd,
+            levelPk: levelPk
+        })
+
+        setShowModal(true)
+    }
+
+    const handleKunciPk = (pk: PkAsn) => {
+        const formKunciPk: KunciPkRequest = {
+            kode_opd: pk.kode_opd,
+            tahun: pk.tahun,
+            id_pegawai: pk.nip_pemilik_pk
+        };
+        const pemilikPk = pk.nama_pemilik_pk
+
+        AlertQuestion("WARNING", `PK milik ${pemilikPk} akan dikunci, lanjutkan ?`,
+            "warning", "Kunci", "Batal"
+        ).then(async (res) => {
+            if (!res.isConfirmed) {
+                return;
+            }
+
+            try {
+                const response = await kunciPk({
+                    request: formKunciPk,
+                    apiUrl: apiPerencanaan,
+                    token: token
+                })
+
+                setData(prev => {
+                    if (!prev) return prev
+
+                    return updateData(
+                        prev,
+                        response.id_pegawai,
+                        pegawai => (
+                            {
+                                ...pegawai,
+                                pk_terkunci: response.pk_terkunci
+                            }),
+                    )
+                })
+
+                AlertNotification("SUCCESS", `PK milik ${pemilikPk} berhasil dikunci`,
+                    "success", 2500, false
+                )
+            } catch (err) {
+                AlertNotification("ERROR",
+                    err instanceof Error
+                        ? err.message
+                        : "Gagal mengunci PK",
+                    "error", 2500, false
+                )
+            }
+        })
+    }
+
+    const handleBukaKunciPk = (pk: PkAsn) => {
+        const formKunciPk: KunciPkRequest = {
+            kode_opd: pk.kode_opd,
+            tahun: pk.tahun,
+            id_pegawai: pk.nip_pemilik_pk
+        };
+        const pemilikPk = pk.nama_pemilik_pk
+
+        AlertQuestion("WARNING", `Kuncian PK milik ${pemilikPk} akan dibuka, lanjutkan ?`,
+            "warning", "Buka Kunci", "Batal"
+        ).then(async (res) => {
+            if (!res.isConfirmed) {
+                return;
+            }
+
+            try {
+                const response = await bukaKunciPk({
+                    request: formKunciPk,
+                    apiUrl: apiPerencanaan,
+                    token: token
+                })
+
+                setData(prev => {
+                    if (!prev) return prev
+
+                    return updateData(
+                        prev,
+                        response.id_pegawai,
+                        pegawai => (
+                            {
+                                ...pegawai,
+                                pk_terkunci: response.pk_terkunci
+                            }),
+                    )
+                })
+
+                AlertNotification("SUCCESS", `Kuncian PK milik ${pemilikPk} berhasil dibuka`,
+                    "success", 2500, false
+                )
+            } catch (err) {
+                AlertNotification("ERROR",
+                    err instanceof Error
+                        ? err.message
+                        : "Gagal mengunci PK",
+                    "error", 2500, false
+                )
+            }
+        })
+    }
+
+
     if (tahun == null) {
         return <TahunNull />
     }
@@ -182,31 +379,10 @@ const PerjanjianKinerja = () => {
                             roleUser={roleUser}
                             onPreviewPk={handlePreviewPk}
                             getCandidates={getCandidates}
-                            onSelectAtasan={({ nipBawahan }) => {
-                                const candidates = extractUniqueAtasanFromData(
-                                    data,
-                                    nipBawahan
-                                )
-
-                                setAtasanList(candidates)
-
-                                setSelectedAtasan({ nipBawahan: nipBawahan })
-
-                                setShowPilihAtasanModal(true)
-                            }}
-                            onSelectPk={({ pk, levelPk }) => {
-                                const candidates = buildCandidates(data, pk, levelPk)
-                                setRekinAtasanList(candidates)
-
-                                setSelectedPk({
-                                    idRekinPemilik: pk.id_rekin_pemilik_pk,
-                                    idPohon: pk.id_pohon,
-                                    kodeOpd: pk.kode_opd,
-                                    levelPk: levelPk
-                                })
-
-                                setShowModal(true)
-                            }}
+                            onSelectAtasan={handleSelectAtasan}
+                            onSelectPk={handleSelectPk}
+                            onKunciPk={handleKunciPk}
+                            onBukaKunciPk={handleBukaKunciPk}
                         />
                     </div>
                 </div>
@@ -216,39 +392,7 @@ const PerjanjianKinerja = () => {
                     open={showPilihAtasanModal}
                     onClose={() => setShowPilihAtasanModal(false)}
                     atasanList={atasanList}
-                    onSubmit={async (nipAtasan) => {
-                        if (!selectedAtasan) return
-                        setSubmitting(true)
-
-                        try {
-                            const res = await fetch(`${apiPerencanaan}/pk_opd/hubungkan_atasan`, {
-                                method: "POST",
-                                headers: {
-                                    Authorization: `${token}`,
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    nip_atasan: nipAtasan,
-                                    nip_bawahan: selectedAtasan.nipBawahan,
-                                    kode_opd: kodeOpd,
-                                    tahun: tahun,
-                                }),
-                            })
-
-                            const json = await res.json()
-
-                            if (res.ok) {
-                                setData(json.data)
-                                AlertNotification("Berhasil", "Data Atasan Diupdate", "success", 1000)
-                                setShowPilihAtasanModal(false)
-                                setSelectedAtasan(null)
-                            }
-                        } catch (err) {
-                            console.error(err)
-                        } finally {
-                            setSubmitting(false)
-                        }
-                    }}
+                    onSubmit={handlePilihAtasan}
                 />
             )}
             {showModal && selectedPk && (
@@ -256,96 +400,16 @@ const PerjanjianKinerja = () => {
                     open={showModal}
                     onClose={() => setShowModal(false)}
                     rekinAtasanList={rekinAtasanList}
-                    onSubmit={async (idRekinAtasan) => {
-                        setSubmitting(true)
-
-                        try {
-                            const res = await fetch(`${apiPerencanaan}/pk_opd/hubungkan`, {
-                                method: "POST",
-                                headers: {
-                                    Authorization: `${token}`,
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    id_rekin_pemilik_pk: selectedPk.idRekinPemilik,
-                                    id_rekin_atasan: idRekinAtasan,
-                                    id_pohon: selectedPk.idPohon,
-                                    kode_opd: selectedPk.kodeOpd,
-                                    tahun: tahun,
-                                    level_pk: selectedPk.levelPk,
-                                }),
-                            })
-
-                            const json = await res.json()
-
-                            if (res.ok) {
-                                setData(json.data)
-                                AlertNotification("Berhasil", "Data PK Diupdate", "success", 1000)
-                                setShowModal(false)
-                                setRekinAtasanList([])
-                            } else {
-                                console.log(json)
-                                AlertNotification("PK Gagal disimpan", json.message, "error", 5000, true)
-                            }
-                        } catch (err) {
-                            console.error(err)
-                            AlertNotification("Gagal", String(err), "error", 2000)
-                        } finally {
-                            setSubmitting(false)
-                        }
-                    }}
+                    onSubmit={handleHubungkanPk}
+                    selectedPk={selectedPk}
                 />
             )}
             {showPreview && previewData && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
-                    <div className="bg-white w-[90%] h-[90%] rounded-lg shadow-lg flex flex-col">
-
-                        {/* HEADER */}
-                        <div className="flex justify-between items-center px-4 py-2 border-b">
-                            <h2 className="font-bold">Preview Perjanjian Kinerja</h2>
-
-                            <div className="flex items-center gap-3">
-                                {/* DOWNLOAD BUTTON */}
-                                <PDFDownloadLink
-                                    document={
-                                        <DocumentPk
-                                            branding={branding.logo}
-                                            data={previewData}
-                                        />
-                                    }
-                                    fileName={`PK-${previewData.pegawai.nama_pegawai}-${previewData.pegawai.nip}-${previewData.tahun}.pdf`}
-                                >
-                                    {({ loading }) => (
-                                        <button
-                                            className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
-                                            disabled={loading}
-                                        >
-                                            {loading ? "Menyiapkan..." : "Download PDF"}
-                                        </button>
-                                    )}
-                                </PDFDownloadLink>
-
-                                {/* CLOSE BUTTON */}
-                                <button
-                                    onClick={() => setShowPreview(false)}
-                                    className="text-red-500 font-semibold"
-                                >
-                                    Tutup
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* PDF PREVIEW */}
-                        <div className="flex-1">
-                            <PDFViewer width="100%" height="100%">
-                                <DocumentPk
-                                    branding={branding.logo}
-                                    data={previewData}
-                                />
-                            </PDFViewer>
-                        </div>
-                    </div>
-                </div>
+                <PreviewPk
+                    logo={branding.logo}
+                    previewData={previewData}
+                    onClose={() => setShowPreview(false)}
+                />
             )}
         </div>
     );
@@ -360,88 +424,6 @@ export type RekinOption = {
     rekin: string
     namaPegawai: string
     nipPegawai: string
-}
-
-type SelectOption = {
-    value: string
-    label: string
-    meta: RekinOption
-}
-
-type HubungkanModalProps = {
-    open: boolean
-    onClose: () => void
-    onSubmit: (idRekinAtasan: string) => void
-    rekinAtasanList: RekinOption[]
-}
-
-const HubungkanModal = ({
-    open,
-    onClose,
-    onSubmit,
-    rekinAtasanList,
-}: HubungkanModalProps) => {
-    const [selected, setSelected] = useState<SelectOption | null>(null)
-
-    const options: SelectOption[] = useMemo(
-        () =>
-            rekinAtasanList.map((r) => ({
-                value: r.id,
-                label: `${r.namaPegawai} | ${r.nipPegawai} — ${r.rekin}`,
-                meta: r,
-            })),
-        [rekinAtasanList]
-    )
-
-    if (!open) return null
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="bg-white rounded-xl w-[500px] p-6 shadow-lg">
-                <h2 className="text-lg font-bold mb-4">
-                    Pilih Rencana Kinerja Atasan
-                </h2>
-
-                <Select
-                    options={options}
-                    value={selected}
-                    onChange={(opt) => setSelected(opt)}
-                    placeholder="Cari nama / NIP / rencana kinerja..."
-                    isClearable
-                    isSearchable
-                    className="mb-4"
-                />
-                {/* PREVIEW */}
-                {selected && (
-                    <div className="border rounded p-3 bg-slate-50 text-sm mb-5">
-                        <p className="font-semibold">{selected.meta.namaPegawai}</p>
-                        <p className="text-slate-600">
-                            NIP: {selected.meta.nipPegawai}
-                        </p>
-                        <p className="mt-2">{selected.meta.rekin}</p>
-                    </div>
-                )}
-                <div className="flex justify-end gap-2">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 border rounded"
-                    >
-                        Batal
-                    </button>
-                    <button
-                        disabled={!selected}
-                        onClick={() => selected && onSubmit(selected.value)}
-                        className={`px-4 py-2 rounded text-white ${selected
-                            ? "bg-blue-500 hover:bg-blue-600"
-                            : "bg-gray-400 cursor-not-allowed"
-                            }`}
-                    >
-                        Simpan
-                    </button>
-                </div>
-            </div>
-        </div>
-    )
 }
 
 function extractUniqueAtasanFromData(
@@ -539,4 +521,19 @@ const buildCandidates = (
             ) ?? []
 
     return result;
+}
+
+function updateData(data: PkOpdResponse, nip: string, updater: (pegawai: PkPegawai) => PkPegawai): PkOpdResponse {
+    return {
+        ...data,
+        pk_item: data.pk_item.map(item => ({
+            ...item,
+            pegawais: item.pegawais.map(pegawai =>
+                pegawai.nip === nip
+                    ? updater(pegawai)
+                    :
+                    pegawai
+            ),
+        })),
+    }
 }

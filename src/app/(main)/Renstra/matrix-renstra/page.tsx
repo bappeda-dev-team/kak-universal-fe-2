@@ -55,6 +55,9 @@ const MatrixRenstra = () => {
         }
     }, []);
 
+    const kode_opd = (User?.roles == 'super_admin' || User?.roles == 'reviewer') ? SelectedOpd?.value : User?.kode_opd
+    const nama_opd = (User?.roles == 'super_admin' || User?.roles == 'reviewer') ? SelectedOpd?.label : User?.nama_opd
+
     const fetchPeriode = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         try {
@@ -135,7 +138,8 @@ const MatrixRenstra = () => {
                                 tahun_awal={Periode?.tahun_awal ? Periode?.tahun_awal : ""}
                                 tahun_akhir={Periode?.tahun_akhir ? Periode?.tahun_akhir : ""}
                                 tahun_list={Periode?.tahun_list ? Periode?.tahun_list : []}
-                                kode_opd={(User?.roles == 'super_admin' || User?.roles == 'reviewer') ? SelectedOpd?.value : User?.kode_opd}
+                                kode_opd={kode_opd}
+                                nama_opd={nama_opd}
                             />
                         </div>
                         :

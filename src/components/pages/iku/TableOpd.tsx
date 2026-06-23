@@ -3,10 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { getToken } from "@/components/lib/Cookie";
-import { TbCircleX, TbCircleCheck, TbMistOff, TbMist } from "react-icons/tb";
+import { TbCircleX, TbCircleCheck, TbMistOff, TbMist, TbPrinter } from "react-icons/tb";
 import { ButtonBlackBorder } from "@/components/global/Button";
 import { AlertQuestion, AlertNotification } from "@/components/global/Alert";
 import { useBrandingContext } from "@/context/BrandingContext";
+import { useCetakIkuOpd } from "@/app/(main)/Renstra/ikuopd/useCetakIkuOpd";
+import { getUser } from "@/components/lib/Cookie";
+import { getOpdTahun } from "@/components/lib/Cookie";
 
 interface IKU {
     indikator_id: string;
@@ -29,13 +32,14 @@ interface Target {
 
 interface table {
     tahun_awal: string;
-    kode_opd: string;
     tahun_akhir: string;
+    kode_opd: string;
+    nama_opd: string;
     jenis: string;
     tahun_list: string[];
 }
 
-const TableOpd: React.FC<table> = ({ kode_opd, tahun_awal, tahun_akhir, jenis, tahun_list }) => {
+const TableOpd: React.FC<table> = ({ kode_opd, nama_opd, tahun_awal, tahun_akhir, jenis, tahun_list }) => {
 
     const [IKU, setIKU] = useState<IKU[]>([]);
 
@@ -47,8 +51,9 @@ const TableOpd: React.FC<table> = ({ kode_opd, tahun_awal, tahun_akhir, jenis, t
 
     const [Loading, setLoading] = useState<boolean | null>(null);
     const [Proses, setProses] = useState<boolean | null>(null);
+
     const token = getToken();
-    const {branding} = useBrandingContext();
+    const { branding } = useBrandingContext();
     const Tahun = branding?.tahun ? branding?.tahun?.value : 0;
 
     useEffect(() => {
@@ -124,6 +129,8 @@ const TableOpd: React.FC<table> = ({ kode_opd, tahun_awal, tahun_akhir, jenis, t
         }
     }
 
+    const { cetakPdfIkuOpd } = useCetakIkuOpd(IKU, nama_opd, tahun_awal, tahun_akhir, tahun_list);
+
     if (Loading) {
         return (
             <div className="border p-5 rounded-xl shadow-xl">
@@ -165,6 +172,16 @@ const TableOpd: React.FC<table> = ({ kode_opd, tahun_awal, tahun_akhir, jenis, t
                     <TbCircleX />
                     IKU yang tidak aktif
                 </button>
+            </div>
+            <div className="w-full px-3">
+                <ButtonBlackBorder
+                    className="w-full flex items-center gap-1"
+                    onClick={cetakPdfIkuOpd}
+                    disabled={IKU.length === 0}
+                >
+                    <TbPrinter />
+                    Cetak
+                </ButtonBlackBorder>
             </div>
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">

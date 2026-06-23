@@ -62,7 +62,7 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
         if (kode_opd != undefined) {
             fetchOpd();
         }
-    }, [token, kode_opd, FetchTrigger]);
+    }, [branding, token, kode_opd, FetchTrigger]);
 
     const handleClose = () => {
         setModalOpen(false);
