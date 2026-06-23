@@ -1100,7 +1100,7 @@ export const FormEditPohon: React.FC<{
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/program_unggulan/findbytahun/${Tahun?.value}`, {
+            const response = await fetch(`${API_URL}/program_unggulan/findbyopd_and_tahun/${kode_opd}/${Tahun?.value}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `${token}`,
