@@ -74,7 +74,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
     //DATA MASTER
     if (
       url.startsWith("/DataMaster") ||
-      url === "/bidang-urusan-opd"
+      url === "/DataMasterOpd/bidang-urusan-opd"
     ) {
       setDataMaster(true);
       setDataMasterOpd(false);
@@ -88,11 +88,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setMasterProgramKegiatan(true);
     }
     //DATA MASTER OPD
-    if (
-      url === "/useropd" ||
-      url === "/jabatan-opd" ||
-      url === "/subkegiatanopd"
-    ) {
+    if (url.startsWith("/DataMasterOpd")) {
       setDataMaster(false);
       setDataMasterOpd(true);
       setPerencanaanKota(false);
@@ -533,26 +529,26 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
           {/* SUB MENU DATA MASTER OPD */}
           {(User?.roles == 'super_admin' || User?.roles == 'admin_opd' || User?.roles == 'reviewer') &&
             <div className={`transition-all duration-300 ease-in-out ${DataMasterOpd ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-              <Link href="/jabatan-opd">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/jabatan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/DataMasterOpd/jabatan-opd">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/jabatan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbBadges className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Jabatan</span>
                 </li>
               </Link>
-              <Link href="/useropd">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${(url === "/useropd" || url === "/useropd/tambah" || url === `/useropd/${id}`) ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/DataMasterOpd/useropd">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${(url === "/DataMasterOpd/useropd" || url === "/DataMasterOpd/useropd/tambah" || url === `/useropd/${id}`) ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbUser className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>User OPD</span>
                 </li>
               </Link>
-              <Link href="/subkegiatanopd">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/subkegiatanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/DataMasterOpd/subkegiatanopd">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/subkegiatanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbFileCode2 className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Sub Kegiatan OPD</span>
                 </li>
               </Link>
               <Link href="/DataMaster/master-rb">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/DataMaster/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbDice4Filled className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master RB</span>
                 </li>
