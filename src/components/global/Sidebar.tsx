@@ -1020,7 +1020,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             >
               <div className="flex items-center gap-2">
                 <TbBuildingFortress className="text-xl" />
-                <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Perencanaan</span>
+                <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Perencanaan ASN</span>
               </div>
               <TbChevronRight className={`transition-all duration-200 ease-in-out ${Perencanaan ? "rotate-90" : ""}`} />
             </li>
