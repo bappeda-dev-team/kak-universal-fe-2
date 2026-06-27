@@ -1,7 +1,7 @@
 'use client'
 
 import { ButtonSky, ButtonSkyBorder, ButtonRedBorder } from "@/components/global/Button";
-import { ModalPermasalahanAdd, ModalPermasalahanEdit } from "../ModalPermasalahan";
+import { ModalPermasalahan } from "../ModalPermasalahan";
 import { useState, useEffect } from "react";
 import { getToken, getUser } from "@/components/lib/Cookie";
 import { LoadingSync } from "@/components/global/Loading";
@@ -11,6 +11,8 @@ import { TbCirclePlus, TbPencil, TbTrash } from "react-icons/tb";
 interface table {
     id: string;
     nip: string;
+    kode_opd: string;
+    tahun: string;
 }
 interface dasar_hukum {
     Id: number;
@@ -21,93 +23,89 @@ interface dasar_hukum {
     JenisPermasalahan: string;
 }
 
-const Permasalahan: React.FC<table> = ({ id, nip }) => {
+const Permasalahan: React.FC<table> = ({ kode_opd, tahun, id, nip }) => {
 
-    const [isOpenNewDasarHukum, setIsOpenNewDasarHukum] = useState<boolean>(false);
-    const [isOpenEditDasarHukum, setIsOpenEditDasarHukum] = useState<boolean>(false);
+    const [ModalOpen, setModalOpen] = useState<boolean>(false);
+    const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
     const [IdEdit, setIdEdit] = useState<number>(0);
     const [Permasalahan, setPermasalahan] = useState<dasar_hukum[]>([]);
     const [Loading, setLoading] = useState<boolean | null>(null);
     const [Deleted, setDeleted] = useState<boolean>(false);
     const [dataNull, setDataNull] = useState<boolean | null>(null);
+    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const token = getToken();
 
-     useEffect(() => {
-            const API_URL = process.env.NEXT_PUBLIC_API_URL;
-            const fetchUsulan = async() => {
-                setLoading(true);
-                try{
-                    const response = await fetch(`${API_URL}/rencana_kinerja/${id}/pegawai/${nip}/input_rincian_kak`, {
-                        headers: {
-                          Authorization: `${token}`,
-                          'Content-Type': 'application/json',
-                        },
-                    });
-                    const result = await response.json();
-                    const hasil = result.rencana_kinerja;
-                    if(hasil){
-                        const data = hasil.find((item: any) => item.permasalahan);
-                        ;if(data == null){
-                            setDataNull(true);
-                            setPermasalahan([]);
-                        } else {
-                            setDataNull(false);
-                            setPermasalahan(data.permasalahan);
-                        }
-                    } else {
+    useEffect(() => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const fetchUsulan = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_URL}/rencana_kinerja/${id}/pegawai/${nip}/input_rincian_kak`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                const hasil = result.rencana_kinerja;
+                if (hasil) {
+                    const data = hasil.find((item: any) => item.permasalahan);
+                    ; if (data == null) {
                         setDataNull(true);
                         setPermasalahan([]);
+                    } else {
+                        setDataNull(false);
+                        setPermasalahan(data.permasalahan);
                     }
-                } catch(err) {
-                    console.log(err)
-                } finally {
-                    setLoading(false);
+                } else {
+                    setDataNull(true);
+                    setPermasalahan([]);
                 }
-            };
-            if(nip != undefined){    
-                fetchUsulan();
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false);
             }
-        },[id, nip, token, isOpenEditDasarHukum, isOpenNewDasarHukum]);
-
-    const handleModalNewDasarHukum = () => {
-        if(isOpenNewDasarHukum){
-            setIsOpenNewDasarHukum(false);
-        } else {
-            setIsOpenNewDasarHukum(true);
+        };
+        if (nip != undefined) {
+            fetchUsulan();
         }
-    }
-    const handleModalEditDasarHukum = (id: number) => {
-        if(isOpenEditDasarHukum){
-            setIsOpenEditDasarHukum(false);
-            setIdEdit(0);
-        } else {
+    }, [id, nip, token, FetchTrigger]);
+
+    const handleModal = (jenis: "tambah" | "edit", id: number) => {
+        if (ModalOpen) {
+            setModalOpen(false);
+            setJenisModal(jenis);
             setIdEdit(id);
-            setIsOpenEditDasarHukum(true);
+        } else {
+            setModalOpen(true);
+            setJenisModal(jenis);
+            setIdEdit(id);
         }
     }
 
-    const hapusPermasalahan = async(id_p: any) => {
+    const hapusPermasalahan = async (id_p: any) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try{
+        try {
             const response = await fetch(`${API_URL}/permasalahan_rekin/delete/${id_p}`, {
                 method: "DELETE",
                 headers: {
-                  Authorization: `${token}`,
-                  'Content-Type': 'application/json',
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
                 },
             })
-            if(!response.ok){
+            if (!response.ok) {
                 alert("response !ok ketika gagal hapus Permasalahan");
             }
             AlertNotification("Berhasil", "Permasalahan Berhasil Dihapus", "success", 1000);
             setDeleted((prev) => !prev);
-        } catch(err){
+        } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
         }
     };
 
-    if(Loading){
-        return(
+    if (Loading) {
+        return (
             <>
                 <div className="mt-3 rounded-t-xl border px-5 py-3">
                     <h1 className="font-bold">Permasalahan</h1>
@@ -119,20 +117,15 @@ const Permasalahan: React.FC<table> = ({ id, nip }) => {
         );
     }
 
-    return(
+    return (
         <>
             {/* Dasar Hukum */}
             <div className="flex flex-wrap justify-between items-center mt-3 rounded-t-xl border px-5 py-3">
                 <h1 className="font-bold">Permasalahan</h1>
-                <ButtonSky onClick={handleModalNewDasarHukum}>
-                    <TbCirclePlus className="mr-1"/>
+                <ButtonSky onClick={() => handleModal("tambah", 0)}>
+                    <TbCirclePlus className="mr-1" />
                     Tambah Permasalahan
                 </ButtonSky>
-                <ModalPermasalahanAdd 
-                    onClose={handleModalNewDasarHukum} 
-                    isOpen={isOpenNewDasarHukum}
-                    id_rekin={id}
-                />
             </div>
             <div className="rounded-b-xl shadow-lg border-x border-b px-5 py-3">
                 <div className="overflow-auto m-2 rounded-t-xl border">
@@ -164,27 +157,21 @@ const Permasalahan: React.FC<table> = ({ id, nip }) => {
                                         <td className="border px-6 py-3">{data.JenisPermasalahan}</td>
                                         <td className="border px-6 py-3">
                                             <div className="flex flex-col justify-center items-center gap-2">
-                                                <ButtonSkyBorder className="w-full" onClick={() => handleModalEditDasarHukum(data.Id)}>
-                                                    <TbPencil className="mr-1"/>
+                                                <ButtonSkyBorder className="w-full" onClick={() => handleModal("edit", data.Id)}>
+                                                    <TbPencil className="mr-1" />
                                                     Edit
                                                 </ButtonSkyBorder>
-                                                <ModalPermasalahanEdit
-                                                    onClose={() => handleModalEditDasarHukum(0)} 
-                                                    isOpen={isOpenEditDasarHukum}
-                                                    id_rekin={id}
-                                                    id={IdEdit}
-                                                />
                                                 <ButtonRedBorder
                                                     className="w-full"
                                                     onClick={() => {
                                                         AlertQuestion("Hapus?", "Hapus Permasalahan yang dipilih?", "question", "Hapus", "Batal").then((result) => {
-                                                            if(result.isConfirmed){
+                                                            if (result.isConfirmed) {
                                                                 hapusPermasalahan(data.Id);
                                                             }
                                                         });
                                                     }}
                                                 >
-                                                    <TbTrash className="mr-1"/>
+                                                    <TbTrash className="mr-1" />
                                                     Hapus
                                                 </ButtonRedBorder>
                                             </div>
@@ -196,6 +183,16 @@ const Permasalahan: React.FC<table> = ({ id, nip }) => {
                     </table>
                 </div>
             </div>
+            <ModalPermasalahan
+                onClose={() => handleModal("tambah", 0)}
+                isOpen={ModalOpen}
+                id_rekin={id}
+                id={IdEdit}
+                kode_opd={kode_opd}
+                tahun={tahun}
+                fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                jenis={JenisModal}
+            />
         </>
     )
 }
