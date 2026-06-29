@@ -1,5 +1,7 @@
+'use client'
+
 import Link from "next/link";
-import { PegawaiResponse } from "./service";
+import { PegawaiResponse } from "./types";
 
 type TableProps = {
     pegawais: PegawaiResponse[];
@@ -13,9 +15,9 @@ export default function Table({ pegawais }: TableProps) {
                     <thead>
                         <tr className="border-b bg-gray-50">
                             <th className="px-4 py-3 text-left">No</th>
-                            <th className="px-4 py-3 text-left">NIP</th>
                             <th className="px-4 py-3 text-left">Nama Pegawai</th>
-                            <th className="px-4 py-3 text-left">Status</th>
+                            <th className="px-4 py-3 text-center">NIP</th>
+                            <th className="px-4 py-3 text-center">Status</th>
                             <th className="px-4 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -40,15 +42,16 @@ export default function Table({ pegawais }: TableProps) {
                                         {index + 1}
                                     </td>
 
-                                    <td className="px-4 py-3">
-                                        {pegawai.pegawai_id}
-                                    </td>
-
                                     <td className="px-4 py-3 font-medium">
                                         {pegawai.nama_pegawai}
                                     </td>
 
-                                    <td className="px-4 py-3">
+                                    <td className="px-4 py-3 text-left font-small">
+                                        {pegawai.nip}
+                                    </td>
+
+
+                                    <td className="px-4 py-3 text-center">
                                         <span
                                             className={`
                                                 rounded-full px-3 py-1 text-xs font-semibold
@@ -63,12 +66,10 @@ export default function Table({ pegawais }: TableProps) {
                                     </td>
 
                                     <td className="px-4 py-3 text-center">
-                                        <Link href="/DataMaster/history-pegawai/1">
-                                            <button
-                                                className="rounded-md border px-3 py-1 text-sm hover:bg-gray-100"
-                                            >
-                                                Lihat Riwayat
-                                            </button>
+                                        <Link href={`/DataMaster/history-pegawai/${pegawai.id}`}
+                                            className="rounded-md border px-3 py-1 text-sm hover:bg-gray-100"
+                                        >
+                                            Lihat Riwayat
                                         </Link>
                                     </td>
                                 </tr>

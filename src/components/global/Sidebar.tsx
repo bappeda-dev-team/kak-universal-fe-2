@@ -10,8 +10,7 @@ import {
   TbUser, TbHexagonLetterR, TbBinaryTree2, TbTarget, TbMapPin, TbChartBar, TbCalendarShare,
   TbCalendar, TbHexagonLetterV, TbHexagonLetterM, TbClipboardText, TbZoomExclamation,
   TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar,
-  TbFocus2, TbHexagonLetterC, TbHexagonLetterO, TbHexagonLetterI,
-  TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbFileImport,
+  TbFocus2, TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbFileImport,
   TbFileCheck, TbRubberStamp, TbAB2, TbDice4Filled, TbCircleFilled, TbLockSquareRounded, TbLockSquare,
   TbUserSearch, TbLockSquareRoundedFilled
 } from "react-icons/tb";

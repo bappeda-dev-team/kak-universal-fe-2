@@ -1,18 +1,11 @@
-'use client'
-
 import PageCardLayout from "@/components/global/PageCardLayout";
-import { PegawaiResponse, getPegawais } from './service';
-import { useState, useEffect } from "react";
+import { api } from './service';
 import Table from "./table";
+import { PegawaiResponse } from "./types";
 
-export default function Page() {
-    const [pegawais, setPegawais] = useState<PegawaiResponse[]>([])
+export default async function Page() {
 
-    useEffect(() => {
-        getPegawais()
-            .then(setPegawais)
-            .catch(console.error)
-    }, []);
+    const pegawais: PegawaiResponse[] = await api.pegawai.pegawais();
 
     return (
         <PageCardLayout
