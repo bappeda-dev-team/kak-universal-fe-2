@@ -9,6 +9,7 @@ function generateCSP() {
         process.env.NEXT_PUBLIC_API_URL_CSF,
         process.env.NEXT_PUBLIC_API_URL_TAGGING,
         process.env.NEXT_PUBLIC_API_URL_CASCADING_PEMDA,
+        process.env.NEXT_PUBLIC_API_KEPEGAWAIAN,
     ].filter(Boolean);
 
     const connectSrc = ["'self'", ...allowedDomains].join(' ');
@@ -16,44 +17,17 @@ function generateCSP() {
     return `default-src 'self'; connect-src ${connectSrc}; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self';`
 }
 
+const API_KEPEGAWAIAN = process.env.NEXT_PUBLIC_API_KEPEGAWAIAN || "http://localhost:8080"
+
 const nextConfig = {
-    // async headers() {
-    //     return [
-    //         {
-    //             source: '/(.*)',
-    //             headers: [
-    //                 {
-    //                     key: 'X-DNS-Prefetch-Control',
-    //                     value: 'on'
-    //                 },
-    //                 {
-    //                     key: 'Strict-Transport-Security',
-    //                     value: 'max-age=63072000; includeSubDomains; preload'
-    //                 },
-    //                 {
-    //                     key: 'X-XSS-Protection',
-    //                     value: '1; mode=block'
-    //                 },
-    //                 {
-    //                     key: 'X-Frame-Options',
-    //                     value: 'SAMEORIGIN'
-    //                 },
-    //                 {
-    //                     key: 'X-Content-Type-Options',
-    //                     value: 'nosniff'
-    //                 },
-    //                 {
-    //                     key: 'Referrer-Policy',
-    //                     value: 'origin-when-cross-origin'
-    //                 },
-    //                 {
-    //                     key: 'Content-Security-Policy',
-    //                     value: generateCSP()
-    //                 }
-    //             ],
-    //         },
-    //     ]
-    // },
+    async rewrites() {
+        return [
+            {
+                source: "/api/v1/kepegawaian/:path*", // panggilan fe
+                destination: `${API_KEPEGAWAIAN}/:path*` // backend
+            }
+        ]
+    },
     images: {
         remotePatterns: [
             {
