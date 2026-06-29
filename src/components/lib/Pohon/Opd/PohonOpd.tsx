@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
     TbPrinter, TbLayersLinked, TbBookmarkPlus, TbCheck, TbCircleLetterXFilled,
-    TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbEye, TbEyeClosed, TbArrowAutofitWidth,
-    TbDeviceTabletSearch, TbZoom, TbCircleCheckFilled, TbArrowGuide, TbAB2
+    TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbEye, TbEyeClosed,
+    TbArrowAutofitWidth, TbZoom, TbCircleCheckFilled, TbArrowGuide, TbAB2
 } from 'react-icons/tb';
 import { ButtonSky, ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder, ButtonBlackBorder } from '@/components/global/Button';
 import { AlertNotification, AlertQuestion } from '@/components/global/Alert';
@@ -15,6 +15,7 @@ import { ModalCetak } from '@/components/pages/Pohon/ModalCetak';
 import { LoadingClip } from '@/components/global/Loading';
 import { FormAmbilPohonOpd } from './FormAmbilPohonOpd';
 import { useBrandingContext } from '@/context/BrandingContext';
+import Link from 'next/link';
 
 interface pohon {
     tema: any;
@@ -35,20 +36,6 @@ interface Indikator {
     id_indikator: string;
     nama_indikator: string;
     targets: Target[];
-}
-
-interface Cross {
-    id: number;
-    parent: string;
-    nama_pohon: string;
-    jenis_pohon: string;
-    level_pohon: number;
-    kode_opd: string;
-    nama_opd: string;
-    keterangan: string;
-    tahun: string;
-    status: string;
-    indikator: Indikator[];
 }
 
 interface Tagging {
@@ -188,10 +175,10 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
             }
             const data = await response.json();
             if (data.code == 400) {
-                AlertNotification("Gagal", "Crosscutting hanya bisa dihapus saat setelah disetujui", "error", 3000, true);
+                AlertNotification("Gagal", `${data.data || ""}`, "error", 3000, true);
             } else if (data.code == 200) {
                 AlertNotification("Berhasil", "Data pohon Crosscutting Di hapus", "success", 1000);
-                fetchTrigger();
+                setCrossDikirim(CrossDikirim.filter((data) => data.id_crosscutting !== id));
             }
         } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
@@ -220,6 +207,9 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
             console.error(err);
         }
     };
+    const tambahCrosscuttingBerhasil = (data: CrosscuttingDikirim) => {
+        setCrossDikirim((prev) => [...prev, data]);
+    }
 
 
     return (
@@ -307,13 +297,18 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                         {tema.level_pohon === 6 &&
                                             <ButtonGreenBorder
                                                 onClick={handleCross}
-                                            // onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
                                             >
                                                 <TbLayersLinked className="mr-1" />
                                                 CrossCutting
                                             </ButtonGreenBorder>
                                         }
-                                        <ModalAddCrosscutting isOpen={Cross} onClose={handleCross} id={tema.id} nama_pohon={tema.nama_pohon} />
+                                        <ModalAddCrosscutting
+                                            isOpen={Cross}
+                                            onClose={handleCross}
+                                            id={tema.id}
+                                            nama_pohon={tema.nama_pohon}
+                                            onSuccess={(data) => tambahCrosscuttingBerhasil(data)}
+                                        />
                                         <ButtonRedBorder
                                             onClick={() => {
                                                 AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
@@ -355,13 +350,18 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                         {tema.level_pohon === 6 &&
                                             <ButtonGreenBorder
                                                 onClick={handleCross}
-                                            // onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
                                             >
                                                 <TbLayersLinked className="mr-1" />
                                                 CrossCutting
                                             </ButtonGreenBorder>
                                         }
-                                        <ModalAddCrosscutting isOpen={Cross} onClose={handleCross} id={tema.id} nama_pohon={tema.nama_pohon} />
+                                        <ModalAddCrosscutting
+                                            isOpen={Cross}
+                                            onClose={handleCross}
+                                            id={tema.id}
+                                            nama_pohon={tema.nama_pohon}
+                                            onSuccess={(data) => tambahCrosscuttingBerhasil(data)}
+                                        />
                                         <ButtonRedBorder
                                             onClick={() => {
                                                 AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
@@ -401,13 +401,18 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                         {tema.level_pohon === 6 &&
                                             <ButtonGreenBorder
                                                 onClick={handleCross}
-                                            // onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
                                             >
                                                 <TbLayersLinked className="mr-1" />
                                                 CrossCutting
                                             </ButtonGreenBorder>
                                         }
-                                        <ModalAddCrosscutting isOpen={Cross} onClose={handleCross} id={tema.id} nama_pohon={tema.nama_pohon} />
+                                        <ModalAddCrosscutting
+                                            isOpen={Cross}
+                                            onClose={handleCross}
+                                            id={tema.id}
+                                            nama_pohon={tema.nama_pohon}
+                                            onSuccess={(data) => tambahCrosscuttingBerhasil(data)}
+                                        />
                                         <ButtonRedBorder
                                             onClick={() => {
                                                 AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
@@ -448,13 +453,18 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                         {tema.level_pohon === 6 &&
                                             <ButtonGreenBorder
                                                 onClick={handleCross}
-                                            // onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
                                             >
                                                 <TbLayersLinked className="mr-1" />
                                                 CrossCutting
                                             </ButtonGreenBorder>
                                         }
-                                        <ModalAddCrosscutting isOpen={Cross} onClose={handleCross} id={tema.id} nama_pohon={tema.nama_pohon} />
+                                        <ModalAddCrosscutting
+                                            isOpen={Cross}
+                                            onClose={handleCross}
+                                            id={tema.id}
+                                            nama_pohon={tema.nama_pohon}
+                                            onSuccess={(data) => tambahCrosscuttingBerhasil(data)}
+                                        />
                                         <ButtonRedBorder
                                             onClick={() => {
                                                 AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
@@ -486,7 +496,6 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                         {tema.level_pohon === 6 &&
                                             <ButtonGreenBorder
                                                 onClick={handleCross}
-                                            // onClick={() => AlertNotification("Dalam Pengembangan", "", "info", 2000)}
                                             >
                                                 <TbLayersLinked className="mr-1" />
                                                 CrossCutting
@@ -508,7 +517,13 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                             <TbTrash className='mr-1' />
                                             Hapus
                                         </ButtonRedBorder>
-                                        <ModalAddCrosscutting isOpen={Cross} onClose={handleCross} id={tema.id} nama_pohon={tema.nama_pohon} />
+                                        <ModalAddCrosscutting
+                                            isOpen={Cross}
+                                            onClose={handleCross}
+                                            id={tema.id}
+                                            nama_pohon={tema.nama_pohon}
+                                            onSuccess={(data) => tambahCrosscuttingBerhasil(data)}
+                                        />
                                     </div>
                                 }
                                 {/* CROSSCUTTING DITERIMA */}
@@ -574,13 +589,14 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                             ${tema.jenis_pohon === "Operational N" && 'border-green-500'}
                                     `}
                                 >
-                                    <ButtonSky
-                                        className='flex items-center gap-1'
-                                        onClick={() => setIsCetak(true)}
-                                    >
-                                        <TbPrinter />
-                                        Cetak
-                                    </ButtonSky>
+                                    <Link href={`/cetak/pokin-opd/${tema.id}`} target="_blank" rel="noopener noreferrer">
+                                        <ButtonSky
+                                            className='flex items-center gap-1'
+                                        >
+                                            <TbPrinter />
+                                            Cetak
+                                        </ButtonSky>
+                                    </Link>
                                     <ButtonSkyBorder
                                         onClick={() => handleDetailCross()}
                                     >
