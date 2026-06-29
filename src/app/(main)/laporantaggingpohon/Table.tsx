@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { TbCircleCheckFilled } from "react-icons/tb";
+import { formatRupiah } from "@/components/utils/format-rupiah";
 
 interface Table {
     tahun: number;
@@ -174,7 +175,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                             </tr>
                             
                             <tr className="bg-emerald-700 text-white">
-                                {[...Array(15)].map((_, index: number) => (
+                                {[...Array(16)].map((_, index: number) => (
                                     <th key={index} className="border-r border-b px-3 py-1 min-w-[100px]">{index + 1}</th>
                                 ))}
                             </tr>
@@ -196,7 +197,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                             <tr>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{index + 1}</td>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.nama_program_unggulan || "-"}</td>
-                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">Rencana Implementasi</td>
+                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.rencana_implementasi || "-"}</td>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.nama_opd || "-"}</td>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">
                                                     <p>{p.nama_pohon || "-"} </p>
@@ -221,9 +222,9 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                                                     <td key={index} className="border-r border-b px-6 py-4 h-[200px]">{rk.rencana_kinerja || "-"}</td>
                                                                     {rk.kode_subkegiatan ?
                                                                         <>
-                                                                            <td className="border-r border-b px-6 py-4 h-[200px]">(Kode Program) Nama Program</td>
+                                                                            <td className="border-r border-b px-6 py-4 h-[200px]">({rk.kode_program || "-"}) {rk.nama_program || ""}</td>
                                                                             <td className="border-r border-b px-6 py-4 h-[200px]">({rk.kode_subkegiatan || 0}) {rk.nama_subkegiatan || "-"}</td>
-                                                                            <td className="border-r border-b px-6 py-4 h-[200px]">{rk.pagu || "-"}</td>
+                                                                            <td className="border-r border-b px-6 py-4 h-[200px]">Rp.{formatRupiah(rk.pagu || 0)}</td>
                                                                         </>
                                                                         :
                                                                         <td colSpan={2} className="border-r border-b px-6 py-4 bg-red-400 text-white italic h-[200px]">*Sub Kegiatan Belum Di Pilih</td>
