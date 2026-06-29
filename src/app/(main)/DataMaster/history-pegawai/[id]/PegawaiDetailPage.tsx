@@ -18,6 +18,10 @@ type PegawaiDetailPageProps = {
 }
 
 export default function PegawaiDetailPage({ pegawai, masterJabatans, opds, jenisPenugasans }: PegawaiDetailPageProps) {
+    const [mutasiDialogOpen, setMutasiDialogOpen] = useState<boolean>(false);
+    const [tambahJabatanDialogOpen, setTambahJabatanDialogOpen] = useState<boolean>(false);
+    const router = useRouter();
+
     if (pegawai == null) {
         return (
             <div>
@@ -25,11 +29,6 @@ export default function PegawaiDetailPage({ pegawai, masterJabatans, opds, jenis
             </div>
         );
     }
-
-    const [mutasiDialogOpen, setMutasiDialogOpen] = useState<boolean>(false);
-    const [tambahJabatanDialogOpen, setTambahJabatanDialogOpen] = useState<boolean>(false);
-
-    const router = useRouter();
 
     // TODO: get from pegawai response
     const jabatanAktif = pegawai.jabatan_pegawais.find(

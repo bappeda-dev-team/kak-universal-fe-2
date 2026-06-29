@@ -69,39 +69,39 @@ const Table = () => {
     ];
 
     useEffect(() => {
-        fetchVisi(JenisPeriode ? JenisPeriode?.value : "RPJMD");
-    }, [FetchTrigger, JenisPeriode])
-
-    const fetchVisi = async (jenis: string) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        setLoading(true);
-        try {
-            const response = await fetch(`${API_URL}/visi_pemda/findall/tahun/${Tahun?.value}/jenisperiode/${jenis}`, {
-                headers: {
-                    Authorization: `${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const result = await response.json();
-            const data = result.data;
-            // console.log(data);
-            if (data === null) {
-                setDataNull(true);
-                setVisi([]);
-            } else if (result.code == 500) {
-                setPeriodeNotFound(true);
-                setVisi([]);
-            } else {
-                setDataNull(false);
-                setVisi(data);
+        const fetchVisi = async (jenis: string) => {
+            const API_URL = process.env.NEXT_PUBLIC_API_URL;
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_URL}/visi_pemda/findall/tahun/${Tahun?.value}/jenisperiode/${jenis}`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                const data = result.data;
+                // console.log(data);
+                if (data === null) {
+                    setDataNull(true);
+                    setVisi([]);
+                } else if (result.code == 500) {
+                    setPeriodeNotFound(true);
+                    setVisi([]);
+                } else {
+                    setDataNull(false);
+                    setVisi(data);
+                }
+            } catch (err) {
+                setError(true);
+                console.error(err)
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            setError(true);
-            console.error(err)
-        } finally {
-            setLoading(false);
         }
-    }
+
+        fetchVisi(JenisPeriode ? JenisPeriode?.value : "RPJMD");
+    }, [FetchTrigger, JenisPeriode, Tahun, token])
 
     const hapusVisi = async (id: number) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -118,7 +118,7 @@ const Table = () => {
                 alert("response !ok saat hapus data tujuan pemda")
             }
             AlertNotification("Berhasil", "Data Visi Berhasil Dihapus", "success", 1000);
-            fetchVisi(JenisPeriode ? JenisPeriode?.value : "RPJMD");
+            setJenisPeriode(JenisPeriode)
             // setFetchTrigger((prev) => !prev);
         } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
@@ -173,9 +173,6 @@ const Table = () => {
                     }}
                     onChange={(option) => {
                         setJenisPeriode(option);
-                        if (option) {
-                            fetchVisi(option?.value);
-                        }
                     }}
                     isClearable
                     options={jenisOption}
@@ -203,9 +200,9 @@ const Table = () => {
                                     <td className="px-6 py-3 flex flex-wrap items-center gap-5" colSpan={30}>
                                         <p>Data Kosong / Belum Ditambahkan</p>
                                         <ButtonSky
-                                        onClick={() => handleModalNewTujuan()}
+                                            onClick={() => handleModalNewTujuan()}
                                         >
-                                            <TbCirclePlus className="mr-1"/>
+                                            <TbCirclePlus className="mr-1" />
                                             Tambah Visi
                                         </ButtonSky>
                                     </td>
