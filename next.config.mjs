@@ -17,17 +17,7 @@ function generateCSP() {
     return `default-src 'self'; connect-src ${connectSrc}; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self';`
 }
 
-const API_KEPEGAWAIAN = process.env.NEXT_PUBLIC_API_KEPEGAWAIAN || "http://localhost:8080"
-
 const nextConfig = {
-    async rewrites() {
-        return [
-            {
-                source: "/api/v1/kepegawaian/:path*", // panggilan fe
-                destination: `${API_KEPEGAWAIAN}/:path*` // backend
-            }
-        ]
-    },
     images: {
         remotePatterns: [
             {
