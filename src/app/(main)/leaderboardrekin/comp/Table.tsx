@@ -165,10 +165,11 @@ interface Body {
     onUpdate: (data: Pokin) => void;
 }
 
-export const Body: React.FC<Body> = ({ Data, tahun, token, onUpdate, user }) => {
+export const Body: React.FC<Body> = ({ Data, tahun, token, user, onUpdate }) => {
 
     const { branding } = useBrandingContext();
     const [LoadingHidden, setLoadingHidden] = useState<boolean | null>(null);
+    const [Hidden, setHidden] = useState<boolean>(false);
 
     const [ModalClone, setModalClone] = useState<boolean>(false);
     const [KodeOpd, setKodeOpd] = useState<string>("");
@@ -286,7 +287,7 @@ export const Body: React.FC<Body> = ({ Data, tahun, token, onUpdate, user }) => 
                         const daftarTematik = item.tematik || [];
                         const totalBarisOPD = hitungTotalBarisOPD(daftarTematik);
 
-                        const [Hidden, setHidden] = useState<boolean>(item.is_hidden);
+                        // const [Hidden, setHidden] = useState<boolean>(item.is_hidden);
                         const handleHidden = () => { setHidden((prev) => !prev) }
 
                         return (

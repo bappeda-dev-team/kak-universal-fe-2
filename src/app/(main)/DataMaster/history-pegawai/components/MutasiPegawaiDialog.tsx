@@ -36,11 +36,13 @@ export default function MutasiPegawaiDialog({
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
+        const jenisPen = jenisPenugasan === null ? "BELUM_DIATUR" : jenisPenugasan.value
+
         await onSubmit({
             pegawai_id: pegawai.id,
-            master_jabatan_id: Number(masterJabatan.value),
-            opd_id: Number(opd.value),
-            jenis_penugasan: jenisPenugasan.value,
+            master_jabatan_id: Number(masterJabatan?.value),
+            opd_id: Number(opd?.value),
+            jenis_penugasan: jenisPen,
             tmt_mulai: tmtMulai,
         });
     }

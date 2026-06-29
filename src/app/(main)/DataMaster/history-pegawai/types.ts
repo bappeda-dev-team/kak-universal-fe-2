@@ -38,7 +38,7 @@ export interface JabatanPegawaiResponse {
 
 export interface JenisPenugasan {
     label: string;
-    value: "UTAMA" | "PLT" | "PLH" | "PJ";
+    value: "UTAMA" | "PLT" | "PLH" | "PJ" | "BELUM_DIATUR";
 }
 
 export interface AlasanBerakhir {
