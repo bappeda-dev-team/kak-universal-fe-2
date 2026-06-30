@@ -14,6 +14,7 @@ interface RencanaKinerja {
     rencana_kinerja: string;
     nama_pelaksana: string;
     nip_pelaksana: string;
+    indikator_programs: IndikatorProgram[];
     kode_bidang_urusan: string;
     nama_bidang_urusan: string;
     kode_program: string;
@@ -28,6 +29,11 @@ interface RencanaKinerja {
         tw_3: number;
         tw_4: number;
     };
+}
+
+interface IndikatorProgram {
+    kode_indikator: string;
+    indikator: string;
 }
 
 interface Pelaksana {
@@ -161,7 +167,8 @@ export const Table: React.FC<Table> = ({ tahun }) => {
 
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Pelaksana</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Rencana Kinerja</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Program</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Program</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator Program</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Sub Kegiatan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Pagu Anggaran</th>
                                 <th colSpan={4} className="border-r border-b px-6 py-3 min-w-[100px]">Waktu Pelaksanaan</th>
@@ -175,7 +182,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                             </tr>
                             
                             <tr className="bg-emerald-700 text-white">
-                                {[...Array(16)].map((_, index: number) => (
+                                {[...Array(17)].map((_, index: number) => (
                                     <th key={index} className="border-r border-b px-3 py-1 min-w-[100px]">{index + 1}</th>
                                 ))}
                             </tr>
@@ -223,11 +230,16 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                                                     {rk.kode_subkegiatan ?
                                                                         <>
                                                                             <td className="border-r border-b px-6 py-4 h-[200px]">({rk.kode_program || "-"}) {rk.nama_program || ""}</td>
+                                                                            <td className="border-r border-b px-6 py-4 h-[200px]">
+                                                                                {rk?.indikator_programs?.map((i: IndikatorProgram, index: number) => (
+                                                                                    <p key={index}>{i.indikator || "-"}</p>
+                                                                                ))}
+                                                                            </td>
                                                                             <td className="border-r border-b px-6 py-4 h-[200px]">({rk.kode_subkegiatan || 0}) {rk.nama_subkegiatan || "-"}</td>
                                                                             <td className="border-r border-b px-6 py-4 h-[200px]">Rp.{formatRupiah(rk.pagu || 0)}</td>
                                                                         </>
                                                                         :
-                                                                        <td colSpan={2} className="border-r border-b px-6 py-4 bg-red-400 text-white italic h-[200px]">*Sub Kegiatan Belum Di Pilih</td>
+                                                                        <td colSpan={3} className="border-r border-b px-6 py-4 bg-red-400 text-white italic h-[200px]">*Sub Kegiatan Belum Di Pilih</td>
                                                                     }
                                                                     <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_1 || 0}</td>
                                                                     <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_2 || 0}</td>

@@ -1,0 +1,237 @@
+'use client'
+
+import { useState, useEffect } from "react";
+import { Controller, SubmitHandler, useForm, useFieldArray } from "react-hook-form";
+import { ButtonSky, ButtonRed, ButtonBlackBorder } from '@/components/global/Button';
+import { getToken } from "@/components/lib/Cookie";
+import { AlertNotification } from "@/components/global/Alert";
+import { LoadingButtonClip } from "@/components/global/Loading";
+import { OptionTypeString } from "@/types";
+import { useBrandingContext } from "@/context/BrandingContext";
+import { TbCirclePlus, TbDeviceFloppy, TbTrash, TbX } from "react-icons/tb";
+import { IndikatorTujuan, TargetTujuan } from "../type";
+
+interface FormValue {
+    targets: Targets[];
+}
+interface Targets {
+    id: number,
+    kode_indikator?: string;
+    satuan: string;
+    tahun: string;
+    target: number;
+}
+interface modal {
+    isOpen: boolean;
+    onClose: () => void;
+    indikator: IndikatorTujuan | null;
+    tahun: string;
+    fetchTrigger: () => void;
+    jenis: "ranwal" | "rankhir" | "penetapan";
+    metode: "edit" | "tambah"
+}
+
+export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indikator, jenis, fetchTrigger, metode }) => {
+
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<FormValue>({
+        defaultValues: {
+            targets: indikator?.target.length != 0
+                ? indikator?.target.map((t: TargetTujuan) => ({
+                    kode_indikator: indikator?.kode_indikator || '',
+                    tahun: t.tahun || tahun,
+                    target: t.target || 0,
+                    satuan: t.satuan || "",
+                }))
+                : [
+                    {
+                        kode_indikator: indikator?.kode_indikator || '',
+                        tahun: tahun,
+                        target: 0,
+                        satuan: "",
+                    }
+                ]
+        }
+    });
+
+    const { fields } = useFieldArray({
+        name: "targets",
+        control,
+    });
+
+    const [Proses, setProses] = useState<boolean>(false);
+
+    const { branding } = useBrandingContext();
+    const token = getToken();
+
+    const handleClose = () => {
+        onClose();
+        reset();
+    }
+
+    const onSubmit: SubmitHandler<FormValue> = async (data) => {
+        const formDataTambah = {
+            //key : value
+            targets: data.targets.map((t) => ({
+                kode_indikator: indikator?.kode_indikator || "",
+                target: Number(t.target),
+                satuan: t.satuan,
+                tahun: tahun,
+            }))
+        };
+        const formDataEdit = {
+            //key : value
+            targets: data.targets.map((t) => ({
+                id: 0,
+                target: Number(t.target),
+                satuan: t.satuan,
+                tahun: tahun,
+            }))
+        };
+        const getBody = () => {
+            if (metode === "tambah") return formDataTambah;
+            if (metode === "edit") return formDataEdit;
+            return {}; // Default jika metode tidak sesuai
+        };
+        // console.log(formData);
+        try {
+            setProses(true);
+            let url = ""
+            if (metode === "tambah") {
+                url = `tujuan_pemda/target/${jenis}/create`
+            } else {
+                url = `tujuan_pemda/target/${jenis}/update`
+            }
+            const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
+                method: metode === "tambah" ? "POST" : "PUT",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(getBody),
+            });
+            if (response.ok) {
+                AlertNotification("Berhasil", "Berhasil mengubah Permasalahan", "success", 1000);
+                handleClose();
+                fetchTrigger();
+            } else {
+                AlertNotification("Gagal", "terdapat kesalahan pada backend / database server", "error", 2000);
+            }
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
+        } finally {
+            setProses(false);
+        }
+    };
+
+    if (!isOpen) {
+        return null;
+    } else {
+
+        return (
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className={`fixed inset-0 bg-black opacity-30`} onClick={handleClose}></div>
+                <div className={`bg-white rounded-lg p-8 z-10 w-4/5 text-start`}>
+                    <div className="w-max-[500px] py-2 border-b text-center">
+                        <h1 className="text-xl uppercase">{metode} Target {jenis}</h1>
+                    </div>
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="flex flex-col mx-5 py-5"
+                    >
+                        <div className="flex flex-col gap-1 mb-2">
+                            <label className="uppercase text-xs font-bold text-gray-700 my-1 ml-1">
+                                Indikator :
+                            </label>
+                            <h1 className="border border-gray-700 rounded-lg p-2">{indikator?.indikator || "-"}</h1>
+                        </div>
+                        <div className="flex flex-col gap-1 mb-2">
+                            <label className="uppercase text-xs font-bold text-gray-700 my-1 ml-1">
+                                Definisi Operasional :
+                            </label>
+                            <h1 className="border border-gray-700 rounded-lg p-2">{indikator?.definisi_operasional || "-"}</h1>
+                        </div>
+                        <div className="flex flex-col gap-1 mb-2">
+                            <label className="uppercase text-xs font-bold text-gray-700 my-1 ml-1">
+                                Rumus Perhitungan :
+                            </label>
+                            <h1 className="border border-gray-700 rounded-lg p-2">{indikator?.rumus_perhitungan || "-"}</h1>
+                        </div>
+                        <div className="flex flex-col gap-1 mb-2">
+                            <label className="uppercase text-xs font-bold text-gray-700 my-1 ml-1">
+                                Sumber Data:
+                            </label>
+                            <h1 className="border border-gray-700 rounded-lg p-2">{indikator?.sumber_data || "-"}</h1>
+                        </div>
+                        {fields.map((field, index: number) => (
+                            <div key={field.id} className="flex flex-col gap-1 my-1 border border-emerald-500 p-2 rounded-lg">
+                                <h1
+                                    className={`font-bold text-xl uppercase `}
+                                >
+                                    Target
+                                </h1>
+                                <div className="flex items-center gap-1">
+                                    <div className="flex flex-col py-3 w-full">
+                                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                            Target:
+                                        </label>
+                                        <Controller
+                                            name={`targets.${index}.target`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <input
+                                                    {...field}
+                                                    className="border px-4 py-2 rounded-lg"
+                                                    placeholder="Masukkan Target"
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col py-3 w-full">
+                                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                            Satuan:
+                                        </label>
+                                        <Controller
+                                            name={`targets.${index}.satuan`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <input
+                                                    {...field}
+                                                    className="border px-4 py-2 rounded-lg"
+                                                    placeholder="Masukkan Satuan"
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        <div className="flex flex-col items-center gap-1 mt-5">
+                            <ButtonSky className="w-full" type="submit" disabled={Proses}>
+                                {Proses ?
+                                    <span className="flex">
+                                        <LoadingButtonClip />
+                                        Menyimpan...
+                                    </span>
+                                    :
+                                    <span className="flex items-center gap-1">
+                                        <TbDeviceFloppy />
+                                        Simpan
+                                    </span>
+                                }
+                            </ButtonSky>
+                            <ButtonRed className="w-full flex items-center gap-1" onClick={handleClose}>
+                                <TbX />
+                                Batal
+                            </ButtonRed>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )
+    }
+}

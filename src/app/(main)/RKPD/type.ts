@@ -1,6 +1,5 @@
 export interface TargetTujuan {
     id: number;
-    jenis: string;
     satuan: string;
     tahun: string;
     target: any;
@@ -15,6 +14,9 @@ export interface IndikatorTujuan {
     rumus_perhitungan: string;
     sumber_data: string;
     target: TargetTujuan[];
+    target_ranwal: TargetTujuan[];
+    target_rankhir: TargetTujuan[];
+    target_penetapan: TargetTujuan[];
 }
 
 export interface TujuanPemdaRKPD {

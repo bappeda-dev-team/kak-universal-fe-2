@@ -105,7 +105,7 @@ const RKPDPenetapanTujuanPage = () => {
                     />
                 </div>
                 {Periode ?
-                    <TableTujuan menu="ranwal" tahun={branding?.tahun?.value || 0} jenis_periode={Periode?.jenis_periode || ""}/>
+                    <TableTujuan menu="penetapan" tahun={branding?.tahun?.value || 0} jenis_periode={Periode?.jenis_periode || ""}/>
                     :
                     <div className="m-5">
                         <h1>Pilih Periode terlebih dahulu</h1>
