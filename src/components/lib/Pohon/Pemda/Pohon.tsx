@@ -491,14 +491,14 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                         />
                                     </div>
                                     {tema.level_pohon === 0 &&
-                                    <Link href={`/cetak/pokin-tematik/${tema.id}`} target="_blank" rel="noopener noreferrer">
-                                        <ButtonSky
-                                            className='w-full flex items-center gap-1'
-                                        >
-                                            <TbPrinter />
-                                            Cetak Tematik
-                                        </ButtonSky>
-                                    </Link>
+                                        <Link href={`/cetak/pokin-tematik/${tema.id}`} target="_blank" rel="noopener noreferrer">
+                                            <ButtonSky
+                                                className='w-full flex items-center gap-1'
+                                            >
+                                                <TbPrinter />
+                                                Cetak Tematik
+                                            </ButtonSky>
+                                        </Link>
                                     }
                                     {/* BUTTON ACTION INSIDE BOX */}
                                     {user != 'reviewer' &&
@@ -516,14 +516,16 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                                         Edit
                                                     </ButtonSkyBorder>
                                                 }
-                                                {tema.level_pohon !== 0 &&
-                                                    <ButtonSky
-                                                        className='flex items-center gap-1'
-                                                        onClick={() => setIsCetak(true)}
-                                                    >
-                                                        <TbPrinter />
-                                                        Cetak
-                                                    </ButtonSky>
+                                                {tema.level_pohon > 3 &&
+                                                    <Link href={`/cetak/pohon-kinerja/${tema.id}`} target="_blank" rel="noopener noreferrer">
+                                                        <ButtonSky
+                                                            className='flex items-center gap-1'
+                                                            onClick={() => setIsCetak(true)}
+                                                        >
+                                                            <TbPrinter />
+                                                            Cetak
+                                                        </ButtonSky>
+                                                    </Link>
                                                 }
                                                 {tema.jenis_pohon === 'Tematik' &&
                                                     <>
@@ -549,9 +551,9 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                                         <ButtonBlack
                                                             className='flex justify-center items-center gap-1'
                                                             onClick={() => setIsClone(true)}
-                                                            // onClick={() => {
-                                                            //     AlertNotification("Fitur dalam perbaikan", "", "warning", 3000);
-                                                            // }}
+                                                        // onClick={() => {
+                                                        //     AlertNotification("Fitur dalam perbaikan", "", "warning", 3000);
+                                                        // }}
                                                         >
                                                             <TbCopy />
                                                             Clone

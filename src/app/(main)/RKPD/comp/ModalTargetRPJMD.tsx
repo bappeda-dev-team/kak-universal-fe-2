@@ -6,7 +6,6 @@ import { ButtonSky, ButtonRed, ButtonBlackBorder } from '@/components/global/But
 import { getToken } from "@/components/lib/Cookie";
 import { AlertNotification } from "@/components/global/Alert";
 import { LoadingButtonClip } from "@/components/global/Loading";
-import { OptionTypeString } from "@/types";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { TbCirclePlus, TbDeviceFloppy, TbTrash, TbX } from "react-icons/tb";
 import { IndikatorTujuan, TargetTujuan } from "../type";
@@ -16,22 +15,24 @@ interface FormValue {
 }
 interface Targets {
     id: number,
-    kode_indikator?: string;
+    target: number;
     satuan: string;
     tahun: string;
-    target: number;
 }
 interface modal {
     isOpen: boolean;
     onClose: () => void;
     indikator: IndikatorTujuan | null;
+    target_awal: Targets[];
+    target_edit: Targets[];
     tahun: string;
     fetchTrigger: () => void;
     jenis: "ranwal" | "rankhir" | "penetapan";
     metode: "edit" | "tambah"
+
 }
 
-export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indikator, jenis, fetchTrigger, metode }) => {
+export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indikator, target_awal, target_edit, jenis, fetchTrigger, metode }) => {
 
     const {
         control,
@@ -40,8 +41,8 @@ export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indi
         formState: { errors },
     } = useForm<FormValue>({
         defaultValues: {
-            targets: indikator?.target.length != 0
-                ? indikator?.target.map((t: TargetTujuan) => ({
+            targets: target_edit.length != 0
+                ? target_edit.map((t: TargetTujuan) => ({
                     kode_indikator: indikator?.kode_indikator || '',
                     tahun: t.tahun || tahun,
                     target: t.target || 0,
@@ -166,13 +167,32 @@ export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indi
                                 Sumber Data:
                             </label>
                             <h1 className="border border-gray-700 rounded-lg p-2">{indikator?.sumber_data || "-"}</h1>
+                            {target_awal.map((ta: Targets, index: number) => (
+                                <div key={index} className="flex flex-col gap-1 my-1 border border-emerald-500 p-2 rounded-lg">
+                                    <h1 className={`font-bold text-xl uppercase ${jenis === "rankhir" ? "text-red-600" : "text-yellow-600"}`}>
+                                        {jenis === "rankhir" ? "Target Ranwal" : "Target Rankir"}
+                                    </h1>
+                                    <div className="flex items-center gap-1">
+                                        <div className="flex flex-col py-3 w-full">
+                                            <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                                Target:
+                                            </label>
+                                            <h1 className="border border-gray-700 rounded-lg p-2">{ta.target || "-"}</h1>
+                                        </div>
+                                        <div className="flex flex-col py-3 w-full">
+                                            <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                                Satuan:
+                                            </label>
+                                            <h1 className="border border-gray-700 rounded-lg p-2">{ta.satuan || "-"}</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                         {fields.map((field, index: number) => (
                             <div key={field.id} className="flex flex-col gap-1 my-1 border border-emerald-500 p-2 rounded-lg">
-                                <h1
-                                    className={`font-bold text-xl uppercase `}
-                                >
-                                    Target
+                                <h1 className={`font-bold text-xl uppercase ${jenis === "rankhir" ? "text-yellow-600" : "text-blue-600"}`}>
+                                    Target {jenis}
                                 </h1>
                                 <div className="flex items-center gap-1">
                                     <div className="flex flex-col py-3 w-full">

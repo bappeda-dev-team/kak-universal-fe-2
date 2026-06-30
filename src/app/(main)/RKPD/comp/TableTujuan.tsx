@@ -25,22 +25,27 @@ const TableTujuan: React.FC<table> = ({ tahun, menu, jenis_periode }) => {
     const [Loading, setLoading] = useState<boolean | null>(null);
 
     const [ModalOpen, setModalOpen] = useState<boolean>(false);
-    const [KodeIndikator, setKodeIndikator] = useState<string>("");
+    const [TargetAwal, setTargetAwal] = useState<TargetTujuan[]>([]);
+    const [TargetEdit, setTargetEdit] = useState<TargetTujuan[]>([]);
     const [Indikator, setIndikator] = useState<IndikatorTujuan | null>(null);
     const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const token = getToken();
 
-    const handleModal = (indikator: IndikatorTujuan | null, jenis: "tambah" | "edit") => {
+    const handleModal = (indikator: IndikatorTujuan | null, jenis: "tambah" | "edit", target_awal: TargetTujuan[], target_edit: TargetTujuan[]) => {
         if (ModalOpen) {
             setModalOpen(false);
             setIndikator(indikator);
             setJenisModal(jenis);
+            setTargetAwal(target_awal);
+            setTargetEdit(target_edit);
         } else {
             setModalOpen(true);
             setIndikator(indikator);
             setJenisModal(jenis);
+            setTargetAwal(target_awal);
+            setTargetEdit(target_edit);
         }
     }
 
@@ -170,11 +175,20 @@ const TableTujuan: React.FC<table> = ({ tahun, menu, jenis_periode }) => {
                                                             <ButtonGreenBorder
                                                                 className={`flex items-center gap-1 w-full ${menu === "ranwal" && "cursor-not-allowed"}`}
                                                                 onClick={() => {
-                                                                    if(i.target[1].id === 0){
-                                                                        handleModal(i, "tambah");
+                                                                    if(menu === "rankhir"){
+                                                                        if(i.target_rankhir[0].id === 0){
+                                                                            handleModal(i, "tambah", i.target_ranwal, [])
+                                                                        } else {
+                                                                            handleModal(i, "edit", i.target_ranwal, i.target_rankhir)
+                                                                        }
                                                                     } else {
-                                                                        handleModal(i, "edit");
+                                                                        if(i.target_penetapan[0].id === 0){
+                                                                            handleModal(i, "tambah", i.target_rankhir, [])
+                                                                        } else {
+                                                                            handleModal(i, "edit", i.target_rankhir, i.target_penetapan)
+                                                                        }
                                                                     }
+                                                                    
                                                                 }}
                                                                 disabled={menu === "ranwal"}
                                                             >
@@ -228,8 +242,10 @@ const TableTujuan: React.FC<table> = ({ tahun, menu, jenis_periode }) => {
             {ModalOpen &&
                 <ModalTargetRPJMD
                     isOpen={ModalOpen}
-                    onClose={() => handleModal(null, "tambah")}
+                    onClose={() => handleModal(null, "tambah", [], [])}
                     indikator={Indikator}
+                    target_awal={TargetAwal}
+                    target_edit={TargetEdit}
                     tahun={String(tahun)}
                     fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                     jenis={menu}
