@@ -7,6 +7,7 @@ import html2canvas from "html2canvas";
 import { PohonCetak } from "./PohonCetak";
 import { LoadingButtonClip2 } from "@/components/global/Loading";
 import { getOpdTahun } from "@/components/lib/Cookie";
+import jsPDF from "jspdf";
 
 interface modal {
     jenis: 'cascading' | 'non_cascading' | 'laporan';
@@ -27,7 +28,7 @@ export const ModalCetak: React.FC<modal> = ({ jenis, isOpen, onClose, pohon }) =
 
     useEffect(() => {
         const data = getOpdTahun();
-        if(data.tahun){
+        if (data.tahun) {
             const tahun = {
                 value: data.tahun.value,
                 label: data.tahun.label,
@@ -74,10 +75,19 @@ export const ModalCetak: React.FC<modal> = ({ jenis, isOpen, onClose, pohon }) =
             }
 
             const imgData = newCanvas.toDataURL("image/png");
-            const link = document.createElement("a");
-            link.href = imgData;
-            link.download = `${pohon.nama_pohon !== undefined ? pohon.nama_pohon : pohon.tema}_${Tahun?.value}${jenis === 'cascading' ? '_cascading' : ''}.jpg`;
-            link.click();
+
+            const pdf = new jsPDF({
+                orientation: newCanvas.width > newCanvas.height ? "landscape" : "portrait",
+                unit: "px",
+                format: [newCanvas.width, newCanvas.height],
+            });
+
+            pdf.addImage(imgData, "PNG", 0, 0, newCanvas.width, newCanvas.height);
+
+            pdf.save(
+                `${pohon.nama_pohon !== undefined ? pohon.nama_pohon : pohon.tema}_${Tahun?.value}${jenis === "cascading" ? "_cascading" : ""
+                }.pdf`
+            );
         } catch (error) {
             alert("Error capturing the element");
             console.error("Error capturing the element:", error);

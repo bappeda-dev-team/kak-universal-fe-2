@@ -42,14 +42,21 @@ export const ModalIkk: React.FC<modal> = ({ isOpen, onClose, jenis, tahun, kode_
                 }
                 : null,
             keterangan: Data?.keterangan || '',
-            indikators: Data?.indikators?.map((i: Indikator) => ({
-                indikator: i.indikator,
-                targets: i.targets.map((t: Target) => ({
-                    target: t.target,
-                    satuan: t.satuan,
+            indikators: Data?.indikators ? 
+                Data?.indikators?.map((i: Indikator) => ({
+                    indikator: i.indikator,
+                    targets: i.targets.map((t: Target) => ({
+                        target: t.target,
+                        satuan: t.satuan,
+                    }))
                 }))
-            }))
-            ,
+            : [{
+                indikator: "",
+                targets: [{
+                    target: "",
+                    satuan: ""
+                }]
+            }],
         }
     });
     const { branding } = useBrandingContext();

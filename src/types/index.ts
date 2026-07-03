@@ -6,6 +6,15 @@ export interface OptionType {
     value: number;
     label: string;
 }
+export interface Periode {
+    value: number;
+    label: string;
+    id: number;
+    tahun_awal: string;
+    tahun_akhir: string;
+    jenis_periode: string;
+    tahun_list: string[];
+}
 export interface PerangkatDaerah {
     nama_opd: string;
     kode_opd: string;

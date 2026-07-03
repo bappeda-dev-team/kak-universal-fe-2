@@ -1,7 +1,7 @@
 'use client'
 
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Select from 'react-select';
 import { ButtonGreen, ButtonRed } from "@/components/global/Button";
 import { LoadingClip, LoadingButtonClip } from "@/components/global/Loading";
@@ -457,10 +457,12 @@ export const FormEditUserOpd = () => {
         }
     };
 
-    const activeOptions = [
-        { label: "Aktif", value: true },
-        { label: "Tidak Aktif", value: false },
-    ];
+    const activeOptions = useMemo(() => {
+        return [
+            { label: "Aktif", value: true },
+            { label: "Tidak Aktif", value: false },
+        ];
+    }, [])
 
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -517,7 +519,7 @@ export const FormEditUserOpd = () => {
             }
         }
         fetchUser();
-    }, [id, reset, token]);
+    }, [id, reset, token, activeOptions]);
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;

@@ -9,6 +9,7 @@ import { getToken } from "@/components/lib/Cookie";
 import { LoadingClip } from "@/components/global/Loading";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import html2canvas from "html2canvas";
+import jsPDF from 'jspdf';
 
 const CetakPokinTematik = () => {
 
@@ -16,7 +17,7 @@ const CetakPokinTematik = () => {
     const [Pohon, setPohon] = useState<any>(null);
     const [Loading, setLoading] = useState<boolean>(false);
     const [LoadingCetak, setLoadingCetak] = useState<boolean>(false);
-    
+
     const token = getToken();
     const modalRef = useRef<HTMLDivElement | null>(null);
     const linkDownload = Pohon === null ? `tematik` : `${Pohon?.tema || "tanpa-nama"}`
@@ -59,10 +60,16 @@ const CetakPokinTematik = () => {
             }
 
             const imgData = newCanvas.toDataURL("image/png");
-            const link = document.createElement("a");
-            link.href = imgData;
-            link.download = linkDownload;
-            link.click();
+            const pdf = new jsPDF({
+                orientation: newCanvas.width > newCanvas.height ? "landscape" : "portrait",
+                unit: "px",
+                format: [newCanvas.width, newCanvas.height],
+            });
+
+            pdf.addImage(imgData, "PNG", 0, 0, newCanvas.width, newCanvas.height);
+
+            pdf.save(`TEMATIK ${linkDownload || "nama unknown"}}.pdf`
+            );
         } catch (error) {
             alert("Error capturing the element");
             console.error("Error capturing the element:", error);
@@ -114,7 +121,7 @@ const CetakPokinTematik = () => {
                         className="w-full flex items-center gap-1"
                         onClick={handleDownloadPdf}
                     >
-                        {LoadingCetak ? 
+                        {LoadingCetak ?
                             <>
                                 <LoadingButtonClip />
                                 Loading

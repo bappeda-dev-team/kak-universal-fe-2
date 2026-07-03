@@ -3,13 +3,13 @@
 import { ButtonBlackBorder } from "@/components/global/Button";
 import { TbPrinter } from "react-icons/tb";
 import { useParams } from "next/navigation";
-import { PohonPemdaCetak } from "../../pokin-tematik/[id]/comp/PohonPemdaCetak";
 import { useState, useEffect, useRef } from "react";
 import { getToken } from "@/components/lib/Cookie";
 import { LoadingClip } from "@/components/global/Loading";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import html2canvas from "html2canvas";
 import { PohonLaporanPemda } from "./comp/PohonLaporanPemda";
+import jsPDF from 'jspdf';
 
 const CetakCascadingTematik = () => {
 
@@ -17,7 +17,7 @@ const CetakCascadingTematik = () => {
     const [Pohon, setPohon] = useState<any>(null);
     const [Loading, setLoading] = useState<boolean>(false);
     const [LoadingCetak, setLoadingCetak] = useState<boolean>(false);
-    
+
     const token = getToken();
     const modalRef = useRef<HTMLDivElement | null>(null);
     const linkDownload = Pohon === null ? `tematik` : `${Pohon?.tema || "tanpa-nama"}`
@@ -60,10 +60,17 @@ const CetakCascadingTematik = () => {
             }
 
             const imgData = newCanvas.toDataURL("image/png");
-            const link = document.createElement("a");
-            link.href = imgData;
-            link.download = linkDownload;
-            link.click();
+            const pdf = new jsPDF({
+                orientation: newCanvas.width > newCanvas.height ? "landscape" : "portrait",
+                unit: "px",
+                format: [newCanvas.width, newCanvas.height],
+            });
+
+            pdf.addImage(imgData, "PNG", 0, 0, newCanvas.width, newCanvas.height);
+
+            pdf.save(
+                `Cascading tematik ${linkDownload}.pdf`
+            );
         } catch (error) {
             alert("Error capturing the element");
             console.error("Error capturing the element:", error);
@@ -115,7 +122,7 @@ const CetakCascadingTematik = () => {
                         className="w-full flex items-center gap-1"
                         onClick={handleDownloadPdf}
                     >
-                        {LoadingCetak ? 
+                        {LoadingCetak ?
                             <>
                                 <LoadingButtonClip />
                                 Loading

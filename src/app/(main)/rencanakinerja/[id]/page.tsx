@@ -65,9 +65,9 @@ const RincianRencanaKinerja = () => {
                         <SubKegiatan
                             id={id_rekin}
                             tahun={Tahun?.value}
-                            nip={User?.nip}
                             kode_opd={User?.kode_opd}
-                        />
+                            nip={User?.nip}
+                            />
                         <Sakip id={id_rekin} />
                         <Renaksi id={id_rekin} />
                         <DasarHukum
@@ -77,8 +77,10 @@ const RincianRencanaKinerja = () => {
                         <GambaranUmum
                             id={id_rekin}
                             nip={User?.nip}
-                        />
+                            />
                         <Permasalahan
+                            tahun={Tahun?.value}
+                            kode_opd={User?.kode_opd}
                             id={id_rekin}
                             nip={User?.nip}
                         />
