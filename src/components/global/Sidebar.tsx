@@ -406,7 +406,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </li>
               </Link>
               <Link href="/DataMaster/history-pegawai">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/masterpegawai" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/history-pegawai" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbUsers className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>History Pegawai</span>
                 </li>
