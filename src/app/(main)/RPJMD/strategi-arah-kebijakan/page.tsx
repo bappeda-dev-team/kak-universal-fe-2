@@ -8,6 +8,7 @@ import { LoadingClip } from "@/components/global/Loading";
 import { getToken, getPeriode, setCookie } from "@/components/lib/Cookie";
 import { ArahKebijakan } from "./type";
 import { AlertNotification } from "@/components/global/Alert";
+import { ButtonGreen } from "@/components/global/Button";
 import { useRouter } from "next/navigation";
 
 import Select from "react-select";
@@ -124,6 +125,50 @@ const StrategiArahKebijakanPage = () => {
     FetchData();
   }, [Periode, token, branding?.api_perencanaan, router]);
 
+  const ExportExcel = async () => {
+    if (!Periode) return;
+
+    try {
+      const response = await fetch(
+        `${branding?.api_perencanaan}/export/strategi_arah_kebijakan_pemda/${Periode.tahun_awal}/${Periode.tahun_akhir}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw setError(true);
+      }
+
+      const blob = await response.blob();
+
+      const disposition = response.headers.get("Content-Disposition");
+
+      let filename = "Strategi_Arah_Kebijakan_Pemda.xlsx";
+
+      if (disposition) {
+        const match = disposition.match(/filename="?([^"]+)"?/);
+        if (match) {
+          filename = match[1];
+        }
+      }
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      AlertNotification("Error", "Gagal mengunduh file Excel", "error", 2000);
+    }
+  };
+
   if (Loading) {
     return (
       <div className="border p-5 rounded-xl shadow-xl">
@@ -160,6 +205,7 @@ const StrategiArahKebijakanPage = () => {
           </div>
           <div className="flex items-center gap-3">
             {/* <h2 className="text-sm max-w-[500px]">{nama_opd || ""}</h2> */}
+            <ButtonGreen onClick={ExportExcel}>Export Excel</ButtonGreen>
 
             <Select
               styles={{
