@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LoadingButtonClip2 } from "./Loading";
 import { TbPrinter } from "react-icons/tb";
+import useToast from '@/components/global/Toast';
 
 interface button {
     onClick?: () => void;
@@ -23,8 +24,8 @@ interface ButtonCetak {
 }
 export const ButtonCetak: React.FC<ButtonCetak> = ({ jenis, disabled, tahun, kode_opd, pokin_id, text }) => {
 
-    const router = useRouter();
     const [Loading, setLoading] = useState<boolean>(false);
+    const { toastSuccess, toastError, toastWarning } = useToast();
 
     const useCetak = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_CETAK;
@@ -50,13 +51,14 @@ export const ButtonCetak: React.FC<ButtonCetak> = ({ jenis, disabled, tahun, kod
                 body: JSON.stringify(getBody())
             });
             const result = await response.json();
-            if (result.code === 200) {
-                router.push(`${result.data}`)
-            } else {
-                alert("error");
+            if (!response.ok) {
+                throw new Error("Generate PDF gagal");
             }
+
+            window.open(result.data, "_blank", "noopener,noreferrer");
+
         } catch (err) {
-            console.log(err);
+            toastError("❌ Gagal membuat dokumen. Silakan coba beberapa saat lagi.")
         } finally {
             setLoading(false);
         }
@@ -65,16 +67,21 @@ export const ButtonCetak: React.FC<ButtonCetak> = ({ jenis, disabled, tahun, kod
     return (
         <button
             className={`px-3 flex gap-1 justify-center items-center py-1 bg-gradient-to-r border-2 border-[#60241E] hover:bg-[#60241E] text-[#60241E] hover:text-white rounded-lg`}
-            disabled={disabled}
+            disabled={disabled || Loading}
             type="button"
             onClick={useCetak}
         >
-            {Loading ?
-                <LoadingButtonClip2 />
-                :
-                <TbPrinter />
-            }
-            {text || "cetak"}
+            {Loading ? (
+                <>
+                    <LoadingButtonClip2 />
+                    Menyiapkan...
+                </>
+            ) : (
+                <>
+                    <TbPrinter />
+                    {text ?? "Cetak"}
+                </>
+            )}
         </button>
     )
 }
