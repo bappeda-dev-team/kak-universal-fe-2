@@ -2,7 +2,7 @@ export interface TargetTujuan {
     id: number;
     satuan: string;
     tahun: string;
-    target: any;
+    target: number;
 }
 
 export interface IndikatorTujuan {

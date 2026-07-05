@@ -13,11 +13,12 @@ import { IndikatorTujuan, TargetTujuan } from "../type";
 interface FormValue {
     targets: Targets[];
 }
-interface Targets {
+interface Targets extends TargetTujuan {
+    kode_indikator?: string;
+    tahun: string;
     id: number,
     target: number;
     satuan: string;
-    tahun: string;
 }
 interface modal {
     isOpen: boolean;
@@ -41,17 +42,27 @@ export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indi
         formState: { errors },
     } = useForm<FormValue>({
         defaultValues: {
-            targets: target_edit.length != 0
-                ? target_edit.map((t: TargetTujuan) => ({
-                    kode_indikator: indikator?.kode_indikator || '',
-                    tahun: t.tahun || tahun,
-                    target: t.target || 0,
-                    satuan: t.satuan || "",
-                }))
+            targets: metode === "edit"
+                ? (target_edit && target_edit.length > 0
+                    ? target_edit.map((t: TargetTujuan) => ({
+                        id: t.id || 0,
+                        target: t.target || 0,
+                        satuan: t.satuan || "",
+                    }))
+                    : [
+                        {
+                            id: 0,
+                            kode_indikator: indikator?.kode_indikator || '',
+                            tahun: tahun || '',
+                            target: 0,
+                            satuan: "",
+                        }
+                    ]
+                )
                 : [
                     {
                         kode_indikator: indikator?.kode_indikator || '',
-                        tahun: tahun,
+                        tahun: tahun || '',
                         target: 0,
                         satuan: "",
                     }
@@ -87,7 +98,7 @@ export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indi
         const formDataEdit = {
             //key : value
             targets: data.targets.map((t) => ({
-                id: 0,
+                id: t.id,
                 target: Number(t.target),
                 satuan: t.satuan,
                 tahun: tahun,
@@ -96,9 +107,13 @@ export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indi
         const getBody = () => {
             if (metode === "tambah") return formDataTambah;
             if (metode === "edit") return formDataEdit;
-            return {}; // Default jika metode tidak sesuai
+            return {};
         };
-        // console.log(formData);
+        // if(metode === "tambah"){
+        //     console.log(formDataTambah);
+        // } else {
+        //     console.log(formDataEdit);
+        // }
         try {
             setProses(true);
             let url = ""
@@ -113,7 +128,7 @@ export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indi
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(getBody),
+                body: JSON.stringify(getBody()),
             });
             if (response.ok) {
                 AlertNotification("Berhasil", "Berhasil mengubah Permasalahan", "success", 1000);
@@ -205,6 +220,7 @@ export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indi
                                             render={({ field }) => (
                                                 <input
                                                     {...field}
+                                                    type="number"
                                                     className="border px-4 py-2 rounded-lg"
                                                     placeholder="Masukkan Target"
                                                 />

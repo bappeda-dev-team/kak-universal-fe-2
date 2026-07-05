@@ -12,10 +12,9 @@ import { ModalTargetRPJMD } from "./ModalTargetRPJMD";
 interface table {
     tahun: number;
     menu: "ranwal" | "rankhir" | "penetapan";
-    jenis_periode: string;
 }
 
-const TableTujuan: React.FC<table> = ({ tahun, menu, jenis_periode }) => {
+const TableTujuan: React.FC<table> = ({ tahun, menu }) => {
 
     const [Tujuan, setTujuan] = useState<TujuanPemdaRKPD[]>([]);
 
@@ -54,7 +53,7 @@ const TableTujuan: React.FC<table> = ({ tahun, menu, jenis_periode }) => {
         const fetchTujuanPemda = async () => {
             setLoading(true)
             try {
-                const response = await fetch(`${API_URL}/tujuan_pemda/${menu}/${tahun}/${jenis_periode}`, {
+                const response = await fetch(`${API_URL}/tujuan_pemda/${menu}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -87,7 +86,7 @@ const TableTujuan: React.FC<table> = ({ tahun, menu, jenis_periode }) => {
         }
         fetchTujuanPemda();
 
-    }, [token, FetchTrigger, tahun, menu, jenis_periode]);
+    }, [token, FetchTrigger, tahun, menu]);
 
     if (Loading) {
         return (
@@ -148,7 +147,7 @@ const TableTujuan: React.FC<table> = ({ tahun, menu, jenis_periode }) => {
                             :
                             Tujuan.map((data: any, index: number) => {
 
-                                const rs = data?.indikator.length === 0 ? 2 : data.indikator.length + 2;
+                                const rs = data?.indikator.length === 0 ? 2 : data.indikator.length + 1;
 
                                 return (
                                     <React.Fragment key={index}>
@@ -161,7 +160,7 @@ const TableTujuan: React.FC<table> = ({ tahun, menu, jenis_periode }) => {
                                         </tr>
                                         {data.indikator.length === 0 ?
                                             <tr>
-                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-red-400" colSpan={7}>tidak ada indikator</td>
+                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-red-400" colSpan={9}>tidak ada indikator</td>
                                             </tr>
                                             :
                                             data.indikator.map((i: IndikatorTujuan, i_index: number) => (
