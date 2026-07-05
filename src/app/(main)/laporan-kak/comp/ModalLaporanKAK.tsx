@@ -1,20 +1,33 @@
+'use client'
+
+import useSWR from "swr";
 import React from "react";
+import { RincianRekin } from "../type";
 import { TbX } from "react-icons/tb";
+import { api } from "../service";
 import { RekinComponent } from "./Rekin";
 import { SubKegiatanComponent } from "./SubKegiatanComponent";
 import { RenaksiComponent } from "./RenaksiComponent";
 import { DasarHukumComponent } from "./DasarHukumComponent";
 import { GambaranUmumComponent } from "./GambaranUmumComponent";
 import { PermasalahanRekinComponent } from "./PermasalahanRekinComponent";
+import { LoadingBeat } from "@/components/global/Loading";
 
 interface modal {
     isOpen: boolean;
     onClose: () => void;
     id: string;
+    nip: string;
 }
 
+export const ModalLaporanKAK: React.FC<modal> = ({ isOpen, onClose, id, nip }) => {
 
-export const ModalLaporanKAK: React.FC<modal> = ({ isOpen, onClose, id }) => {
+    const shouldFetch = Boolean(id && nip);
+
+    const { data = [], isLoading } = useSWR(
+        shouldFetch ? ["rincian-kak", nip, id] : null,
+        () => api.rincian_kak.findall({ nip, id }), { revalidateOnFocus: false }
+    );
 
     const Dummy = {
         "rencana_kinerja": {
@@ -360,7 +373,7 @@ export const ModalLaporanKAK: React.FC<modal> = ({ isOpen, onClose, id }) => {
         return (
             <div className="fixed inset-0 flex items-center justify-center z-50">
                 <div className="fixed inset-0 bg-black opacity-30" onClick={onClose}></div>
-                <div className={`bg-white rounded-lg z-10 w-5/6 max-h-[90%] overflow-auto`}>
+                <div className={`bg-white rounded-lg z-10 w-5/6 h-[90%] overflow-auto`}>
                     <div className="flex justify-between w-max-[500px] p-5 border-b border-emerald-700">
                         <h1 className="text-xl uppercase text-center font-bold">Detail Rencana Kinerja</h1>
                         <button
@@ -370,30 +383,37 @@ export const ModalLaporanKAK: React.FC<modal> = ({ isOpen, onClose, id }) => {
                             <TbX />
                         </button>
                     </div>
-                    <div className="flex flex-col mx-5 py-5 gap-2">
-                        {Dummy.subkegiatan ? 
-                            <SubKegiatanComponent data={Dummy.subkegiatan[0]}/>
-                        :
-                            <p>Sub Kegiatan Kosong</p>
-                        }
-                        {Dummy.rencana_kinerja ?
-                            <RekinComponent data={Dummy.rencana_kinerja} />
-                            :
-                            <p>Rencana Kinerja Kosong</p>
-                        }
-                        {Dummy.rencana_aksis &&
-                            <RenaksiComponent data={Dummy.rencana_aksis}/>
-                        }
-                        {Dummy.dasar_hukum &&
-                            <DasarHukumComponent data={Dummy.dasar_hukum} />
-                        }
-                        {Dummy.gambaran_umum &&
-                            <GambaranUmumComponent data={Dummy.gambaran_umum}/>
-                        }
-                        {Dummy.permasalahan &&
-                            <PermasalahanRekinComponent data={Dummy.permasalahan} />
-                        }
-                    </div>
+                    {isLoading ? 
+                        <div className="w-full h-[90%] flex flex-col items-center justify-center">
+                            <LoadingBeat />
+                            <p className="text-slate-600">Memuat data detail rincian rencana kinerja</p>
+                        </div>
+                    :
+                        <div className="flex flex-col mx-5 py-5 gap-2">
+                            {data[0].subkegiatan ?
+                                <SubKegiatanComponent data={data[0].subkegiatan[0]} />
+                                :
+                                <p className="p-5 border border-red-400 text-red-400 font-semibold text-center rounded-lg">Sub Kegiatan Belum Di Pilih</p>
+                            }
+                            {data[0].rencana_kinerja ?
+                                <RekinComponent data={data[0].rencana_kinerja} />
+                                :
+                                <p>Rencana Kinerja Kosong</p>
+                            }
+                            {data[0].rencana_aksis &&
+                                <RenaksiComponent data={data[0].rencana_aksis} />
+                            }
+                            {data[0].dasar_hukum &&
+                                <DasarHukumComponent data={data[0].dasar_hukum} />
+                            }
+                            {data[0].gambaran_umum &&
+                                <GambaranUmumComponent data={data[0].gambaran_umum} />
+                            }
+                            {data[0].permasalahan &&
+                                <PermasalahanRekinComponent data={data[0].permasalahan} />
+                            }
+                        </div>
+                    }
                 </div>
             </div>
         )

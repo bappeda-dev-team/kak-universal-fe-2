@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { OpdTahunNull, TahunNull } from "@/components/global/OpdTahunNull";
 import { IsLoadingBranding } from "@/components/global/Loading";
 import { useBrandingContext } from "@/context/BrandingContext";
-import Table from "./comp/Table";
+import CardPage from "./comp/CardPage";
 
 const LaporanKakPage = () => {
 
@@ -18,7 +18,6 @@ const LaporanKakPage = () => {
 
     useEffect(() => {
         setLoading(true);
-
         try {
             const fetchUser = getUser();
             const fetchOpdtahun = getOpdTahun();
@@ -43,6 +42,7 @@ const LaporanKakPage = () => {
     const kode_opd = (User?.roles == 'super_admin' || User?.roles == 'reviewer') ? SelectedOpd?.value : User?.kode_opd
     const nama_opd = (User?.roles == 'super_admin' || User?.roles == 'reviewer') ? SelectedOpd?.label : User?.nama_opd
     const tahun = branding?.tahun?.value || 0;
+
 
     if (Loading || LoadingBranding) {
         return <IsLoadingBranding />;
@@ -74,7 +74,7 @@ const LaporanKakPage = () => {
                         <h1 className="uppercase font-bold ml-1">Tahun {tahun || "-"}</h1>
                     </div>
                 </div>
-                <Table tahun={tahun} kode_opd={kode_opd} nama_opd={nama_opd} />
+                <CardPage nama_opd={nama_opd} kode_opd={kode_opd} tahun={tahun}/>
             </div>
         </>
     )

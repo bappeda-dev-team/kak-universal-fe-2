@@ -87,7 +87,7 @@ export const ModalPermasalahan: React.FC<modal> = ({ kode_opd, tahun, isOpen, on
         if (jenis === "edit") {
             fetchId();
         }
-    }, [id, token, jenis]);
+    }, [id, token, jenis, reset]);
 
     const fetchPermasalahanTerpilih = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN;

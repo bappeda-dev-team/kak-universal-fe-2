@@ -1,34 +1,29 @@
 'use client'
 
-import React, { useState, useEffect } from "react";
-import { LoadingClip } from "@/components/global/Loading";
-import { getToken } from "@/components/lib/Cookie";
+import React, { useState } from "react";
 import { LaporanKak, Rekin } from "../type";
 import { TbFileSearch } from "react-icons/tb";
 import { ModalLaporanKAK } from "./ModalLaporanKAK";
 
 interface Table {
-    tahun: number;
-    kode_opd: string;
-    nama_opd: string
+    nama_opd: string;
+    data: Rekin[];
 }
 
-const Table: React.FC<Table> = ({ tahun, kode_opd, nama_opd }) => {
-
-    const [Opd, setOpd] = useState<LaporanKak[]>([]);
-    const [Error, setError] = useState<boolean | null>(null);
-    const [Loading, setLoading] = useState<boolean | null>(null);
-    const token = getToken();
+const Table: React.FC<Table> = ({ data, nama_opd }) => {
 
     const [ModalOpen, setModalOpen] = useState<boolean>(false);
     const [IdRekin, setIdRekin] = useState<string>("");
+    const [Nip, setNip] = useState<string>("");
 
-    const handleModal = (id: string) => {
+    const handleModal = (id: string, nip: string) => {
         if (ModalOpen) {
             setIdRekin(id);
+            setNip(nip);
             setModalOpen(false);
         } else {
             setIdRekin(id);
+            setNip(nip);
             setModalOpen(true);
         }
     }
@@ -112,20 +107,6 @@ const Table: React.FC<Table> = ({ tahun, kode_opd, nama_opd }) => {
         }
     ]
 
-    if (Loading) {
-        return (
-            <div className="border p-5 rounded-xl shadow-xl">
-                <LoadingClip className="mx-5 py-5" />
-            </div>
-        );
-    } else if (Error) {
-        return (
-            <div className="border p-5 rounded-xl shadow-xl">
-                <h1 className="text-red-500 mx-5 py-5">Periksa koneksi internet atau database server</h1>
-            </div>
-        )
-    }
-
     return (
         <>
             <div className="overflow-auto m-2 rounded-t-xl border">
@@ -134,56 +115,52 @@ const Table: React.FC<Table> = ({ tahun, kode_opd, nama_opd }) => {
                         <tr className="bg-emerald-500 text-white">
                             <th className="border-r border-b px-6 py-3 w-[50px]">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pegawai</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pohon</th>
                             <th colSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rencana Kinerja</th>
                             <th className="border-r border-b px-6 py-3 min-w-[150px]">Nama OPD</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {Dummy.length === 0 ?
+                        {data.length === 0 ?
                             <tr>
                                 <td className="px-6 py-3 uppercase" colSpan={13}>
                                     Data Laporan Rencana Kinerja (KAK) di OPD {nama_opd || "unknown"} Kosong
                                 </td>
                             </tr>
                             :
-                            Dummy.map((item: LaporanKak, index: number) => {
+                            data.map((item: Rekin, index: number) => {
 
-                                const totalRow = item.rencana_kinerja.length === 0 ? 2 : item.rencana_kinerja.length + 1;
+                                // const totalRow = item.rencana_kinerja.length === 0 ? 2 : item.rencana_kinerja.length + 1;
 
                                 return (
                                     <React.Fragment key={index}>
                                         <tr>
-                                            <td rowSpan={totalRow} className="border-r border-b border-emerald-500 px-6 py-4">{index + 1}</td>
-                                            <td rowSpan={totalRow} className="border-r border-b border-emerald-500 px-6 py-4">
+                                            <td className="border-r border-b border-emerald-500 px-6 py-4">{index + 1}</td>
+                                            <td className="border-r border-b border-emerald-500 px-6 py-4">
                                                 <div className="flex flex-col gap-1">
                                                     <p className="font-bold">{item.nama_pegawai || "unknown"}</p>
-                                                    <p className="font-light text-slate-500">{item.nip || "nip unknown"}</p>
+                                                    <p className="font-light text-slate-500">{item.pegawai_id || "nip unknown"}</p>
                                                 </div>
                                             </td>
+                                            <td className="border-r border-b border-emerald-500 px-6 py-4">
+                                                {item.nama_pohon ? 
+                                                    <p>{item.nama_pohon || "-"}</p>
+                                                    :
+                                                    <p className="italic font-light text-red-400">Pohon Kinerja Kosong / Telah Di Hapus</p>
+                                                }
+                                            </td>
+                                            <td className="border-r border-b border-emerald-500 px-6 py-4">{item.nama_rencana_kinerja || "-"}</td>
+                                            <td className="border-r border-b border-emerald-500 text-center p-2">
+                                                <button
+                                                    className="p-1 border border-emerald-500 rounded-full text-emerald-500 hover:text-white hover:bg-emerald-400 hover:border-emerald-400"
+                                                    title="Lihat Detail Rencana Kinerja"
+                                                    onClick={() => handleModal(item.id_rencana_kinerja, item.pegawai_id)}
+                                                >
+                                                    <TbFileSearch />
+                                                </button>
+                                            </td>
+                                            <td className="border-r border-b border-emerald-500 px-6 py-4">{item.operasional_daerah.nama_opd || "unknown"}</td>
                                         </tr>
-                                        {item.rencana_kinerja.length === 0 ?
-                                            <tr>
-                                                <td className="px-6 py-3 uppercase bg-red-400 text-white border border-emerald-500" colSpan={3}>
-                                                    Rencana Kinerja Kosong
-                                                </td>
-                                            </tr>
-                                            :
-                                            item.rencana_kinerja.map((rk: Rekin, rk_index: number) => (
-                                                <tr key={rk_index}>
-                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{rk.nama_rencana_kinerja || "-"}</td>
-                                                    <td className="border-r border-b border-emerald-500 text-center p-2">
-                                                        <button
-                                                            className="p-1 border border-emerald-500 rounded-full text-emerald-500 hover:text-white hover:bg-emerald-400 hover:border-emerald-400"
-                                                            title="Lihat Detail Rencana Kinerja"
-                                                            onClick={() => handleModal(rk.id_rencana_kinerja)}
-                                                        >
-                                                            <TbFileSearch />
-                                                        </button>
-                                                    </td>
-                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{rk.operasional_daerah.nama_opd || "unknown"}</td>
-                                                </tr>
-                                            ))
-                                        }
                                     </React.Fragment>
                                 )
                             })
@@ -191,7 +168,7 @@ const Table: React.FC<Table> = ({ tahun, kode_opd, nama_opd }) => {
                     </tbody>
                 </table>
             </div>
-            <ModalLaporanKAK isOpen={ModalOpen} onClose={() => handleModal("")} id={IdRekin} />
+            <ModalLaporanKAK isOpen={ModalOpen} onClose={() => handleModal("", "")} id={IdRekin} nip={Nip}/>
         </>
     )
 }

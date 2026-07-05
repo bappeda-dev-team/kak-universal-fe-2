@@ -22,6 +22,7 @@
     "react-select": "^5.8.1",
     "react-spinners": "^0.14.1",
     "sweetalert2": "^11.6.13",
+    "swr": "^2.4.2",
     "treeflex": "^2.0.1"
   },
   "devDependencies": {

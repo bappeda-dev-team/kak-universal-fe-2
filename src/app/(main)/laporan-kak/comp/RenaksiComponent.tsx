@@ -29,22 +29,28 @@ export const RenaksiComponent: React.FC<RenaksiComponent> = ({ data }) => {
                         </tr>
                     </thead>
                     <tbody className="text-sm">
-                        {data.rencana_aksi.map((data: Renaksi, index: number) => (
-                            <tr key={data.id}>
-                                <td className="border-r border-b border-emerald-500 py-4 text-center">{index + 1}</td>
-                                <td className="border-r border-b border-emerald-500 px-6 py-4">{data.nama_rencana_aksi || "-"}</td>
-                                {/* BOBOT PELAKSANAAN */}
-                                {data.pelaksanaan.map((p: Pelaksanaan, index: number) => (
-                                    <td colSpan={3} key={p.id && p.id.trim() !== "" ? p.id : index} className="border-r border-b border-emerald-500 px-6 py-4 text-center">
-                                        {p.bobot === 0 ? "-" : p.bobot}
-                                    </td>
-                                ))}
-                                {/* TOTAL TAHAPAN */}
-                                <td className="border-r border-b px-6 py-4 text-white bg-emerald-500 text-center">
-                                    {data.jumlah_bobot}
-                                </td>
+                        {data.rencana_aksi === null ? 
+                            <tr>
+                                <td colSpan={30} className="py-4 px-6 text-red-400">Rencana Aksi Kosong</td>
                             </tr>
-                        ))}
+                        :
+                            data.rencana_aksi.map((data: Renaksi, index: number) => (
+                                <tr key={data.id}>
+                                    <td className="border-r border-b border-emerald-500 py-4 text-center">{index + 1}</td>
+                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{data.nama_rencana_aksi || "-"}</td>
+                                    {/* BOBOT PELAKSANAAN */}
+                                    {data.pelaksanaan.map((p: Pelaksanaan, index: number) => (
+                                        <td colSpan={3} key={p.id && p.id.trim() !== "" ? p.id : index} className="border-r border-b border-emerald-500 px-6 py-4 text-center">
+                                            {p.bobot === 0 ? "-" : p.bobot}
+                                        </td>
+                                    ))}
+                                    {/* TOTAL TAHAPAN */}
+                                    <td className="border-r border-b px-6 py-4 text-white bg-emerald-500 text-center">
+                                        {data.jumlah_bobot}
+                                    </td>
+                                </tr>
+                            ))
+                        }
                         {/* TOTAL BULAN */}
                         <tr className="bg-emerald-500 text-white">
                             <td colSpan={2} className="border-r border-y px-6 py-1">

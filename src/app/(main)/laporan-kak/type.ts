@@ -1,3 +1,10 @@
+export interface WebResponse<T> {
+    code: number;
+    status: string;
+    message: string;
+    rencana_kinerja: T;
+}
+
 export interface LaporanKak {
     nama_pegawai: string;
     nip: string;
@@ -23,11 +30,11 @@ export interface Rekin {
 
 export interface RincianRekin {
     rencana_kinerja: Rekin;
-    rencana_aksis: Renaksi;
-    subkegiatan: any;
-    permasalahan: any;
-    dasar_hukum: any;
-    gambaran_umum: any;
+    rencana_aksis: RencanaAksi;
+    subkegiatan: SubKegiatan[];
+    permasalahan: Permasalahan[];
+    dasar_hukum: DasarHukum[];
+    gambaran_umum: GambaranUmum[];
     inovasi: any;
 }
 export interface TargetIndikatorRenkin {
