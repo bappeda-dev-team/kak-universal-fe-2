@@ -36,4 +36,5 @@ export interface TujuanPemdaRKPD {
     tematik_id: number;
     tujuan_pemda: string;
     visi: string;
+    is_lock?: boolean;
 }
