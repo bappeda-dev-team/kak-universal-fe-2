@@ -5,13 +5,14 @@ import { FiHome } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import Table from "./comp/Table";
 import TableIsu from "./comp/TableIsu";
-import TableTujuan from "./comp/TableTujuan";
+import TableTujuan from "./comp/TablePermasalahan";
 import { LoadingClip } from "@/components/global/Loading";
 import { getToken } from "@/components/lib/Cookie";
 import { StrategicArahKebijakan } from "./type";
 import { ButtonGreen } from "@/components/global/Button";
 import { AlertNotification } from "@/components/global/Alert";
 import { useRouter } from "next/navigation";
+import TablePermasalahan from "./comp/TablePermasalahan";
 
 const StrategiArahKebijakanPage = () => {
   const { branding } = useBrandingContext();
@@ -145,8 +146,8 @@ const StrategiArahKebijakanPage = () => {
           <ButtonGreen onClick={ExportExcel}>Export Excel</ButtonGreen>
         </div>
         <div className="mx-3 mb-3">
+          <TablePermasalahan Data={Data?.permasalahan_opds || []} />
           <TableIsu Data={Data?.isu_strategis_opds || []} />
-          <TableTujuan Data={Data?.tujuan_opd || []} />
           <Table Data={Data?.strategi_arah_kebijakan_opds || []} />
         </div>
       </div>

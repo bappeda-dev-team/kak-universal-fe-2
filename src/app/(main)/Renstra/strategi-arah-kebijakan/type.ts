@@ -2,8 +2,8 @@ export interface StrategicArahKebijakan {
   kode_opd: string;
   nama_opd: string;
   tahun: string;
+  permasalahan_opds: PermasalahanOpd[];
   isu_strategis_opds: IsuStrategisOpd[];
-  tujuan_opd: TujuanOpd[];
   strategi_arah_kebijakan_opds: ArahKebijakan[];
 }
 
@@ -11,10 +11,8 @@ export interface IsuStrategisOpd {
   nama_isu_strategis: string;
 }
 
-export interface TujuanOpd {
-  id: number;
-  kode_opd: string;
-  tujuan: string;
+export interface PermasalahanOpd {
+  permasalahan: string;
 }
 
 export interface ArahKebijakan {
