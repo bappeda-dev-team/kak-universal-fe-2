@@ -12,7 +12,7 @@ import {
   TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus, TbDeviceImacDollar,
   TbFocus2, TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbFileImport,
   TbFileCheck, TbRubberStamp, TbAB2, TbDice4Filled, TbCircleFilled, TbLockSquareRounded, TbLockSquare,
-  TbUserSearch, TbLockSquareRoundedFilled
+  TbUserSearch, TbLockSquareRoundedFilled, TbUserQuestion
 } from "react-icons/tb";
 import Image from 'next/image';
 import { usePathname, useParams } from 'next/navigation';
@@ -406,8 +406,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </li>
               </Link>
               <Link href="/DataMaster/history-pegawai">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/masterpegawai" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                  <TbUsers className="text-xl" />
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/history-pegawai" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbUserQuestion className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>History Pegawai</span>
                 </li>
               </Link>

@@ -2,7 +2,7 @@ export interface TargetTujuan {
     id: number;
     satuan: string;
     tahun: string;
-    target: any;
+    target: number;
 }
 
 export interface IndikatorTujuan {
@@ -36,4 +36,5 @@ export interface TujuanPemdaRKPD {
     tematik_id: number;
     tujuan_pemda: string;
     visi: string;
+    is_lock?: boolean;
 }
