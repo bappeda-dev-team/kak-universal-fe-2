@@ -26,6 +26,10 @@ export interface ArahKebijakan {
 
 export interface SasaranPemda {
   sasaran_pemda: string;
+  strategi_pemdas: StrategiPemda[];
+}
+
+export interface StrategiPemda {
   strategi_pemda: string;
   arah_kebijakan_pemdas: ArahKebijakanPemda[];
 }

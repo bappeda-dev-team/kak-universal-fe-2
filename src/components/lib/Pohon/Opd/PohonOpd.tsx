@@ -16,6 +16,7 @@ import { LoadingClip } from '@/components/global/Loading';
 import { FormAmbilPohonOpd } from './FormAmbilPohonOpd';
 import { useBrandingContext } from '@/context/BrandingContext';
 import { IkkFindall } from '@/app/(main)/DataMaster/ikk/type';
+import Link from 'next/link';
 
 interface pohon {
     tema: any;
@@ -592,13 +593,12 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                             ${tema.jenis_pohon === "Operational N" && 'border-green-500'}
                                     `}
                                 >
-                                    <ButtonSky
-                                        className='flex items-center gap-1'
-                                        onClick={() => setIsCetak(true)}
-                                    >
-                                        <TbPrinter />
-                                        Cetak
-                                    </ButtonSky>
+                                    <Link href={`/cetak/pohon-kinerja/${tema.id}`} target="_blank" rel="noopener noreferrer">
+                                        <ButtonSky className='flex items-center gap-1'>
+                                            <TbPrinter />
+                                            Cetak
+                                        </ButtonSky>
+                                    </Link>
                                     <ButtonSkyBorder
                                         onClick={() => handleDetailCross()}
                                     >

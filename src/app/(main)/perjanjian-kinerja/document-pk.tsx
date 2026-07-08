@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Image as PdfImage } from '@react-pdf/renderer';
 import NamaJabatan from '@/components/cetak/nama-jabatan';
 import TTD from '@/components/cetak/tanda-tangan';
 import TableRekin from '@/components/cetak/table-rekin';
@@ -120,7 +120,7 @@ const DocumentPk: React.FC<DocumentProps> = ({ branding, data }) => {
         <Document title='dokumen perjanjian kinerja'>
             <Page size="A4" style={styles.page}>
                 <View style={styles.logoContainer}>
-                    <Image
+                    <PdfImage
                         src={logoBase64}
                         style={styles.logoImage}
                     />

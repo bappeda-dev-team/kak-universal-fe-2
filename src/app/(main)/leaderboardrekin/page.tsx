@@ -46,11 +46,6 @@ const ControlPokin = () => {
                     <p className="mr-1">/ Laporan</p>
                     <p>/ Control Pokin</p>
                 </div>
-                {branding?.user === null ?
-                    <p>Harus Reload</p>
-                    :
-                    <p>isi branding {branding?.user?.nama_pegawai || ""}</p>
-                }
                 <div className="mt-3 rounded-xl shadow-lg border">
                     <div className="flex flex-wrap items-center justify-between border-b px-5 py-5">
                         <h1 className="font-bold text-lg uppercase">Leaderboard Rekin {branding?.tahun?.label}</h1>

@@ -9,6 +9,7 @@ import { TahunNull } from "@/components/global/OpdTahunNull";
 import { getToken, getUser } from "@/components/lib/Cookie";
 import { TbPencil, TbTrash, TbCirclePlus } from "react-icons/tb";
 import { ModalMisi } from "./ModalMisi";
+import { useRouter } from "next/navigation";
 import Select from 'react-select';
 
 interface OptionTypeString {
@@ -51,7 +52,13 @@ const Table = () => {
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [Tahun, setTahun] = useState<any>(null);
     const [User, setUser] = useState<any>(null);
+    const router = useRouter();
     const token = getToken();
+
+    const jenisOption = [
+        { label: "RPJMD", value: "RPJMD" },
+        { label: "RPD", value: "RPD" }
+    ];
 
     useEffect(() => {
         const data = getOpdTahun();
@@ -68,47 +75,41 @@ const Table = () => {
         }
     }, []);
 
-    const jenisOption = [
-        { label: "RPJMD", value: "RPJMD" },
-        { label: "RPD", value: "RPD" }
-    ];
-
     useEffect(() => {
-        if(JenisPeriode != null){
+        const fetchMisi = async (jenis: string) => {
+            const API_URL = process.env.NEXT_PUBLIC_API_URL;
+            try {
+                setLoading(true);
+                const response = await fetch(`${API_URL}/misi_pemda/findall/tahun/${Tahun?.value}/jenisperiode/${jenis}`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                const data = result.data;
+                // console.log(data);
+                if (data.length === 0) {
+                    setDataNull(true);
+                    setMisi([]);
+                } else if (result.code == 500) {
+                    setPeriodeNotFound(true);
+                    setMisi([]);
+                } else {
+                    setDataNull(false);
+                    setMisi(data);
+                }
+            } catch (err) {
+                setError(true);
+                console.error(err)
+            } finally {
+                setLoading(false);
+            }
+        }
+        if (JenisPeriode != null) {
             fetchMisi(JenisPeriode ? JenisPeriode?.value : "RPJMD");
         }
-    }, [FetchTrigger, JenisPeriode])
-
-    const fetchMisi = async (jenis: string) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try {
-            setLoading(true);
-            const response = await fetch(`${API_URL}/misi_pemda/findall/tahun/${Tahun?.value}/jenisperiode/${jenis}`, {
-                headers: {
-                    Authorization: `${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const result = await response.json();
-            const data = result.data;
-            // console.log(data);
-            if (data.length === 0) {
-                setDataNull(true);
-                setMisi([]);
-            } else if (result.code == 500) {
-                setPeriodeNotFound(true);
-                setMisi([]);
-            } else {
-                setDataNull(false);
-                setMisi(data);
-            }
-        } catch (err) {
-            setError(true);
-            console.error(err)
-        } finally {
-            setLoading(false);
-        }
-    }
+    }, [FetchTrigger, JenisPeriode, Tahun, token])
 
     const hapusMisi = async (id: number) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -125,7 +126,8 @@ const Table = () => {
                 alert("response !ok saat hapus data tujuan pemda")
             }
             AlertNotification("Berhasil", "Data Misi Berhasil Dihapus", "success", 1000);
-            fetchMisi(JenisPeriode ? JenisPeriode?.value : "RPJMD");
+            // fetchMisi(JenisPeriode ? JenisPeriode?.value : "RPJMD");
+            router.refresh()
             // setFetchTrigger((prev) => !prev);
         } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
@@ -202,9 +204,6 @@ const Table = () => {
                     }}
                     onChange={(option) => {
                         setJenisPeriode(option);
-                        if (option) {
-                            fetchMisi(option?.value);
-                        }
                     }}
                     isClearable
                     options={jenisOption}
@@ -252,7 +251,7 @@ const Table = () => {
                                             {data.misi_pemda.map((item: MisiPemda) => (
                                                 <React.Fragment key={item.id}>
                                                     <tr>
-                                                        <td className="border border-emerald-500 px-4 py-4 text-center">{index +1}.{item.urutan}</td>
+                                                        <td className="border border-emerald-500 px-4 py-4 text-center">{index + 1}.{item.urutan}</td>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-4">{item.misi}</td>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">{item.tahun_akhir_periode ? `${item.tahun_awal_periode} - ${item.tahun_akhir_periode} (${item.jenis_periode})` : "-"}</td>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-4">{item.keterangan || "-"}</td>

@@ -256,7 +256,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
-                    target: t.target,
+                    target: Number(t.target),
                     satuan: t.satuan,
                     tahun: tahun_list[index],
                 })),
@@ -265,6 +265,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
         const formDataEdit = {
             //key : value
             id: id,
+            tema_id: tema_id,
             periode_id: periode,
             tujuan_pemda: TujuanPemda,
             id_visi: Visi?.value,
@@ -274,7 +275,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
-                    target: t.target,
+                    target: Number(t.target),
                     satuan: t.satuan,
                     tahun: tahun_list[index],
                 })),

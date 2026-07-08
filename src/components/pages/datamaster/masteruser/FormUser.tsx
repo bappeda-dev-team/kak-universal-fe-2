@@ -1,7 +1,7 @@
 'use client'
 
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Select from 'react-select';
 import { ButtonGreen, ButtonRed } from "@/components/global/Button";
 import { LoadingClip, LoadingButtonClip } from "@/components/global/Loading";
@@ -153,26 +153,26 @@ export const FormUser = () => {
             }],
         };
         // console.log(formData);
-        try{
+        try {
             setProses(true);
             const response = await fetch(`${API_URL}/user/create`, {
                 method: "POST",
                 headers: {
-                  Authorization: `${token}`,
-                  'Content-Type': 'application/json',
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formData),
             });
             const data = await response.json();
-            if(data.code == 201 || data.code === 200){
+            if (data.code == 201 || data.code === 200) {
                 AlertNotification("Berhasil", "Berhasil menambahkan data user", "success", 1000);
                 router.push("/DataMaster/masteruser");
-            } else if(data.code == 400){
+            } else if (data.code == 400) {
                 AlertNotification("Gagal", `${data.data}`, "error", 3000, true);
             } else {
                 AlertNotification("Gagal", "terdapat kesalahan pada backend / database server", "error", 2000);
             }
-        } catch(err){
+        } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
         } finally {
             setProses(false);
@@ -498,10 +498,12 @@ export const FormEditUser = () => {
         }
     };
 
-    const activeOptions = [
-        { label: "Aktif", value: true },
-        { label: "Tidak Aktif", value: false },
-    ];
+    const activeOptions = useMemo(() => {
+        return [
+            { label: "Aktif", value: true },
+            { label: "Tidak Aktif", value: false },
+        ]
+    }, []);
 
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -538,7 +540,7 @@ export const FormEditUser = () => {
                         }
                         setNip(nip);
                     }
-                    if(data.role){
+                    if (data.role) {
                         const role = {
                             value: data.role[0].id,
                             label: data.role[0].role,
@@ -557,7 +559,7 @@ export const FormEditUser = () => {
             }
         }
         fetchUser();
-    }, [id, reset, token]);
+    }, [id, reset, token, activeOptions]);
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -574,26 +576,26 @@ export const FormEditUser = () => {
             }],
         };
         // console.log(formData);
-        try{
+        try {
             setProses(true);
             const response = await fetch(`${API_URL}/user/update/${id}`, {
                 method: "PUT",
                 headers: {
-                  Authorization: `${token}`,
-                  'Content-Type': 'application/json',
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formData),
             });
             const result = await response.json();
-            if(result.code === 200 || result.code === 201){
+            if (result.code === 200 || result.code === 201) {
                 AlertNotification("Berhasil", "Berhasil mengubah data user", "success", 1000);
                 router.push("/DataMaster/masteruser");
-            } else if(result.code === 400) {
+            } else if (result.code === 400) {
                 AlertNotification("Gagal", `${result.data}`, "error", 2000);
             } else {
                 AlertNotification("Gagal", "terdapat kesalahan pada backend / database server", "error", 2000);
             }
-        } catch(err){
+        } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
         } finally {
             setProses(false);
