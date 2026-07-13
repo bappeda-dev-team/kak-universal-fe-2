@@ -6,6 +6,8 @@ import { LoadingClip } from "@/components/global/Loading";
 import { AlertQuestion } from "@/components/global/Alert";
 import { getToken } from "@/components/lib/Cookie";
 import { TbLockOpen, TbLock, TbPencil } from "react-icons/tb";
+import { SasaranPemdaRKPD, IndikatorSasaran, TargetTujuan } from "../type";
+import { ModalTargetSasaranRKPD } from "./ModalTargetSasaranRKPD";
 
 interface table {
     tahun: number;
@@ -14,14 +16,36 @@ interface table {
 
 const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
 
-    const [Sasaran, setSasaran] = useState<any[]>([]);
+    const [Sasaran, setSasaran] = useState<SasaranPemdaRKPD[]>([]);
     const [Lock, setLock] = useState<boolean>(false);
     const token = getToken();
+
+    const [ModalOpen, setModalOpen] = useState<boolean>(false);
+    const [TargetAwal, setTargetAwal] = useState<TargetTujuan[]>([]);
+    const [TargetEdit, setTargetEdit] = useState<TargetTujuan[]>([]);
+    const [Indikator, setIndikator] = useState<IndikatorSasaran | null>(null);
+    const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
 
     const [Error, setError] = useState<boolean | null>(null);
     const [Loading, setLoading] = useState<boolean | null>(null);
     const [LoadingStatus, setLoadingStatus] = useState<boolean | null>(null);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+
+    const handleModal = (indikator: IndikatorSasaran | null, jenis: "tambah" | "edit", target_awal: TargetTujuan[], target_edit: TargetTujuan[]) => {
+        if (ModalOpen) {
+            setModalOpen(false);
+            setIndikator(indikator);
+            setJenisModal(jenis);
+            setTargetAwal(target_awal);
+            setTargetEdit(target_edit);
+        } else {
+            setModalOpen(true);
+            setIndikator(indikator);
+            setJenisModal(jenis);
+            setTargetAwal(target_awal);
+            setTargetEdit(target_edit);
+        }
+    }
 
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -38,7 +62,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                 const data = result.data;
                 if (data == null) {
                     setSasaran([]);
-                } else if (result.code == 200 || result.code == 201) {
+                } else if (result.code == 200) {
                     setSasaran(data);
                     setError(false);
                 } else {
@@ -53,8 +77,50 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                 setLoading(false);
             }
         }
+        const fetchStatusLock = async () => {
+            setLoadingStatus(true);
+            try {
+                const response = await fetch(`${API_URL}/sasaran_pemda/lock/${tahun}`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                const data = result.data.locked;
+                setLock(data);
+            } catch (err) {
+                setError(true);
+                console.error(err)
+            } finally {
+                setLoadingStatus(false);
+            }
+        }
+        if (menu === "penetapan") {
+            fetchStatusLock();
+        }
         fetchSasaran();
     }, [token, FetchTrigger, tahun, menu]);
+
+    const handleLock = async (metode: "POST" | "DELETE") => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        try {
+            const response = await fetch(`${API_URL}/sasaran_pemda/lock/${tahun}`, {
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+                method: metode,
+            });
+            const result = await response.json();
+            if (result.code === 200) {
+                setFetchTrigger((prev) => !prev);
+            }
+        } catch (err) {
+            setError(true);
+            console.error(err)
+        }
+    }
 
 
     if (Loading) {
@@ -97,7 +163,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                                                 className="flex items-center gap-1"
                                                 onClick={() => AlertQuestion("Buka Kunci / Unlock ?", "", "question", "Unlock", "Batal").then((result) => {
                                                     if (result.isConfirmed) {
-                                                        // handleLock("DELETE");
+                                                        handleLock("DELETE");
                                                     }
                                                 })}
                                             >
@@ -115,7 +181,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                                                 className="flex items-center gap-1"
                                                 onClick={() => AlertQuestion("Kunci / Lock ?", "", "question", "Lock", "Batal").then((result) => {
                                                     if (result.isConfirmed) {
-                                                        // handleLock("POST");
+                                                        handleLock("POST");
                                                     }
                                                 })}
                                             >
@@ -134,7 +200,6 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                         <thead>
                             <tr className="bg-emerald-500 text-white">
                                 <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
-                                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Strategic Pemda</th>
                                 <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Sasaran Pemda</th>
                                 <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</th>
                                 <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi Operational</th>
@@ -169,7 +234,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                                     </td>
                                 </tr>
                                 :
-                                Sasaran.map((data: any, index: number) => {
+                                Sasaran.map((data: SasaranPemdaRKPD, index: number) => {
 
                                     const rs = data?.indikator.length === 0 ? 2 : data.indikator.length + 1;
 
@@ -178,8 +243,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                                             {/* Baris Utama */}
                                             <tr>
                                                 <td rowSpan={rs} className="border-x border-b border-emerald-500 px-6 py-4 text-center">{index + 1}</td>
-                                                <td rowSpan={rs} className="border-r border-b border-emerald-500 px-6 py-4">{data.nama_tematik || "-"}</td>
-                                                <td rowSpan={rs} className="border-r border-b border-emerald-500 px-6 py-4">{data.tujuan_pemda || "-"}</td>
+                                                <td rowSpan={rs} className="border-r border-b border-emerald-500 px-6 py-4">{data.sasaran_pemda || "-"}</td>
                                             </tr>
                                             {data.indikator.length === 0 ?
                                                 <tr>
@@ -199,15 +263,15 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                                                                     onClick={() => {
                                                                         if (menu === "rankhir") {
                                                                             if (i.target_rankhir[0].id === 0) {
-                                                                                // handleModal(i, "tambah", i.target_ranwal, [])
+                                                                                handleModal(i, "tambah", i.target_ranwal, [])
                                                                             } else {
-                                                                                // handleModal(i, "edit", i.target_ranwal, i.target_rankhir)
+                                                                                handleModal(i, "edit", i.target_ranwal, i.target_rankhir)
                                                                             }
                                                                         } else {
                                                                             if (i.target_penetapan[0].id === 0) {
-                                                                                // handleModal(i, "tambah", i.target_rankhir, [])
+                                                                                handleModal(i, "tambah", i.target_rankhir, [])
                                                                             } else {
-                                                                                // handleModal(i, "edit", i.target_rankhir, i.target_penetapan)
+                                                                                handleModal(i, "edit", i.target_rankhir, i.target_penetapan)
                                                                             }
                                                                         }
 
@@ -219,7 +283,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                                                                 </ButtonGreenBorder>
                                                             </div>
                                                         </td>
-                                                        {i.target &&
+                                                        {(i.target) &&
                                                             i.target.map((t: any, t_index: number) => (
                                                                 <React.Fragment key={t_index}>
                                                                     <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
@@ -227,7 +291,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                                                                 </React.Fragment>
                                                             ))
                                                         }
-                                                        {i.target_ranwal &&
+                                                        {(i.target_ranwal) &&
                                                             i.target_ranwal.map((t: any, t_index: number) => (
                                                                 <React.Fragment key={t_index}>
                                                                     <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
@@ -235,7 +299,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                                                                 </React.Fragment>
                                                             ))
                                                         }
-                                                        {i.target_rankhir &&
+                                                        {(i.target_rankhir) &&
                                                             i.target_rankhir.map((t: any, t_index: number) => (
                                                                 <React.Fragment key={t_index}>
                                                                     <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
@@ -243,7 +307,7 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                                                                 </React.Fragment>
                                                             ))
                                                         }
-                                                        {i.target_penetapan &&
+                                                        {(i.target_penetapan) &&
                                                             i.target_penetapan.map((t: any, t_index: number) => (
                                                                 <React.Fragment key={t_index}>
                                                                     <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
@@ -262,6 +326,19 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
                     </table>
                 </div>
             </div>
+            {ModalOpen &&
+                <ModalTargetSasaranRKPD
+                    isOpen={ModalOpen}
+                    onClose={() => handleModal(null, "tambah", [], [])}
+                    indikator={Indikator}
+                    target_awal={TargetAwal}
+                    target_edit={TargetEdit}
+                    tahun={String(tahun)}
+                    fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                    jenis={menu}
+                    metode={JenisModal}
+                />
+            }
         </>
     )
 }
