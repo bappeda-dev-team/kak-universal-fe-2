@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Controller, SubmitHandler, useForm, useFieldArray } from "react-hook-form";
-import { ButtonSky, ButtonRed, ButtonBlackBorder } from '@/components/global/Button';
+import { ButtonSky, ButtonRed } from '@/components/global/Button';
 import { getToken } from "@/components/lib/Cookie";
 import { AlertNotification } from "@/components/global/Alert";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import { useBrandingContext } from "@/context/BrandingContext";
-import { TbCirclePlus, TbDeviceFloppy, TbTrash, TbX } from "react-icons/tb";
-import { IndikatorTujuan, TargetTujuan } from "../type";
+import { TbDeviceFloppy, TbX } from "react-icons/tb";
+import { IndikatorSasaran, TargetTujuan } from "../type";
 
 interface FormValue {
     targets: Targets[];
@@ -23,7 +23,7 @@ interface Targets extends TargetTujuan {
 interface modal {
     isOpen: boolean;
     onClose: () => void;
-    indikator: IndikatorTujuan | null;
+    indikator: IndikatorSasaran | null;
     target_awal: Targets[];
     target_edit: Targets[];
     tahun: string;
@@ -33,7 +33,7 @@ interface modal {
 
 }
 
-export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indikator, target_awal, target_edit, jenis, fetchTrigger, metode }) => {
+export const ModalTargetSasaranRKPD: React.FC<modal> = ({ tahun, isOpen, onClose, indikator, target_awal, target_edit, jenis, fetchTrigger, metode }) => {
 
     const {
         control,
@@ -118,9 +118,9 @@ export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indi
             setProses(true);
             let url = ""
             if (metode === "tambah") {
-                url = `tujuan_pemda/target/${jenis}/create`
+                url = `sasaran_pemda/target/${jenis}/create`
             } else {
-                url = `tujuan_pemda/target/${jenis}/update`
+                url = `sasaran_pemda/target/${jenis}/update`
             }
             const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
                 method: metode === "tambah" ? "POST" : "PUT",
@@ -131,7 +131,7 @@ export const ModalTargetRPJMD: React.FC<modal> = ({ tahun, isOpen, onClose, indi
                 body: JSON.stringify(getBody()),
             });
             if (response.ok) {
-                AlertNotification("Berhasil", "Berhasil mengubah Permasalahan", "success", 1000);
+                AlertNotification("Berhasil", "Berhasil mengubah Target Satuan", "success", 1000);
                 handleClose();
                 fetchTrigger();
             } else {

@@ -1,53 +1,13 @@
 'use client'
 
-import { ButtonRed, ButtonGreen, ButtonSky } from "@/components/global/Button";
-import React, { useEffect, useState } from "react";
+import { ButtonGreenBorder, ButtonBlack } from "@/components/global/Button";
+import React, { useState, useEffect } from "react";
 import { LoadingClip } from "@/components/global/Loading";
-import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
-import { getOpdTahun } from "@/components/lib/Cookie";
-import { TahunNull } from "@/components/global/OpdTahunNull";
-import { getToken, getUser } from "@/components/lib/Cookie";
-import { TbPencil, TbArrowBadgeDownFilled, TbTrash, TbCirclePlus } from "react-icons/tb";
-
-
-interface Target {
-    id: string;
-    target: string;
-    satuan: string;
-    tahun: string;
-}
-
-interface Indikator {
-    id: string;
-    indikator: string;
-    rumus_perhitungan: string;
-    definisi_operational: string;
-    sumber_data: string;
-    target: Target[];
-}
-
-interface SasaranPemda {
-    id_sasaran_pemda: number;
-    sasaran_pemda: string;
-    indikator: Indikator[];
-}
-
-interface SubTematik {
-    subtematik_id: number;
-    nama_subtematik: string;
-    jenis_pohon: string;
-    level_pohon: number;
-    is_active: boolean;
-    tahun: string;
-    sasaran_pemda: SasaranPemda[];
-}
-
-interface Sasaran {
-    tematik_id: number;
-    nama_tematik: string;
-    tahun: string;
-    subtematik: SubTematik[];
-}
+import { AlertQuestion } from "@/components/global/Alert";
+import { getToken } from "@/components/lib/Cookie";
+import { TbLockOpen, TbLock, TbPencil } from "react-icons/tb";
+import { SasaranPemdaRKPD, IndikatorSasaran, TargetTujuan } from "../type";
+import { ModalTargetSasaranRKPD } from "./ModalTargetSasaranRKPD";
 
 interface table {
     tahun: number;
@@ -56,71 +16,112 @@ interface table {
 
 const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
 
-    const [Data, setData] = useState<Sasaran[]>([]);
-
-    const [User, setUser] = useState<any>(null);
-    const [SelectedOpd, setSelectedOpd] = useState<any>(null);
-    const [Tahun, setTahun] = useState<any>(null);
+    const [Sasaran, setSasaran] = useState<SasaranPemdaRKPD[]>([]);
+    const [Lock, setLock] = useState<boolean>(false);
     const token = getToken();
 
-    const [PeriodeNotFound, setPeriodeNotFound] = useState<boolean | null>(null);
+    const [ModalOpen, setModalOpen] = useState<boolean>(false);
+    const [TargetAwal, setTargetAwal] = useState<TargetTujuan[]>([]);
+    const [TargetEdit, setTargetEdit] = useState<TargetTujuan[]>([]);
+    const [Indikator, setIndikator] = useState<IndikatorSasaran | null>(null);
+    const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
+
     const [Error, setError] = useState<boolean | null>(null);
     const [Loading, setLoading] = useState<boolean | null>(null);
+    const [LoadingStatus, setLoadingStatus] = useState<boolean | null>(null);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
-    const [DataNull, setDataNull] = useState<boolean>(false);
 
-    const [isOpenNewSasaran, setIsOpenNewSasaran] = useState<boolean>(false);
-    const [isOpenEditSasaran, setIsOpenEditSasaran] = useState<boolean>(false);
-    const [IdSasaran, setIdSasaran] = useState<number>(0);
-    const [IdSubTema, setIdSubTema] = useState<number>(0);
-    const [NamaPohon, setNamaPohon] = useState<string>('');
-    const [JenisPohon, setJenisPohon] = useState<string>('');
-
-    const [Show, setShow] = useState<{ [key: string]: boolean }>({});
-
-    // useEffect(() => {
-    //     const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    //     const fetchSasaran = async () => {
-    //         setLoading(true);
-    //         try {
-    //             const response = await fetch(`${API_URL}/sasaran_pemda/findall/tahun_awal/${tahun_awal}/tahun_akhir/${tahun_akhir}/jenis_periode/${jenis}`, {
-    //                 headers: {
-    //                     Authorization: `${token}`,
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //             });
-    //             const result = await response.json();
-    //             const data = result.data;
-    //             if (data == null) {
-    //                 setDataNull(true);
-    //                 setData([]);
-    //             } else if (result.code == 200 || result.code == 201) {
-    //                 setDataNull(false);
-    //                 setData(data);
-    //                 setError(false);
-    //             } else {
-    //                 setDataNull(false);
-    //                 setData([]);
-    //                 setError(true);
-    //                 console.log(data);
-    //             }
-    //         } catch (err) {
-    //             console.error(err);
-    //             setError(true);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     }
-    //     if (User?.roles !== undefined && Tahun?.value != undefined) {
-    //         fetchSasaran();
-    //     }
-    // }, [token, User, Tahun, SelectedOpd, FetchTrigger, tahun, menu]);
-
-    const handleShow = (id: number) => {
-        setShow((prev) => ({
-            [id]: !prev[id],
-        }));
+    const handleModal = (indikator: IndikatorSasaran | null, jenis: "tambah" | "edit", target_awal: TargetTujuan[], target_edit: TargetTujuan[]) => {
+        if (ModalOpen) {
+            setModalOpen(false);
+            setIndikator(indikator);
+            setJenisModal(jenis);
+            setTargetAwal(target_awal);
+            setTargetEdit(target_edit);
+        } else {
+            setModalOpen(true);
+            setIndikator(indikator);
+            setJenisModal(jenis);
+            setTargetAwal(target_awal);
+            setTargetEdit(target_edit);
+        }
     }
+
+    useEffect(() => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const fetchSasaran = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_URL}/sasaran_pemda/${menu}/${tahun}`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                const data = result.data;
+                if (data == null) {
+                    setSasaran([]);
+                } else if (result.code == 200) {
+                    setSasaran(data);
+                    setError(false);
+                } else {
+                    setSasaran([]);
+                    setError(true);
+                    console.log(data);
+                }
+            } catch (err) {
+                console.error(err);
+                setError(true);
+            } finally {
+                setLoading(false);
+            }
+        }
+        const fetchStatusLock = async () => {
+            setLoadingStatus(true);
+            try {
+                const response = await fetch(`${API_URL}/sasaran_pemda/lock/${tahun}`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                const data = result.data.locked;
+                setLock(data);
+            } catch (err) {
+                setError(true);
+                console.error(err)
+            } finally {
+                setLoadingStatus(false);
+            }
+        }
+        if (menu === "penetapan") {
+            fetchStatusLock();
+        }
+        fetchSasaran();
+    }, [token, FetchTrigger, tahun, menu]);
+
+    const handleLock = async (metode: "POST" | "DELETE") => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        try {
+            const response = await fetch(`${API_URL}/sasaran_pemda/lock/${tahun}`, {
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+                method: metode,
+            });
+            const result = await response.json();
+            if (result.code === 200) {
+                setFetchTrigger((prev) => !prev);
+            }
+        } catch (err) {
+            setError(true);
+            console.error(err)
+        }
+    }
+
 
     if (Loading) {
         return (
@@ -138,178 +139,205 @@ const TableSasaran: React.FC<table> = ({ tahun, menu }) => {
 
     return (
         <>
-            {Data.length === 0 ?
-                <div className="px-6 py-3 border w-full rounded-xl">
-                    Data Kosong / Belum Ditambahkan
-                </div>
-                :
-                Data.map((data: Sasaran) => {
-                    const isShown = Show[data.tematik_id] || false;
-                    const isActiveTematik = data?.subtematik[0]?.is_active;
-                    return (
-                        <div className="flex flex-col m-2" key={data.tematik_id}>
-                            <div
-                                className={`flex justify-between border items-center p-5 rounded-xl text-emerald-500 cursor-pointer border-emerald-500 hover:bg-emerald-500 hover:text-white ${isShown ? "bg-emerald-500 text-white" : ""}`}
-                                onClick={() => handleShow(data.tematik_id)}
-                            >
-                                {isActiveTematik ?
-                                    <h1 className="font-semibold">Tematik - {data.nama_tematik} ({data.tahun})</h1>
-                                    :
-                                    <h1 className="font-semibold text-red-400">Tematik - {data.nama_tematik} ({data.tahun}) - NON AKTIF</h1>
-                                }
-                                <div className="flex items-center">
-                                    <TbArrowBadgeDownFilled className={`transition-all duration-200 ease-in-out text-3xl ${isShown ? "" : "-rotate-90"}`} />
+            <div className="flex flex-col gap-2 mt-2">
+                {menu === "penetapan" &&
+                    <div className="flex w-full p-2">
+                        <div className={`w-full p-2 flex items-start border rounded-lg ${Lock ? "border-red-800 bg-red-300" : "border-emerald-800 bg-emerald-300"}`}>
+                            {LoadingStatus ?
+                                <div className="flex items-center gap-1">
+                                    <LoadingClip />
+                                    Loading Status Lock Sasaran Pemda Penetapan
                                 </div>
-                            </div>
-                            <div className={`transition-all duration-300 ease-in-out border-x border-b border-emerald-500 ${isShown ? "opacity-100 mx-4 p-5" : "max-h-0 opacity-0 pointer-events-none"}`}>
-                                <div className="overflow-auto rounded-t-xl border">
-                                    <table className="w-full">
-                                        <thead>
-                                            <tr className="text-xm bg-emerald-500 text-white">
-                                                <td rowSpan={2} className="border-r border-b px-6 py-3 max-w-[100px] text-center">No</td>
-                                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Strategic Pemda</td>
-                                                <td rowSpan={2} colSpan={2} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Sasaran Pemda</td>
-                                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</td>
-                                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi operational</td>
-                                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</td>
-                                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
-                                                <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{tahun}</th>
+                                :
+                                <div className={`flex items-center justify-between w-full gap-1 ${Lock ? "text-red-800" : "text-emerald-800"}`}>
+                                    {Lock ?
+                                        <>
+                                            <div className="flex items-center gap-2">
+                                                <p className="p-1 border border-red-800 rounded-full"><TbLock /></p>
+                                                <div className="flex flex-col">
+                                                    <p className="font-semibold">Sasaran Pemda Penetapan Terkunci</p>
+                                                    <p className="text-sm font-light">Tidak bisa mengubah data yang terkunci / Lock</p>
+                                                </div>
+                                            </div>
+                                            <ButtonBlack
+                                                className="flex items-center gap-1"
+                                                onClick={() => AlertQuestion("Buka Kunci / Unlock ?", "", "question", "Unlock", "Batal").then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        handleLock("DELETE");
+                                                    }
+                                                })}
+                                            >
+                                                <TbLockOpen />
+                                                Unlock
+                                            </ButtonBlack>
+                                        </>
+                                        :
+                                        <>
+                                            <div className="flex items-center gap-2">
+                                                <p className="p-1 border border-emerald-800 rounded-full"><TbLockOpen /></p>
+                                                <p>Sasaran Pemda Penetapan Tidak Terkunci</p>
+                                            </div>
+                                            <ButtonBlack
+                                                className="flex items-center gap-1"
+                                                onClick={() => AlertQuestion("Kunci / Lock ?", "", "question", "Lock", "Batal").then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        handleLock("POST");
+                                                    }
+                                                })}
+                                            >
+                                                <TbLock />
+                                                Lock
+                                            </ButtonBlack>
+                                        </>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                <div className="overflow-auto mx-2 mb-2 rounded-t-xl border">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-emerald-500 text-white">
+                                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
+                                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Sasaran Pemda</th>
+                                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</th>
+                                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi Operational</th>
+                                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</th>
+                                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</th>
+                                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[100px]">Aksi</th>
+                                <th colSpan={menu === "ranwal" ? 2 : 4} className="border-l border-b px-6 py-3 min-w-[100px]">{tahun || ""}</th>
+
+                            </tr>
+                            {menu != "ranwal" &&
+                                <tr className="text-white">
+                                    <th colSpan={2} className={`${menu === "rankhir" ? "bg-red-600" : "bg-yellow-600"} border-l border-b px-6 py-1 min-w-[50px]`}>{menu === "rankhir" ? "Ranwal" : "Rankir"}</th>
+                                    <th colSpan={2} className={`${menu === "rankhir" ? "bg-yellow-600" : "bg-blue-600"} border-l border-b px-6 py-1 min-w-[50px]`}>{menu === "rankhir" ? "Rankir" : "Penetapan"}</th>
+                                </tr>
+                            }
+                            <tr className="bg-emerald-700 text-white">
+                                {menu != "ranwal" &&
+                                    <>
+                                        <th className="border-l border-b px-6 py-1 min-w-[50px]">Target</th>
+                                        <th className="border-l border-b px-6 py-1 min-w-[50px]">Satuan</th>
+                                    </>
+                                }
+                                <th className="border-l border-b px-6 py-1 min-w-[50px]">Target</th>
+                                <th className="border-l border-b px-6 py-1 min-w-[50px]">Satuan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Sasaran?.length === 0 ?
+                                <tr>
+                                    <td className="px-6 py-3" colSpan={30}>
+                                        Data Kosong / Belum Ditambahkan
+                                    </td>
+                                </tr>
+                                :
+                                Sasaran.map((data: SasaranPemdaRKPD, index: number) => {
+
+                                    const rs = data?.indikator.length === 0 ? 2 : data.indikator.length + 1;
+
+                                    return (
+                                        <React.Fragment key={index}>
+                                            {/* Baris Utama */}
+                                            <tr>
+                                                <td rowSpan={rs} className="border-x border-b border-emerald-500 px-6 py-4 text-center">{index + 1}</td>
+                                                <td rowSpan={rs} className="border-r border-b border-emerald-500 px-6 py-4">{data.sasaran_pemda || "-"}</td>
                                             </tr>
-                                            <tr className="bg-emerald-500 text-white">
-                                                <th className="border-l border-b px-6 py-3 min-w-[50px]">Target</th>
-                                                <th className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {data.subtematik.length == 0 ?
+                                            {data.indikator.length === 0 ?
                                                 <tr>
-                                                    <td className="px-6 py-3" colSpan={30}>
-                                                        Data Kosong / Belum Ditambahkan
-                                                    </td>
+                                                    <td className="border-r border-b border-emerald-500 px-6 py-4 text-red-400" colSpan={9}>tidak ada indikator</td>
                                                 </tr>
                                                 :
-                                                data.subtematik.map((item: SubTematik, index: number) => {
-                                                    // Cek apakah item.tujuan_pemda ada
-                                                    const hasSasaran = item.sasaran_pemda.length != 0;
-                                                    // const hasSasaranPemda = item.sasaranpemda != "";
-                                                    const [sasaranLength, indikatorLength] = hasSasaran
-                                                        ? [
-                                                            item.sasaran_pemda.length + 1,
-                                                            item.sasaran_pemda.reduce((total, sasaran) => total + (sasaran.indikator.length === 0 ? 1 : sasaran.indikator.length), 0),
-                                                        ]
-                                                        : [1, 1];
-                                                    return (
-                                                        <React.Fragment key={item.subtematik_id}>
-                                                            {/* NO & POHON */}
-                                                            <tr>
-                                                                <td className="border border-emerald-500 px-4 py-4 text-center" rowSpan={sasaranLength + (indikatorLength === 0 ? 1 : indikatorLength)}>
-                                                                    {index + 1}
-                                                                </td>
-                                                                <td className="border border-emerald-500 px-6 py-4" rowSpan={sasaranLength + (indikatorLength === 0 ? 1 : indikatorLength)}>
-                                                                    <p>{item.nama_subtematik} ({item.tahun})</p>
-                                                                    <div className="flex flex-col justify-between gap-2 h-full">
-                                                                        <p className="uppercase text-emerald-500 text-xs">{item.jenis_pohon}</p>
-                                                                        {item.is_active === false ?
-                                                                            <button
-                                                                                className="flex justify-between gap-1 rounded-full p-1 bg-red-500 text-white cursor-not-allowed"
-                                                                                // onClick={() => handleModalNewSasaran(item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
-                                                                                disabled
-                                                                            >
-                                                                                <div className="flex gap-1">
-                                                                                    <TbCirclePlus />
-                                                                                    <p className="text-xs">Tematik NON-AKTIF</p>
-                                                                                </div>
-                                                                                <TbArrowBadgeDownFilled className="-rotate-90" />
-                                                                            </button>
-                                                                            :
-                                                                            <button
-                                                                                className="flex justify-between gap-1 rounded-full p-1 bg-sky-500 text-white border border-sky-500 hover:bg-white hover:text-sky-500 hover:border hover:border-sky-500"
-                                                                                // onClick={() => handleModalNewSasaran(item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
-                                                                            >
-                                                                                <div className="flex gap-1">
-                                                                                    <TbCirclePlus />
-                                                                                    <p className="text-xs">Tambah Sasaran Baru</p>
-                                                                                </div>
-                                                                                <TbArrowBadgeDownFilled className="-rotate-90" />
-                                                                            </button>
+                                                data.indikator.map((i: any, i_index: number) => (
+                                                    <tr key={i_index}>
+                                                        <td className="border-r border-b border-emerald-500 px-6 py-4">{i.indikator || "-"}</td>
+                                                        <td className="border-r border-b border-emerald-500 px-6 py-4">{i.definisi_operasional || "-"}</td>
+                                                        <td className="border-r border-b border-emerald-500 px-6 py-4">{i.rumus_perhitungan || "-"}</td>
+                                                        <td className="border-r border-b border-emerald-500 px-6 py-4">{i.sumber_data || "-"}</td>
+                                                        <td className="border-r border-b border-emerald-500 px-6 py-4">
+                                                            <div className="flex flex-col justify-center items-center gap-2">
+                                                                <ButtonGreenBorder
+                                                                    className={`flex items-center gap-1 w-full ${(menu === "ranwal" || Lock) && "cursor-not-allowed"}`}
+                                                                    onClick={() => {
+                                                                        if (menu === "rankhir") {
+                                                                            if (i.target_rankhir[0].id === 0) {
+                                                                                handleModal(i, "tambah", i.target_ranwal, [])
+                                                                            } else {
+                                                                                handleModal(i, "edit", i.target_ranwal, i.target_rankhir)
+                                                                            }
+                                                                        } else {
+                                                                            if (i.target_penetapan[0].id === 0) {
+                                                                                handleModal(i, "tambah", i.target_rankhir, [])
+                                                                            } else {
+                                                                                handleModal(i, "edit", i.target_rankhir, i.target_penetapan)
+                                                                            }
                                                                         }
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            {/* SASARAN */}
-                                                            {hasSasaran ?
-                                                                item.sasaran_pemda.map((s: SasaranPemda) => (
-                                                                    <React.Fragment key={s.id_sasaran_pemda}>
-                                                                        <tr>
-                                                                            <td className="border-b border-emerald-500 px-6 py-4 h-[150px]" rowSpan={s.indikator.length === 0 ? 2 : s.indikator.length + 1}>
-                                                                                {s.sasaran_pemda || "-"}
-                                                                            </td>
-                                                                            <td className="border-b border-r border-emerald-500 px-6 py-4" rowSpan={s.indikator.length === 0 ? 2 : s.indikator.length + 1}>
-                                                                                <div className="flex flex-col justify-center items-center gap-1">
-                                                                                    <>
-                                                                                        <ButtonGreen
-                                                                                            className="flex items-center gap-1 w-full"
-                                                                                            // onClick={() => handleModalEditSasaran(s.id_sasaran_pemda, item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
-                                                                                        >
-                                                                                            <TbPencil />
-                                                                                            Edit
-                                                                                        </ButtonGreen>
-                                                                                        <ButtonRed
-                                                                                            className="flex items-center gap-1 w-full"
-                                                                                            onClick={() => {
-                                                                                                AlertQuestion("Hapus?", "Hapus Tujuan Pemda yang dipilih?", "question", "Hapus", "Batal").then((result) => {
-                                                                                                    if (result.isConfirmed) {
-                                                                                                        // hapusSasaranPemda(s.id_sasaran_pemda);
-                                                                                                    }
-                                                                                                });
-                                                                                            }}
-                                                                                        >
-                                                                                            <TbTrash />
-                                                                                            Delete
-                                                                                        </ButtonRed>
-                                                                                    </>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                        {/* INDIKATOR */}
-                                                                        {s.indikator.length == 0 ?
-                                                                            <td className="border-r border-b border-emerald-500 px-6 py-4 bg-yellow-500 text-white" colSpan={30}>
-                                                                                Indikator Kosong / Belum di Inputkan
-                                                                            </td>
-                                                                            :
-                                                                            s.indikator.map((i: Indikator) => (
-                                                                                <tr key={i.id}>
-                                                                                    <td className="border-b border-r border-emerald-500 px-6 py-4">{i.indikator || "-"}</td>
-                                                                                    <td className="border-b border-r border-emerald-500 px-6 py-4">{i.definisi_operational || "-"}</td>
-                                                                                    <td className="border-b border-r border-emerald-500 px-6 py-4">{i.rumus_perhitungan || "-"}</td>
-                                                                                    <td className="border-b border-r border-emerald-500 px-6 py-4">{i.sumber_data || "-"}</td>
-                                                                                    {i.target.map((t: Target) => (
-                                                                                        <React.Fragment key={t.id}>
-                                                                                            <td className="border-b border-r border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
-                                                                                            <td className="border-b border-r border-emerald-500 px-6 py-4 text-center">{t.satuan || "-"}</td>
-                                                                                        </React.Fragment>
-                                                                                    ))}
-                                                                                </tr>
-                                                                            ))
-                                                                        }
-                                                                    </React.Fragment>
-                                                                ))
-                                                                :
-                                                                <td className="border-r border-b border-emerald-500 px-6 py-4 bg-red-400 text-white" colSpan={30}>
-                                                                    Sasaran Pemda belum di buat
-                                                                </td>
-                                                            }
-                                                        </React.Fragment>
-                                                    )
-                                                })
+
+                                                                    }}
+                                                                    disabled={menu === "ranwal" || Lock}
+                                                                >
+                                                                    <TbPencil />
+                                                                    Edit
+                                                                </ButtonGreenBorder>
+                                                            </div>
+                                                        </td>
+                                                        {(i.target) &&
+                                                            i.target.map((t: any, t_index: number) => (
+                                                                <React.Fragment key={t_index}>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{t.satuan || "-"}</td>
+                                                                </React.Fragment>
+                                                            ))
+                                                        }
+                                                        {(i.target_ranwal) &&
+                                                            i.target_ranwal.map((t: any, t_index: number) => (
+                                                                <React.Fragment key={t_index}>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{t.satuan || "-"}</td>
+                                                                </React.Fragment>
+                                                            ))
+                                                        }
+                                                        {(i.target_rankhir) &&
+                                                            i.target_rankhir.map((t: any, t_index: number) => (
+                                                                <React.Fragment key={t_index}>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{t.satuan || "-"}</td>
+                                                                </React.Fragment>
+                                                            ))
+                                                        }
+                                                        {(i.target_penetapan) &&
+                                                            i.target_penetapan.map((t: any, t_index: number) => (
+                                                                <React.Fragment key={t_index}>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
+                                                                    <td className="border-r border-b border-emerald-500 px-6 py-4">{t.satuan || "-"}</td>
+                                                                </React.Fragment>
+                                                            ))
+                                                        }
+                                                    </tr>
+                                                ))
                                             }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })
+                                        </React.Fragment>
+                                    );
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {ModalOpen &&
+                <ModalTargetSasaranRKPD
+                    isOpen={ModalOpen}
+                    onClose={() => handleModal(null, "tambah", [], [])}
+                    indikator={Indikator}
+                    target_awal={TargetAwal}
+                    target_edit={TargetEdit}
+                    tahun={String(tahun)}
+                    fetchTrigger={() => setFetchTrigger((prev) => !prev)}
+                    jenis={menu}
+                    metode={JenisModal}
+                />
             }
         </>
     )
