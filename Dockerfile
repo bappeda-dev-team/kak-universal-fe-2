@@ -55,7 +55,7 @@ ARG NEXT_PUBLIC_API_KEPEGAWAIAN
 ENV NEXT_PUBLIC_API_KEPEGAWAIAN=${NEXT_PUBLIC_API_KEPEGAWAIAN}
 
 ARG NEXT_PUBLIC_API_CETAK
-ENV NEXT_PUBLIC_API_CETAK
+ENV NEXT_PUBLIC_API_CETAK=${NEXT_PUBLIC_API_CETAK}
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line to disable telemetry at build time
@@ -120,7 +120,7 @@ ARG NEXT_PUBLIC_API_KEPEGAWAIAN
 ENV NEXT_PUBLIC_API_KEPEGAWAIAN=${NEXT_PUBLIC_API_KEPEGAWAIAN}
 
 ARG NEXT_PUBLIC_API_CETAK
-ENV NEXT_PUBLIC_API_CETAK
+ENV NEXT_PUBLIC_API_CETAK=${NEXT_PUBLIC_API_CETAK}
 
 # Uncomment the following line to disable telemetry at run time
 ENV NEXT_TELEMETRY_DISABLED=1
