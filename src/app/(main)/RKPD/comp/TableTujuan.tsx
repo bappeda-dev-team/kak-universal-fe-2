@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { getToken } from "@/components/lib/Cookie";
 import { TujuanPemdaRKPD, IndikatorTujuan, TargetTujuan } from "../type";
-import { ModalTargetRPJMD } from "./ModalTargetRPJMD";
+import { ModalTargetTujuanRKPD } from "./ModalTargetTujuanRKPD";
 import { TbPencil, TbLock, TbLockOpen } from "react-icons/tb";
 import { AlertQuestion, AlertNotification } from "@/components/global/Alert";
 
@@ -333,7 +333,7 @@ const TableTujuan: React.FC<table> = ({ tahun, menu }) => {
                 </div>
             </div>
             {ModalOpen &&
-                <ModalTargetRPJMD
+                <ModalTargetTujuanRKPD
                     isOpen={ModalOpen}
                     onClose={() => handleModal(null, "tambah", [], [])}
                     indikator={Indikator}

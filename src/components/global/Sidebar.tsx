@@ -453,8 +453,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master IKK</span>
                 </li>
               </Link>
-              <Link href="/bidang-urusan-opd">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/bidang-urusan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/DataMaster/bidang-urusan-opd">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/bidang-urusan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbFileDelta className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200 text-sm`}>Bidang Urusan OPD</span>
                 </li>

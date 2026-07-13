@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { TbCircleCheckFilled } from "react-icons/tb";
 import { Data, Pelaksana, RencanaKinerja, TaggingData } from "./types"
+import { formatRupiah } from "@/components/utils/format-rupiah";
 import { api } from "./service"
 
 interface Table {
@@ -118,7 +119,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                             </tr>
 
                             <tr className="bg-emerald-700 text-white">
-                                {[...Array(15)].map((_, index: number) => (
+                                {[...Array(17)].map((_, index: number) => (
                                     <th key={index} className="border-r border-b px-3 py-1 min-w-[100px]">{index + 1}</th>
                                 ))}
                             </tr>
@@ -176,10 +177,10 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                                                                 </ul>
                                                                             </td>
                                                                             <td className="border-r border-b px-6 py-4 h-[200px]">({rk.kode_subkegiatan || 0}) {rk.nama_subkegiatan || "-"}</td>
-                                                                            <td className="border-r border-b px-6 py-4 h-[200px]">{rk.pagu || "-"}</td>
+                                                                            <td className="border-r border-b px-6 py-4 h-[200px]">Rp.{formatRupiah(rk.pagu || 0)}</td>
                                                                         </>
                                                                         :
-                                                                        <td colSpan={2} className="border-r border-b px-6 py-4 bg-red-400 text-white italic h-[200px]">*Sub Kegiatan Belum Di Pilih</td>
+                                                                        <td colSpan={4} className="border-r border-b px-6 py-4 bg-red-400 text-white italic h-[200px]">*Sub Kegiatan Belum Di Pilih</td>
                                                                     }
                                                                     <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_1 || 0}</td>
                                                                     <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_2 || 0}</td>

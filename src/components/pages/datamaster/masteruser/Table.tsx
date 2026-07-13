@@ -286,7 +286,7 @@ const Table = () => {
                                             <ButtonRed
                                                 className="w-full"
                                                 onClick={() => {
-                                                    AlertQuestion("Hapus?", "Hapus urusan yang dipilih?", "question", "Hapus", "Batal").then((result) => {
+                                                    AlertQuestion("Hapus?", "Hapus User yang dipilih?", "question", "Hapus", "Batal").then((result) => {
                                                         if (result.isConfirmed) {
                                                             hapusUrusan(data.id);
                                                         }
