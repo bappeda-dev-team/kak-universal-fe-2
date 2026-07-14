@@ -1,7 +1,6 @@
 'use client'
 
 import { FiHome } from "react-icons/fi";
-import Maintenance from "@/components/global/Maintenance";
 import { useBrandingContext } from "@/context/BrandingContext";
 import TableSasaran from "../../comp/TableSasaran";
 
@@ -25,8 +24,7 @@ const RKPDRanwalSasaranPage = () => {
                         <h1 className="uppercase font-bold ml-1">{branding?.tahun?.label || ""}</h1>
                     </div>
                 </div>
-                {/* <Maintenance /> */}
-                <TableSasaran 
+                <TableSasaran
                     tahun={branding?.tahun?.value || 0}
                     menu="ranwal"
                 />
