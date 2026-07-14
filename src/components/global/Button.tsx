@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LoadingButtonClip2 } from "./Loading";
 import { TbPrinter } from "react-icons/tb";
-import useToast from '@/components/global/Toast';
+import { toast } from 'react-toastify';
 
 interface button {
     onClick?: () => void;
@@ -25,7 +25,6 @@ interface ButtonCetak {
 export const ButtonCetak: React.FC<ButtonCetak> = ({ jenis, disabled, tahun, kode_opd, pokin_id, text }) => {
 
     const [Loading, setLoading] = useState<boolean>(false);
-    const { toastSuccess, toastError, toastWarning } = useToast();
 
     const useCetak = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_CETAK;
@@ -55,10 +54,14 @@ export const ButtonCetak: React.FC<ButtonCetak> = ({ jenis, disabled, tahun, kod
                 throw new Error("Generate PDF gagal");
             }
 
-            window.open(result.data, "_blank", "noopener,noreferrer");
+            const pdfUrl = result.data.startsWith("http")
+                ? result.data
+                : `${API_URL}${result.data}`;
+
+            window.open(pdfUrl, "_blank", "noopener,noreferrer");
 
         } catch (err) {
-            toastError("❌ Gagal membuat dokumen. Silakan coba beberapa saat lagi.")
+            toast.error("❌ Gagal membuat dokumen. Silakan coba beberapa saat lagi.")
         } finally {
             setLoading(false);
         }
