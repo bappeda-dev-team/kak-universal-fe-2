@@ -23,6 +23,7 @@ export interface IkkFindall {
   nama_bidang_urusan: string;
   nama_opd: string;
   jenis: "output" | string;
+  tahun: number;
   indikators: Indikator[];
   keterangan: string;
   created_at: string;

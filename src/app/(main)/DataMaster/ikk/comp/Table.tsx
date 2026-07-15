@@ -19,9 +19,13 @@ import { TbTrash, TbPencil } from "react-icons/tb";
 
 interface Table {
   kode_opd: string;
+  Tahun: {
+    value: number;
+    label: string;
+  } | null;
 }
 
-const Table: React.FC<Table> = ({ kode_opd }) => {
+const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
   const [Data, setData] = useState<IkkFindall[]>([]);
   const [Error, setError] = useState<boolean | null>(null);
 
@@ -33,6 +37,12 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
   const [Loading, setLoading] = useState<boolean | null>(null);
   const token = getToken();
   const { branding } = useBrandingContext();
+
+  const tahun = Number(Tahun?.value ?? new Date().getFullYear());
+
+  const filteredData = Data.filter(
+    (item) => Number(item.tahun) === Number(tahun),
+  );
 
   useEffect(() => {
     const fetchOpd = async () => {
@@ -208,14 +218,14 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                 </tr>
               </thead>
               <tbody>
-                {Data.length === 0 ? (
+                {filteredData.length === 0 ? (
                   <tr>
                     <td className="px-6 py-3" colSpan={30}>
                       Data Kosong / Belum Ditambahkan
                     </td>
                   </tr>
                 ) : (
-                  Data.map((item: IkkFindall, index: number) => (
+                  filteredData.map((item: IkkFindall, index: number) => (
                     <React.Fragment key={index}>
                       {item.indikators.length > 0 ? (
                         item.indikators.flatMap((indikator, indikatorIndex) =>
