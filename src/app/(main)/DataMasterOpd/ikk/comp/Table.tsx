@@ -158,13 +158,13 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
             <TbRefresh />
             Refresh
           </ButtonBlackBorder>
-          <ButtonSkyBorder
-            className="flex items-center gap-1"
-            onClick={() => handleModalOpen("tambah", null)}
-          >
-            <TbCirclePlus />
-            Tambah Data
-          </ButtonSkyBorder>
+          {/* <ButtonSkyBorder
+                        className="flex items-center gap-1"
+                        onClick={() => handleModalOpen('tambah', null)}
+                    >
+                        <TbCirclePlus />
+                        Tambah Data
+                    </ButtonSkyBorder> */}
         </div>
         <div className="flex flex-col items-center gap-1 w-full">
           <div className="overflow-auto m-2 rounded-t-xl border w-full">
@@ -329,25 +329,6 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                                       <TbPencil />
                                       Edit
                                     </ButtonGreenBorder>
-                                    <ButtonRedBorder
-                                      className="flex items-center gap-1 w-full"
-                                      onClick={() => {
-                                        AlertQuestion(
-                                          "Hapus?",
-                                          "Hapus IKK yang dipilih?",
-                                          "question",
-                                          "Hapus",
-                                          "Batal",
-                                        ).then((result) => {
-                                          if (result.isConfirmed) {
-                                            hapusData(item.id);
-                                          }
-                                        });
-                                      }}
-                                    >
-                                      <TbTrash />
-                                      Hapus
-                                    </ButtonRedBorder>
                                   </td>
                                 </>
                               )}
@@ -388,25 +369,6 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                               <TbPencil />
                               Edit
                             </ButtonGreenBorder>
-                            <ButtonRedBorder
-                              className="flex items-center gap-1 w-full"
-                              onClick={() => {
-                                AlertQuestion(
-                                  "Hapus?",
-                                  "Hapus IKK yang dipilih?",
-                                  "question",
-                                  "Hapus",
-                                  "Batal",
-                                ).then((result) => {
-                                  if (result.isConfirmed) {
-                                    hapusData(item.id);
-                                  }
-                                });
-                              }}
-                            >
-                              <TbTrash />
-                              Hapus
-                            </ButtonRedBorder>
                           </td>
                         </tr>
                       )}
