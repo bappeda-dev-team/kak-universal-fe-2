@@ -381,6 +381,26 @@ export const ModalIkk: React.FC<modal> = ({
                 </ButtonSkyBorder>
               </div>
             ))}
+            <div className="flex flex-col py-3">
+              <label
+                className="uppercase text-xs font-bold text-gray-700 my-2"
+                htmlFor="keterangan"
+              >
+                Keterangan:
+              </label>
+              <Controller
+                name="keterangan"
+                control={control}
+                render={({ field }) => (
+                  <textarea
+                    {...field}
+                    className="border px-4 py-2 rounded-lg"
+                    id="keterangan"
+                    placeholder="masukkan Keterangan"
+                  />
+                )}
+              />
+            </div>
             <div className="flex flex-col gap-2">
               <ButtonSky className="w-full" type="submit" disabled={Proses}>
                 {Proses ? (
