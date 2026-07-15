@@ -58,6 +58,10 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
 
   const tahun = Number(Tahun?.value ?? new Date().getFullYear());
 
+  const filteredData = Data.filter(
+    (item) => Number(item.tahun) === Number(tahun),
+  );
+
   const getTargetByYear = (targets: Target[], tahun: number) => {
     return targets.find((t) => t.tahun === tahun)?.target || "-";
   };
@@ -231,14 +235,14 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
                 </tr>
               </thead>
               <tbody>
-                {Data.length === 0 ? (
+                {filteredData.length === 0 ? (
                   <tr>
                     <td className="px-6 py-3" colSpan={30}>
                       Data Kosong / Belum Ditambahkan
                     </td>
                   </tr>
                 ) : (
-                  Data.map((item: IKK, index: number) => (
+                  filteredData.map((item: IKK, index: number) => (
                     <React.Fragment key={index}>
                       {item.indikators.length > 0 ? (
                         item.indikators.map((indikator, indikatorIndex) => (
