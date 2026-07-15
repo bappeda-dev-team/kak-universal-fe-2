@@ -7,13 +7,17 @@ import {
   useForm,
   useFieldArray,
 } from "react-hook-form";
-import { ButtonSky, ButtonRed } from "@/components/global/Button";
+import {
+  ButtonSky,
+  ButtonRed,
+  ButtonSkyBorder,
+} from "@/components/global/Button";
 import { getToken, getUser } from "@/components/lib/Cookie";
 import { AlertNotification } from "@/components/global/Alert";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import Select from "react-select";
 import { OptionTypeString } from "@/types";
-import { IkkFindall, FormValue } from "../type";
+import { IkkFindall, FormValue, Indikator, Target } from "../type";
 import { useBrandingContext } from "@/context/BrandingContext";
 
 interface modal {
@@ -54,9 +58,49 @@ export const ModalIkk: React.FC<modal> = ({
           }
         : null,
       keterangan: Data?.keterangan || "",
+      indikators: Data?.indikators
+        ? Data?.indikators?.map((i: Indikator) => ({
+            indikator: i.indikator,
+            targets: i.targets.map((t: Target) => ({
+              target: t.target,
+              satuan: t.satuan,
+            })),
+          }))
+        : [
+            {
+              indikator: "",
+              targets: [
+                {
+                  target: "",
+                  satuan: "",
+                },
+              ],
+            },
+          ],
     },
   });
   const { branding } = useBrandingContext();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "indikators",
+  });
+
+  const handleTambahIndikator = () => {
+    append({
+      indikator: "",
+      targets: [
+        {
+          target: "",
+          satuan: "",
+        },
+      ],
+    });
+  };
+
+  const handleHapusIndikator = (index: number) => {
+    remove(index);
+  };
 
   const [Proses, setProses] = useState<boolean>(false);
   const [Loading, setLoading] = useState<boolean>(false);
@@ -106,6 +150,13 @@ export const ModalIkk: React.FC<modal> = ({
       kode_opd: kode_opd,
       tahun: tahun,
       keterangan: data.keterangan,
+      indikators: data?.indikators.map((i: Indikator) => ({
+        indikator: i.indikator,
+        targets: i.targets.map((t: Target) => ({
+          target: t.target,
+          satuan: t.satuan,
+        })),
+      })),
     };
     // console.log(formData);
     try {
@@ -160,7 +211,9 @@ export const ModalIkk: React.FC<modal> = ({
           className={`fixed inset-0 bg-black opacity-30`}
           onClick={onClose}
         ></div>
-        <div className={`bg-white rounded-lg p-8 z-10 w-4/5 text-start`}>
+        <div
+          className={`bg-white rounded-lg p-8 z-10 w-4/5 text-start h-[90%] overflow-auto`}
+        >
           <div className="w-max-[500px] py-2 border-b text-center">
             <h1 className="text-xl uppercase">
               {jenis} Indikator Kinerja Kunci
@@ -235,6 +288,46 @@ export const ModalIkk: React.FC<modal> = ({
                 )}
               />
             </div>
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                className="flex flex-col border border-gray-700 my-2 py-2 px-2 rounded-lg"
+              >
+                <div className="flex justify-end">
+                  <ButtonRed
+                    type="button"
+                    onClick={() => handleHapusIndikator(index)}
+                  >
+                    Hapus Indikator
+                  </ButtonRed>
+                </div>
+
+                <Controller
+                  name={`indikators.${index}.indikator`}
+                  control={control}
+                  defaultValue={field.indikator}
+                  render={({ field }) => (
+                    <div className="flex flex-col py-3">
+                      <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                        Nama Indikator :
+                      </label>
+                      <input
+                        {...field}
+                        className="border px-4 py-2 rounded-lg"
+                        placeholder={`Masukkan nama indikator`}
+                      />
+                    </div>
+                  )}
+                />
+              </div>
+            ))}
+            <ButtonSkyBorder
+              className="mb-3 mt-3"
+              type="button"
+              onClick={handleTambahIndikator}
+            >
+              Tambah Indikator
+            </ButtonSkyBorder>
             <div className="flex flex-col py-3">
               <label
                 className="uppercase text-xs font-bold text-gray-700 my-2"

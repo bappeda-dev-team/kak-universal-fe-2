@@ -218,106 +218,150 @@ const Table: React.FC<Table> = ({ kode_opd }) => {
                   Data.map((item: IkkFindall, index: number) => (
                     <React.Fragment key={index}>
                       {item.indikators.length > 0 ? (
-                        item.indikators.map((indikator, indikatorIndex) => (
-                          <tr key={`${index}-${indikatorIndex}`}>
-                            {indikatorIndex === 0 && (
-                              <>
-                                <td
-                                  rowSpan={item.indikators.length}
-                                  className="border border-emerald-500 px-4 py-4 text-center"
-                                >
-                                  {index + 1}
-                                </td>
-
-                                <td
-                                  rowSpan={item.indikators.length}
-                                  className="border-x border-b border-emerald-500 px-6 py-4"
-                                >
-                                  ({item.kode_bidang_urusan || "no code"}){" "}
-                                  {item.nama_bidang_urusan ||
-                                    "nama bidang urusan tidak diketahui"}
-                                </td>
-
-                                <td
-                                  rowSpan={item.indikators.length}
-                                  className="border-x border-b border-emerald-500 px-6 py-4"
-                                >
-                                  {item.jenis || ""}
-                                </td>
-                              </>
-                            )}
-
-                            <td className="border-x border-b border-emerald-500 px-6 py-4">
-                              {indikator.indikator}
-                            </td>
-
-                            <td className="border-x border-b border-emerald-500 px-6 py-4">
-                              {indikator.targets.map((target, i) => (
-                                <div key={i}>{target.target}</div>
-                              ))}
-                            </td>
-
-                            <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">
-                              {indikator.targets.map((target, i) => (
-                                <div key={i}>{target.satuan}</div>
-                              ))}
-                            </td>
-
-                            {indikatorIndex === 0 && (
-                              <>
-                                <td
-                                  rowSpan={item.indikators.length}
-                                  className="border-x border-b border-emerald-500 px-6 py-4"
-                                >
-                                  {item.keterangan || "-"}
-                                </td>
-
-                                <td
-                                  rowSpan={item.indikators.length}
-                                  className="border-x border-b border-emerald-500 px-6 py-4"
-                                >
-                                  <ButtonGreenBorder
-                                    className="flex items-center gap-1 w-full"
-                                    onClick={() =>
-                                      handleModalOpen("edit", item)
-                                    }
+                        item.indikators.flatMap((indikator, indikatorIndex) =>
+                          (indikator.targets.length > 0
+                            ? indikator.targets
+                            : [{ target: "", satuan: "" }]
+                          ).map((target, targetIndex) => (
+                            <tr
+                              key={`${index}-${indikatorIndex}-${targetIndex}`}
+                            >
+                              {/* No */}
+                              {indikatorIndex === 0 && targetIndex === 0 && (
+                                <>
+                                  <td
+                                    rowSpan={item.indikators.reduce(
+                                      (total, i) =>
+                                        total + Math.max(i.targets.length, 1),
+                                      0,
+                                    )}
+                                    className="border border-emerald-500 px-4 py-4 text-center"
                                   >
-                                    <TbPencil />
-                                    Edit
-                                  </ButtonGreenBorder>
+                                    {index + 1}
+                                  </td>
+
+                                  <td
+                                    rowSpan={item.indikators.reduce(
+                                      (total, i) =>
+                                        total + Math.max(i.targets.length, 1),
+                                      0,
+                                    )}
+                                    className="border border-emerald-500 px-6 py-4"
+                                  >
+                                    ({item.kode_bidang_urusan}){" "}
+                                    {item.nama_bidang_urusan}
+                                  </td>
+
+                                  <td
+                                    rowSpan={item.indikators.reduce(
+                                      (total, i) =>
+                                        total + Math.max(i.targets.length, 1),
+                                      0,
+                                    )}
+                                    className="border border-emerald-500 px-6 py-4"
+                                  >
+                                    {item.jenis}
+                                  </td>
+                                </>
+                              )}
+
+                              {/* Indikator */}
+                              {targetIndex === 0 && (
+                                <td
+                                  rowSpan={Math.max(
+                                    indikator.targets.length,
+                                    1,
+                                  )}
+                                  className="border border-emerald-500 px-6 py-4"
+                                >
+                                  {indikator.indikator}
                                 </td>
-                              </>
-                            )}
-                          </tr>
-                        ))
+                              )}
+
+                              {/* Target */}
+                              {target.target ? (
+                                <>
+                                  <td className="border border-emerald-500 px-6 py-4">
+                                    {target.target}
+                                  </td>
+
+                                  <td className="border border-emerald-500 px-6 py-4 text-center">
+                                    {target.satuan}
+                                  </td>
+                                </>
+                              ) : (
+                                <td
+                                  colSpan={2}
+                                  className="border border-emerald-500 bg-yellow-400 px-6 py-4 text-center font-semibold"
+                                >
+                                  Target belum ditambahkan
+                                </td>
+                              )}
+
+                              {/* Keterangan & Aksi */}
+                              {indikatorIndex === 0 && targetIndex === 0 && (
+                                <>
+                                  <td
+                                    rowSpan={item.indikators.reduce(
+                                      (total, i) =>
+                                        total + Math.max(i.targets.length, 1),
+                                      0,
+                                    )}
+                                    className="border border-emerald-500 px-6 py-4"
+                                  >
+                                    {item.keterangan || "-"}
+                                  </td>
+
+                                  <td
+                                    rowSpan={item.indikators.reduce(
+                                      (total, i) =>
+                                        total + Math.max(i.targets.length, 1),
+                                      0,
+                                    )}
+                                    className="border border-emerald-500 px-6 py-4"
+                                  >
+                                    <ButtonGreenBorder
+                                      className="flex items-center gap-1 w-full"
+                                      onClick={() =>
+                                        handleModalOpen("edit", item)
+                                      }
+                                    >
+                                      <TbPencil />
+                                      Edit
+                                    </ButtonGreenBorder>
+                                  </td>
+                                </>
+                              )}
+                            </tr>
+                          )),
+                        )
                       ) : (
                         <tr>
                           <td className="border border-emerald-500 px-4 py-4 text-center">
                             {index + 1}
                           </td>
 
-                          <td className="border-x border-b border-emerald-500 px-6 py-4">
-                            ({item.kode_bidang_urusan || "no code"}){" "}
-                            {item.nama_bidang_urusan ||
-                              "nama bidang urusan tidak diketahui"}
+                          <td className="border border-emerald-500 px-6 py-4">
+                            ({item.kode_bidang_urusan}){" "}
+                            {item.nama_bidang_urusan}
                           </td>
 
-                          <td className="border-x border-b border-emerald-500 px-6 py-4">
-                            {item.jenis || ""}
+                          <td className="border border-emerald-500 px-6 py-4">
+                            {item.jenis}
                           </td>
 
                           <td
                             colSpan={3}
-                            className="border-x border-b border-emerald-500 px-6 py-4 bg-yellow-400"
+                            className="border border-emerald-500 bg-yellow-400 px-6 py-4 text-center font-semibold"
                           >
                             Indikator belum ditambahkan
                           </td>
 
-                          <td className="border-x border-b border-emerald-500 px-6 py-4">
-                            {item.keterangan || "-"}
+                          <td className="border border-emerald-500 px-6 py-4">
+                            {item.keterangan}
                           </td>
 
-                          <td className="border-x border-b border-emerald-500 px-6 py-4">
+                          <td className="border border-emerald-500 px-6 py-4">
                             <ButtonGreenBorder
                               className="flex items-center gap-1 w-full"
                               onClick={() => handleModalOpen("edit", item)}

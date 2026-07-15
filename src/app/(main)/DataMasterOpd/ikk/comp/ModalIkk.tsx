@@ -42,6 +42,9 @@ export const ModalIkk: React.FC<modal> = ({
   const {
     control,
     handleSubmit,
+    watch,
+    getValues,
+    setValue,
     formState: { errors },
   } = useForm<FormValue>({
     defaultValues: {
@@ -81,25 +84,32 @@ export const ModalIkk: React.FC<modal> = ({
   });
   const { branding } = useBrandingContext();
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "indikators",
   });
 
-  const handleTambahIndikator = () => {
-    append({
-      indikator: "",
-      targets: [
-        {
-          target: "",
-          satuan: "",
-        },
-      ],
-    });
+  const indikators = watch("indikators");
+
+  const handleTambahTarget = (indikatorIndex: number) => {
+    const targets = getValues(`indikators.${indikatorIndex}.targets`) || [];
+
+    setValue(`indikators.${indikatorIndex}.targets`, [
+      ...targets,
+      {
+        target: "",
+        satuan: "",
+      },
+    ]);
   };
 
-  const handleHapusIndikator = (index: number) => {
-    remove(index);
+  const handleHapusTarget = (indikatorIndex: number, targetIndex: number) => {
+    const targets = getValues(`indikators.${indikatorIndex}.targets`);
+
+    setValue(
+      `indikators.${indikatorIndex}.targets`,
+      targets.filter((_, i) => i !== targetIndex),
+    );
   };
 
   const [Proses, setProses] = useState<boolean>(false);
@@ -295,15 +305,6 @@ export const ModalIkk: React.FC<modal> = ({
                 key={field.id}
                 className="flex flex-col border border-gray-700 my-2 py-2 px-2 rounded-lg"
               >
-                <div className="flex justify-end">
-                  <ButtonRed
-                    type="button"
-                    onClick={() => handleHapusIndikator(index)}
-                  >
-                    Hapus Indikator
-                  </ButtonRed>
-                </div>
-
                 <Controller
                   name={`indikators.${index}.indikator`}
                   control={control}
@@ -315,13 +316,13 @@ export const ModalIkk: React.FC<modal> = ({
                       </label>
                       <input
                         {...field}
-                        className="border px-4 py-2 rounded-lg"
-                        placeholder={`Masukkan nama indikator`}
+                        disabled
+                        className="border px-4 py-2 rounded-lg bg-gray-100 cursor-not-allowed"
                       />
                     </div>
                   )}
                 />
-                {field.targets.map((_, subindex) => (
+                {indikators[index]?.targets?.map((_, subindex) => (
                   <div
                     key={subindex}
                     className="flex items-center gap-1 w-full"
@@ -361,18 +362,25 @@ export const ModalIkk: React.FC<modal> = ({
                         </div>
                       )}
                     />
+                    <div className="flex justify-end">
+                      <ButtonRed
+                        type="button"
+                        onClick={() => handleHapusTarget(index, subindex)}
+                      >
+                        Hapus Target
+                      </ButtonRed>
+                    </div>
                   </div>
                 ))}
+                <ButtonSkyBorder
+                  className="mb-3 mt-3"
+                  type="button"
+                  onClick={() => handleTambahTarget(index)}
+                >
+                  Tambah target
+                </ButtonSkyBorder>
               </div>
             ))}
-            <ButtonSkyBorder
-              className="mb-3 mt-3"
-              type="button"
-              onClick={handleTambahIndikator}
-            >
-              Tambah Indikator
-            </ButtonSkyBorder>
-
             <div className="flex flex-col gap-2">
               <ButtonSky className="w-full" type="submit" disabled={Proses}>
                 {Proses ? (
