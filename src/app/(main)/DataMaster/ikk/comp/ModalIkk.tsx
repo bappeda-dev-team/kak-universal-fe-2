@@ -99,7 +99,9 @@ export const ModalIkk: React.FC<modal> = ({
   };
 
   const handleHapusIndikator = (index: number) => {
-    remove(index);
+    if (fields.length > 1) {
+      remove(index);
+    }
   };
 
   const [Proses, setProses] = useState<boolean>(false);
@@ -294,12 +296,14 @@ export const ModalIkk: React.FC<modal> = ({
                 className="flex flex-col border border-gray-700 my-2 py-2 px-2 rounded-lg"
               >
                 <div className="flex justify-end">
-                  <ButtonRed
-                    type="button"
-                    onClick={() => handleHapusIndikator(index)}
-                  >
-                    Hapus Indikator
-                  </ButtonRed>
+                  {fields.length > 1 && (
+                    <ButtonRed
+                      type="button"
+                      onClick={() => handleHapusIndikator(index)}
+                    >
+                      Hapus Indikator
+                    </ButtonRed>
+                  )}
                 </div>
 
                 <Controller
