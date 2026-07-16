@@ -224,14 +224,20 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
                   <th className="border-r border-b px-2 py-1 text-center">2</th>
                   <th className="border-r border-b px-2 py-1 text-center">3</th>
                   <th className="border-r border-b px-2 py-1 text-center">4</th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-l border-b px-2 py-1 text-center">7</th>
+                  <th className="border-r border-b px-2 py-1 text-center">5</th>
+                  <th className="border-r border-b px-2 py-1 text-center">6</th>
+                  <th className="border-r border-b px-2 py-1 text-center">7</th>
+                  <th className="border-r border-b px-2 py-1 text-center">8</th>
+                  <th className="border-r border-b px-2 py-1 text-center">9</th>
+                  <th className="border-r border-b px-2 py-1 text-center">
+                    10
+                  </th>
+                  <th className="border-r border-b px-2 py-1 text-center">
+                    11
+                  </th>
+                  <th className="border-l border-b px-2 py-1 text-center">
+                    12
+                  </th>
                 </tr>
               </thead>
               <tbody>
