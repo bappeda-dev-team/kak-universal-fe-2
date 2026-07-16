@@ -207,17 +207,17 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
                 </tr>
 
                 <tr className="bg-emerald-500 text-white">
-                  <th className="border-r border-b px-6 py-2">{tahun - 1}</th>
+                  <th className="border-r border-b px-6 py-2">2024</th>
 
-                  <th className="border-r border-b px-6 py-2">{tahun}</th>
+                  <th className="border-r border-b px-6 py-2">2025</th>
 
-                  <th className="border-r border-b px-6 py-2">{tahun + 1}</th>
+                  <th className="border-r border-b px-6 py-2">2026</th>
 
-                  <th className="border-r border-b px-6 py-2">{tahun + 2}</th>
+                  <th className="border-r border-b px-6 py-2">2027</th>
 
-                  <th className="border-r border-b px-6 py-2">{tahun + 3}</th>
+                  <th className="border-r border-b px-6 py-2">2028</th>
 
-                  <th className="border-r border-b px-6 py-2">{tahun + 4}</th>
+                  <th className="border-r border-b px-6 py-2">2029</th>
                 </tr>
                 <tr className="bg-emerald-700 text-white">
                   <th className="border-r border-b px-2 py-1 text-center">1</th>
