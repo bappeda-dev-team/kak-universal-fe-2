@@ -368,13 +368,17 @@ export const ModalIkk: React.FC<modal> = ({
                       render={({ field }) => (
                         <div className="flex flex-col py-3 w-full">
                           <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                            Target :
+                            {subindex === 0 ? "Realisasi :" : "Target :"}
                           </label>
                           <input
                             {...field}
                             type="text"
                             className="border px-4 py-2 rounded-lg"
-                            placeholder="Masukkan target"
+                            placeholder={
+                              subindex === 0
+                                ? "Masukkan realisasi"
+                                : "Masukkan target"
+                            }
                           />
                         </div>
                       )}
