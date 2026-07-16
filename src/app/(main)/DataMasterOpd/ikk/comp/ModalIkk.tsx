@@ -394,6 +394,7 @@ export const ModalIkk: React.FC<modal> = ({
 
                           <input
                             {...field}
+                            value={2024 + subindex}
                             readOnly
                             className="border px-4 py-2 rounded-lg bg-gray-100"
                           />
