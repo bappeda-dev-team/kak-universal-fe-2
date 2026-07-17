@@ -400,6 +400,18 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <button type="button" title="Program Prioritas Daerah" className={`${!isOpen && 'hidden'} text-left duration-200`}>Program Prioritas Daerah</button>
                 </li>
               </Link>
+              <Link href="/DataMaster/bidang-urusan-opd">
+                <li
+                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/bidang-urusan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                >
+                  <TbFileDelta className="text-xl" />
+                  <span
+                    className={`${!isOpen && "hidden"} origin-left duration-200 text-sm`}
+                  >
+                    Bidang Urusan OPD
+                  </span>
+                </li>
+              </Link>
               <Link href="/DataMaster/program-prioritas-pusat">
                 <li className={`flex items-center gap-x-2 cursor-pointer text-sm p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/program-prioritas-pusat" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbChartPie className="text-2xl" />
