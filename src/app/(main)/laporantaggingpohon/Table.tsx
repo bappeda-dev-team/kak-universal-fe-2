@@ -102,8 +102,8 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pohon</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Level Pohon</th>
 
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Pelaksana</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Rencana Kinerja</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Pelaksana</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Rencana Kinerja</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Program</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Indikator Program</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Sub Kegiatan</th>
@@ -182,10 +182,10 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                                                         :
                                                                         <td colSpan={4} className="border-r border-b px-6 py-4 bg-red-400 text-white italic h-[200px]">*Sub Kegiatan Belum Di Pilih</td>
                                                                     }
-                                                                    <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_1 || 0}</td>
-                                                                    <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_2 || 0}</td>
-                                                                    <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_3 || 0}</td>
-                                                                    <td className="border-r border-b px-6 py-4 h-[200px]">{rk.tahapan_pelaksanaan.tw_4 || 0}</td>
+                                                                    <td className="border-r border-b px-6 py-4 h-[200px] text-center">{rk.tahapan_pelaksanaan.tw_1 || 0}</td>
+                                                                    <td className="border-r border-b px-6 py-4 h-[200px] text-center">{rk.tahapan_pelaksanaan.tw_2 || 0}</td>
+                                                                    <td className="border-r border-b px-6 py-4 h-[200px] text-center">{rk.tahapan_pelaksanaan.tw_3 || 0}</td>
+                                                                    <td className="border-r border-b px-6 py-4 h-[200px] text-center">{rk.tahapan_pelaksanaan.tw_4 || 0}</td>
                                                                     <td className="border-r border-b px-6 py-4 h-[200px]">{rk.keterangan || "-"}</td>
                                                                 </tr>
                                                             ))
