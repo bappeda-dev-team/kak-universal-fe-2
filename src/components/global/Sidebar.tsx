@@ -494,12 +494,6 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>User OPD</span>
                 </li>
               </Link>
-              <Link href="/bidang-urusan-opd">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/bidang-urusan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                  <TbFileDelta className="text-xl" />
-                  <span className={`${!isOpen && 'hidden'} text-sm origin-left duration-200`}>Bidang Urusan OPD</span>
-                </li>
-              </Link>
               <Link href="/subkegiatanopd">
                 <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/subkegiatanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbFileCode2 className="text-xl" />
