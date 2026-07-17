@@ -143,7 +143,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         try{
             setIsLoading(true);
-            const response = await fetch(`${API_URL}/bidang_urusan/findall/${kode_opd}`, {
+            const response = await fetch(`${API_URL}/bidang_urusan_opd/findall/${kode_opd}`, {
                 headers: {
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
