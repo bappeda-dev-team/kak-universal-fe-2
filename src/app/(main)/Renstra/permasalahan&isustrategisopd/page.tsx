@@ -40,19 +40,25 @@ const IsuStrategis = () => {
           <div className="mt-3 rounded-xl shadow-lg border">
             <div className="flex items-center justify-between border-b px-5 py-5">
               <div className="flex flex-wrap items-end">
-                <h1 className="uppercase font-bold">Isu Strategis</h1>
+                <h1 className="uppercase font-bold">
+                  Permasalahan & Isu Strategis
+                </h1>
                 <h1 className="uppercase font-bold ml-1 text-emerald-500">
                   {branding?.tahun?.label}
                 </h1>
               </div>
             </div>
-            {/* <p className="text-sm italic text-gray-400 ml-3 mt-2">
+            <p className="text-sm italic text-gray-400 ml-3 mt-2">
               *data permasalahan per tahun {tahun} (header)
-            </p> */}
-            {/* <TablePermasalahan
-                            tahun={tahun}
-                            kode_opd={branding?.user?.roles == 'super_admin' ? branding?.opd?.value : branding?.user?.kode_opd}
-                        /> */}
+            </p>
+            <TablePermasalahan
+              tahun={tahun}
+              kode_opd={
+                branding?.user?.roles == "super_admin"
+                  ? branding?.opd?.value
+                  : branding?.user?.kode_opd
+              }
+            />
             <TableIsuStrategis
               tahun={tahun}
               kode_opd={
