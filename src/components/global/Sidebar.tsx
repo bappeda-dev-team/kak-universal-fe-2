@@ -104,6 +104,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
   const [RKPDRankir, setRKPDRankir] = useState<boolean | null>(null);
   const [RKPDPenetapan, setRKPDPenetapan] = useState<boolean | null>(null);
   const [Renstra, setRenstra] = useState<boolean | null>(null);
+  const [Isu, setIsu] = useState<boolean | null>(null);
   const [Renja, setRenja] = useState<boolean | null>(null);
   const [RenjaRanwal, setRenjaRanwal] = useState<boolean | null>(null);
   const [RenjaRankir, setRenjaRankir] = useState<boolean | null>(null);
@@ -144,6 +145,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setPerencanaanKota(false);
       setPerencanaanOPD(false);
       setLaporan(false);
+      setIsu(true);
     }
     //PERENCANAAN PEMDA
     if (
@@ -563,6 +565,18 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   </span>
                 </li>
               </Link>
+              <Link href="/DataMaster/isu-klhs">
+                <li
+                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/isu-klhs" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                >
+                  <TbLockSquare className="text-xl" />
+                  <span
+                    className={`${!isOpen && "hidden"} origin-left duration-200`}
+                  >
+                    Master Isu KLHS
+                  </span>
+                </li>
+              </Link>
               <Link href="/DataMaster/ikk">
                 <li
                   className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/ikk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
@@ -766,6 +780,63 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   </span>
                 </li>
               </Link>
+              <li
+                className={`flex justify-between font-medium items-center gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
+                onClick={() => setIsu(Isu ? false : true)}
+              >
+                <div className="flex items-center gap-2">
+                  <TbBuildingCommunity className="text-xl" />
+                  <span
+                    className={`${!isOpen && "hidden"} origin-left duration-200`}
+                  >
+                    Master Isu
+                  </span>
+                </div>
+                <TbChevronRight
+                  className={`transition-all duration-200 ease-in-out ${Isu ? "rotate-90" : ""}`}
+                />
+              </li>
+              {/* SUBS MENU RENSTRA */}
+              <div
+                className={`transition-all duration-300 ease-in-out ${Isu ? "px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}
+              >
+                <Link href="/DataMasterOpd/isu-global">
+                  <li
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-global" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  >
+                    <TbAlertTriangle className="text-xl" />
+                    <span
+                      className={`${!isOpen && "hidden"} origin-left duration-200`}
+                    >
+                      Global
+                    </span>
+                  </li>
+                </Link>
+                <Link href="/DataMasterOpd/isu-nasional">
+                  <li
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/nasional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  >
+                    <TbFocus2 className="text-xl" />
+                    <span
+                      className={`${!isOpen && "hidden"} origin-left duration-200`}
+                    >
+                      Nasional
+                    </span>
+                  </li>
+                </Link>
+                <Link href="/DataMasterOpd/isu-regional">
+                  <li
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-regional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  >
+                    <TbLayoutList className="text-xl" />
+                    <span
+                      className={`${!isOpen && "hidden"} origin-left duration-200`}
+                    >
+                      Regional
+                    </span>
+                  </li>
+                </Link>
+              </div>
               <Link href="/DataMasterOpd/ikk">
                 <li
                   className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/ikk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
