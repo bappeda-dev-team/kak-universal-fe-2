@@ -814,7 +814,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </Link>
                 <Link href="/DataMasterOpd/isu-nasional">
                   <li
-                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/nasional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-nasional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                   >
                     <TbFocus2 className="text-xl" />
                     <span
