@@ -63,6 +63,10 @@ import {
   TbLockSquareRoundedFilled,
   TbUserQuestion,
   TbLayoutList,
+  TbShieldSearch,
+  TbWorldSearch,
+  TbFlag,
+  TbFlagPin,
 } from "react-icons/tb";
 import Image from "next/image";
 import { usePathname, useParams } from "next/navigation";
@@ -569,7 +573,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 <li
                   className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/isu-klhs" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                 >
-                  <TbLockSquare className="text-xl" />
+                  <TbShieldSearch className="text-xl" />
                   <span
                     className={`${!isOpen && "hidden"} origin-left duration-200`}
                   >
@@ -804,7 +808,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <li
                     className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-global" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                   >
-                    <TbAlertTriangle className="text-xl" />
+                    <TbWorldSearch className="text-xl" />
                     <span
                       className={`${!isOpen && "hidden"} origin-left duration-200`}
                     >
@@ -816,7 +820,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <li
                     className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-nasional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                   >
-                    <TbFocus2 className="text-xl" />
+                    <TbFlag className="text-xl" />
                     <span
                       className={`${!isOpen && "hidden"} origin-left duration-200`}
                     >
@@ -828,7 +832,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <li
                     className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-regional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                   >
-                    <TbLayoutList className="text-xl" />
+                    <TbFlagPin className="text-xl" />
                     <span
                       className={`${!isOpen && "hidden"} origin-left duration-200`}
                     >
