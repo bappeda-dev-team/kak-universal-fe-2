@@ -4,7 +4,6 @@ import { FiHome } from "react-icons/fi";
 import Table from "@/components/pages/subkegiatanopd/Table";
 import { getOpdTahun, getUser } from "@/components/lib/Cookie";
 import { useState, useEffect } from "react";
-import Maintenance from "@/components/global/Maintenance";
 import { OpdNull, TahunNull } from "@/components/global/OpdTahunNull";
 
 const SubKegiatanOpd = () => {
@@ -58,7 +57,6 @@ const SubKegiatanOpd = () => {
                 ) : (
                     Tahun?.value !== undefined ?
                         <div className="m-1">
-                            {/* <Maintenance /> */}
                             <Table
                                 opd={(User?.roles == 'super_admin' || User?.roles == 'reviewer') ? SelectedOpd?.value : User?.kode_opd}
                                 tahun={Tahun?.value}

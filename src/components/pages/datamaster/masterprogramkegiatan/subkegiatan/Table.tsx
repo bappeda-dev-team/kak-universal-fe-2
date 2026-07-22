@@ -13,20 +13,21 @@ interface SubKegiatan {
     kode_subkegiatan: string;
     nama_sub_kegiatan: string;
 }
+interface Table {
+    data: any[];
+    error: boolean;
+    fetchTrigger: () => void;
+}
 
-const Table = () => {
+const Table: React.FC<Table> = ({ fetchTrigger, data, error }) => {
 
-    const [SubKegiatan, setSubKegiatan] = useState<SubKegiatan[]>([]);
-    const [Error, setError] = useState<boolean | null>(null);
-    const [Loading, setLoading] = useState<boolean | null>(null);
-    const [DataNull, setDataNull] = useState<boolean | null>(null);
+    const [SubKegiatan, setSubKegiatan] = useState<any[]>(data);
     const token = getToken();
     
     // MODAL
     const [ModalTambah, setModalTambah] = useState<boolean>(false);
     const [ModalEdit, setModalEdit] = useState<boolean>(false);
     const [IdSubKegiatan, setIdSubKegiatan] = useState<string>('');
-    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
     const handleEdit = (id: string) => {
         if(ModalEdit){
@@ -37,40 +38,6 @@ const Table = () => {
             setIdSubKegiatan(id);
         }
     }
-
-    useEffect(() => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const fetchSubKegiatan = async () => {
-            setLoading(true)
-            try {
-                const response = await fetch(`${API_URL}/sub_kegiatan/findall`, {
-                    headers: {
-                        Authorization: `${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-                const result = await response.json();
-                const data = result.sub_kegiatan;
-                if (data == null) {
-                    setDataNull(true);
-                    setSubKegiatan([]);
-                } else if (result.code === 401) {
-                    setError(true);
-                } else {
-                    setError(false);
-                    setDataNull(false);
-                    setSubKegiatan(data);
-                }
-                setSubKegiatan(data);
-            } catch (err) {
-                setError(true);
-                console.error(err)
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchSubKegiatan();
-    }, [token, FetchTrigger]);
 
     const hapusSubKegiatan = async (id: any) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -93,13 +60,7 @@ const Table = () => {
         }
     };
 
-    if (Loading) {
-        return (
-            <div className="border p-5 rounded-xl shadow-xl">
-                <LoadingClip className="mx-5 py-5" />
-            </div>
-        );
-    } else if (Error) {
+    if (error) {
         return (
             <div className="border p-5 rounded-xl shadow-xl">
                 <h1 className="text-red-500 mx-5 py-5">Periksa koneksi internet atau database server</h1>
@@ -127,7 +88,7 @@ const Table = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {DataNull ?
+                        {SubKegiatan.length === 0 ?
                             <tr>
                                 <td className="px-6 py-3 uppercase" colSpan={13}>
                                     Data Kosong / Belum Ditambahkan
@@ -180,7 +141,7 @@ const Table = () => {
                     metode="baru"
                     onClose={() => setModalTambah(false)}
                     isOpen={ModalTambah}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
+                    onSuccess={fetchTrigger}
                 />
                 {/* MODAL EDIT */}
                 <ModalSubKegiatan
@@ -188,7 +149,7 @@ const Table = () => {
                     metode="lama"
                     onClose={() => setModalEdit(false)}
                     isOpen={ModalEdit}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
+                    onSuccess={fetchTrigger}
                 />
             </div>
         </>
