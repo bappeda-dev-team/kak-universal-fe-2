@@ -6,7 +6,7 @@ import Select from 'react-select'
 import PohonTematik from './PohonTematik';
 import { TahunNull } from '@/components/global/OpdTahunNull';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ButtonBlackBorder, ButtonSky } from '@/components/global/Button';
+import { ButtonBlackBorder, ButtonCetak, ButtonSky } from '@/components/global/Button';
 import { TbEye, TbPrinter } from 'react-icons/tb';
 import html2canvas from 'html2canvas';
 import { AlertNotification, AlertQuestion2 } from '@/components/global/Alert';
@@ -215,6 +215,10 @@ const TematikKab = () => {
                                 'Tampilkan Semua Pohon'
                             }
                         </ButtonBlackBorder>
+
+                        <div className="mx-3">
+                          <ButtonCetak text={"Cetak Pokin Tematik PDF"} jenis={"pemda"} tahun={Tahun} pokin_id={Tematik.value} />
+                        </div>
                     </>
                 }
             </div>
