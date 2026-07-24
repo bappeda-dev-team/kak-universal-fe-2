@@ -7,6 +7,9 @@ import { useBrandingContext } from "@/context/BrandingContext";
 import { getToken } from "@/components/lib/Cookie";
 import { generatePagination } from "@/components/global/PaginationNav";
 import { LoadingBeat } from "@/components/global/Loading";
+import { ButtonBlackBorder, ButtonSky } from "@/components/global/Button";
+import { TbCirclePlus, TbSearch } from "react-icons/tb";
+
 
 const subkegiatan = () => {
 
@@ -14,6 +17,8 @@ const subkegiatan = () => {
     const [Page, setPage] = useState<number>(1);
     const [Limit, setLimit] = useState<number>(10);
     const [TotalPage, setTotalPage] = useState<number>(1);
+    const [SearchNama, setSearchNama] = useState<string>("");
+    const [SearchCode, setSearchCode] = useState<string>("");
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [Loading, setLoading] = useState<boolean>(false);
@@ -51,7 +56,7 @@ const subkegiatan = () => {
             }
         }
         fetchData();
-    }, [Limit, Page, branding, token, FetchTrigger]);
+    }, [Limit, Page, branding, token, SearchCode, SearchNama, FetchTrigger]);
 
     const page_nav = generatePagination(Page, TotalPage);
 
@@ -68,6 +73,42 @@ const subkegiatan = () => {
                     <div className="flex flex-col items-end">
                         <h1 className="uppercase font-bold">Master Sub Kegiatan</h1>
                     </div>
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                    <div className="ml-3 flex items-center gap-1">
+                        <div className="flex items-center gap-1 p-1 rounded-lg border">
+                            <div className="flex px-2 items-center">
+                                <TbSearch className="absolute ml-4 text-slate-500" />
+                                <input
+                                    type="text"
+                                    placeholder="Cari dengan kode"
+                                    // value={searchQuery}
+                                    onChange={(e) => setSearchCode(e.target.value)}
+                                    className="py-1 pl-10 pr-2 border rounded-lg border-gray-300"
+                                />
+                            </div>
+                            <div className="flex px-2 items-center">
+                                <TbSearch className="absolute ml-4 text-slate-500" />
+                                <input
+                                    type="text"
+                                    placeholder="Cari dengan nama"
+                                    // value={searchQuery}
+                                    onChange={(e) => setSearchNama(e.target.value)}
+                                    className="py-1 pl-10 pr-2 border rounded-lg border-gray-300"
+                                />
+                            </div>
+                            <ButtonBlackBorder onClick={() => setFetchTrigger((prev) => !prev)}>
+                                Cari
+                            </ButtonBlackBorder>
+                        </div>
+                    </div>
+                    <ButtonSky
+                        // onClick={() => setModalTambah(true)}
+                        className="flex items-center gap-1 m-2"
+                    >
+                        <TbCirclePlus />
+                        Tambah Sub Kegiatan
+                    </ButtonSky>
                 </div>
                 {Loading ?
                     <LoadingBeat />

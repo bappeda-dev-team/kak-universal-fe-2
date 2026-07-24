@@ -70,21 +70,14 @@ const Table: React.FC<Table> = ({ fetchTrigger, data, error }) => {
 
     return (
         <>
-            <ButtonSky 
-                onClick={() => setModalTambah(true)}
-                className="flex items-center gap-1 m-2"
-            >
-                <TbCirclePlus />
-                Tambah Sub Kegiatan
-            </ButtonSky>
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
                     <thead>
                         <tr className="bg-[#99CEF5] text-white">
-                            <th className="border-r border-b px-6 py-3 min-w-[50px]">No</th>
+                            <th className="border-r border-b px-6 py-3 w-[50px]">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Kode</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Nama Sub Kegiatan</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[70px]">Aksi</th>
+                            <th className="border-r border-b px-6 py-3 w-[100px]">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
