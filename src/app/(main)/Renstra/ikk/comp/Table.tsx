@@ -197,7 +197,7 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
                     </div>
                   </th>
 
-                  <th colSpan={5} className="border-r border-b px-6 py-3">
+                  <th colSpan={6} className="border-r border-b px-6 py-3">
                     Target
                   </th>
 
@@ -218,20 +218,30 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
                   <th className="border-r border-b px-6 py-2">2028</th>
 
                   <th className="border-r border-b px-6 py-2">2029</th>
+                  <th className="border-r border-b px-6 py-2">2030</th>
                 </tr>
                 <tr className="bg-emerald-700 text-white">
                   <th className="border-r border-b px-2 py-1 text-center">1</th>
                   <th className="border-r border-b px-2 py-1 text-center">2</th>
                   <th className="border-r border-b px-2 py-1 text-center">3</th>
                   <th className="border-r border-b px-2 py-1 text-center">4</th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-r border-b px-2 py-1 text-center"></th>
-                  <th className="border-l border-b px-2 py-1 text-center">7</th>
+                  <th className="border-r border-b px-2 py-1 text-center">5</th>
+                  <th className="border-r border-b px-2 py-1 text-center">6</th>
+                  <th className="border-r border-b px-2 py-1 text-center">7</th>
+                  <th className="border-r border-b px-2 py-1 text-center">8</th>
+                  <th className="border-r border-b px-2 py-1 text-center">9</th>
+                  <th className="border-r border-b px-2 py-1 text-center">
+                    10
+                  </th>
+                  <th className="border-r border-b px-2 py-1 text-center">
+                    11
+                  </th>
+                  <th className="border-l border-b px-2 py-1 text-center">
+                    12
+                  </th>
+                  <th className="border-l border-b px-2 py-1 text-center">
+                    13
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -281,29 +291,17 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
                               {indikator.targets[0]?.satuan || "-"}
                             </td>
 
-                            <td className="border border-emerald-500 px-6 py-4 text-center">
-                              {getTargetByYear(indikator.targets, tahun - 1)}
-                            </td>
-
-                            <td className="border border-emerald-500 px-6 py-4 text-center">
-                              {getTargetByYear(indikator.targets, tahun)}
-                            </td>
-
-                            <td className="border border-emerald-500 px-6 py-4 text-center">
-                              {getTargetByYear(indikator.targets, tahun + 1)}
-                            </td>
-
-                            <td className="border border-emerald-500 px-6 py-4 text-center">
-                              {getTargetByYear(indikator.targets, tahun + 2)}
-                            </td>
-
-                            <td className="border border-emerald-500 px-6 py-4 text-center">
-                              {getTargetByYear(indikator.targets, tahun + 3)}
-                            </td>
-
-                            <td className="border border-emerald-500 px-6 py-4 text-center">
-                              {getTargetByYear(indikator.targets, tahun + 4)}
-                            </td>
+                            {Array.from(
+                              { length: 7 },
+                              (_, idx) => 2024 + idx,
+                            ).map((year) => (
+                              <td
+                                key={year}
+                                className="border border-emerald-500 px-6 py-4 text-center"
+                              >
+                                {getTargetByYear(indikator.targets, year)}
+                              </td>
+                            ))}
 
                             {indikatorIndex === 0 && (
                               <td

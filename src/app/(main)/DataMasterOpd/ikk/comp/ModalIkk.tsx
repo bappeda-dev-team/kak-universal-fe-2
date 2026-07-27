@@ -64,22 +64,19 @@ export const ModalIkk: React.FC<modal> = ({
       indikators: Data?.indikators
         ? Data.indikators.map((i: Indikator) => ({
             indikator: i.indikator,
-            targets: Array.from({ length: 6 }, (_, idx) => ({
+            targets: Array.from({ length: 7 }, (_, idx) => ({
               target: i.targets[idx]?.target || "",
               satuan: i.targets[idx]?.satuan || "",
-              tahun:
-                i.targets[idx]?.tahun && i.targets[idx].tahun !== 0
-                  ? i.targets[idx].tahun
-                  : Data.tahun - 1 + idx,
+              tahun: 2024 + idx,
             })),
           }))
         : [
             {
               indikator: "",
-              targets: Array.from({ length: 6 }, (_, idx) => ({
+              targets: Array.from({ length: 7 }, (_, idx) => ({
                 target: "",
                 satuan: "",
-                tahun: Number(Data?.tahun) - 1 + idx,
+                tahun: 2024 + idx,
               })),
             },
           ],

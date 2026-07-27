@@ -273,6 +273,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
             indikator: data.indikator.map((ind) => ({
                 indikator: ind.indikator,
                 rumus_perhitungan: ind.rumus_perhitungan,
+                definisi_operasional: ind.definisi_operasional,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
                     target: Number(t.target),
