@@ -213,7 +213,7 @@ const Table = () => {
                                     }
                                     <td className="border-r border-b px-6 py-4">
                                         <div className="flex flex-col jutify-center items-center gap-2">
-                                            <ButtonGreen className="w-full" halaman_url={`/useropd/${data.id}`}>Edit</ButtonGreen>
+                                            <ButtonGreen className="w-full" halaman_url={`/DataMasterOpd/useropd/${data.id}`}>Edit</ButtonGreen>
                                             <ButtonBlack
                                                 className="w-full"
                                                 onClick={() => handleModalJabatan(data)}
