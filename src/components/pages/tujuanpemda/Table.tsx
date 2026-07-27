@@ -25,7 +25,7 @@ interface Target {
 interface Indikator {
     id: string;
     indikator: string;
-    definisi_operational: string;
+    definisi_operasional: string;
     rumus_perhitungan: string;
     sumber_data: string;
     target: Target[];
@@ -334,7 +334,7 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                                                         item.indikator.map((i: Indikator) => (
                                                             <tr key={i.id}>
                                                                 <td className="border-x border-b border-emerald-500 px-6 py-6">{i.indikator || "-"}</td>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-6">{i.definisi_operational || "-"}</td>
+                                                                <td className="border-x border-b border-emerald-500 px-6 py-6">{i.definisi_operasional || "-"}</td>
                                                                 <td className="border-x border-b border-emerald-500 px-6 py-6">{i.rumus_perhitungan || "-"}</td>
                                                                 <td className="border-x border-b border-emerald-500 px-6 py-6">{i.sumber_data || "-"}</td>
                                                                 {i.target.map((t: Target) => (

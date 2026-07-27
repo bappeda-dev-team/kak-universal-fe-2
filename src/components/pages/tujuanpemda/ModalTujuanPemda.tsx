@@ -31,7 +31,7 @@ interface indikator {
     target: target[];
 }
 type target = {
-    target: string;
+    target: number;
     satuan: string;
     tahun?: string;
 }
@@ -48,15 +48,6 @@ interface modal {
     tahun_list: string[]; // tahun value header
     onSuccess: () => void;
 }
-
-interface Periode {
-    id: number;
-    tahun_awal: string;
-    tahun_akhir: string;
-    jenis_periode: string;
-    tahun_list: string[];
-}
-
 
 export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id, periode, jenis_periode, metode, tahun, tahun_list, onSuccess }) => {
 
@@ -256,7 +247,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
-                    target: Number(t.target),
+                    target: String(t.target),
                     satuan: t.satuan,
                     tahun: tahun_list[index],
                 })),
@@ -276,7 +267,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                 definisi_operasional: ind.definisi_operasional,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
-                    target: Number(t.target),
+                    target: String(t.target),
                     satuan: t.satuan,
                     tahun: tahun_list[index],
                 })),
@@ -554,7 +545,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                                                         </label>
                                                         <input
                                                             {...field}
-                                                            type="text"
+                                                            type="number"
                                                             className="border px-4 py-2 rounded-lg"
                                                             placeholder="Masukkan target"
                                                         />
