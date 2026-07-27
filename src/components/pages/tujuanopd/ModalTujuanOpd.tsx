@@ -30,7 +30,7 @@ interface indikator {
     target: target[];
 }
 type target = {
-    target: string;
+    target: number;
     satuan: string;
     tahun?: string;
 };
@@ -213,7 +213,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
-                    target: t.target,
+                    target: String(t.target),
                     satuan: t.satuan,
                     tahun: special === true ? Periode?.tahun_list[index] : (tahun_list && tahun_list[index]),
                 })),
@@ -234,7 +234,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
-                    target: t.target,
+                    target: String(t.target),
                     satuan: t.satuan,
                     tahun: tahun_list && tahun_list[index],
                 })),
@@ -513,7 +513,8 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                                         </label>
                                                         <input
                                                             {...field}
-                                                            type="text"
+                                                            step="0.00001"
+                                                            type="number"
                                                             className="border px-4 py-2 rounded-lg"
                                                             placeholder="Masukkan target"
                                                         />

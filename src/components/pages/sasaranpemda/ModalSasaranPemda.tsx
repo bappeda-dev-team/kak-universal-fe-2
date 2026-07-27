@@ -30,7 +30,7 @@ interface indikator {
     target: target[];
 }
 type target = {
-    target: string;
+    target: number;
     satuan: string;
     tahun?: string;
 };
@@ -197,7 +197,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                 rumus_perhitungan: ind.rumus_perhitungan,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
-                    target: t.target,
+                    target: String(t.target),
                     satuan: t.satuan,
                     tahun: tahun_list[index],
                 })),
@@ -216,7 +216,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                 definisi_operasional: ind.definisi_operasional,
                 sumber_data: ind.sumber_data,
                 target: ind.target.map((t, index) => ({
-                    target: t.target,
+                    target: String(t.target),
                     satuan: t.satuan,
                     tahun: tahun_list[index],
                 })),
@@ -483,7 +483,8 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                                                         </label>
                                                                         <input
                                                                             {...field}
-                                                                            type="text"
+                                                                            step="0.00001"
+                                                                            type="number"
                                                                             className="border px-4 py-2 rounded-lg"
                                                                             placeholder="Masukkan target"
                                                                         />
