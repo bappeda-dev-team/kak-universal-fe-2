@@ -459,7 +459,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                                 )}
                                             />
                                         </div>
-                                        <div className="flex flex-wrap justify-between gap-1">
+                                        <div className="grid grid-cols-2 md:grid-cols-3 justify-between gap-1">
                                             {field.target.map((_, subindex) => (
                                                 <div key={`${index}-${subindex}`} className="flex flex-col py-1 px-3 border border-gray-200 rounded-lg">
                                                     <label className="text-base text-center text-gray-700">
