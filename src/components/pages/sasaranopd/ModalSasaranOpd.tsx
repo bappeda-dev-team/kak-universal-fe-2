@@ -147,17 +147,17 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                         definisi_operasional: item.definisi_operasional,
                         rumus_perhitungan: item.rumus_perhitungan,
                         sumber_data: item.sumber_data,
-                        target: item.target.length === 0
-                            ? tahun_list.map((t: string) => ({
-                                target: "",
-                                satuan: "",
-                                tahun: t,
-                            }))
-                            : item.target.map((t: target) => ({
-                                target: t.target,
-                                satuan: t.satuan,
-                                tahun: t.tahun,
-                            })),
+                        target: tahun_list.map((tahun: string) => {
+                            const targetTahun = item.target.find(
+                                (t: target) => t.tahun === tahun
+                            );
+
+                            return {
+                                tahun,
+                                target: targetTahun?.target ?? "",
+                                satuan: targetTahun?.satuan ?? "",
+                            };
+                        }),
                     }))
                 );
             } catch (err) {
@@ -184,10 +184,17 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                     definisi_operasional: item.definisi_operasional,
                     rumus_perhitungan: item.rumus_perhitungan,
                     sumber_data: item.sumber_data,
-                    target: item.target.map((t: any) => ({
-                        target: t.target,
-                        satuan: t.satuan,
-                    })),
+                    target: tahun_list.map((tahun: string) => {
+                        const targetTahun = item.target.find(
+                            (t: target) => t.tahun === tahun
+                        );
+
+                        return {
+                            tahun,
+                            target: targetTahun?.target ?? "",
+                            satuan: targetTahun?.satuan ?? "",
+                        };
+                    }),
                 })) || [];
 
                 reset({ indikator: indikatorData });
@@ -506,7 +513,7 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                                             )}
                                         />
                                     </div>
-                                    <div className="flex flex-wrap justify-between gap-1">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 justify-between gap-1">
                                         {field.target.map((_, subindex) => (
                                             <div key={`${index_indikator}-${subindex}`} className="flex flex-col py-1 px-3 border border-gray-200 rounded-lg">
                                                 <label className="text-base text-center text-gray-700">
