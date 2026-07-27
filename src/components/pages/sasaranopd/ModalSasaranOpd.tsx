@@ -147,17 +147,17 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                         definisi_operasional: item.definisi_operasional,
                         rumus_perhitungan: item.rumus_perhitungan,
                         sumber_data: item.sumber_data,
-                        target: item.target.length === 0
-                            ? tahun_list.map((t: string) => ({
-                                target: "",
-                                satuan: "",
-                                tahun: t,
-                            }))
-                            : item.target.map((t: target) => ({
-                                target: t.target,
-                                satuan: t.satuan,
-                                tahun: t.tahun,
-                            })),
+                        target: tahun_list.map((tahun: string) => {
+                            const targetTahun = item.target.find(
+                                (t: target) => t.tahun === tahun
+                            );
+
+                            return {
+                                tahun,
+                                target: targetTahun?.target ?? "",
+                                satuan: targetTahun?.satuan ?? "",
+                            };
+                        }),
                     }))
                 );
             } catch (err) {
@@ -184,10 +184,17 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                     definisi_operasional: item.definisi_operasional,
                     rumus_perhitungan: item.rumus_perhitungan,
                     sumber_data: item.sumber_data,
-                    target: item.target.map((t: any) => ({
-                        target: t.target,
-                        satuan: t.satuan,
-                    })),
+                    target: tahun_list.map((tahun: string) => {
+                        const targetTahun = item.target.find(
+                            (t: target) => t.tahun === tahun
+                        );
+
+                        return {
+                            tahun,
+                            target: targetTahun?.target ?? "",
+                            satuan: targetTahun?.satuan ?? "",
+                        };
+                    }),
                 })) || [];
 
                 reset({ indikator: indikatorData });

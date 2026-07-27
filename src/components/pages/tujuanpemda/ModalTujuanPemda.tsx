@@ -64,7 +64,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
     const [NamaPohon, setNamaPohon] = useState<string>('');
     const [Visi, setVisi] = useState<OptionType | null>(null);
     const [Misi, setMisi] = useState<OptionType | null>(null);
-    
+
     const [VisiOption, setVisiOption] = useState<OptionType[]>([]);
     const [MisiOption, setMisiOption] = useState<OptionType[]>([]);
 
@@ -101,14 +101,14 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                 if (hasil.nama_tematik) {
                     setNamaPohon(hasil.nama_tematik);
                 }
-                if(hasil.id_visi){
+                if (hasil.id_visi) {
                     const visi = {
                         label: hasil.visi,
                         value: hasil.id_visi,
                     }
                     setVisi(visi);
                 }
-                if(hasil.id_misi){
+                if (hasil.id_misi) {
                     const misi = {
                         value: hasil.id_misi,
                         label: hasil.misi,
@@ -123,10 +123,17 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                     definisi_operasional: item.definisi_operasional,
                     rumus_perhitungan: item.rumus_perhitungan,
                     sumber_data: item.sumber_data,
-                    target: item.target.map((t: any) => ({
-                        target: t.target,
-                        satuan: t.satuan,
-                    })),
+                    target: tahun_list.map((tahun: string) => {
+                        const targetTahun = item.target.find(
+                            (t: target) => t.tahun === tahun
+                        );
+
+                        return {
+                            tahun,
+                            target: targetTahun?.target ?? "",
+                            satuan: targetTahun?.satuan ?? "",
+                        };
+                    }),
                 })) || [];
 
                 reset({ indikator: indikatorData });
@@ -427,7 +434,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                                             isDisabled={!Visi}
                                             isClearable
                                             onMenuOpen={() => {
-                                                if(Visi){
+                                                if (Visi) {
                                                     fetchMisiOption(Visi?.value);
                                                 }
                                             }}

@@ -120,10 +120,17 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                     rumus_perhitungan: item.rumus_perhitungan,
                     definisi_operasional: item.definisi_operasional,
                     sumber_data: item.sumber_data,
-                    target: item.target.map((t: any) => ({
-                        target: t.target,
-                        satuan: t.satuan,
-                    })),
+                    target: tahun_list?.map((tahun: string) => {
+                        const targetTahun = item.target.find(
+                            (t: target) => t.tahun === tahun
+                        );
+
+                        return {
+                            tahun,
+                            target: targetTahun?.target ?? "",
+                            satuan: targetTahun?.satuan ?? "",
+                        };
+                    }),
                 })) || [];
 
                 reset({ indikator: indikatorData });
@@ -139,9 +146,9 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
         }
     }, [id, token, isOpen, metode, reset, replace, tahun, tahun_list, special]);
 
-    const fetchOptionBidangUrusan = async() => {
+    const fetchOptionBidangUrusan = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try{
+        try {
             setIsLoading(true);
             const response = await fetch(`${API_URL}/bidang_urusan/findall/${kode_opd}`, {
                 headers: {
@@ -162,9 +169,9 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
             setIsLoading(false);
         }
     }
-    const fetchOptionPeriode = async() => {
+    const fetchOptionPeriode = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try{
+        try {
             setIsLoading(true);
             const response = await fetch(`${API_URL}/periode/findall`, {
                 headers: {
@@ -264,7 +271,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                 onClose();
                 onSuccess();
                 reset();
-            } else if(result.code === 500) {
+            } else if (result.code === 500) {
                 AlertNotification("Gagal", `${result.data}`, "error", 2000);
             } else {
                 AlertNotification("Gagal", "terdapat kesalahan pada backend / database server dengan response !ok", "error", 2000);
@@ -357,7 +364,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                                 borderRadius: '8px',
                                                 borderColor: 'black', // Warna default border menjadi merah
                                                 '&:hover': {
-                                                borderColor: '#3673CA', // Warna border tetap merah saat hover
+                                                    borderColor: '#3673CA', // Warna border tetap merah saat hover
                                                 },
                                             }),
                                         }}
@@ -399,7 +406,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                                     borderRadius: '8px',
                                                     borderColor: 'black', // Warna default border menjadi merah
                                                     '&:hover': {
-                                                    borderColor: '#3673CA', // Warna border tetap merah saat hover
+                                                        borderColor: '#3673CA', // Warna border tetap merah saat hover
                                                     },
                                                 }),
                                             }}
