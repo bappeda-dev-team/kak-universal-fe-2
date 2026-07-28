@@ -513,8 +513,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                                         </label>
                                                         <input
                                                             {...field}
-                                                            step="0.00001"
-                                                            type="number"
+                                                            type="text"
                                                             className="border px-4 py-2 rounded-lg"
                                                             placeholder="Masukkan target"
                                                         />
