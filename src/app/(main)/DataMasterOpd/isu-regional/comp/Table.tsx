@@ -187,7 +187,9 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
                   <th className="border-r border-b px-6 py-3 min-w-[250px]">
                     Bidang Urusan
                   </th>
-                  <th className="border-r border-b px-6 py-3 w-[100px]">Isu</th>
+                  <th className="border-r border-b px-6 py-3 min-w-[250px]">
+                    Isu
+                  </th>
                   <th className="border-l border-b px-6 py-3 w-[100px]">
                     Aksi
                   </th>
