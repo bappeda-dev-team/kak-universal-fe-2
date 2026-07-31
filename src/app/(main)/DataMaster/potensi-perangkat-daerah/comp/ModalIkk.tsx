@@ -69,7 +69,7 @@ export const ModalIkk: React.FC<modal> = ({
     try {
       setLoading(true);
       const response = await fetch(
-        `${API_URL}/bidang_urusan/findall/${kode_opd}`,
+        `${API_URL}/bidang_urusan_opd/findall/${kode_opd}`,
         {
           headers: {
             Authorization: `${token}`,
