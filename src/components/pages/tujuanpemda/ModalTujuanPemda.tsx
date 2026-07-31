@@ -552,7 +552,6 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                                                         </label>
                                                         <input
                                                             {...field}
-                                                            // step="0.00001"
                                                             type="text"
                                                             className="border px-4 py-2 rounded-lg"
                                                             placeholder="Masukkan target"

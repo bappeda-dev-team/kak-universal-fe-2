@@ -530,7 +530,6 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                                                             </label>
                                                             <input
                                                                 {...field}
-                                                                // step="0.00001"
                                                                 type="text"
                                                                 className="border px-4 py-2 rounded-lg"
                                                                 placeholder="Masukkan target"

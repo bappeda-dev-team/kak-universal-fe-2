@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
         height: 40, // Ruang tanda tangan yang konsisten
     },
     nameText: {
-        textTransform: 'uppercase',
         fontSize: 12,
         fontWeight: 'bold',
         textDecoration: 'underline',
