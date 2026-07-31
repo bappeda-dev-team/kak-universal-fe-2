@@ -43,7 +43,7 @@ interface indikator {
 type target = {
     id_target?: string;
     id_indikator?: string;
-    target: number;
+    target: string;
     satuan: string;
     tahun?: string;
 };

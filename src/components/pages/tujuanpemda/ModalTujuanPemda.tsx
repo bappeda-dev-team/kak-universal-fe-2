@@ -31,7 +31,7 @@ interface indikator {
     target: target[];
 }
 type target = {
-    target: number;
+    target: string;
     satuan: string;
     tahun?: string;
 }
