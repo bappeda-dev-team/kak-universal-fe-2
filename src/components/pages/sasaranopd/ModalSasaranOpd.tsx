@@ -43,7 +43,7 @@ interface indikator {
 type target = {
     id_target?: string;
     id_indikator?: string;
-    target: number;
+    target: string;
     satuan: string;
     tahun?: string;
 };
@@ -530,8 +530,7 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                                                             </label>
                                                             <input
                                                                 {...field}
-                                                                step="0.00001"
-                                                                type="number"
+                                                                type="text"
                                                                 className="border px-4 py-2 rounded-lg"
                                                                 placeholder="Masukkan target"
                                                             />

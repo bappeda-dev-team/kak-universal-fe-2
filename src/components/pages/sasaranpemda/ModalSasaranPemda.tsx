@@ -30,7 +30,7 @@ interface indikator {
     target: target[];
 }
 type target = {
-    target: number;
+    target: string;
     satuan: string;
     tahun?: string;
 };
@@ -386,7 +386,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                             />
                                         </div>
                                         <label className="uppercase text-base font-bold text-gray-700 my-2">
-                                            indikator Sasaran Pemda :
+                                            Indikator Sasaran Pemda :
                                         </label>
                                         {fields.map((field, index) => (
                                             <React.Fragment key={field.id}>
@@ -483,8 +483,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                                                         </label>
                                                                         <input
                                                                             {...field}
-                                                                            step="0.00001"
-                                                                            type="number"
+                                                                            type="text"
                                                                             className="border px-4 py-2 rounded-lg"
                                                                             placeholder="Masukkan target"
                                                                         />

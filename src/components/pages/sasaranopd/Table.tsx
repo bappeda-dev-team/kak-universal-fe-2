@@ -1,14 +1,13 @@
 'use client'
 
-import { ButtonRed, ButtonGreen, ButtonBlackBorder } from "@/components/global/Button";
+import { ButtonRed, ButtonGreen, ButtonRedBorder, ButtonSkyBorder } from "@/components/global/Button";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken, getUser, getOpdTahun } from "@/components/lib/Cookie";
-import { TbPencil, TbTrash, TbCirclePlus, TbArrowBadgeDownFilled, TbPrinter } from "react-icons/tb";
+import { TbPencil, TbTrash, TbCirclePlus, TbArrowBadgeDownFilled, TbEyeClosed, TbEye, TbAlertCircle } from "react-icons/tb";
 import { ModalSasaranOpd } from "./ModalSasaranOpd";
-import { useCetakSasaranOpd } from "@/app/(main)/Renstra/sasaranopd/useCetakSasaranOpd";
 
 interface OptionTypeString {
     value: string;
@@ -84,6 +83,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
     const [IdSasaran, setIdSasaran] = useState<string>('');
     const [NamaPohon, setNamaPohon] = useState<string>('');
     const [IdPohon, setIdPohon] = useState<number>(0);
+    const [Hidden, setHidden] = useState<number[]>([]);
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [Tahun, setTahun] = useState<any>(null);
@@ -112,9 +112,6 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
             setSelectedOpd(opd);
         }
     }, []);
-
-    const kode_opd = User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd;
-    const nama_opd = User?.roles == 'super_admin' ? SelectedOpd?.label : User?.nama_opd;
 
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -165,8 +162,6 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
 
         }
     }, [token, User, FetchTrigger, tahun_awal, tahun_akhir, jenis, SelectedOpd]);
-
-    const {cetakPdfSasaranOpd} = useCetakSasaranOpd(Sasaran, nama_opd, tahun_awal, tahun_akhir, tahun_list);
 
     const hapusSasaranOpd = async (id: string) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -258,15 +253,6 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
 
     return (
         <>
-            <div className="m-2">
-                <ButtonBlackBorder
-                    className="w-full flex items-center gap-1"
-                    onClick={cetakPdfSasaranOpd}
-                >
-                    <TbPrinter />
-                    Cetak
-                </ButtonBlackBorder>
-            </div>
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
                     <thead>
@@ -306,14 +292,23 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                             :
                             Sasaran.map((data: Sasaran, index: number) => {
                                 // Cek apakah data.tujuan_pemda ada
-                                const hasPelaksana = data.pelaksana.length != 0;
                                 const hasSasaran = data.sasaran_opd.length != 0;
                                 const TotalRow = data.sasaran_opd.reduce((total, item) => total + (item.indikator.length == 0 ? 1 : item.indikator.length), 0) + data.sasaran_opd.length + 1;
+
+                                const toggleHidden = (id: number) => {
+                                    setHidden(prev =>
+                                        prev.includes(id)
+                                            ? prev.filter(item => item !== id)
+                                            : [...prev, id]
+                                    );
+                                };
+
+                                const isHidden = Hidden.includes(data.id_pohon);
 
                                 return (
                                     <React.Fragment key={index}>
                                         {/* Baris Utama */}
-                                        <tr>
+                                        <tr className={`${isHidden && "bg-red-300"}`}>
                                             <td className="border-x border-b border-emerald-500 px-6 py-4 text-center" rowSpan={data.sasaran_opd.length === 0 ? 2 : TotalRow}>
                                                 {index + 1}
                                             </td>
@@ -322,20 +317,51 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                                                     {data.nama_pohon || "-"} - {data.tahun_pohon || ""}
                                                     {tipe === "opd" &&
                                                         <div className="flex items center gap-1 border-t border-emerald-500 pt-3">
-                                                            <div className="flex flex-col justify-between  gap-2 h-full w-full">
-                                                                <button
-                                                                    className="flex justify-between gap-1 rounded-full p-1 bg-sky-500 text-white border border-sky-500 hover:bg-white hover:text-sky-500 hover:border hover:border-sky-500"
-                                                                    onClick={() => {
-                                                                        handleModalNewSasaran(data.id_pohon, data.nama_pohon);
-                                                                        fetchOptionPelaksana(data.pelaksana);
-                                                                    }}
-                                                                >
-                                                                    <div className="flex gap-1">
-                                                                        <TbCirclePlus />
-                                                                        <p className="text-xs">Tambah Sasaran Baru</p>
-                                                                    </div>
-                                                                    <TbArrowBadgeDownFilled className="-rotate-90" />
-                                                                </button>
+                                                            <div className="flex justify-between  gap-2 h-full w-full">
+                                                                {isHidden ?
+                                                                    <>
+                                                                        <button
+                                                                            className="flex justify-between gap-1 rounded-full p-1 bg-blue-400 text-white border border-blue-400 hover:bg-white hover:text-blue-400 hover:border hover:border-blue-400"
+                                                                            onClick={() => toggleHidden(data.id_pohon)}
+                                                                        >
+                                                                            <div className="flex gap-1">
+                                                                                <TbEye />
+                                                                                <p className="text-xs">Show</p>
+                                                                            </div>
+                                                                        </button>
+                                                                        <button className="flex w-full justify-between gap-1 rounded-full p-1 border bg-black text-white">
+                                                                            <div className="flex gap-1">
+                                                                                <TbAlertCircle />
+                                                                                <p className="text-xs">Disembunyikan</p>
+                                                                            </div>
+                                                                        </button>
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <button
+                                                                            className="flex justify-between gap-1 rounded-full p-1 bg-red-400 text-white border border-red-400 hover:bg-white hover:text-red-400 hover:border hover:border-red-400"
+                                                                            onClick={() => toggleHidden(data.id_pohon)}
+                                                                        >
+                                                                            <div className="flex gap-1">
+                                                                                <TbEyeClosed />
+                                                                                <p className="text-xs">Hidden</p>
+                                                                            </div>
+                                                                        </button>
+                                                                        <button
+                                                                            className="flex w-full justify-between gap-1 rounded-full p-1 bg-sky-500 text-white border border-sky-500 hover:bg-white hover:text-sky-500 hover:border hover:border-sky-500"
+                                                                            onClick={() => {
+                                                                                handleModalNewSasaran(data.id_pohon, data.nama_pohon);
+                                                                                fetchOptionPelaksana(data.pelaksana);
+                                                                            }}
+                                                                        >
+                                                                            <div className="flex gap-1">
+                                                                                <TbCirclePlus />
+                                                                                <p className="text-xs">Tambah Sasaran</p>
+                                                                            </div>
+                                                                            <TbArrowBadgeDownFilled className="-rotate-90" />
+                                                                        </button>
+                                                                    </>
+                                                                }
                                                             </div>
                                                         </div>
                                                     }
@@ -356,7 +382,13 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                                                 <React.Fragment key={item.id}>
                                                     <tr>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-6 h-[150px]" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
-                                                            {item.nama_sasaran_opd || "-"}
+                                                            <div className="flex flex-col items-center gap-3">
+                                                                {item.nama_sasaran_opd || "-"}
+                                                                {/* <div className="flex items-center gap-1 py-1 px-3 rounded-xl bg-red-300 text-red-700">
+                                                                    <TbEyeClosed />
+                                                                    disembunyikan
+                                                                </div> */}
+                                                            </div>
                                                         </td>
                                                         <td className="border-x border-b border-emerald-500 px-6 py-6 h-[150px]" rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
                                                             {item.nama_tujuan_opd ?
@@ -450,7 +482,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                     tahun_awal={tahun_awal}
                     tahun_akhir={tahun_akhir}
                     jenis_periode={jenis}
-                    kode_opd={kode_opd}
+                    kode_opd={User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd}
                     isOpen={isOpenNewSasaran}
                     onClose={() => handleModalNewSasaran(0, '')}
                     onSuccess={() => setFetchTrigger((prev) => !prev)}
@@ -466,7 +498,7 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                     periode={id_periode}
                     tahun_awal={tahun_awal}
                     tahun_akhir={tahun_akhir}
-                    kode_opd={kode_opd}
+                    kode_opd={User?.roles == 'super_admin' ? SelectedOpd?.value : User?.kode_opd}
                     jenis_periode={jenis}
                     isOpen={isOpenEditSasaran}
                     onClose={() => handleModalEditSasaran('', 0, '')}

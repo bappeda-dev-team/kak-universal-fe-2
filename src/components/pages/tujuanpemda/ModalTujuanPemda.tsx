@@ -31,7 +31,7 @@ interface indikator {
     target: target[];
 }
 type target = {
-    target: number;
+    target: string;
     satuan: string;
     tahun?: string;
 }
@@ -552,8 +552,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                                                         </label>
                                                         <input
                                                             {...field}
-                                                            step="0.00001"
-                                                            type="number"
+                                                            type="text"
                                                             className="border px-4 py-2 rounded-lg"
                                                             placeholder="Masukkan target"
                                                         />

@@ -30,7 +30,7 @@ interface indikator {
     target: target[];
 }
 type target = {
-    target: number;
+    target: string;
     satuan: string;
     tahun?: string;
 };
@@ -150,7 +150,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         try {
             setIsLoading(true);
-            const response = await fetch(`${API_URL}/bidang_urusan/findall/${kode_opd}`, {
+            const response = await fetch(`${API_URL}/bidang_urusan_opd/findall/${kode_opd}`, {
                 headers: {
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
@@ -513,8 +513,7 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
                                                         </label>
                                                         <input
                                                             {...field}
-                                                            step="0.00001"
-                                                            type="number"
+                                                            type="text"
                                                             className="border px-4 py-2 rounded-lg"
                                                             placeholder="Masukkan target"
                                                         />

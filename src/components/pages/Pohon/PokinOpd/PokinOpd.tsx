@@ -4,7 +4,7 @@
 import '@/components/pages/Pohon/treeflex.css'
 import React, { useState, useEffect, useRef } from 'react';
 import { TbPencil, TbCheck, TbCircleLetterXFilled, TbCirclePlus, TbHandStop, TbPointer, TbSettings, TbHourglass, TbCopy, TbEye, TbPrinter } from 'react-icons/tb';
-import { ButtonGreenBorder, ButtonSkyBorder, ButtonRedBorder, ButtonBlackBorder, ButtonBlack, ButtonSky } from '@/components/global/Button';
+import { ButtonGreenBorder, ButtonSkyBorder, ButtonRedBorder, ButtonBlackBorder, ButtonBlack, ButtonSky, ButtonCetak } from '@/components/global/Button';
 import { LoadingBeat, LoadingButtonClip, LoadingButtonClip2, LoadingClip, LoadingSync } from '@/components/global/Loading';
 import { OpdTahunNull, TahunNull } from '@/components/global/OpdTahunNull';
 import { PohonOpd } from '@/components/lib/Pohon/Opd/PohonOpd';
@@ -372,6 +372,7 @@ const PokinOpd = () => {
                         :
                         <h1 className="font-bold">Pohon Cascading {Pokin?.nama_opd}</h1>
                 }
+                <ButtonCetak text={"Cetak Pokin OPD PDF"} jenis={"opd"} tahun={Tahun.value} kode_opd={kode_opd} />
                 {(User?.roles == 'admin_opd' || User?.roles == 'super_admin') &&
                     <ButtonBlackBorder onClick={() => setKendali((prev) => !prev)}>{Kendali ? <span className='flex gap-1 items-center'><TbSettings />Sembunyikan</span> : <span className='flex gap-1 items-center'><TbSettings />Tampilkan</span>}</ButtonBlackBorder>
                 }
