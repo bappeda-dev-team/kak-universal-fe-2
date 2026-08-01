@@ -33,7 +33,7 @@ const MasterUser = () => {
                     <div className="flex flex-col">
                         <ButtonSky 
                             className="flex items-center justify-center"
-                            halaman_url='/useropd/tambah'
+                            halaman_url='DataMasterOpd/useropd/tambah'
                         >
                             <TbCirclePlus className="mr-1"/>
                             Tambah User
