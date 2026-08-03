@@ -1106,7 +1106,7 @@ export const ModalIsu: React.FC<modal> = ({
               />
             </div>
             {/* PERMASALAHAN ARRAY */}
-            {PermasalahanField.map((field, index) => (
+            {/* {PermasalahanField.map((field, index) => (
               <div
                 key={index}
                 className="flex flex-col my-2 py-2 px-5 border border-sky-700 rounded-lg"
@@ -1163,15 +1163,15 @@ export const ModalIsu: React.FC<modal> = ({
                 />
                 <DataTerukurList control={control} permasalahan_index={index} />
               </div>
-            ))}
-            <ButtonSkyBorder
+            ))} */}
+            {/* <ButtonSkyBorder
               className="flex items-center gap-1 mb-3 mt-2 w-full"
               type="button"
               onClick={handleTambahPermasalahan}
             >
               <TbCirclePlus />
               Tambah Pemasalahan
-            </ButtonSkyBorder>
+            </ButtonSkyBorder> */}
             <div className="flex flex-col gap-2 my-3">
               <ButtonSky className="w-full" type="submit" disabled={Proses}>
                 {Proses ? (

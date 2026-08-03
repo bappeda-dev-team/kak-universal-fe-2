@@ -163,31 +163,31 @@ const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
               </th>
               <th
                 rowSpan={2}
-                className="border-r border-b px-6 py-3 min-w-[250px]"
+                className="border-r border-b px-6 py-3 min-w-[500px]"
               >
                 Potensi Perangkat Daerah
               </th>
               <th
                 rowSpan={2}
-                className="border-r border-b px-6 py-3 min-w-[250px]"
+                className="border-r border-b px-6 py-3 min-w-[500px]"
               >
                 Isu KLHS
               </th>
               <th
                 rowSpan={2}
-                className="border-r border-b px-6 py-3 min-w-[250px]"
+                className="border-r border-b px-6 py-3 min-w-[500px]"
               >
                 Isu Global
               </th>
               <th
                 rowSpan={2}
-                className="border-r border-b px-6 py-3 min-w-[250px]"
+                className="border-r border-b px-6 py-3 min-w-[500px]"
               >
                 Isu Nasional
               </th>
               <th
                 rowSpan={2}
-                className="border-r border-b px-6 py-3 min-w-[250px]"
+                className="border-r border-b px-6 py-3 min-w-[500px]"
               >
                 Isu Regional
               </th>
@@ -198,7 +198,7 @@ const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
               >
                 Isu Strategis
               </th>
-              <th
+              {/* <th
                 rowSpan={2}
                 className="border-r border-b px-6 py-3 min-w-[250px]"
               >
@@ -215,8 +215,8 @@ const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
                 className="border-r border-b px-6 py-3 min-w-[250px]"
               >
                 Narasi Data Dukung
-              </th>
-              {PeriodeBelakang.slice()
+              </th> */}
+              {/* {PeriodeBelakang.slice()
                 .reverse()
                 .map((item: any) => (
                   <th
@@ -226,9 +226,9 @@ const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
                   >
                     {item}
                   </th>
-                ))}
+                ))} */}
             </tr>
-            <tr className={`text-white`}>
+            {/* <tr className={`text-white`}>
               {PeriodeBelakang.slice()
                 .reverse()
                 .map((item: any) => (
@@ -245,7 +245,7 @@ const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
                     </th>
                   </React.Fragment>
                 ))}
-            </tr>
+            </tr> */}
           </thead>
           <tbody>
             {Isu.length === 0 ? (
@@ -274,59 +274,32 @@ const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
                 return (
                   <React.Fragment key={index}>
                     <tr>
-                      <td
-                        rowSpan={i.permasalahan_opd ? TotalRow : 2}
-                        className="border-x border-b border-emerald-500 py-4 px-3 text-center"
-                      >
+                      <td className="border-x border-b border-emerald-500 py-4 px-3 text-center">
                         {index + 1}
                       </td>
-                      <td
-                        rowSpan={i.permasalahan_opd ? TotalRow : 2}
-                        className="border-r border-b border-emerald-500 px-6 py-4"
-                      >
+                      <td className="border-r border-b border-emerald-500 px-6 py-4">
                         {i.kode_bidang_urusan || "no code"} -{" "}
                         {i.nama_bidang_urusan || "-"}
                       </td>
-                      <td
-                        rowSpan={i.permasalahan_opd ? TotalRow : 2}
-                        className="border-r border-b border-emerald-500 px-6 py-4"
-                      >
+                      <td className="border-r border-b border-emerald-500 px-6 py-4">
                         {i.potensi_perangkat_daerah || "-"}
                       </td>
-                      <td
-                        rowSpan={i.permasalahan_opd ? TotalRow : 2}
-                        className="border-r border-b border-emerald-500 px-6 py-4"
-                      >
+                      <td className="border-r border-b border-emerald-500 px-6 py-4">
                         {i.isu_klhs || "-"}
                       </td>
-                      <td
-                        rowSpan={i.permasalahan_opd ? TotalRow : 2}
-                        className="border-r border-b border-emerald-500 px-6 py-4"
-                      >
+                      <td className="border-r border-b border-emerald-500 px-6 py-4">
                         {i.isu_global || "-"}
                       </td>
-                      <td
-                        rowSpan={i.permasalahan_opd ? TotalRow : 2}
-                        className="border-r border-b border-emerald-500 px-6 py-4"
-                      >
+                      <td className="border-r border-b border-emerald-500 px-6 py-4">
                         {i.isu_nasional || "-"}
                       </td>
-                      <td
-                        rowSpan={i.permasalahan_opd ? TotalRow : 2}
-                        className="border-r border-b border-emerald-500 px-6 py-4"
-                      >
+                      <td className="border-r border-b border-emerald-500 px-6 py-4">
                         {i.isu_regional || "-"}
                       </td>
-                      <td
-                        rowSpan={i.permasalahan_opd ? TotalRow : 2}
-                        className="border-r border-b border-emerald-500 px-6 py-4"
-                      >
+                      <td className="border-r border-b border-emerald-500 px-6 py-4">
                         {i.isu_strategis || "-"}
                       </td>
-                      <td
-                        rowSpan={i.permasalahan_opd ? TotalRow : 2}
-                        className="border-r border-b border-emerald-500 px-6 py-4"
-                      >
+                      <td className="border-r border-b border-emerald-500 px-6 py-4">
                         <div className="flex flex-col jutify-center items-center gap-2">
                           <ButtonSkyBorder
                             className="flex items-center gap-1 w-full"
@@ -357,7 +330,7 @@ const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
                         </div>
                       </td>
                     </tr>
-                    {!i.permasalahan_opd || i.permasalahan_opd.length === 0 ? (
+                    {/* {!i.permasalahan_opd || i.permasalahan_opd.length === 0 ? (
                       <tr>
                         <td
                           colSpan={15}
@@ -435,7 +408,7 @@ const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
                           </React.Fragment>
                         ),
                       )
-                    )}
+                    )} */}
                   </React.Fragment>
                 );
               })
