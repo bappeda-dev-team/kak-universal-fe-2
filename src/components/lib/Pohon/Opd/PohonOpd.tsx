@@ -599,25 +599,27 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                             Cetak
                                         </ButtonSky>
                                     </Link>
-                                    <ButtonSkyBorder
-                                        onClick={() => handleDetailCross()}
-                                    >
-                                        {DetailCross ?
-                                            <div className='flex items-center gap-1'>
-                                                <p className='flex items-center gap-1 rounded-full px-2 text-blue-700 bg-blue-300 animate-pulse'>
-                                                    {CrossDikirim.length || 0}
-                                                </p>
-                                                Sembunyikan
-                                            </div>
-                                            :
-                                            <div className='flex items-center gap-1'>
-                                                <p className='flex items-center gap-1 rounded-full px-2 text-blue-700 bg-blue-300 animate-pulse'>
-                                                    {CrossDikirim.length || 0}
-                                                </p>
-                                                Cek Crosscutting
-                                            </div>
-                                        }
-                                    </ButtonSkyBorder>
+                                    {tema.level_pohon === 6 &&
+                                        <ButtonSkyBorder
+                                            onClick={() => handleDetailCross()}
+                                        >
+                                            {DetailCross ?
+                                                <div className='flex items-center gap-1'>
+                                                    <p className='flex items-center gap-1 rounded-full px-2 text-blue-700 bg-blue-300 animate-pulse'>
+                                                        {CrossDikirim.length || 0}
+                                                    </p>
+                                                    Sembunyikan
+                                                </div>
+                                                :
+                                                <div className='flex items-center gap-1'>
+                                                    <p className='flex items-center gap-1 rounded-full px-2 text-blue-700 bg-blue-300 animate-pulse'>
+                                                        {CrossDikirim.length || 0}
+                                                    </p>
+                                                    Cek Crosscutting
+                                                </div>
+                                            }
+                                        </ButtonSkyBorder>
+                                    }
                                 </div>
                                 {/* footer */}
                                 <div className="flex flex-wrap justify-evenly my-3 py-3 hide-on-capture">
