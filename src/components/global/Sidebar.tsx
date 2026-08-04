@@ -785,9 +785,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   </span>
                 </li>
               </Link>
-              <Link href="/DataMaster/potensi-perangkat-daerah">
+              <Link href="/DataMasterOpd/potensi-perangkat-daerah">
                 <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/potensi-perangkat-daerah" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/potensi-perangkat-daerah" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                 >
                   <TbPencilPlus className="text-4xl" />
                   <span
@@ -866,9 +866,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   </span>
                 </li>
               </Link>
-              <Link href="/DataMaster/master-rb">
+              <Link href="/DataMasterOpd/master-rb">
                 <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/DataMaster/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                 >
                   <TbDice4Filled className="text-xl" />
                   <span
