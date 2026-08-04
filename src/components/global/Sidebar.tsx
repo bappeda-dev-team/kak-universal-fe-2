@@ -582,18 +582,6 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   </span>
                 </li>
               </Link>
-              <Link href="/DataMaster/potensi-perangkat-daerah">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/potensi-perangkat-daerah" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
-                  <TbPencilPlus className="text-4xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
-                    Master Potensi Perangkat Daerah
-                  </span>
-                </li>
-              </Link>
               <Link href="/DataMaster/ikk">
                 <li
                   className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/ikk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
@@ -794,6 +782,18 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                     className={`${!isOpen && "hidden"} origin-left duration-200`}
                   >
                     Sub Kegiatan OPD
+                  </span>
+                </li>
+              </Link>
+              <Link href="/DataMaster/potensi-perangkat-daerah">
+                <li
+                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/potensi-perangkat-daerah" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                >
+                  <TbPencilPlus className="text-4xl" />
+                  <span
+                    className={`${!isOpen && "hidden"} origin-left duration-200 text-sm`}
+                  >
+                    Master Potensi Perangkat Daerah
                   </span>
                 </li>
               </Link>
