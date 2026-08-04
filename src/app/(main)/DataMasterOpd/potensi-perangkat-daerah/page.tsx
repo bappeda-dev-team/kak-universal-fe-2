@@ -53,13 +53,12 @@ const IkuOpd = () => {
           <FiHome />
         </a>
         <p className="mr-1">/ Data Master OPD</p>
-        <p className="mr-1">/ Master Isu</p>
-        <p className="mr-1">/ Nasional</p>
+        <p className="mr-1">/ Potensi Perangkat Daerah</p>
       </div>
       <div className="mt-3 rounded-xl shadow-lg border">
         <div className="flex flex-col justify-between border-b px-5 py-5">
           <div className="flex flex-wrap items-end">
-            <h1 className="uppercase font-bold">Isu Nasional</h1>
+            <h1 className="uppercase font-bold">Potensi Perangkat Daerah</h1>
             <h1 className="uppercase font-bold ml-1">
               {Tahun ? Tahun?.label : ""}
             </h1>

@@ -52,9 +52,8 @@ const IkuOpd = () => {
         <a href="/" className="mr-1">
           <FiHome />
         </a>
-        <p className="mr-1">/ Perencanaan OPD</p>
-        <p className="mr-1">/ Renstra</p>
-        <p className="mr-1">/ IKK OPD</p>
+        <p className="mr-1">/ Data Master</p>
+        <p className="mr-1">/ Master IKK</p>
       </div>
       <div className="mt-3 rounded-xl shadow-lg border">
         <div className="flex flex-col justify-between border-b px-5 py-5">
