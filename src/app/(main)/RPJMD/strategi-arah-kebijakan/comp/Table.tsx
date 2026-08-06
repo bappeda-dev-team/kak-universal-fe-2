@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   ArahKebijakan,
   SasaranPemda,
@@ -8,13 +8,20 @@ import {
   ArahKebijakanPemda,
 } from "../type";
 import { ButtonRedBorder } from "@/components/global/Button";
-import { TbEyeClosed } from "react-icons/tb";
+import { TbEye, TbEyeClosed } from "react-icons/tb";
 
 interface Table {
   Data: ArahKebijakan[];
 }
 
 const Table: React.FC<Table> = ({ Data }) => {
+  const [hiddenItems, setHiddenItems] = useState<string[]>([]);
+
+  const toggleHide = (key: string) => {
+    setHiddenItems((prev) =>
+      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key],
+    );
+  };
   return (
     <>
       <div className="overflow-auto m-2 rounded-t-xl border">
@@ -100,19 +107,45 @@ const Table: React.FC<Table> = ({ Data }) => {
                                           (
                                             ar: ArahKebijakanPemda,
                                             ar_index: number,
-                                          ) => (
-                                            <p
-                                              key={ar_index}
-                                              className="flex flex-col gap-2 p-1 border border-emerald-500 rounded-lg w-full"
-                                            >
-                                              {ar_index + 1}.{" "}
-                                              {ar.arah_kebijakan_pemda}
-                                              <ButtonRedBorder className="flex items-center gap-1 text-sm">
-                                                <TbEyeClosed />
-                                                Sembunyikan
-                                              </ButtonRedBorder>
-                                            </p>
-                                          ),
+                                          ) => {
+                                            const hiddenKey = `${index}-${s_index}-${st_index}-${ar_index}`;
+
+                                            return (
+                                              <p
+                                                key={ar_index}
+                                                className="flex flex-col gap-2 p-1 border border-emerald-500 rounded-lg w-full"
+                                              >
+                                                {!hiddenItems.includes(
+                                                  hiddenKey,
+                                                ) && (
+                                                  <div>
+                                                    {ar_index + 1}.{" "}
+                                                    {ar.arah_kebijakan_pemda}
+                                                  </div>
+                                                )}
+                                                <ButtonRedBorder
+                                                  className="flex items-center gap-1 text-sm"
+                                                  onClick={() =>
+                                                    toggleHide(hiddenKey)
+                                                  }
+                                                >
+                                                  {hiddenItems.includes(
+                                                    hiddenKey,
+                                                  ) ? (
+                                                    <>
+                                                      <TbEye />
+                                                      Tampilkan
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      <TbEyeClosed />
+                                                      Sembunyikan
+                                                    </>
+                                                  )}
+                                                </ButtonRedBorder>
+                                              </p>
+                                            );
+                                          },
                                         )}
                                       </div>
                                     </td>
