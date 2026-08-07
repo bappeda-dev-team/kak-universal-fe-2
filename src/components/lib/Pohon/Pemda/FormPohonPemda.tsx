@@ -143,11 +143,11 @@ export const FormPohonPemda: React.FC<{
             setIsLoading(false);
         }
     };
-    const fetchProgramUnggulan = async () => {
+    const fetchProgramUnggulan = async (kode_opd: string) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/program_unggulan/findbytahun/${Tahun?.value}`, {
+            const response = await fetch(`${API_URL}/program_unggulan/findbyopd_and_tahun/${kode_opd}/${Tahun?.value}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `${token}`,
@@ -160,13 +160,14 @@ export const FormPohonPemda: React.FC<{
             const data = await response.json();
             if (data == null) {
                 setProgramOption([]);
-                console.log(`data program unggulan belum di tambahkan / kosong`)
+                console.log(`data program unggulan belum di tambahkan / kosong`);
             } else {
                 const program = data.data.map((item: any) => ({
                     value: item.kode_program_unggulan,
                     label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
                 }));
                 setProgramOption(program);
+                // console.log("option : ", program);
             }
         } catch (err) {
             console.error(err);
@@ -194,8 +195,8 @@ export const FormPohonPemda: React.FC<{
                 console.log(`data program unggulan Pusat belum di tambahkan / kosong`);
             } else {
                 const program = data.data.map((item: any) => ({
-                    value: item.kode_program_unggulan,
-                    label: `${item.nama_program_unggulan} - ${item.rencana_implementasi}`,
+                    value: item.kode_program_prioritas_pusat,
+                    label: `${item.nama_program_prioritas_pusat} - ${item.rencana_implementasi}`,
                 }));
                 setProgramPusatOption(program);
                 // console.log("option : ", program);
@@ -504,12 +505,13 @@ export const FormPohonPemda: React.FC<{
                                                                 isSearchable
                                                                 isClearable
                                                                 isMulti
+                                                                isDisabled={KodeOpd === null}
                                                                 onChange={(option) => {
                                                                     field.onChange(option || []);
                                                                     setBupatiValue(option as OptionTypeString[]);
                                                                 }}
                                                                 onMenuOpen={() => {
-                                                                    fetchProgramUnggulan();
+                                                                    fetchProgramUnggulan(KodeOpd?.value || "");
                                                                 }}
                                                                 styles={{
                                                                     control: (baseStyles) => ({
@@ -1322,11 +1324,11 @@ export const FormEditPohon: React.FC<{
         fetchPokinById();
     }, [id, reset, token, replace]);
 
-    const fetchProgramUnggulan = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    const fetchProgramUnggulan = async (kode_opd: string) => {
+         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/program_unggulan/findbytahun/${Tahun?.value}`, {
+            const response = await fetch(`${API_URL}/program_unggulan/findbyopd_and_tahun/${kode_opd}/${Tahun?.value}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `${token}`,
@@ -1689,9 +1691,10 @@ export const FormEditPohon: React.FC<{
                                                     isSearchable
                                                     isClearable
                                                     isMulti
+                                                    isDisabled={KodeOpd === null}
                                                     onMenuOpen={() => {
                                                         if (ProgramOption.length === 0) {
-                                                            fetchProgramUnggulan();
+                                                            fetchProgramUnggulan(KodeOpd?.value || "");
                                                         }
                                                     }}
                                                     onChange={(option) => {
