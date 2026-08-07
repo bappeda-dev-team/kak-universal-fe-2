@@ -143,7 +143,7 @@ export const FormPohonPemda: React.FC<{
             setIsLoading(false);
         }
     };
-    const fetchProgramUnggulan = async (kode_opd: string) => {
+    const fetchProgramUnggulan = async (kode_opd: string, tahun: number) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
         try {
@@ -511,7 +511,7 @@ export const FormPohonPemda: React.FC<{
                                                                     setBupatiValue(option as OptionTypeString[]);
                                                                 }}
                                                                 onMenuOpen={() => {
-                                                                    fetchProgramUnggulan(KodeOpd?.value || "");
+                                                                    fetchProgramUnggulan(KodeOpd?.value || "", Tahun?.value);
                                                                 }}
                                                                 styles={{
                                                                     control: (baseStyles) => ({
@@ -1324,11 +1324,11 @@ export const FormEditPohon: React.FC<{
         fetchPokinById();
     }, [id, reset, token, replace]);
 
-    const fetchProgramUnggulan = async (kode_opd: string) => {
+    const fetchProgramUnggulan = async (kode_opd: string, tahun: number) => {
          const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/program_unggulan/findbyopd_and_tahun/${kode_opd}/${Tahun?.value}`, {
+            const response = await fetch(`${API_URL}/program_unggulan/findbyopd_and_tahun/${kode_opd}/${tahun}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `${token}`,
@@ -1694,7 +1694,7 @@ export const FormEditPohon: React.FC<{
                                                     isDisabled={KodeOpd === null}
                                                     onMenuOpen={() => {
                                                         if (ProgramOption.length === 0) {
-                                                            fetchProgramUnggulan(KodeOpd?.value || "");
+                                                            fetchProgramUnggulan(KodeOpd?.value || "", Tahun?.value);
                                                         }
                                                     }}
                                                     onChange={(option) => {
