@@ -11,7 +11,7 @@ import { ButtonBlackBorder, ButtonSky } from "@/components/global/Button";
 import { TbCirclePlus, TbSearch } from "react-icons/tb";
 
 
-const subkegiatan = () => {
+const SubKegiatan = () => {
 
     const { branding } = useBrandingContext();
     const [Page, setPage] = useState<number>(1);
@@ -141,4 +141,4 @@ const subkegiatan = () => {
     )
 }
 
-export default subkegiatan;
+export default SubKegiatan;
