@@ -56,6 +56,7 @@ interface indikator {
     targets: target[];
 }
 type target = {
+    id_target?: string;
     target: string;
     satuan: string;
 };
@@ -518,6 +519,7 @@ export const FormEditRencanaKinerja = () => {
     const [PokinOption, setPokinOption] = useState<OptionType[]>([]);
     const token = getToken();
     const router = useRouter();
+    const isReady = Boolean(User) && Boolean(Tahun);
 
     useEffect(() => {
         const data = getOpdTahun();
@@ -622,6 +624,7 @@ export const FormEditRencanaKinerja = () => {
                             id_indikator: item.id_indikator,
                             nama_indikator: item.nama_indikator,
                             targets: item.targets.map((t: target) => ({
+                                id_target: t.id_target,
                                 target: t.target,
                                 satuan: t.satuan,
                             })),
@@ -681,16 +684,17 @@ export const FormEditRencanaKinerja = () => {
             tahun: String(Tahun?.value),
             kode_opd: User?.kode_opd,
             pegawai_id: User?.nip,
-            indikator: data.indikator ? 
+            indikator: data.indikator ?
                 data.indikator.map((ind) => ({
                     id_indikator: ind.id_indikator,
                     nama_indikator: ind.nama_indikator,
                     target: ind.targets.map((t) => ({
+                        id_target: t.id_target,
                         target: t.target,
                         satuan: t.satuan,
                     })),
-                })) 
-                : 
+                }))
+                :
                 []
         };
         // console.log(formData);
@@ -742,6 +746,7 @@ export const FormEditRencanaKinerja = () => {
                                     <>
                                         <Select
                                             {...field}
+                                            value={Pokin}
                                             placeholder="Masukkan Pohon"
                                             options={PokinOption}
                                             isLoading={IsLoading}
@@ -1009,7 +1014,7 @@ export const FormEditRencanaKinerja = () => {
                         >
                             Tambah Indikator
                         </ButtonSkyBorder>
-                        <ButtonGreen type="submit" className="my-4" disabled={Proses}>
+                        <ButtonGreen type="submit" className="my-4" disabled={Proses || !isReady}>
                             {Proses ?
                                 <span className="flex">
                                     <LoadingButtonClip />
