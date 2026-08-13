@@ -48,19 +48,19 @@ export const ModalIkk: React.FC<modal> = ({
       id_nspk: Data?.id_nspk
         ? {
             value: Data?.id_nspk,
-            label: `(${Data?.id_nspk}) ${Data?.nspk}`,
+            label: `${Data?.nspk}`,
           }
         : null,
       id_tujuan_opd: Data?.id_tujuan_opd
         ? {
             value: Data?.id_tujuan_opd,
-            label: `(${Data?.id_tujuan_opd}) ${Data?.tujuan_opd}`,
+            label: `${Data?.tujuan_opd}`,
           }
         : null,
       id_sasaran_opd: Data?.id_sasaran_opd
         ? {
             value: Data?.id_sasaran_opd,
-            label: `(${Data?.id_sasaran_opd}) ${Data?.sasaran_opd}`,
+            label: `${Data?.sasaran_opd}`,
           }
         : null,
     },
@@ -169,47 +169,58 @@ export const ModalIkk: React.FC<modal> = ({
     };
     // console.log("FORM DATA:", formData);
     // console.log(formData);
-    try {
-      setProses(true);
-      let url = "";
-      if (jenis === "tambah") {
-        url = "nspk-opd/create";
-      } else if (jenis === "edit") {
-        url = `nspk-opd/update/${Data?.id}`;
-      } else {
-        url = "";
-      }
-      const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
-        method: jenis === "tambah" ? "POST" : "PUT",
-        headers: {
-          Authorization: `${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
-      if (result.code === 201 || result.code === 200) {
+    if (!formData.kode_opd) {
+      AlertNotification("OPD", "OPD wajib terisi", "warning");
+    } else if (!formData.id_nspk) {
+      AlertNotification("NSPK", "NSPK wajib terisi", "warning");
+    } else if (!formData.id_tujuan_opd) {
+      AlertNotification("Tujuan OPD", "Tujuan OPD wajib terisi", "warning");
+    } else if (!formData.id_sasaran_opd) {
+      AlertNotification("Sasaran OPD", "Sasaran OPD wajib terisi", "warning");
+    } else if (!formData.tahun) {
+      AlertNotification("Tahun", "Tahun wajib terisi", "warning");
+    } else
+      try {
+        setProses(true);
+        let url = "";
+        if (jenis === "tambah") {
+          url = "nspk-opd/create";
+        } else if (jenis === "edit") {
+          url = `nspk-opd/update/${Data?.id}`;
+        } else {
+          url = "";
+        }
+        const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
+          method: jenis === "tambah" ? "POST" : "PUT",
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        const result = await response.json();
+        if (result.code === 201 || result.code === 200) {
+          AlertNotification(
+            "Berhasil",
+            `Berhasil ${jenis === "edit" ? "mengubah" : "menambah"} NSPK OPD`,
+            "success",
+            1000,
+          );
+          onSuccess();
+          onClose();
+        } else {
+          AlertNotification("Gagal", "Gagal menyimpan NSPK OPD", "error", 2000);
+        }
+      } catch (err) {
         AlertNotification(
-          "Berhasil",
-          `Berhasil ${jenis === "edit" ? "mengubah" : "menambah"} NSPK OPD`,
-          "success",
-          1000,
+          "Gagal",
+          "cek koneksi internet/terdapat kesalahan pada database server",
+          "error",
+          2000,
         );
-        onSuccess();
-        onClose();
-      } else {
-        AlertNotification("Gagal", `${result.data}`, "error", 2000);
+      } finally {
+        setProses(false);
       }
-    } catch (err) {
-      AlertNotification(
-        "Gagal",
-        "cek koneksi internet/terdapat kesalahan pada database server",
-        "error",
-        2000,
-      );
-    } finally {
-      setProses(false);
-    }
   };
 
   if (!isOpen) {
@@ -221,9 +232,7 @@ export const ModalIkk: React.FC<modal> = ({
           className={`fixed inset-0 bg-black opacity-30`}
           onClick={onClose}
         ></div>
-        <div
-          className={`bg-white rounded-lg p-8 z-10 w-4/5 text-start h-[90%] overflow-auto`}
-        >
+        <div className={`bg-white rounded-lg p-8 z-10 w-4/5 text-start`}>
           <div className="w-max-[500px] py-2 border-b text-center">
             <h1 className="text-xl uppercase">{jenis} NSPK</h1>
           </div>

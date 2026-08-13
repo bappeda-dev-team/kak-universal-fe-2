@@ -69,6 +69,7 @@ import {
   TbFlagPin,
   TbPencilPlus,
   TbClipboardCheck,
+  TbAppsFilled,
 } from "react-icons/tb";
 import Image from "next/image";
 import { usePathname, useParams } from "next/navigation";
@@ -1407,7 +1408,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <li
                     className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/nspk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                   >
-                    <TbTarget className="text-xl" />
+                    <TbAppsFilled className="text-xl" />
                     <span
                       className={`${!isOpen && "hidden"} origin-left duration-200`}
                     >
