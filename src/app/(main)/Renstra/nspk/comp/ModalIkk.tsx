@@ -71,7 +71,9 @@ export const ModalIkk: React.FC<modal> = ({
   const [Loading, setLoading] = useState<boolean>(false);
   const token = getToken();
 
-  const [OptionBidangUrusan, setOptionNspk] = useState<OptionType[]>([]);
+  const [OptionNspk, setOptionNspk] = useState<OptionType[]>([]);
+  const [OptionTujuanOpd, setOptionTujuanOpd] = useState<OptionType[]>([]);
+  const [OptionSasaranOpd, setOptionSasaranOpd] = useState<OptionType[]>([]);
 
   const fetchOptionNspk = async () => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -86,12 +88,65 @@ export const ModalIkk: React.FC<modal> = ({
       const result = await response.json();
       const data = result.data;
       const hasil = data.map((item: any) => ({
-        value: item.id_nspk,
+        value: item.id,
         label: `${item.nspk}`,
       }));
       setOptionNspk(hasil);
     } catch (err) {
       console.error(err, "gagal fetch option Nspk");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchOptionTujuanOpd = async () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${API_URL}/tujuan_opd/penetapan/${kode_opd}/${tahun}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      const result = await response.json();
+      const data = result.data.flatMap((item: any) => item.tujuan_opd);
+      const hasil = data.map((item: any) => ({
+        value: item.id_tujuan_opd,
+        label: `${item.tujuan}`,
+      }));
+      setOptionTujuanOpd(hasil);
+    } catch (err) {
+      console.error(err, "gagal fetch option Tujuan OPD");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOptionSasaranOpd = async () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${API_URL}/sasaran_opd/penetapan/${kode_opd}/${tahun}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      const result = await response.json();
+      const data = result.data.flatMap((item: any) => item.sasaran_opd);
+      const hasil = data.map((item: any) => ({
+        value: item.id,
+        label: `${item.nama_sasaran_opd}`,
+      }));
+      setOptionSasaranOpd(hasil);
+    } catch (err) {
+      console.error(err, "gagal fetch option Tujuan OPD");
     } finally {
       setLoading(false);
     }
@@ -103,12 +158,16 @@ export const ModalIkk: React.FC<modal> = ({
   ];
 
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
+    // console.log("DATA FORM:", data);
     const formData = {
       //key : value
       id_nspk: data.id_nspk?.value,
+      id_tujuan_opd: data.id_tujuan_opd?.value,
+      id_sasaran_opd: data.id_sasaran_opd?.value,
       kode_opd: kode_opd,
       tahun: tahun,
     };
+    // console.log("FORM DATA:", formData);
     // console.log(formData);
     try {
       setProses(true);
@@ -132,7 +191,7 @@ export const ModalIkk: React.FC<modal> = ({
       if (result.code === 201 || result.code === 200) {
         AlertNotification(
           "Berhasil",
-          `Berhasil ${jenis === "edit" ? "mengubah" : "menambah"} NSPK`,
+          `Berhasil ${jenis === "edit" ? "mengubah" : "menambah"} NSPK OPD`,
           "success",
           1000,
         );
@@ -187,10 +246,78 @@ export const ModalIkk: React.FC<modal> = ({
                     {...field}
                     id="id_nspk"
                     placeholder="Pilih NSPK"
-                    options={OptionBidangUrusan}
+                    options={OptionNspk}
                     isLoading={Loading}
                     onMenuOpen={() => {
                       fetchOptionNspk();
+                    }}
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderRadius: "8px",
+                        borderColor: "black", // Warna default border menjadi merah
+                        "&:hover": {
+                          borderColor: "#3673CA", // Warna border tetap merah saat hover
+                        },
+                      }),
+                    }}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-col py-3">
+              <label
+                className="uppercase text-xs font-bold text-gray-700 my-2"
+                htmlFor="id_tujuan_opd"
+              >
+                Tujuan OPD:
+              </label>
+              <Controller
+                name="id_tujuan_opd"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    id="id_tujuan_opd"
+                    placeholder="Pilih Tujuan OPD"
+                    options={OptionTujuanOpd}
+                    isLoading={Loading}
+                    onMenuOpen={() => {
+                      fetchOptionTujuanOpd();
+                    }}
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderRadius: "8px",
+                        borderColor: "black", // Warna default border menjadi merah
+                        "&:hover": {
+                          borderColor: "#3673CA", // Warna border tetap merah saat hover
+                        },
+                      }),
+                    }}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-col py-3">
+              <label
+                className="uppercase text-xs font-bold text-gray-700 my-2"
+                htmlFor="id_sasaran_opd"
+              >
+                Sasaran OPD:
+              </label>
+              <Controller
+                name="id_sasaran_opd"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    id="id_sasaran_opd"
+                    placeholder="Pilih Sasaran OPD"
+                    options={OptionSasaranOpd}
+                    isLoading={Loading}
+                    onMenuOpen={() => {
+                      fetchOptionSasaranOpd();
                     }}
                     styles={{
                       control: (baseStyles, state) => ({

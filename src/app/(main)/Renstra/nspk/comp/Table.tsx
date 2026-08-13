@@ -220,16 +220,16 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
 
                       {/* Bidang Urusan */}
                       <td className="border border-emerald-500 px-6 py-4">
-                        ({item.id_nspk}) {item.nspk}
+                        {item.nspk}
                       </td>
 
                       {/* Isu */}
                       <td className="border border-emerald-500 px-6 py-4">
-                        ({item.id_tujuan_opd}) {item.tujuan_opd}
+                        {item.tujuan_opd}
                       </td>
 
                       <td className="border border-emerald-500 px-6 py-4">
-                        ({item.id_sasaran_opd}) {item.sasaran_opd}
+                        {item.sasaran_opd}
                       </td>
 
                       {/* Aksi */}
