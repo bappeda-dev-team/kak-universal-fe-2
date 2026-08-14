@@ -1,32 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import * as jwtDecoded from "jwt-decode";
 
 export function middleware(req: NextRequest) {
 
-    const tokenCookie = req.cookies.get('token');
-    
-    if (tokenCookie) {
-        const token = tokenCookie.value;
-        try {
-            const decodedToken: any = jwtDecoded.jwtDecode(token);
-            const currentTime = Math.floor(Date.now() / 1000);
+    const sessionId = req.cookies.get("sessionId")?.value;
+    const pathName = req.nextUrl.pathname;
 
-            // Periksa apakah token telah kedaluwarsa
-            if (decodedToken.exp < currentTime) {
-                return NextResponse.redirect(new URL('/login', req.url));
-            }
-
-            return NextResponse.next();
-        } catch (error) {
-            console.error('Token decoding failed:', error);
-        }
+    console.log(pathName)
+    // sudah login
+    if (pathName === "/login" && sessionId) {
+        return NextResponse.redirect(new URL("/", req.url))
     }
 
-    return NextResponse.redirect(new URL('/login', req.url));
+    if (pathName !== "/login" && !sessionId) {
+        return NextResponse.redirect(new URL('/login', req.url))
+    }
+
+    return NextResponse.next();
 };
 
 export const config = {
     matcher: [
-      "/((?!api|_next/static|_next/image|favicon.ico|login).*)",
+        "/((?!api|_next/static|_next/image|favicon.ico|login).*)",
     ],
-  };  
+};
