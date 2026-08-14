@@ -20,8 +20,8 @@ export const getCookie = (name: string): string | null => {
 
 export const login = async (username: string, password: string): Promise<boolean> => {
   try {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    const response = await fetch(`${API_URL}/user/login`, {
+    const API_URL = process.env.NEXT_PUBLIC_AUTH_URL;
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,26 +31,22 @@ export const login = async (username: string, password: string): Promise<boolean
 
     const data = await response.json();
     if (data.code === 200) {
+      AlertNotification("Login Berhasil", "", "success", 1000)
+      return true;
       // console.log('data dari response : ,', data);
-      const token = data.data.token;
-      try {
-        const decoded = jwtDecoded.jwtDecode(token);
-        // Simpan token di cookie
-        document.cookie = `token=${token}; path=/;`;
-        document.cookie = `user=${JSON.stringify(decoded)}; path=/;`;
-        AlertNotification("Login Berhasil", "", "success", 1000)
-        return true;
-      } catch (decodeError) {
-        AlertNotification("Login Gagal", `${data.data}`, "error", 1000)
-        console.error('Error decoding token:', data.code);
-        return false;
-      }
-    } else if (data.code === 400) {
-      AlertNotification("Login Gagal", `${data.data}`, "error", 1000)
-      return false;
-    } else {
-      console.log(`Login gagal: Status ${data.data}`);
-      return false;
+      // const token = data.data.token;
+      // try {
+      //   const decoded = jwtDecoded.jwtDecode(token);
+      //   // Simpan token di cookie
+      //   document.cookie = `token=${token}; path=/;`;
+      //   document.cookie = `user=${JSON.stringify(decoded)}; path=/;`;
+      //   AlertNotification("Login Berhasil", "", "success", 1000)
+      //   return true;
+      // } catch (decodeError) {
+      //   AlertNotification("Login Gagal", `${data.data}`, "error", 1000)
+      //   console.error('Error decoding token:', data.code);
+      //   return false;
+      // }
     }
   } catch (err) {
     AlertNotification("Login Gagal", "terdapat kesalahan server / koneksi internet", "error", 2000)
@@ -59,17 +55,24 @@ export const login = async (username: string, password: string): Promise<boolean
   }
 };
 
-export const logout = () => {
+export const logout = async (sessionId: string) => {
+    const API_URL = process.env.NEXT_PUBLIC_AUTH_URL;
+    const response = await fetch(`${API_URL}/auth/logout`, {
+      method: 'POST',
+      headers: {
+        'X-Session-Id': sessionId,
+      }
+    });
   // Hapus token dari localStorage
-  localStorage.removeItem('token');
-  localStorage.removeItem('opd');
-  localStorage.removeItem('user');
-  localStorage.removeItem('periode');
+  // localStorage.removeItem('token');
+  // localStorage.removeItem('opd');
+  // localStorage.removeItem('user');
+  // localStorage.removeItem('periode');
 
   // Hapus semua cookie yang terkait
-  document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
-  document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
-  document.cookie = 'opd=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+  // document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+  // document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+  // document.cookie = 'opd=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
 
   // Redirect ke halaman login
   window.location.href = '/login';
