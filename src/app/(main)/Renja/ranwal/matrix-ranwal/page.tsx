@@ -1,7 +1,7 @@
 'use client'
 
 import { FiHome } from "react-icons/fi";
-import { TableMatrixRenja } from "../../comp/TableMatrixRenja";
+import { TableMatrixRenjaRanwal } from "../../comp/TableMatrixRenjaRanwal";
 import { useBrandingContext } from "@/context/BrandingContext";
 
 const RenjaRanwalMatrixPage = () => {
@@ -25,7 +25,7 @@ const RenjaRanwalMatrixPage = () => {
                         <h1 className="uppercase font-bold ml-1">{branding?.tahun?.label || ""}</h1>
                     </div>
                 </div>
-                <TableMatrixRenja
+                <TableMatrixRenjaRanwal
                     tahun={String(branding?.tahun?.value) || ""}
                     kode_opd={opd}
                     jenis="opd"

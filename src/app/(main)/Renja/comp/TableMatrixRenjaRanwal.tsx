@@ -64,7 +64,7 @@ interface table {
 }
 
 
-export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd }) => {
+export const TableMatrixRenjaRanwal: React.FC<table> = ({ jenis, tahun, menu, kode_opd }) => {
 
     const [Matrix, setMatrix] = useState<matrix[]>([]);
 
@@ -335,9 +335,9 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type, menu }) => {
                 ${jenis === "Kegiatan" && "bg-green-700 text-white"}
                 ${jenis === "Sub Kegiatan" && "bg-emerald-500 text-white"}
             `}>
-                <td rowSpan={3} className="border-r border-b px-6 py-4 w-[200px]">Kode</td>
-                <td rowSpan={3} className="border-r border-b px-6 py-4 min-w-[200px]">{jenis}</td>
-                <td colSpan={(type === "opd" && menu != "ranwal") ? 12 : 10} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{tahun || 0}</td>
+                <td rowSpan={2} className="border-r border-b px-6 py-4 w-[200px]">Kode</td>
+                <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[200px]">{jenis}</td>
+                <td colSpan={(type === "opd" && menu != "ranwal") ? 5 : 4} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{tahun || 0}</td>
 
             </tr>
             <tr className={`
@@ -347,34 +347,10 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type, menu }) => {
                 ${jenis === "Kegiatan" && "bg-green-700 text-white"}
                 ${jenis === "Sub Kegiatan" && "bg-emerald-500 text-white"}
             `}>
-                <td colSpan={(type === "opd" && menu != "ranwal") ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[300px] text-center uppercase font-bold">
-                    {menu === "penetapan" ? "rankir" : "ranwal"}
-                </td>
-                <td colSpan={(type === "opd" && menu != "ranwal") ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[300px] text-center uppercase font-bold">
-                    {menu === "penetapan" ? "penetapan" : "rankir"}
-                </td>
-            </tr>
-            <tr className={`
-                ${jenis === "Urusan" && "bg-white text-black"}
-                ${jenis === "Bidang Urusan" && "bg-red-500 text-white"}
-                ${jenis === "Program" && "bg-blue-500 text-white"}
-                ${jenis === "Kegiatan" && "bg-green-700 text-white"}
-                ${jenis === "Sub Kegiatan" && "bg-emerald-500 text-white"}
-            `}>
                 {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
-                    <>
-                        <td colSpan={(type === "opd" && menu != "ranwal") ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
-                        <td colSpan={(type === "opd" && menu != "ranwal") ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
-                    </>
+                    <td colSpan={(type === "opd" && menu != "ranwal") ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
                     :
                     <>
-                        <td className="border-l border-b px-6 py-3 min-w-[300px] text-center">indikator</td>
-                        <td className="border-l border-b px-6 py-3 min-w-[50px]">Target</td>
-                        <td className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</td>
-                        <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
-                        {(type === "opd" && menu != "ranwal") &&
-                            <td className="border-l border-b px-6 py-3 min-w-[50px] text-center">Aksi</td>
-                        }
                         <td className="border-l border-b px-6 py-3 min-w-[300px] text-center">indikator</td>
                         <td className="border-l border-b px-6 py-3 min-w-[50px]">Target</td>
                         <td className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</td>
@@ -455,34 +431,12 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                 <tr>
                     <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
                     <td className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
-                    {/* Kiri */}
-                    <React.Fragment>
-                        <td className={`border-b px-6 py-4 w-full`}></td>
-                        <td className={`border-b px-6 py-4 w-full`}></td>
-                        <td className={`border-r border-b px-6 py-4 w-full`}></td>
-                        <td className={`border-b px-6 py-4 w-full`}>
-                            <div className="flex flex-col items-center gap-1">
-                                {menu === "penetapan" &&
-                                    <p className="p-1 px-2 text-sm rounded-lg bg-slate-300 text-slate-700">
-                                        -
-                                    </p>
-                                }
-                                <span className="font-semibold text-sm">
-                                    -
-                                </span>
-                            </div>
-                        </td>
-                        {(type === "opd" && menu !== "ranwal") &&
-                            <td className={`border-r border-b px-6 py-4 w-full`}></td>
-                        }
-                    </React.Fragment>
-                    {/* kanan */}
                     {combinedData.map((i: combinedData, index: number) => (
                         <React.Fragment key={i.id || index}>
-                            <td className={`border-b px-6 py-4 w-full`}></td>
-                            <td className={`border-b px-6 py-4 w-full`}></td>
-                            <td className={`border-r border-b px-6 py-4 w-full`}></td>
-                            <td className={`border-b px-6 py-4 w-full`}>
+                            <td className={`border-b px-6 py-4 w-full text-center`}></td>
+                            <td className={`border-b px-6 py-4 w-full text-center`}></td>
+                            <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
+                            <td className={`border-b px-6 py-4 w-full text-center`}>
                                 <div className="flex flex-col items-center gap-1">
                                     {menu === "penetapan" &&
                                         <p className="p-1 px-2 text-sm rounded-lg bg-slate-300 text-slate-700">
@@ -503,45 +457,15 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                 :
                 <>
                     <tr>
-                        <td rowSpan={indikator.length ? indikator.length + 2 : 3} className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
-                        <td rowSpan={indikator.length ? indikator.length + 2 : 3} className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
+                        <td rowSpan={indikator.length ? indikator.length + 1 : 2} className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
+                        <td rowSpan={indikator.length ? indikator.length + 1 : 2} className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
                     </tr>
-                    {/* Kiri */}
-                    <React.Fragment>
-                        <tr>
-                            {/* KOLOM INDIKATOR */}
-                            <td rowSpan={2} className="border-r border-b px-6 py-4 w-full">
-                                <div className="flex items-center gap-2">-</div>
-                            </td>
-                            <td rowSpan={2} className="border-r border-b px-6 py-4 w-full">-</td>
-
-                            <td rowSpan={2} className="border-r border-b px-6 py-4 w-full">-</td>
-                            <>
-                                <td rowSpan={2} className="border-r border-b px-6 py-4 text-center align-middle">
-                                    <div className="flex flex-col items-center gap-2">
-                                        {menu === "penetapan" &&
-                                            <p className="p-1 px-2 text-sm rounded-lg bg-slate-300 text-slate-700">
-                                                -
-                                            </p>
-                                        }
-                                        <span className="font-semibold text-sm">
-                                            Rp.{formatRupiah(0)}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td rowSpan={2} className="border-r border-b px-6 py-4 text-center align-middle">
-                                    -
-                                </td>
-                            </>
-                        </tr>
-                    </React.Fragment>
-                    {/* Kanan */}
                     {combinedData.map((c, index: number) => {
                         const totalRowsInYear = c.list_indikator.length;
                         return (
                             <React.Fragment key={index}>
                                 {c.list_indikator.map((i, idx) => (
-                                    <tr key={i.id || idx} className="h-[300px]">
+                                    <tr key={i.id || idx}>
                                         {/* KOLOM INDIKATOR */}
                                         <td className="border-r border-b px-6 py-4 w-full">
                                             <div className="flex items-center gap-2">
@@ -591,25 +515,6 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                                                             <></>
                                                         }
                                                     </div>
-                                                </td>
-                                                <td
-                                                    rowSpan={totalRowsInYear}
-                                                    className="border-r border-b px-6 py-4 text-center align-middle"
-                                                >
-                                                    {(type === "opd" && menu !== "ranwal") &&
-                                                        (menu === "penetapan" && lock) ?
-                                                        <div className="text-red-500 flex items-center justify-center">
-                                                            <TbLockCancel size={30} />
-                                                        </div>
-                                                        :
-                                                        <ButtonSkyBorder
-                                                            className="flex items-center gap-1"
-                                                            onClick={() => handleModalIndikator(indikator)}
-                                                        >
-                                                            <TbCirclePlus />
-                                                            <p className="text-sm">Indikator</p>
-                                                        </ButtonSkyBorder>
-                                                    }
                                                 </td>
                                             </>
                                         )}

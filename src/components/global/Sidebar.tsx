@@ -68,6 +68,8 @@ import {
   TbFlag,
   TbFlagPin,
   TbPencilPlus,
+  TbClipboardCheck,
+  TbAppsFilled,
 } from "react-icons/tb";
 import Image from "next/image";
 import { usePathname, useParams } from "next/navigation";
@@ -789,11 +791,23 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 <li
                   className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/potensi-perangkat-daerah" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                 >
-                  <TbPencilPlus className="text-4xl" />
+                  <TbPencilPlus className="text-3xl" />
                   <span
                     className={`${!isOpen && "hidden"} origin-left duration-200 text-sm`}
                   >
                     Master Potensi Perangkat Daerah
+                  </span>
+                </li>
+              </Link>
+              <Link href="/DataMasterOpd/nspk">
+                <li
+                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/nspk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                >
+                  <TbClipboardCheck className="text-xl" />
+                  <span
+                    className={`${!isOpen && "hidden"} origin-left duration-200`}
+                  >
+                    Master NSPK
                   </span>
                 </li>
               </Link>
@@ -1387,6 +1401,18 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                       className={`${!isOpen && "hidden"} origin-left duration-200`}
                     >
                       Sasaran OPD
+                    </span>
+                  </li>
+                </Link>
+                <Link href="/Renstra/nspk">
+                  <li
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/Renstra/nspk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  >
+                    <TbAppsFilled className="text-xl" />
+                    <span
+                      className={`${!isOpen && "hidden"} origin-left duration-200`}
+                    >
+                      NSPK
                     </span>
                   </li>
                 </Link>
