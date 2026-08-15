@@ -87,10 +87,12 @@ export const ModalIkk: React.FC<modal> = ({
       });
       const result = await response.json();
       const data = result.data;
-      const hasil = data.map((item: any) => ({
-        value: item.id,
-        label: `${item.nspk}`,
-      }));
+      const hasil = data
+        .filter((item: any) => item.tahun === tahun)
+        .map((item: any) => ({
+          value: item.id,
+          label: `${item.nspk}`,
+        }));
       setOptionNspk(hasil);
     } catch (err) {
       console.error(err, "gagal fetch option Nspk");
