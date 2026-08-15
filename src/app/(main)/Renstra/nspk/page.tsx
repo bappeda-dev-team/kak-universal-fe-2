@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { FiHome } from "react-icons/fi";
 import Table from "./comp/Table";
 import { getOpdTahun, getUser } from "@/components/lib/Cookie";
-import { OpdNull } from "@/components/global/OpdTahunNull";
+import { OpdNull, TahunNull } from "@/components/global/OpdTahunNull";
 
 const IkuOpd = () => {
-  const [Tahun, setTahun] = useState<any>(null);
+  const [Tahun, setTahun] = useState<number | null>(null);
   const [User, setUser] = useState<any>(null);
   const [SelectedOpd, setSelectedOpd] = useState<any>(null);
 
@@ -15,11 +15,7 @@ const IkuOpd = () => {
     const data = getOpdTahun();
     const user = getUser();
     if (data.tahun) {
-      const tahun = {
-        value: data.tahun.value,
-        label: data.tahun.label,
-      };
-      setTahun(tahun);
+      setTahun(data.tahun.value);
     }
     if (data.opd) {
       const opd = {
@@ -46,6 +42,10 @@ const IkuOpd = () => {
     return <OpdNull />;
   }
 
+  if (Tahun == null) {
+    return <TahunNull />;
+  }
+
   return (
     <>
       <div className="flex items-center">
@@ -60,9 +60,7 @@ const IkuOpd = () => {
         <div className="flex flex-col justify-between border-b px-5 py-5">
           <div className="flex flex-wrap items-end">
             <h1 className="uppercase font-bold">NSPK</h1>
-            <h1 className="uppercase font-bold ml-1">
-              {Tahun ? Tahun?.label : ""}
-            </h1>
+            <h1 className="uppercase font-bold ml-1">{Tahun ?? ""}</h1>
           </div>
           <div className="flex flex-wrap items-end">
             <h1 className="uppercase text-sm">{nama_opd || "-"}</h1>

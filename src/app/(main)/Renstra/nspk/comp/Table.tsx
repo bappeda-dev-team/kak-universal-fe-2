@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
-import { OpdNull, TahunNull } from "@/components/global/OpdTahunNull";
+import { OpdNull } from "@/components/global/OpdTahunNull";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 import {
@@ -19,10 +19,7 @@ import { TbTrash, TbPencil } from "react-icons/tb";
 
 interface Table {
   kode_opd: string;
-  Tahun: {
-    value: number;
-    label: string;
-  } | null;
+  Tahun: number;
 }
 
 const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
@@ -38,7 +35,7 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
   const token = getToken();
   const { branding } = useBrandingContext();
 
-  const tahun = Number(Tahun?.value ?? new Date().getFullYear());
+  const tahun = Tahun;
 
   const filteredData = Data.filter(
     (item) => Number(item.tahun) === Number(tahun),
@@ -145,8 +142,6 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
         </h1>
       </div>
     );
-  } else if (branding?.tahun?.value === undefined) {
-    return <TahunNull />;
   } else if (
     branding?.user?.roles == "super_admin" &&
     (branding?.opd?.value === null || branding?.opd?.value === undefined)
@@ -278,7 +273,7 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
             Data={DataModal}
             jenis={JenisModal}
             kode_opd={kode_opd}
-            tahun={branding?.tahun?.value}
+            tahun={Tahun}
             onSuccess={refresh}
           />
         )}
