@@ -81,7 +81,7 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
         );
     } else if (IdTable != null) {
         return (
-            <div className="w-full flex flex-col items-center gap-1">
+            <div className="w-full flex flex-col items-center gap-2">
                 <ButtonBlackBorder
                     className="flex items-center gap-1 w-full"
                     onClick={() => {
