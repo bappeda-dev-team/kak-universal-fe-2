@@ -2,18 +2,22 @@
 
 import { useState, useEffect } from "react"
 import { LoadingButtonClip2 } from "@/components/global/Loading";
-import { TbAlertCircle, TbSearch } from "react-icons/tb";
+import { TbAlertCircle, TbArrowBack, TbSearch } from "react-icons/tb";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { getToken } from "@/components/lib/Cookie";
 import { TematikFindall } from "../type";
+import { Table } from "./Table";
+import { ButtonBlackBorder } from "@/components/global/Button";
 
 interface Childs {
     id_tematik: number;
+    onTableShown?: (shown: boolean) => void;
 }
 
-export const Childs: React.FC<Childs> = ({ id_tematik }) => {
+export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
 
     const [Data, setData] = useState<TematikFindall | null>(null);
+    const [IdTable, setIdTable] = useState<number | null>(null);
 
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
@@ -75,10 +79,29 @@ export const Childs: React.FC<Childs> = ({ id_tematik }) => {
                 </h1>
             </div>
         );
+    } else if (IdTable != null) {
+        return (
+            <div className="w-full flex flex-col items-center gap-1">
+                <ButtonBlackBorder
+                    className="flex items-center gap-1 w-full"
+                    onClick={() => {
+                        setIdTable(null);
+                        onTableShown?.(false);
+                    }}
+                >
+                    <TbArrowBack />
+                    Kembali Ke List Sub Tematik
+                </ButtonBlackBorder>
+                <div className={`transition-all duration-300 ease-in-out border border-black w-full`}>
+                    <div className="overflow-auto">
+                        <Table />
+                    </div>
+                </div>
+            </div>
+        )
     }
     return (
         <div className="flex flex-col gap-12">
-
             {Data?.childs?.map(
                 (item: TematikFindall, index: number) => (
                     <div
@@ -90,14 +113,16 @@ export const Childs: React.FC<Childs> = ({ id_tematik }) => {
                         <h1 className="text-base ml-5 text-emerald-600">{item.jenis_pohon || "Jenis Unknown"} - {item.tema || "-"}</h1>
                         <button
                             type="button"
+                            onClick={() => {
+                                setIdTable(item.id);
+                                onTableShown?.(true);
+                            }}
                             className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
                         >
                             <TbSearch />
                             Detail
                         </button>
-
                     </div>
-
                 )
             )}
         </div>

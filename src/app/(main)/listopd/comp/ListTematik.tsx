@@ -14,12 +14,12 @@ interface ListTematik {
 
 export const ListTematik: React.FC<ListTematik> = ({ tahun }) => {
 
-
     const [Tematik, setTematik] = useState<TematikFindall[]>([]);
 
     const [IsError, setIsError] = useState<boolean>(false);
     const [Loading, setLoading] = useState<boolean>(false);
     const [Show, setShow] = useState<{ [key: number]: boolean }>({});
+    const [TableShown, setTableShown] = useState<boolean[]>([]);
     const [DataNull, setDataNull] = useState<boolean>(false);
 
     const { branding } = useBrandingContext();
@@ -56,13 +56,20 @@ export const ListTematik: React.FC<ListTematik> = ({ tahun }) => {
             }
         }
         fetchTematik();
-    }, [tahun, token]);
+    }, [branding, tahun, token]);
 
     const handleShow = (id: number) => {
         setShow((prev) => ({
             [id]: !prev[id],
         }));
     }
+    const handleTableShown = (index: number, shown: boolean) => {
+        setTableShown((prev) => {
+            const newState = [...prev];
+            newState[index] = shown;
+            return newState;
+        });
+    };
 
     if (Loading) {
         return (
@@ -91,7 +98,7 @@ export const ListTematik: React.FC<ListTematik> = ({ tahun }) => {
                     return (
                         <div key={index} className="w-full relative mb-4">
                             <div
-                                className={`flex items-center justify-between w-full px-8 py-7 rounded-xl border-2 cursor-pointer transition-all duration-200
+                                className={`flex items-center justify-between w-full px-4 py-4 rounded-xl border-2 cursor-pointer transition-all duration-200
                                     ${isShown
                                         ? "bg-emerald-500 text-white border-emerald-500"
                                         : "text-emerald-500 border-emerald-500 hover:text-white hover:bg-emerald-400"
@@ -100,28 +107,27 @@ export const ListTematik: React.FC<ListTematik> = ({ tahun }) => {
                                 onClick={() => handleShow(index)}
                             >
                                 {data.is_active === true ? (
-                                    <h1 className="font-semibold text-lg">
-                                        Tematik - {data.tema || "tidak diketahui"}
-                                    </h1>
+                                    <h1 className="font-semibold text-lg">Tematik - {data.tema || "tidak diketahui"}</h1>
                                 ) : (
                                     <div className="font-semibold flex items-center gap-1">
-                                        <h1>
-                                            Tematik - {data.tema || "tidak diketahui"}
-                                        </h1>
-
-                                        <h1 className="text-red-500">
-                                            (non-aktif)
-                                        </h1>
+                                        <h1>Tematik - {data.tema || "tidak diketahui"}</h1>
+                                        <h1 className="text-red-500">(non-aktif)</h1>
                                     </div>
                                 )}
                                 <TbArrowBadgeDownFilled className={`text-3xl transition-all duration-200 ${isShown ? "" : "-rotate-90"}`} />
                             </div>
                             {isShown && (
-                                <div className={`transition-all duration-300 ease-in-out border-x border-b border-emerald-500 ${isShown ? "opacity-100 mx-4 p-5" : "max-h-0 opacity-0 pointer-events-none"}`}>
+                                <div className={`transition-all duration-300 ease-in-out border-x border-b border-emerald-500 ${isShown ? "opacity-100 mx-2 p-4" : "max-h-0 opacity-0 pointer-events-none"}`}>
                                     <div className="relative mt-2">
                                         {/* GARIS VERTIKAL */}
-                                        <div className="absolute left-6 top-6 bottom-6 w-[2px] bg-emerald-600 rounded-full my-2"/>
-                                        <Childs id_tematik={data.id || 0} />
+                                        {!TableShown[index] && (
+                                            <div className="absolute left-6 top-6 bottom-6 w-[2px] bg-emerald-600 rounded-full my-2" />
+                                        )}
+                                        <Childs
+                                            id_tematik={data.id || 0}
+                                            onTableShown={(shown) =>
+                                                handleTableShown(index, shown)
+                                            } />
                                     </div>
                                 </div>
                             )}
