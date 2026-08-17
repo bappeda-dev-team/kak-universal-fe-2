@@ -98,9 +98,9 @@ export const ModalIsu: React.FC<modal> = ({
         : null,
       tahun_awal: Data?.tahun_awal,
       tahun_akhir: Data?.tahun_akhir,
-      potensi_perangkat_daerah: Data?.potensi_perangkat_daerah
+      potensi_perangkat_daerah: Data?.id_ppd
         ? {
-            value: 0,
+            value: Data.id_ppd,
             label: Data.potensi_perangkat_daerah,
             potensi: Data.potensi_perangkat_daerah,
             kode_bidang_urusan: Data.kode_bidang_urusan,
@@ -108,9 +108,9 @@ export const ModalIsu: React.FC<modal> = ({
             tahun: "",
           }
         : null,
-      isu_klhs: Data?.isu_klhs
+      isu_klhs: Data?.id_isu_klhs
         ? {
-            value: 0,
+            value: Data?.id_isu_klhs,
             label: Data.isu_klhs,
             isu: Data.isu_klhs,
             kode_bidang_urusan: Data.kode_bidang_urusan,
@@ -118,9 +118,9 @@ export const ModalIsu: React.FC<modal> = ({
             tahun: "",
           }
         : null,
-      isu_global: Data?.isu_global
+      isu_global: Data?.id_isu_global
         ? {
-            value: 0,
+            value: Data?.id_isu_global,
             label: Data.isu_global,
             isu: Data.isu_global,
             kode_bidang_urusan: Data.kode_bidang_urusan,
@@ -128,9 +128,9 @@ export const ModalIsu: React.FC<modal> = ({
             tahun: "",
           }
         : null,
-      isu_nasional: Data?.isu_nasional
+      isu_nasional: Data?.id_isu_nasional
         ? {
-            value: 0,
+            value: Data?.id_isu_nasional,
             label: Data.isu_nasional,
             isu: Data.isu_nasional,
             kode_bidang_urusan: Data.kode_bidang_urusan,
@@ -138,9 +138,9 @@ export const ModalIsu: React.FC<modal> = ({
             tahun: "",
           }
         : null,
-      isu_regional: Data?.isu_regional
+      isu_regional: Data?.id_isu_regional
         ? {
-            value: 0,
+            value: Data.id_isu_regional,
             label: Data.isu_regional,
             isu: Data.isu_regional,
             kode_bidang_urusan: Data.kode_bidang_urusan,
@@ -507,11 +507,16 @@ export const ModalIsu: React.FC<modal> = ({
       nama_bidang_urusan: data.kode_bidang_urusan?.nama_bidang_urusan,
       tahun_awal: "",
       tahun_akhir: "",
-      potensi_perangkat_daerah: data.potensi_perangkat_daerah?.potensi ?? "",
-      isu_klhs: data.isu_klhs?.isu ?? "",
-      isu_global: data.isu_global?.isu ?? "",
-      isu_nasional: data.isu_nasional?.isu ?? "",
-      isu_regional: data.isu_regional?.isu ?? "",
+      // potensi_perangkat_daerah: data.potensi_perangkat_daerah?.potensi ?? "",
+      // isu_klhs: data.isu_klhs?.isu ?? "",
+      // isu_global: data.isu_global?.isu ?? "",
+      // isu_nasional: data.isu_nasional?.isu ?? "",
+      // isu_regional: data.isu_regional?.isu ?? "",
+      id_ppd: data.potensi_perangkat_daerah?.value ?? null,
+      id_isu_klhs: data.isu_klhs?.value ?? null,
+      id_isu_global: data.isu_global?.value ?? null,
+      id_isu_nasional: data.isu_nasional?.value ?? null,
+      id_isu_regional: data.isu_regional?.value ?? null,
       isu_strategis: data.isu_strategis,
       permasalahan_opd: data.permasalahan_opd.map((p) => ({
         data_dukung: p.data_dukung.map((dd) => ({
@@ -536,11 +541,16 @@ export const ModalIsu: React.FC<modal> = ({
       nama_bidang_urusan: data.kode_bidang_urusan?.nama_bidang_urusan,
       tahun_awal: "",
       tahun_akhir: "",
-      potensi_perangkat_daerah: data.potensi_perangkat_daerah?.potensi ?? "",
-      isu_klhs: data.isu_klhs?.isu ?? "",
-      isu_global: data.isu_global?.isu ?? "",
-      isu_nasional: data.isu_nasional?.isu ?? "",
-      isu_regional: data.isu_regional?.isu ?? "",
+      // potensi_perangkat_daerah: data.potensi_perangkat_daerah?.potensi ?? "",
+      // isu_klhs: data.isu_klhs?.isu ?? "",
+      // isu_global: data.isu_global?.isu ?? "",
+      // isu_nasional: data.isu_nasional?.isu ?? "",
+      // isu_regional: data.isu_regional?.isu ?? "",
+      id_ppd: data.potensi_perangkat_daerah?.value ?? null,
+      id_isu_klhs: data.isu_klhs?.value ?? null,
+      id_isu_global: data.isu_global?.value ?? null,
+      id_isu_nasional: data.isu_nasional?.value ?? null,
+      id_isu_regional: data.isu_regional?.value ?? null,
       isu_strategis: data.isu_strategis,
       permasalahan_opd: data.permasalahan_opd.map((p) => ({
         data_dukung: p.data_dukung.map((dd) => ({
