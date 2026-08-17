@@ -30,9 +30,6 @@ const LoginPage = () => {
         try {
             const isLoggedIn = await login(data.username, data.password);
             if (isLoggedIn) {
-                console.log("LOGIN SUCCESS, redirecting...");
-                console.log("cookies:", document.cookie);
-
                 router.push('/'); // Redirect ke halaman dashboard jika login berhasil
             }
         } catch (error) {

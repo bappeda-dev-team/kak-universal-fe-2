@@ -102,13 +102,26 @@ export const logout = async (): Promise<boolean> => {
     }
 };
 
-export const getUser = () => {
-    const get_user = getCookie("user");
-    if (get_user) {
-        return {
-            user: JSON.parse(get_user)
-        };
+export interface UserInfo {
+  username: string;
+  firstName: string;
+  kode_opd: string;
+  nip: string;
+  roles: string[];
+}
+
+export const getUser = async (): Promise<UserInfo | null> => {
+    const API_URL = process.env.NEXT_PUBLIC_AUTH_URL;
+    const response = await fetch(`${API_URL}/user-info-alt`, {
+        method: 'GET',
+        credentials: "include"
+    });
+
+    if (!response.ok) {
+        return null;
     }
+
+  return response.json();
 }
 
 export const getToken = () => {

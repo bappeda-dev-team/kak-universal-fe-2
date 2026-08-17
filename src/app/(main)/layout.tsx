@@ -40,15 +40,19 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
   };
 
   useEffect(() => {
-    const data = getUser();
-    if (data) {
-      setUser(data.user)
+    if (loginPage) {
+      return;
     }
-    // Mengambil path dari URL tanpa domain dan protokol
-    const path = window.location.pathname;
-    // Mengganti judul (title) halaman dengan path (nama halaman)
-    document.title = path.substring(1);
-  }, [pathname]);
+
+    const loadUser = async () => {
+      const user = await getUser();
+
+      if (user) {
+        setUser(user)
+      }
+    }
+    loadUser()
+  }, [loginPage]);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen)
