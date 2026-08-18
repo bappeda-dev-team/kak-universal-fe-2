@@ -1,19 +1,16 @@
 'use client'
 
-import Table from './Table';
+import {ListTematik} from './comp/ListTematik';
 import { FiHome } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
-import { getOpdTahun, getUser, getToken } from '@/components/lib/Cookie';
-import Maintenance from '@/components/global/Maintenance';
+import { getOpdTahun } from '@/components/lib/Cookie';
 import { TahunNull } from '@/components/global/OpdTahunNull';
 
 const LaporanRincianBelanja = () => {
 
-    const [User, setUser] = useState<any>(null);
     const [Tahun, setTahun] = useState<any>(null);
 
     useEffect(() => {
-        const fetchUser = getUser();
         const data = getOpdTahun();
         if (data) {
             if (data.tahun) {
@@ -23,9 +20,6 @@ const LaporanRincianBelanja = () => {
                 }
                 setTahun(tahun_value);
             }
-        }
-        if (fetchUser) {
-            setUser(fetchUser.user);
         }
     }, [])
 
@@ -46,7 +40,7 @@ const LaporanRincianBelanja = () => {
                             <TahunNull />
                         </div>
                         :
-                        <Table 
+                        <ListTematik 
                             tahun={Tahun?.value}
                         />
                     }
