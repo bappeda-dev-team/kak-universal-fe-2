@@ -42,10 +42,7 @@ const Table = () => {
             setLoading(true)
             try{
                 const response = await fetch(`${API_URL}/opd/findall`, {
-                    headers: {
-                        Authorization: `${token}`,
-                        'Content-Type': 'application/json',
-                      },
+                  credentials: "include"
                 });
                 const result = await response.json();
                 const data = result.data;

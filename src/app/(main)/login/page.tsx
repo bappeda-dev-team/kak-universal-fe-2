@@ -25,12 +25,11 @@ const LoginPage = () => {
     const { branding } = useBrandingContext();
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        //   console.log(data.username, data.password);
         setProses(true);
         try {
             const isLoggedIn = await login(data.username, data.password);
             if (isLoggedIn) {
-                router.push('/'); // Redirect ke halaman dashboard jika login berhasil
+                window.location.href = "/";
             }
         } catch (error) {
             console.error(error)

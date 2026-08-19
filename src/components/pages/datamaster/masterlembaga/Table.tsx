@@ -28,12 +28,10 @@ const Table = () => {
             setLoading(true)
             try {
                 const response = await fetch(`${API_URL}/lembaga/findall`, {
-                    headers: {
-                        Authorization: `${token}`,
-                        'Content-Type': 'application/json',
-                    },
+                  credentials: "include",
                 });
                 const result = await response.json();
+              console.log(result)
                 const data = result.data;
                 if (data.length == 0) {
                     setDataNull(true);

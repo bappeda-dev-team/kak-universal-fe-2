@@ -30,30 +30,6 @@ const Header = () => {
         document.cookie = `${name}=${value}; path=/;`;
     };
 
-    useEffect(() => {
-        const data = getOpdTahun();
-        const fetchUser = getUser();
-        if (data) {
-            if (data.tahun) {
-                const valueTahun = {
-                    value: data.tahun.value,
-                    label: data.tahun.label
-                }
-                setTahun(valueTahun);
-            }
-            if (data.opd) {
-                const valueOpd = {
-                    value: data.opd.value,
-                    label: data.opd.label
-                }
-                setOpd(valueOpd);
-            }
-        }
-        if (fetchUser) {
-            setUser(fetchUser.user);
-        }
-    }, [])
-
     const fetchOpd = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);

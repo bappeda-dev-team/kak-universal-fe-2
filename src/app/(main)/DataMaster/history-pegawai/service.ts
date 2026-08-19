@@ -1,11 +1,29 @@
 import type { WebResponse, PegawaiDetailResponse, PegawaiResponse, MutasiPegawaiRequest, OptionResponse } from "./types";
+import { cookies } from "next/headers";
+
 
 const API_KEPEGAWAIAN =
     process.env.NEXT_PUBLIC_API_KEPEGAWAIAN || "http://localhost:8080"
 
+async function authHeaders() {
+    const cookieStore = cookies();
+
+    return {
+        Cookie: cookieStore.toString(),
+    };
+}
+
 async function request<T>(path: string): Promise<T> {
+    const cookieStore = await cookies();
+
+    console.log(
+      cookieStore.toString()
+    );
     const response = await fetch(`${API_KEPEGAWAIAN}${path}`, {
         cache: "no-store",
+        headers: {
+            Cookie: cookieStore.toString(),
+        },
     });
 
     if (!response.ok) {
@@ -22,9 +40,11 @@ async function submit<T>(
     method: "POST" | "PUT" | "PATCH" | "DELETE",
     body?: unknown,
 ): Promise<T> {
+    const cookieStore = await cookies();
     const response = await fetch(`${API_KEPEGAWAIAN}${path}`, {
         method,
         headers: {
+            Cookie: cookieStore.toString(),
             "Content-Type": "application/json",
         },
         body: body ? JSON.stringify(body) : undefined,

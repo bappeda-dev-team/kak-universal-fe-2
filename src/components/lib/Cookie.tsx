@@ -18,6 +18,7 @@ export const getCookie = (name: string): string | null => {
     return null;
 };
 
+// HANDLE LOGIN DAN SIMPAN DATA USER
 export const login = async (username: string, password: string): Promise<boolean> => {
     try {
         const API_URL = process.env.NEXT_PUBLIC_AUTH_URL;
@@ -56,6 +57,12 @@ export const login = async (username: string, password: string): Promise<boolean
 
             return false;
         }
+        document.cookie = [
+            `sessionId=${encodeURIComponent(sessionId)}`,
+            "Path=/",
+            "Max-Age=18000",
+            "SameSite=Lax",
+        ].join("; ");
 
         // document.cookie = `session_id=${sessionId}; path=/;`;
         AlertNotification(
@@ -89,10 +96,11 @@ export const logout = async (): Promise<boolean> => {
             return false;
         }
 
-        const data = await response.json();
-        console.log(data); // { message: "logged out" }
-
         // Cookie sessionId dihapus oleh backend melalui Set-Cookie
+        document.cookie = "user=; Path=/; Max-Age=0";
+        document.cookie = "opd=; Path=/; Max-Age=0";
+        document.cookie = "periode=; Path=/; Max-Age=0";
+        document.cookie = "sessionId=; Path=/; Max-Age=0";
         window.location.href = "/login";
 
         return true;
@@ -102,27 +110,40 @@ export const logout = async (): Promise<boolean> => {
     }
 };
 
-export interface UserInfo {
-  username: string;
-  firstName: string;
-  kode_opd: string;
-  nip: string;
-  roles: string[];
+export interface GetUserResult {
+    user: UserInfo
 }
 
-export const getUser = async (): Promise<UserInfo | null> => {
+export interface UserInfo {
+    username: string;
+    firstName: string;
+    kode_opd: string;
+    nip: string;
+    roles: string[];
+}
+
+export const getUser = async (): Promise<GetUserResult | null> => {
     const API_URL = process.env.NEXT_PUBLIC_AUTH_URL;
+
     const response = await fetch(`${API_URL}/user-info-alt`, {
-        method: 'GET',
-        credentials: "include"
+        method: "GET",
+        credentials: "include",
     });
 
     if (!response.ok) {
         return null;
     }
 
-  return response.json();
-}
+    const user: UserInfo = await response.json();
+
+    document.cookie = `user=${encodeURIComponent(
+        JSON.stringify(user)
+    )}; path=/; max-age=${60 * 60 * 5}; SameSite=Lax`;
+
+    return {
+        user,
+    };
+};
 
 export const getToken = () => {
     const get_Token = getCookie("token")
