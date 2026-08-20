@@ -7,21 +7,56 @@ import {
   StrategiOpd,
   TacticalOpd,
   OperasionalOpd,
+  ArahKebijakanOpd,
 } from "../type";
-import { ButtonRedBorder, ButtonGreenBorder } from "@/components/global/Button";
+import {
+  ButtonRedBorder,
+  ButtonGreenBorder,
+  ButtonSkyBorder,
+} from "@/components/global/Button";
+import { ModalIkk } from "./ModalIkk";
 import { TbEye, TbEyeClosed, TbPencil, TbCirclePlus } from "react-icons/tb";
 
 interface Table {
   Data: ArahKebijakan[];
+  kode_opd: string;
+  tahun: number;
+  onSuccess: () => void;
 }
 
-const Table: React.FC<Table> = ({ Data }) => {
+const Table: React.FC<Table> = ({ Data, kode_opd, tahun, onSuccess }) => {
   const [hiddenItems, setHiddenItems] = useState<string[]>([]);
+
+  const [DataModal, setDataModal] = useState<ArahKebijakanOpd | null>(null);
+  const [ModalOpen, setModalOpen] = useState<boolean>(false);
+  const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
+  const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+  const [PokinId, setPokinId] = useState<number | null>(null);
 
   const toggleHide = (key: string) => {
     setHiddenItems((prev) =>
       prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key],
     );
+  };
+  const handleClose = () => {
+    setModalOpen(false);
+  };
+  const refresh = () => {
+    window.location.reload();
+  };
+  const handleModalOpen = (
+    jenis: "tambah" | "edit",
+    data: ArahKebijakanOpd | null,
+  ) => {
+    if (ModalOpen) {
+      setModalOpen(false);
+      setJenisModal(jenis);
+      setDataModal(null);
+    } else {
+      setModalOpen(true);
+      setJenisModal(jenis);
+      setDataModal(data);
+    }
   };
   return (
     <>
@@ -73,12 +108,6 @@ const Table: React.FC<Table> = ({ Data }) => {
                     ? item.sasaran_opds
                     : [null];
 
-                /*
-                 * Hitung jumlah baris untuk seluruh Tujuan OPD.
-                 *
-                 * Setiap strategi dihitung berdasarkan:
-                 * Tactical -> Operasional
-                 */
                 const getStrategiRows = (st: StrategiOpd) => {
                   if (!st.tactical_opds || st.tactical_opds.length === 0) {
                     return 1;
@@ -146,16 +175,16 @@ const Table: React.FC<Table> = ({ Data }) => {
 
                         let isFirstSasaranRow = true;
 
-                        return strategiList.map(
+                        return strategiList.flatMap(
                           (st: StrategiOpd | null, st_index: number) => {
                             /*
-                             * Kalau strategi belum ada
+                             * STRATEGI BELUM ADA
                              */
                             if (!st) {
                               const showTujuan = isFirstTujuanRow;
                               isFirstTujuanRow = false;
 
-                              return (
+                              return [
                                 <tr key={`${index}-${s_index}-${st_index}`}>
                                   {showTujuan && (
                                     <>
@@ -190,15 +219,9 @@ const Table: React.FC<Table> = ({ Data }) => {
                                   >
                                     Strategi OPD belum dibuat
                                   </td>
-                                </tr>
-                              );
+                                </tr>,
+                              ];
                             }
-
-                            /*
-                             * ==============================
-                             * STRATEGI
-                             * ==============================
-                             */
 
                             const strategiRows = getStrategiRows(st);
 
@@ -209,23 +232,19 @@ const Table: React.FC<Table> = ({ Data }) => {
 
                             let isFirstStrategiRow = true;
 
-                            /*
-                             * ==============================
-                             * TACTICAL
-                             * ==============================
-                             */
-
                             return tacticalList.flatMap(
                               (
                                 tactical: TacticalOpd | null,
                                 tacticalIndex: number,
                               ) => {
                                 /*
-                                 * Kalau Tactical belum ada
+                                 * TACTICAL BELUM ADA
                                  */
                                 if (!tactical) {
                                   const showTujuan = isFirstTujuanRow;
+
                                   const showSasaran = isFirstSasaranRow;
+
                                   const showStrategi = isFirstStrategiRow;
 
                                   isFirstTujuanRow = false;
@@ -273,45 +292,33 @@ const Table: React.FC<Table> = ({ Data }) => {
                                       )}
 
                                       <td
-                                        colSpan={2}
+                                        colSpan={3}
                                         className="border-r border-b border-emerald-500 bg-red-500 px-6 py-4"
                                       >
                                         Tactical OPD belum dibuat
-                                      </td>
-
-                                      <td className="border-r border-b border-emerald-500 px-6 py-4">
-                                        {/* Arah Kebijakan */}
                                       </td>
                                     </tr>,
                                   ];
                                 }
 
                                 /*
-                                 * Jumlah baris Tactical
+                                 * =========================
+                                 * OPERASIONAL
+                                 * =========================
                                  */
+
                                 const operasionalList =
                                   tactical.operasional_opds &&
                                   tactical.operasional_opds.length > 0
                                     ? tactical.operasional_opds
                                     : [null];
 
-                                const arahkebijakanRows = Math.max(
-                                  operasionalList.length,
-                                  1,
-                                );
-
-                                const tacticalRows = Math.max(
+                                const operasionalRows = Math.max(
                                   operasionalList.length,
                                   1,
                                 );
 
                                 let isFirstTacticalRow = true;
-
-                                /*
-                                 * ==============================
-                                 * OPERASIONAL
-                                 * ==============================
-                                 */
 
                                 return operasionalList.map(
                                   (
@@ -335,9 +342,7 @@ const Table: React.FC<Table> = ({ Data }) => {
                                       <tr
                                         key={`${index}-${s_index}-${st_index}-${tacticalIndex}-${operasionalIndex}`}
                                       >
-                                        {/* =========================
-                                                NO
-                                            ========================= */}
+                                        {/* NO & TUJUAN */}
                                         {showTujuan && (
                                           <>
                                             <td
@@ -347,9 +352,6 @@ const Table: React.FC<Table> = ({ Data }) => {
                                               {index + 1}
                                             </td>
 
-                                            {/* =========================
-                                                    TUJUAN OPD
-                                                ========================= */}
                                             <td
                                               rowSpan={totalRows}
                                               className="border-r border-b border-emerald-500 px-6 py-4 font-semibold"
@@ -359,9 +361,7 @@ const Table: React.FC<Table> = ({ Data }) => {
                                           </>
                                         )}
 
-                                        {/* =========================
-                                                SASARAN OPD
-                                            ========================= */}
+                                        {/* SASARAN */}
                                         {showSasaran && (
                                           <td
                                             rowSpan={sasaranRows}
@@ -371,9 +371,7 @@ const Table: React.FC<Table> = ({ Data }) => {
                                           </td>
                                         )}
 
-                                        {/* =========================
-                                                STRATEGIC OPD
-                                            ========================= */}
+                                        {/* STRATEGIC */}
                                         {showStrategi && (
                                           <td
                                             rowSpan={strategiRows}
@@ -383,59 +381,116 @@ const Table: React.FC<Table> = ({ Data }) => {
                                           </td>
                                         )}
 
-                                        {/* =========================
-                                                TACTICAL OPD
-                                            ========================= */}
+                                        {/* TACTICAL */}
                                         {showTactical && (
                                           <td
-                                            rowSpan={tacticalRows}
+                                            rowSpan={operasionalRows}
                                             className="border-r border-b border-emerald-500 px-6 py-4"
                                           >
                                             {tactical.tactical_opd || "-"}
                                           </td>
                                         )}
 
-                                        {/* =========================
-                                                OPERASIONAL OPD
-                                            ========================= */}
+                                        {/* OPERASIONAL */}
                                         <td className="border-r border-b border-emerald-500 px-6 py-4">
                                           {operasional ? (
-                                            <>
-                                              {operasional.operasional_opd ||
-                                                "-"}
-                                            </>
+                                            operasional.operasional_opd || "-"
                                           ) : (
-                                            <span className="text-red-500">
+                                            <span className="text-gray-500">
                                               Operasional OPD belum dibuat
                                             </span>
                                           )}
                                         </td>
 
-                                        {/* =========================
-                                              ARAH KEBIJAKAN
-                                              (KOSONG DULU)
-                                          ========================= */}
+                                        {/* ARAH KEBIJAKAN */}
                                         {showTactical && (
                                           <td
-                                            rowSpan={arahkebijakanRows}
-                                            className="border-r border-b border-emerald-500 px-6 py-4"
+                                            rowSpan={operasionalRows}
+                                            className="border-r border-b border-emerald-500 p-2"
                                           >
-                                            <div className="flex flex-col gap-2">
-                                              <span className="text-red-500">
-                                                Arah kebijakan belum dibuat
-                                              </span>
-                                              <div className="flex items-center justify-center gap-1 pt-2 border-t border-gray-300">
+                                            {tactical.arah_kebijakan_opd &&
+                                            tactical.arah_kebijakan_opd.length >
+                                              0 ? (
+                                              <div className="flex flex-col gap-2">
+                                                {tactical.arah_kebijakan_opd.map(
+                                                  (arah, arahIndex) => {
+                                                    const hiddenKey = `${index}-${s_index}-${st_index}-${tacticalIndex}-${arahIndex}`;
+
+                                                    return (
+                                                      <div
+                                                        key={arah.id}
+                                                        className="flex flex-col gap-2 p-2 border border-emerald-500 rounded-lg"
+                                                      >
+                                                        {!hiddenItems.includes(
+                                                          hiddenKey,
+                                                        ) && (
+                                                          <div>
+                                                            {arah.arah || "-"}
+                                                          </div>
+                                                        )}
+
+                                                        <ButtonRedBorder
+                                                          className="flex items-center gap-1 text-sm"
+                                                          onClick={() =>
+                                                            toggleHide(
+                                                              hiddenKey,
+                                                            )
+                                                          }
+                                                        >
+                                                          {hiddenItems.includes(
+                                                            hiddenKey,
+                                                          ) ? (
+                                                            <>
+                                                              <TbEye />
+                                                              Tampilkan
+                                                            </>
+                                                          ) : (
+                                                            <>
+                                                              <TbEyeClosed />
+                                                              Sembunyikan
+                                                            </>
+                                                          )}
+                                                        </ButtonRedBorder>
+                                                        <ButtonSkyBorder
+                                                          className="flex items-center gap-1 text-sm"
+                                                          onClick={() => {
+                                                            setPokinId(
+                                                              tactical.id_tactical_opd,
+                                                            );
+                                                            handleModalOpen(
+                                                              "edit",
+                                                              arah,
+                                                            );
+                                                          }}
+                                                        >
+                                                          <TbPencil />
+                                                          Edit
+                                                        </ButtonSkyBorder>
+                                                      </div>
+                                                    );
+                                                  },
+                                                )}
+                                              </div>
+                                            ) : (
+                                              <div className="text-red-500 text-center flex flex-col gap-2 p-2 border border-emerald-500 rounded-lg">
+                                                Arah Kebijakan belum dibuat
                                                 <ButtonGreenBorder
-                                                // onClick={() =>
-                                                //   handleEditIndikator(i)
-                                                // }
-                                                // className="rounded-full"
+                                                  onClick={() => {
+                                                    setPokinId(
+                                                      tactical.id_tactical_opd,
+                                                    );
+                                                    handleModalOpen(
+                                                      "tambah",
+                                                      null,
+                                                    );
+                                                  }}
+                                                  className="flex items-center gap-1 text-sm"
                                                 >
                                                   <TbCirclePlus />
-                                                  <span>Tambah</span>
+                                                  Tambah
                                                 </ButtonGreenBorder>
                                               </div>
-                                            </div>
+                                            )}
                                           </td>
                                         )}
                                       </tr>
@@ -455,6 +510,18 @@ const Table: React.FC<Table> = ({ Data }) => {
           </tbody>
         </table>
       </div>
+      {ModalOpen && (
+        <ModalIkk
+          isOpen={ModalOpen}
+          onClose={handleClose}
+          Data={DataModal}
+          jenis={JenisModal}
+          pokin_id={PokinId ?? 0}
+          kode_opd={kode_opd}
+          tahun={tahun}
+          onSuccess={refresh}
+        />
+      )}
     </>
   );
 };
