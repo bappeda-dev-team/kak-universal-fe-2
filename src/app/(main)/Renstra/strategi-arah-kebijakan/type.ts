@@ -27,8 +27,26 @@ export interface SasaranOpd {
 
 export interface StrategiOpd {
   strategi_opd: string;
-  arah_kebijakan_opds: ArahKebijakanOpd[];
+  tactical_opds: TacticalOpd[];
 }
+export interface TacticalOpd {
+  id_tactical_opd: number;
+  tactical_opd: string;
+  operasional_opds: OperasionalOpd[];
+  arah_kebijakan_opd: ArahKebijakanOpd[];
+}
+export interface OperasionalOpd {
+  operasional_opd: string;
+}
+
 export interface ArahKebijakanOpd {
-  arah_kebijakan_opd: string;
+  id: number;
+  arah: string;
+}
+
+export interface FormValue {
+  pokin_id: number;
+  arah: string;
+  kode_opd: string;
+  tahun: number;
 }

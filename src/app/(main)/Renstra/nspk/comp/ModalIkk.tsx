@@ -117,7 +117,7 @@ export const ModalIkk: React.FC<modal> = ({
       const data = result.data.flatMap((item: any) => item.tujuan_opd);
       const hasil = data.map((item: any) => ({
         value: item.id_tujuan_opd,
-        label: `${item.tujuan}`,
+        label: `${item.tujuan} (${item.tahun_awal} - ${item.tahun_akhir} ${item.jenis_periode})`,
       }));
       setOptionTujuanOpd(hasil);
     } catch (err) {
@@ -144,7 +144,7 @@ export const ModalIkk: React.FC<modal> = ({
       const data = result.data.flatMap((item: any) => item.sasaran_opd);
       const hasil = data.map((item: any) => ({
         value: item.id,
-        label: `${item.nama_sasaran_opd}`,
+        label: `${item.nama_sasaran_opd} (${item.tahun_awal} - ${item.tahun_akhir} ${item.jenis_periode})`,
       }));
       setOptionSasaranOpd(hasil);
     } catch (err) {

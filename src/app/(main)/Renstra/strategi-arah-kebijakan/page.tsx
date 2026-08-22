@@ -26,7 +26,7 @@ const StrategiArahKebijakanPage = () => {
     branding?.user?.roles == "reviewer"
       ? branding?.opd?.label
       : branding?.user?.nama_opd;
-  const tahun = branding?.tahun?.value || "";
+  const tahun = branding?.tahun?.value || 0;
   const router = useRouter();
 
   const token = getToken();
@@ -143,12 +143,17 @@ const StrategiArahKebijakanPage = () => {
             <h1 className="uppercase font-bold ml-1">{tahun}</h1>
           </div>
           <h2 className="text-sm max-w-[500px]">{nama_opd || ""}</h2>
-          <ButtonGreen onClick={ExportExcel}>Export Excel</ButtonGreen>
+          {/* <ButtonGreen onClick={ExportExcel}>Export Excel</ButtonGreen> */}
         </div>
         <div className="mx-3 mb-3">
           <TablePermasalahan Data={Data?.permasalahan_opds || []} />
           <TableIsu Data={Data?.isu_strategis_opds || []} />
-          <Table Data={Data?.strategi_arah_kebijakan_opds || []} />
+          <Table
+            Data={Data?.strategi_arah_kebijakan_opds || []}
+            kode_opd={kode_opd}
+            tahun={tahun}
+            onSuccess={() => setFetchTrigger((prev) => !prev)}
+          />
         </div>
       </div>
     </>
