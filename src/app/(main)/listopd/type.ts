@@ -1,3 +1,8 @@
+export interface DataTable {
+    kode_opd: string;
+    nama_opd: string;
+    childs: TematikFindall[];
+}
 export interface TematikFindall {
     id: number;
     parent: number;
@@ -7,6 +12,7 @@ export interface TematikFindall {
     indikator: Indikator[]; 
     childs?: TematikFindall[];
     jenis_pohon?: string;
+    level_pohon?: number;
 }
 export interface Indikator {
     id_indikator: string;

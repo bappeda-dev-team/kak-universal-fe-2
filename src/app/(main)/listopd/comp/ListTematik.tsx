@@ -127,7 +127,8 @@ export const ListTematik: React.FC<ListTematik> = ({ tahun }) => {
                                             id_tematik={data.id || 0}
                                             onTableShown={(shown) =>
                                                 handleTableShown(index, shown)
-                                            } />
+                                            }
+                                        />
                                     </div>
                                 </div>
                             )}
