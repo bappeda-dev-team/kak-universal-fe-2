@@ -18,7 +18,7 @@ interface FormValue {
     kode_opd: string;
     kode_subkegiatan: string
     nip_atasan: OptionTypeString;
-    nonaktif_at: Date;
+    nonaktif_at: string;
     level: OptionTypeString;
 }
 
@@ -105,12 +105,15 @@ export const ModalPenanggungJawab: React.FC<modal> = ({ isOpen, onClose, onSucce
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const payload = {
             //key : value
+            ...data,
+            nonaktif_at: data.nonaktif_at
+                ? `${data.nonaktif_at}:00+07:00`
+                : null,
             nip: data.nip?.value,
             tahun: Number(branding?.tahun?.value),
             kode_subkegiatan: Data?.kode_subkegiatan,
             kode_opd: kode_opd,
-            nip_atasan: data.nip_atasan,
-            nonaktif_at: data.nonaktif_at,
+            nip_atasan: data.nip_atasan?.value,
         };
         console.log(payload)
         // try {
@@ -268,6 +271,27 @@ export const ModalPenanggungJawab: React.FC<modal> = ({ isOpen, onClose, onSucce
                                 )}
                             />
                         </div>
+
+                        <Controller
+                            name="nonaktif_at"
+                            control={control}
+                            render={({ field }) => (
+                                <div className="flex flex-col py-3">
+                                    <label
+                                        className="flex items-center gap-1 uppercase text-xs font-bold text-gray-700 my-2"
+                                        htmlFor="nonaktif_at"
+                                    >
+                                        <p>Non Aktif</p>
+                                        <p className="font-light italic text-xs text-slate-400">Kosongkan jika tidak di non aktifkan</p>
+                                    </label>
+                                    <input
+                                        {...field}
+                                        className="border px-4 py-2 rounded-lg"
+                                        type="date"
+                                    />
+                                </div>
+                            )}
+                        />
 
                         <ButtonSky className="w-full mt-3 mb-2" type="submit" disabled={Proses}>
                             {Proses ?
