@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from "react";
-import { ButtonBlackBorder, ButtonGreen, ButtonGreenBorder, ButtonSky, ButtonSkyBorder } from "@/components/global/Button";
-import { TbEye, TbBook, TbKeyFilled, TbPencil, TbPrinter, TbReceipt } from "react-icons/tb";
-import { ModalIndikator } from "../Pohon/ModalIndikator";
+import { ButtonBlackBorder } from "@/components/global/Button";
 import { getToken } from "@/components/lib/Cookie";
 import { OpdTahunNull, TahunNull } from "@/components/global/OpdTahunNull";
 import { LoadingClip } from "@/components/global/Loading";
+import { TbPencil } from "react-icons/tb";
+import { ModalPenanggungJawab } from "./ModalPenanggungJawab";
+import { IndikatorSubKegiatan, IndikatorRencanaKinerja, RencanaAksi, RincianBelanja, LaporanRincianBelanja, Target } from "./type"
 
 interface TableLaporan {
     tahun: string;
@@ -14,52 +15,6 @@ interface TableLaporan {
     nama_opd?: string;
     nip?: string;
     role: string;
-}
-interface Target {
-    id_target: string;
-    indikator_id: string;
-    target: string;
-    satuan: string;
-}
-
-interface IndikatorSubKegiatan {
-    id_indikator: string;
-    kode_subkegiatan: string;
-    kode_opd: string;
-    nama_indikator: string;
-    targets: Target[];
-}
-interface IndikatorRencanaKinerja {
-    id_indikator: string;
-    rencana_kinerja_id: string;
-    nama_indikator: string;
-    targets: Target[];
-}
-
-interface RencanaAksi {
-    renaksi_id: string;
-    renaksi: string;
-    anggaran: number;
-}
-
-interface RincianBelanja {
-    index: string;
-    rencana_kinerja_id: string;
-    rencana_kinerja: string;
-    pegawai_id: string | null;
-    nama_pegawai: string | null;
-    indikator: IndikatorRencanaKinerja[];
-    total_anggaran: number;
-    rencana_aksi: RencanaAksi[] | null;
-}
-
-interface LaporanRincianBelanja {
-    kode_opd: string;
-    kode_subkegiatan: string;
-    nama_subkegiatan: string;
-    indikator_subkegiatan: IndikatorSubKegiatan[];
-    total_anggaran: number;
-    rincian_belanja: RincianBelanja[];
 }
 
 export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd, nip, role }) => {
@@ -69,6 +24,11 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
     const [DataNull, setDataNull] = useState<boolean>(false);
+
+    const [ModalPJ, setModalPJ] = useState<boolean>(false);
+    const [DataModal, setDataModal] = useState<LaporanRincianBelanja | null>(null);
+
+    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
     const token = getToken();
 
@@ -125,6 +85,16 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
         return angka.toLocaleString('id-ID'); // 'id-ID' untuk format Indonesia
     }
 
+    const handleModalPJ = (data: LaporanRincianBelanja | null) => {
+        if (ModalPJ) {
+            setModalPJ(false);
+            setDataModal(null);
+        } else {
+            setModalPJ(true);
+            setDataModal(data);
+        }
+    }
+
     if (Loading) {
         return (
             <div className="w-full border p-5 rounded-xl shadow-xl">
@@ -162,6 +132,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                         <th className="border-r border-b px-6 py-3 min-w-[300px]">Indikator Kinerja</th>
                         <th className="border-r border-b px-6 py-3 min-w-[100px]">Target/Satuan</th>
                         <th className="border-r border-b px-6 py-3 min-w-[170px]">Anggaran</th>
+                        <th className="border-r border-b px-6 py-3 min-w-[170px]">Penanggung Jawab</th>
                     </tr>
                 </thead>
                 {DataNull ?
@@ -196,6 +167,17 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                                     ))
                                 }
                                 <td className="border-r border-b px-6 py-4">Rp.{formatRupiah(data.total_anggaran)}</td>
+                                <td className="border-r border-b px-6 py-4">
+                                    <div className="flex items-center-gap-1">
+                                        <ButtonBlackBorder
+                                            className="flex items-center gap-1 w-full rounded-full"
+                                            onClick={() => handleModalPJ(data)}
+                                        >
+                                            <TbPencil />
+                                            Edit
+                                        </ButtonBlackBorder>
+                                    </div>
+                                </td>
                             </tr>
                             {data.rincian_belanja.map((rekin: RincianBelanja, index_rb: number) => (
                                 <React.Fragment key={index_rb}>
@@ -238,10 +220,10 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                                             </tr>
                                         ))
                                         :
-                                            <tr>
-                                                <td className="border-r border-b px-6 py-4">-</td>
-                                                <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                            </tr>
+                                        <tr>
+                                            <td className="border-r border-b px-6 py-4">-</td>
+                                            <td className="border-r border-b px-6 py-4 text-center">-</td>
+                                        </tr>
                                     }
                                     {rekin.rencana_aksi === null ?
                                         <tr>
@@ -262,6 +244,14 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                     ))
                 }
             </table>
+            <ModalPenanggungJawab
+                isOpen={ModalPJ}
+                onClose={() => handleModalPJ(null)}
+                onSuccess={() => setFetchTrigger((prev) => !prev)}
+                kode_opd={kode_opd}
+                Data={DataModal}
+                metode="tambah"
+            />
         </div>
     )
 }
