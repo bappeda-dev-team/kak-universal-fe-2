@@ -99,7 +99,7 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
     useEffect(() => {
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     }, []);
 

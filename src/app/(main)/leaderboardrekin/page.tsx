@@ -18,7 +18,7 @@ const ControlPokin = () => {
     useEffect(() => {
         const get_user = getUser();
         if(get_user){
-            setUser(get_user.user);
+            setUser(get_user);
         }
     }, [])
 

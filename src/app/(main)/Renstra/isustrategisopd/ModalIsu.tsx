@@ -213,7 +213,7 @@ export const ModalIsu: React.FC<modal> = ({
   useEffect(() => {
     const fetchUser = getUser();
     if (fetchUser) {
-      setUser(fetchUser.user);
+      setUser(fetchUser);
     }
   }, [branding]);
 

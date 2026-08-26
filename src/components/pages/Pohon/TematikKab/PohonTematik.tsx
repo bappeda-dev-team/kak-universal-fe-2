@@ -53,7 +53,7 @@ const PohonTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
         const fetchUser = getUser();
         const data = getOpdTahun();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         if(data.tahun){
             const tahun = {

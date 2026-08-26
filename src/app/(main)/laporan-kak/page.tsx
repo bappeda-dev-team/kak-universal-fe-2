@@ -32,7 +32,7 @@ const LaporanKakPage = () => {
             }
 
             if (fetchUser) {
-                setUser(fetchUser.user);
+                setUser(fetchUser);
             }
         } finally {
             setLoading(false);

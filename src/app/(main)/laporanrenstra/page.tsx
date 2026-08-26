@@ -32,7 +32,7 @@ const LaporanRenstra = () => {
         const data = getOpdTahun();
         const fetchPeriode = getPeriode();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         if (data.opd) {
             const opd = {

@@ -48,7 +48,7 @@ export const FormPermasalahan: React.FC<FormPermasalahan> = ({ data, jenis, rowS
     useEffect(() => {
             const fetchUser = getUser();
             if (fetchUser) {
-                setUser(fetchUser.user);
+                setUser(fetchUser);
             }
         }, []);
 

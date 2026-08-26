@@ -54,7 +54,7 @@ export const ModalAddUsulan: React.FC<modal> = ({ isOpen, onClose, jenis, metode
     useEffect(() => {
         const fetchUser = getUser();
         if(fetchUser){
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         const data = getOpdTahun();
         if(data.tahun){

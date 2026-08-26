@@ -109,7 +109,7 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, metode, tahun
     useEffect(() => {
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     }, [branding]);
 

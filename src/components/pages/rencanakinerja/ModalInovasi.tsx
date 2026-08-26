@@ -40,7 +40,7 @@ export const ModalInovasi: React.FC<modal> = ({isOpen, onClose, id_rekin}) => {
     useEffect(() => {
         const fetchUser = getUser();
         if(fetchUser){
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     },[]);
 
@@ -195,7 +195,7 @@ export const ModalInovasiEdit: React.FC<modal> = ({isOpen, onClose, id_rekin, id
     useEffect(() => {
         const fetchUser = getUser();
         if(fetchUser){
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     },[]);
 

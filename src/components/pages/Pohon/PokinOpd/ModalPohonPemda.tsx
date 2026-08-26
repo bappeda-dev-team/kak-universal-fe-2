@@ -106,7 +106,7 @@ export const ModalPohonPemda: React.FC<modal> = ({ isOpen, onClose, onSuccess, i
     useEffect(() => {
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         const data = getOpdTahun();
         if (data.tahun) {
@@ -601,7 +601,7 @@ export const ModalPohonCrosscutting: React.FC<modal> = ({ isOpen, onClose, onSuc
     useEffect(() => {
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         const data = getOpdTahun();
         if (data.tahun) {

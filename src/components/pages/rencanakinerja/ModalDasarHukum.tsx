@@ -38,7 +38,7 @@ export const ModalDasarHukumAdd: React.FC<modal> = ({isOpen, onClose, id_rekin})
     useEffect(() => {
         const fetchUser = getUser();
         if(fetchUser){
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     },[]);
 
@@ -178,7 +178,7 @@ export const ModalDasarHukumEdit: React.FC<modal> = ({isOpen, onClose, id_rekin,
     useEffect(() => {
         const fetchUser = getUser();
         if(fetchUser){
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     },[]);
 

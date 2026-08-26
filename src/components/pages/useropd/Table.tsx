@@ -59,7 +59,7 @@ const Table = () => {
         const fetchUser = getUser();
         const data = getOpdTahun();
         if (fetchUser) {
-            setuser(fetchUser.user);
+            setuser(fetchUser);
         }
         if (data.opd) {
             const opd = {

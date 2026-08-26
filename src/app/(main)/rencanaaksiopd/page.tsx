@@ -17,7 +17,7 @@ const RencanaAksiOpd = () => {
         const data = getOpdTahun();
         const fetchUser = getUser();
         if(fetchUser){
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         if(data){
             if(data.tahun){

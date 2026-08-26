@@ -41,7 +41,7 @@ export const PohonCascading: React.FC<pohon> = ({ tema, deleteTrigger, show_all,
     useEffect(() => {
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     }, []);
 
@@ -239,7 +239,7 @@ export const PohonCascadingEdited: React.FC<pohon> = ({ tema, deleteTrigger }) =
     useEffect(() => {
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     }, [])
 

@@ -68,7 +68,7 @@ export function BrandingProvider({ children }: Readonly<{ children: React.ReactN
         setSelectedOpd(valueOpd);
       }
       if (fetchUser) {
-        setUser(fetchUser.user);
+        setUser(fetchUser);
       }
     }
     setLoading(false);

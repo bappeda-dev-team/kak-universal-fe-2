@@ -100,7 +100,7 @@ export const FormPohonOpd: React.FC<{
         const fetchUser = getUser();
         const data = getOpdTahun();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         if (data.tahun) {
             const tahun = {
@@ -856,7 +856,7 @@ export const FormEditPohon: React.FC<{
         const fetchUser = getUser();
         const data = getOpdTahun();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         if (data.tahun) {
             const tahun = {

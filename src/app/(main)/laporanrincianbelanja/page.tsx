@@ -33,7 +33,7 @@ const LaporanRincianBelanja = () => {
             }
         }
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     }, [])
 

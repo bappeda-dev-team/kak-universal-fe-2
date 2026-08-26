@@ -7,8 +7,8 @@ import ActionDropdown from "@/components/global/ActionDropdown";
 import TambahJabatanDialog from "../components/TambahJabatanDialog"
 import MutasiPegawaiDialog from "../components/MutasiPegawaiDialog"
 import { useState } from "react";
-import { api } from "../service"
 import { useRouter } from "next/navigation";
+import { mutasiPegawaiAction, tambahJabatanAction } from "./actions";
 
 type PegawaiDetailPageProps = {
     pegawai: PegawaiDetailResponse
@@ -121,7 +121,7 @@ export default function PegawaiDetailPage({ pegawai, masterJabatans, opds, jenis
                 jenisPenugasans={jenisPenugasans}
                 onClose={() => setMutasiDialogOpen(false)}
                 onSubmit={async (request: MutasiPegawaiRequest) => {
-                    await api.jabatanPegawai.mutasiPegawai(request)
+                    await mutasiPegawaiAction(request)
 
                     setMutasiDialogOpen(false)
 
@@ -137,7 +137,7 @@ export default function PegawaiDetailPage({ pegawai, masterJabatans, opds, jenis
                 jenisPenugasans={jenisPenugasans}
                 onClose={() => setTambahJabatanDialogOpen(false)}
                 onSubmit={async (request: MutasiPegawaiRequest) => {
-                    await api.jabatanPegawai.tambahJabatan(request)
+                    await tambahJabatanAction(request)
 
                     setTambahJabatanDialogOpen(false)
 

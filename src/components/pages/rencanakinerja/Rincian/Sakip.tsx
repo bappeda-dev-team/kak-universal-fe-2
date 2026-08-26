@@ -54,7 +54,7 @@ const Sakip: React.FC<id> = ({ id }) => {
     useEffect(() => {
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     }, []);
 

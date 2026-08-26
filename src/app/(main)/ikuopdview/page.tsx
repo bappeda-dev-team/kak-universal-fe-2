@@ -33,7 +33,7 @@ const IkuOpd = () => {
         const fetchPeriode = getPeriode();
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         if (data.tahun) {
             const tahun = {

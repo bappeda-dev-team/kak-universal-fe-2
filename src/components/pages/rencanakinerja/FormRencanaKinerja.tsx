@@ -90,7 +90,7 @@ export const FormRencanaKinerja = () => {
         const data = getOpdTahun();
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         if (data) {
             if (data.tahun) {
@@ -523,7 +523,7 @@ export const FormEditRencanaKinerja = () => {
         const data = getOpdTahun();
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         if (data) {
             if (data.tahun) {

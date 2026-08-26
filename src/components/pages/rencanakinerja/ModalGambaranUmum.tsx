@@ -37,7 +37,7 @@ export const ModalAddGambaranUmum: React.FC<modal> = ({isOpen, onClose, id_rekin
     useEffect(() => {
         const fetchUser = getUser();
         if(fetchUser){
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     },[]);
 
@@ -149,7 +149,7 @@ export const ModalEditGambaranUmum: React.FC<modal> = ({isOpen, onClose, id_reki
     useEffect(() => {
         const fetchUser = getUser();
         if(fetchUser){
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     },[]);
 

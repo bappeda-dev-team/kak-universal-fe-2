@@ -52,7 +52,7 @@ export const ModalPermasalahan: React.FC<modal> = ({ kode_opd, tahun, isOpen, on
     useEffect(() => {
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     }, []);
 

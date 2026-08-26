@@ -32,7 +32,7 @@ const JabatanOpd = () => {
             }
         }
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     }, [])
 

@@ -82,7 +82,7 @@ export const ModalPindahPohonOpd: React.FC<modal> = ({isOpen, onClose, onSuccess
         const fetchUser = getUser();
         const data = getOpdTahun();
         if(fetchUser){
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
         if(data.tahun){
             const tahun = {

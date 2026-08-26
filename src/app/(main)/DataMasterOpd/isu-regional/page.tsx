@@ -29,7 +29,7 @@ const IkuOpd = () => {
       setSelectedOpd(opd);
     }
     if (user) {
-      setUser(user.user);
+      setUser(user);
     }
   }, []);
 

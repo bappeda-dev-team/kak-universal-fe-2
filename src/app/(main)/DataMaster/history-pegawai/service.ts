@@ -1,17 +1,8 @@
 import type { WebResponse, PegawaiDetailResponse, PegawaiResponse, MutasiPegawaiRequest, OptionResponse } from "./types";
 import { cookies } from "next/headers";
 
-
 const API_KEPEGAWAIAN =
     process.env.NEXT_PUBLIC_API_KEPEGAWAIAN || "http://localhost:8080"
-
-async function authHeaders() {
-    const cookieStore = cookies();
-
-    return {
-        Cookie: cookieStore.toString(),
-    };
-}
 
 async function request<T>(path: string): Promise<T> {
     const cookieStore = await cookies();

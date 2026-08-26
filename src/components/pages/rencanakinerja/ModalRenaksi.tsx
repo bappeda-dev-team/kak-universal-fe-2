@@ -42,7 +42,7 @@ export const ModalRenaksi: React.FC<modal> = ({ isOpen, onClose, id, rekin_id, m
     useEffect(() => {
         const fetchUser = getUser();
         if (fetchUser) {
-            setUser(fetchUser.user);
+            setUser(fetchUser);
         }
     }, []);
 
