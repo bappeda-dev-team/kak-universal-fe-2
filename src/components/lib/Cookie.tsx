@@ -136,9 +136,7 @@ export const getUser = async (): Promise<GetUserResult | null> => {
 
     const user: UserInfo = await response.json();
 
-    document.cookie = `user=${encodeURIComponent(
-        JSON.stringify(user)
-    )}; path=/; max-age=${60 * 60 * 5}; SameSite=Lax`;
+    document.cookie = `user=${JSON.stringify(user)}; path=/; max-age=${60 * 60 * 5}; SameSite=Lax`;
 
     return {
         user,
