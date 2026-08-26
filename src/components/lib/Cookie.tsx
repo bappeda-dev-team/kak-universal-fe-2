@@ -100,6 +100,7 @@ export const logout = async (): Promise<boolean> => {
         document.cookie = "user=; Path=/; Max-Age=0";
         document.cookie = "opd=; Path=/; Max-Age=0";
         document.cookie = "periode=; Path=/; Max-Age=0";
+        document.cookie = "tahun=; Path=/; Max-Age=0";
         document.cookie = "sessionId=; Path=/; Max-Age=0";
         window.location.href = "/login";
 

@@ -104,7 +104,7 @@ const Header = () => {
                 {/* <h1 className="font-light text-sm">{Tahun ? Tahun?.value : "Pilih Tahun"} - Kab. Madiun</h1> */}
             </div>
             <div className="flex flex-wrap items-center">
-                {(user?.roles == 'super_admin' || user?.roles == 'reviewer') &&
+                {(user?.roles.some((r: string) => ['super_admin', 'reviewer'].includes(r))) &&
                     <Select
                         styles={{
                             control: (baseStyles) => ({
@@ -116,7 +116,7 @@ const Header = () => {
                             })
                         }}
                         onChange={(option) => setSelectedOpd(option)}
-                        options={OpdOption} 
+                        options={OpdOption}
                         placeholder="Pilih OPD ..."
                         value={SelectedOpd || Opd}
                         isLoading={IsLoading}
