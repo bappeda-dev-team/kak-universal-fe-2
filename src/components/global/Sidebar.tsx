@@ -74,7 +74,7 @@ import { usePathname, useParams } from "next/navigation";
 import Link from "next/link";
 // @ts-ignore: allow side-effect CSS import without type declarations
 import "@/app/globals.css";
-import { logout, getUser, GetUserResult } from "../lib/Cookie";
+import { logout } from "../lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
 
 interface SidebarProps {
@@ -85,11 +85,11 @@ interface SidebarProps {
 
 // TODO: REFACTOR SIDEBAR LOGIC
 export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
-    const [User, setUser] = useState<any>(null);
     const { id } = useParams();
     const url = usePathname();
 
     const { branding } = useBrandingContext();
+    const User = branding.user;
 
     // MENU UTAMA
     const [DataMaster, setDataMaster] = useState<boolean | null>(null);
@@ -118,24 +118,6 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
     const [Review, setReview] = useState<boolean | null>(null);
     const [RenstraView, setRenstraView] = useState<boolean | null>(null);
     const [LaporanRB, setLaporanRB] = useState<boolean | null>(null);
-
-    useEffect(() => {
-        let mounted = true;
-
-        const fetchUser = async () => {
-            const data = await getUser();
-
-            if (mounted && data) {
-                setUser(data.user);
-            }
-        };
-
-        fetchUser();
-
-        return () => {
-            mounted = false;
-        };
-    }, []);
 
     useEffect(() => {
         //DATA MASTER

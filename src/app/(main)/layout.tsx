@@ -8,11 +8,9 @@ import { Sidebar } from "@/components/global/Sidebar";
 import Header from "@/components/global/Header";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { getUser } from "@/components/lib/Cookie";
 import NextTopLoader from "nextjs-toploader";
 import { BrandingProvider } from "@/context/BrandingContext";
 import NetworkMonitorWrapper from "@/context/NetworkMonitorWrapper";
-import { AuthProvider } from "@/context/AuthProvider";
 
 const font = Poppins({
     subsets: ['latin'],
@@ -58,7 +56,6 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
                     <link
                         rel="icon"
                         href={logo}
-                    // href="/universal.png"
                     />
                 </head>
                 <body>
@@ -83,24 +80,21 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
                 <link
                     rel="icon"
                     href={logo}
-                // href="/universal.png"
                 />
             </head>
             <body className="flex">
-                <AuthProvider>
-                    <BrandingProvider>
-                        <NextTopLoader
-                            color="linear-gradient(to right, rgb(134, 239, 172), rgb(59, 130, 246), rgb(147, 51, 234))"
-                        />
-                        {!loginPage && <Sidebar isOpen={isOpen} toggleSidebar={() => toggleSidebar()} isZoomed={isZoomed} />}
-                        <div className={`w-full ${isOpen ? 'pl-[16rem]' : ''}`}>
-                            {!loginPage && <Header />}
-                            <div className={`${font.className} ${loginPage ? "" : "px-4 py-2"}`}>{children}</div>
-                        </div>
-                        <ToastProvider />
-                        <NetworkMonitorWrapper />
-                    </BrandingProvider>
-                </AuthProvider>
+                <BrandingProvider>
+                    <NextTopLoader
+                        color="linear-gradient(to right, rgb(134, 239, 172), rgb(59, 130, 246), rgb(147, 51, 234))"
+                    />
+                    {!loginPage && <Sidebar isOpen={isOpen} toggleSidebar={() => toggleSidebar()} isZoomed={isZoomed} />}
+                    <div className={`w-full ${isOpen ? 'pl-[16rem]' : ''}`}>
+                        {!loginPage && <Header />}
+                        <div className={`${font.className} ${loginPage ? "" : "px-4 py-2"}`}>{children}</div>
+                    </div>
+                    <ToastProvider />
+                    <NetworkMonitorWrapper />
+                </BrandingProvider>
             </body>
         </html>
     );

@@ -6,20 +6,11 @@ import { TbDownload, TbBook2, TbCircleFilled } from "react-icons/tb";
 import { ButtonSky } from "@/components/global/Button";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { IsLoadingBranding } from "@/components/global/Loading";
-import { useAuth } from "@/context/AuthProvider";
 
 const Dashboard = () => {
 
-    const { LoadingBranding } = useBrandingContext();
-    const [User, setUser] = useState<any>(null);
-    const { user, loading } = useAuth();
-
-
-    useEffect(() => {
-        if (!loading) {
-            setUser(user);
-        }
-    }, [user, loading]);
+    const { LoadingBranding, branding } = useBrandingContext();
+    const User = branding.user
 
     const manual_user = process.env.NEXT_PUBLIC_LINK_MANUAL_USER;
 

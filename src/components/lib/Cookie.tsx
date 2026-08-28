@@ -1,4 +1,3 @@
-import * as jwtDecoded from "jwt-decode";
 import { AlertNotification } from "../global/Alert";
 
 // Fungsi untuk menyimpan nilai ke cookies
@@ -21,8 +20,7 @@ export const getCookie = (name: string): string | null => {
 // HANDLE LOGIN DAN SIMPAN DATA USER
 export const login = async (username: string, password: string): Promise<boolean> => {
     try {
-        const API_URL = process.env.NEXT_PUBLIC_AUTH_URL;
-        const response = await fetch(`${API_URL}/auth/login`, {
+        const response = await fetch(`/api-auth/login`, {
             method: 'POST',
             credentials: "include",
             headers: {
@@ -46,25 +44,16 @@ export const login = async (username: string, password: string): Promise<boolean
 
         const sessionId = data?.sessionId;
         if (!sessionId) {
-            console.error("Session ID tidak ditemukan:", data)
-
             AlertNotification(
                 "Login Gagal",
-                "Session ID tidak ditemukan",
+                "Terjadi kesalahan server",
                 "error",
                 2000
             );
 
             return false;
         }
-        document.cookie = [
-            `sessionId=${encodeURIComponent(sessionId)}`,
-            "Path=/",
-            "Max-Age=18000",
-            "SameSite=Lax",
-        ].join("; ");
 
-        // document.cookie = `session_id=${sessionId}; path=/;`;
         AlertNotification(
             "Login Berhasil",
             "",
@@ -73,7 +62,6 @@ export const login = async (username: string, password: string): Promise<boolean
         );
 
         return true;
-
 
     } catch (err) {
         console.error('Login gagal dengan error:', err);
@@ -84,9 +72,7 @@ export const login = async (username: string, password: string): Promise<boolean
 
 export const logout = async (): Promise<boolean> => {
     try {
-        const API_URL = process.env.NEXT_PUBLIC_AUTH_URL;
-
-        const response = await fetch(`${API_URL}/auth/logout`, {
+        const response = await fetch(`/api-auth/logout`, {
             method: "POST",
             credentials: "include",
         });
@@ -124,9 +110,7 @@ export interface UserInfo {
 }
 
 export const getUser = async (): Promise<GetUserResult | null> => {
-    const API_URL = process.env.NEXT_PUBLIC_AUTH_URL;
-
-    const response = await fetch(`${API_URL}/user-info-alt`, {
+    const response = await fetch(`/api-user/user-info`, {
         method: "GET",
         credentials: "include",
     });
@@ -137,7 +121,7 @@ export const getUser = async (): Promise<GetUserResult | null> => {
 
     const user: UserInfo = await response.json();
 
-    document.cookie = `user=${JSON.stringify(user)}; path=/; max-age=${60 * 60 * 5}; SameSite=Lax`;
+    setCookie('user', JSON.stringify(user))
 
     return {
         user,

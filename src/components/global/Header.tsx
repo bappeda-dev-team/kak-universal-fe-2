@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Select from "react-select"
-import { getOpdTahun, getUser } from "../lib/Cookie"
 import { AlertNotification } from "./Alert"
-import { getToken } from "../lib/Cookie"
+import { useBrandingContext } from "@/context/BrandingContext";
+import { setCookie } from "@/components/lib/Cookie"
 
 interface OptionType {
     value: number;
@@ -19,27 +19,19 @@ const Header = () => {
 
     const [Tahun, setTahun] = useState<OptionType | null>(null);
     const [SelectedOpd, setSelectedOpd] = useState<OptionTypeString | null>(null);
-    const [Opd, setOpd] = useState<OptionTypeString | null>(null);
-    const [user, setUser] = useState<any>(null);
+    // const [Opd, setOpd] = useState<OptionTypeString | null>(null);
     const [OpdOption, setOpdOption] = useState<OptionTypeString[]>([]);
     const [IsLoading, setIsLoading] = useState<boolean>(false);
-    const token = getToken();
-
-    // Fungsi untuk menyimpan nilai ke cookies
-    const setCookie = (name: string, value: any) => {
-        document.cookie = `${name}=${value}; path=/;`;
-    };
+    const { branding } = useBrandingContext();
+    const user = branding.user
+    const Opd: OptionTypeString | null = branding.opd
 
     const fetchOpd = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/opd/findall`, {
+            const response = await fetch(`/api-perencanaan/opd/findall`, {
                 method: 'GET',
-                headers: {
-                    Authorization: `${token}`,
-                    'Content-Type': 'application/json',
-                },
+                credentials: "include",
             });
             if (!response.ok) {
                 throw new Error('cant fetch data opd');
@@ -96,7 +88,7 @@ const Header = () => {
     return (
         <div className="flex flex-wrap gap-2 justify-between items-center rounded-2xl mx-2 mt-2 bg-gradient-to-r from-[#182C4E] to-[#17212D] py-4 pr-2 pl-3">
             <div className="flex flex-col text-white max-w-[400px]">
-                {user?.roles == 'super_admin' ?
+                {user?.roles.some((r: string) => ['super_admin']) ?
                     <h1 className="font-light text-sm">{Opd ? Opd?.label : "Pilih OPD"}</h1>
                     :
                     <h1 className="font-light text-sm">{user?.nama_pegawai}</h1>
