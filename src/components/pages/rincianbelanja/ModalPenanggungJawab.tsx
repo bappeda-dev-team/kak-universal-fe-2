@@ -16,7 +16,7 @@ interface FormValue {
     nip: OptionTypeString;
     tahun: number;
     kode_opd: string;
-    kode_subkegiatan: string
+    kode_sub_kegiatan: string
     nip_atasan: OptionTypeString;
     nonaktif_at: string;
     level: OptionTypeString;
@@ -89,7 +89,7 @@ export const ModalPenanggungJawab: React.FC<modal> = ({ isOpen, onClose, onSucce
                 console.log(`data user dengan ${role} tidak ditemukan`)
             } else {
                 const opd = data.data.map((item: any) => ({
-                    value: item.pegawai_id,
+                    value: item.nip,
                     label: item.nama_pegawai,
                 }));
                 setOptionAtasan(opd);
@@ -110,37 +110,41 @@ export const ModalPenanggungJawab: React.FC<modal> = ({ isOpen, onClose, onSucce
                 ? `${data.nonaktif_at}:00+07:00`
                 : null,
             nip: data.nip?.value,
-            tahun: Number(branding?.tahun?.value),
-            kode_subkegiatan: Data?.kode_subkegiatan,
             kode_opd: kode_opd,
+            tahun: Number(branding?.tahun?.value),
+            kode_sub_kegiatan: Data?.kode_subkegiatan,
             nip_atasan: data.nip_atasan?.value,
         };
-        console.log(payload)
-        // try {
-        //     let url = "";
-        //     url = ``;
-        //     setProses(true);
-        //     const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
-        //         method: "POST",
-        //         headers: {
-        //             Authorization: `${token}`,
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(payload),
-        //     });
-        //     const result = await response.json();
-        //     if (result.code === 200 || result.code === 201) {
-        //         AlertNotification("Berhasil", `Berhasil menyimpan Anggaran Renaksi`, "success", 1000);
-        //         onClose();
-        //         onSuccess();
-        //     } else {
-        //         AlertNotification("Gagal", `${result.data}`, "error", 2000);
-        //     }
-        // } catch (err) {
-        //     AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
-        // } finally {
-        //     setProses(false);
-        // }
+        // console.log(payload);
+        try {
+            let url = "";
+            if(metode === "tambah"){
+                url = `pptk/create`;
+            } else {
+                url = `pptk/update/${0}`;
+            }
+            setProses(true);
+            const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
+                method: "POST",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+            const result = await response.json();
+            if (result.code === 200 || result.code === 201) {
+                AlertNotification("Berhasil", `Berhasil mengubah data PPTK`, "success", 1000);
+                onClose();
+                onSuccess();
+            } else {
+                AlertNotification("Gagal", `${result.data}`, "error", 2000);
+            }
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
+        } finally {
+            setProses(false);
+        }
     };
 
     const handleClose = () => {

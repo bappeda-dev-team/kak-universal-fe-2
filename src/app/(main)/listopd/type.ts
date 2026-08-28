@@ -1,6 +1,15 @@
 export interface DataTable {
     kode_opd: string;
     nama_opd: string;
+    childs: BidangUrusan[];
+}
+export interface BidangUrusan {
+    nama_bidang_urusan: string;
+    childs: TujuanOpd[];
+}
+export interface TujuanOpd {
+    id_tujuan_opd: number;
+    nama_tujuan_opd: string;
     childs: TematikFindall[];
 }
 export interface TematikFindall {
