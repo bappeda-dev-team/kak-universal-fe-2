@@ -141,7 +141,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                             <tr>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{index + 1}</td>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.nama_program_unggulan || "-"}</td>
-                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">Rencana Implementasi</td>
+                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.rencana_implementasi || "-"}</td>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.nama_opd || "-"}</td>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">
                                                     <p>{p.nama_pohon || "-"} </p>
