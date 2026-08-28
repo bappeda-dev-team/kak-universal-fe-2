@@ -100,8 +100,6 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Rencana Implementasi</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Perangkat Daerah</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pohon</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Level Pohon</th>
-
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Pelaksana</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Rencana Kinerja</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Program</th>
@@ -119,7 +117,7 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                             </tr>
 
                             <tr className="bg-emerald-700 text-white">
-                                {[...Array(17)].map((_, index: number) => (
+                                {[...Array(16)].map((_, index: number) => (
                                     <th key={index} className="border-r border-b px-3 py-1 min-w-[100px]">{index + 1}</th>
                                 ))}
                             </tr>
@@ -147,7 +145,6 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                                     <p>{p.nama_pohon || "-"} </p>
                                                     <p className="font-semibold">({p.id_pohon || "-"})</p>
                                                 </td>
-                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.jenis_pohon || "-"}</td>
                                             </tr>
                                             {p.pelaksanas ?
                                                 p.pelaksanas.map((p: Pelaksana, sub_index: number) => (
