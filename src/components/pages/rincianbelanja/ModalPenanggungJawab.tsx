@@ -8,7 +8,7 @@ import { LoadingButtonClip } from "@/components/global/Loading";
 import { AlertNotification } from "@/components/global/Alert";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { TbDeviceFloppy, TbX } from "react-icons/tb";
-import { LaporanRincianBelanja } from "./type";
+import { LaporanRincianBelanja, PPTK } from "./type";
 import Select from 'react-select';
 import { OptionTypeString } from "@/types";
 
@@ -29,15 +29,31 @@ interface modal {
     Data: LaporanRincianBelanja | null;
     kode_opd: string;
     metode: "tambah" | "edit";
+    DataEdit?: PPTK | null;
 }
 
 
-export const ModalPenanggungJawab: React.FC<modal> = ({ isOpen, onClose, onSuccess, kode_opd, Data, metode }) => {
-
-    const { reset, control, handleSubmit } = useForm<FormValue>();
+export const ModalPenanggungJawab: React.FC<modal> = ({ isOpen, onClose, onSuccess, kode_opd, Data, DataEdit, metode }) => {
 
     const token = getToken();
     const { branding } = useBrandingContext();
+
+    const { reset, control, handleSubmit } = useForm<FormValue>({
+        defaultValues: {
+            nip: {
+                value: DataEdit?.nip,
+                label: DataEdit?.nama_pegawai
+            },
+            tahun: branding?.tahun?.value,
+            kode_opd: kode_opd,
+            kode_sub_kegiatan: Data?.kode_subkegiatan,
+            nip_atasan: {
+                value: DataEdit?.nip_atasan,
+                label: DataEdit?.nama_atasan
+            },
+            nonaktif_at: "",
+        }
+    });
 
     const [Proses, setProses] = useState<boolean>(false);
     const [Loading, setLoading] = useState<boolean>(false);
@@ -118,7 +134,7 @@ export const ModalPenanggungJawab: React.FC<modal> = ({ isOpen, onClose, onSucce
         // console.log(payload);
         try {
             let url = "";
-            if(metode === "tambah"){
+            if (metode === "tambah") {
                 url = `pptk/create`;
             } else {
                 url = `pptk/update/${0}`;

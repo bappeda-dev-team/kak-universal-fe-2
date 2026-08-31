@@ -10,6 +10,7 @@ import { ModalRencanaKinerja } from "./ModalRencanaKinerja";
 import { ModalCloneRekin } from "./ModalCloneRekin";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { RolePill } from "@/components/global/RolePill";
+import { ModalRekinLevel1 } from "./ModalRekinLevel1";
 
 interface type_rekin {
     id_rencana_kinerja: string;
@@ -51,6 +52,7 @@ export const TablePerencanaan = () => {
 
     const [ModalNew, setModalNew] = useState<boolean>(false);
     const [ModalEdit, setModalEdit] = useState<boolean>(false);
+    const [ModalLevel1, setModalLevel1] = useState<boolean>(false);
     const [IdRekin, setIdRekin] = useState<string | null>(null);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
@@ -69,9 +71,15 @@ export const TablePerencanaan = () => {
 
     useEffect(() => {
         const fetchRekin = async () => {
-            setLoading(true)
+            setLoading(true);
+            let url = ""
+            if(User?.roles == "level_1"){
+                url = `${branding?.api_perencanaan}/rencanakinerja/pegawai_level_1/${User?.nip}/${User?.kode_opd}/${branding?.tahun?.value}`
+            } else {
+                url = `${branding?.api_perencanaan}/get_rencana_kinerja/pegawai/${User?.nip}?tahun=${branding?.tahun?.value}`
+            }
             try {
-                const response = await fetch(`${branding?.api_perencanaan}/get_rencana_kinerja/pegawai/${User?.nip}?tahun=${branding?.tahun?.value}`, {
+                const response = await fetch(`${url}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -107,7 +115,6 @@ export const TablePerencanaan = () => {
             setModalEdit(true);
         }
     }
-
     const handleCloneRekin = (data: type_rekin | null) => {
         if (ModalCloneOpen) {
             setDataModalClone(null);
@@ -115,6 +122,13 @@ export const TablePerencanaan = () => {
         } else {
             setDataModalClone(data);
             setModalCloneOpen(true);
+        }
+    }
+    const handleRekinLevel1 = () => {
+        if (ModalLevel1) {
+            setModalLevel1(false);
+        } else {
+            setModalLevel1(true);
         }
     }
 
@@ -154,7 +168,13 @@ export const TablePerencanaan = () => {
                     </div>
                     <ButtonSkyBorder
                         className="flex items-center justify-center"
-                        onClick={() => setModalNew(true)}
+                        onClick={() => {
+                            if (User?.roles == "level_1") {
+                                handleRekinLevel1();
+                            } else {
+                                setModalNew(true)
+                            }
+                        }}
                     >
                         <TbCirclePlus className="mr-1" />
                         Tambah Rencana kinerja
@@ -238,32 +258,36 @@ export const TablePerencanaan = () => {
                                     <td className="border-r border-b px-6 py-4">{data.catatan ? data.catatan : "-"}</td>
                                     <td className="border-r border-b px-6 py-4">
                                         <div className="flex flex-col justify-center items-center gap-2">
-                                            <ButtonSkyBorder
-                                                className="w-full"
-                                                onClick={() => handleEditRekin(data.id_rencana_kinerja)}
-                                            >
-                                                <TbPencil className="mr-1" />
-                                                Edit Rekin
-                                            </ButtonSkyBorder>
-                                            <ButtonBlackBorder
-                                                className="w-full"
-                                                onClick={() => handleCloneRekin(data)}
-                                            >
-                                                <TbLayersSelected className="mr-1" />
-                                                Clone
-                                            </ButtonBlackBorder>
-                                            {(User?.roles == "level_2" || User?.roles == 'level_3' || User?.roles == 'level_4') &&
-                                                <ButtonGreenBorder
-                                                    className="w-full"
-                                                    halaman_url={`/rencanakinerja/${data.id_rencana_kinerja}`}
-                                                >
-                                                    <TbPencilDown className="mr-1" />
-                                                    {User?.roles == 'level_4' ?
-                                                        "Renaksi"
-                                                        :
-                                                        "Rincian"
+                                            {User?.roles != "level_1" &&
+                                                <>
+                                                    <ButtonSkyBorder
+                                                        className="w-full"
+                                                        onClick={() => handleEditRekin(data.id_rencana_kinerja)}
+                                                    >
+                                                        <TbPencil className="mr-1" />
+                                                        Edit Rekin
+                                                    </ButtonSkyBorder>
+                                                    <ButtonBlackBorder
+                                                        className="w-full"
+                                                        onClick={() => handleCloneRekin(data)}
+                                                    >
+                                                        <TbLayersSelected className="mr-1" />
+                                                        Clone
+                                                    </ButtonBlackBorder>
+                                                    {(User?.roles == "level_2" || User?.roles == 'level_3' || User?.roles == 'level_4') &&
+                                                        <ButtonGreenBorder
+                                                            className="w-full"
+                                                            halaman_url={`/rencanakinerja/${data.id_rencana_kinerja}`}
+                                                        >
+                                                            <TbPencilDown className="mr-1" />
+                                                            {User?.roles == 'level_4' ?
+                                                                "Renaksi"
+                                                                :
+                                                                "Rincian"
+                                                            }
+                                                        </ButtonGreenBorder>
                                                     }
-                                                </ButtonGreenBorder>
+                                                </>
                                             }
                                             <ButtonRedBorder className="w-full"
                                                 onClick={() => {
@@ -284,29 +308,43 @@ export const TablePerencanaan = () => {
                         }
                     </tbody>
                 </table>
-                <ModalRencanaKinerja
-                    metode="baru"
-                    tahun={String(branding?.tahun?.value)}
-                    kode_opd={User?.kode_opd}
-                    nip={User?.nip}
-                    pegawai_id={User?.pegawai_id}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
-                    isOpen={ModalNew}
-                    onClose={() => setModalNew(false)}
-                    roles={User?.roles}
-                />
-                <ModalRencanaKinerja
-                    id={IdRekin || ''}
-                    metode="lama"
-                    tahun={String(branding?.tahun?.value)}
-                    kode_opd={User?.kode_opd}
-                    nip={User?.nip}
-                    pegawai_id={User?.pegawai_id}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
-                    isOpen={ModalEdit}
-                    onClose={() => handleEditRekin('')}
-                    roles={User?.roles}
-                />
+                {ModalNew &&
+                    <ModalRencanaKinerja
+                        metode="baru"
+                        tahun={String(branding?.tahun?.value)}
+                        kode_opd={User?.kode_opd}
+                        nip={User?.nip}
+                        pegawai_id={User?.pegawai_id}
+                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                        isOpen={ModalNew}
+                        onClose={() => setModalNew(false)}
+                        roles={User?.roles}
+                    />
+                }
+                {ModalEdit &&
+                    <ModalRencanaKinerja
+                        id={IdRekin || ''}
+                        metode="lama"
+                        tahun={String(branding?.tahun?.value)}
+                        kode_opd={User?.kode_opd}
+                        nip={User?.nip}
+                        pegawai_id={User?.pegawai_id}
+                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                        isOpen={ModalEdit}
+                        onClose={() => handleEditRekin('')}
+                        roles={User?.roles}
+                    />
+                }
+                {ModalLevel1 &&
+                    <ModalRekinLevel1
+                        tahun={String(branding?.tahun?.value)}
+                        kode_opd={User?.kode_opd}
+                        nip={User?.nip}
+                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                        isOpen={ModalLevel1}
+                        onClose={handleRekinLevel1}
+                    />
+                }
                 {ModalCloneOpen &&
                     <ModalCloneRekin
                         isOpen={ModalCloneOpen}

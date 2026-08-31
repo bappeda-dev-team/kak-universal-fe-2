@@ -30,6 +30,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
 
     const [ModalPJ, setModalPJ] = useState<boolean>(false);
     const [DataModal, setDataModal] = useState<LaporanRincianBelanja | null>(null);
+    const [DataEdit, setDataEdit] = useState<PPTK | null>(null);
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const { branding } = useBrandingContext();
@@ -81,13 +82,15 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
         }
     }, [role, kode_opd, nip, tahun, token, FetchTrigger]);
 
-    const handleModalPJ = (data: LaporanRincianBelanja | null) => {
+    const handleModalPJ = (data: LaporanRincianBelanja | null, dataedit?: PPTK) => {
         if (ModalPJ) {
             setModalPJ(false);
             setDataModal(null);
+            setDataEdit(null);
         } else {
             setModalPJ(true);
             setDataModal(data);
+            setDataEdit(dataedit || null);
         }
     }
     const hapusPJ = async(id: number) => {
@@ -201,7 +204,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                                                         <div className="p-1 rounded-full flex flex-col items-center gap-1 bg-white shadow-md">
                                                             <button
                                                                 className="p-1 flex items-center gap-1 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white"
-                                                                onClick={() => handleModalPJ(data)}
+                                                                onClick={() => handleModalPJ(data, pt)}
                                                                 title="Edit Data PPTK"
                                                             >
                                                                 <TbPencil />
@@ -313,6 +316,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                 onSuccess={() => setFetchTrigger((prev) => !prev)}
                 kode_opd={kode_opd}
                 Data={DataModal}
+                DataEdit={DataEdit}
                 metode="tambah"
             />
         </div>
