@@ -37,6 +37,7 @@ export interface TacticalOpd {
 }
 export interface OperasionalOpd {
   operasional_opd: string;
+  tahun_operasional_opd: number;
 }
 
 export interface ArahKebijakanOpd {
