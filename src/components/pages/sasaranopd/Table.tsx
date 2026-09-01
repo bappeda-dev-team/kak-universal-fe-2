@@ -5,6 +5,7 @@ import {
   ButtonGreen,
   ButtonRedBorder,
   ButtonSkyBorder,
+  ButtonBlackBorder,
 } from "@/components/global/Button";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
@@ -19,8 +20,10 @@ import {
   TbEyeClosed,
   TbEye,
   TbAlertCircle,
+  TbPrinter,
 } from "react-icons/tb";
 import { ModalSasaranOpd } from "./ModalSasaranOpd";
+import { useCetakSasaranOpd } from "@/app/(main)/Renstra/sasaranopd/useCetakSasaranOpd";
 
 interface OptionTypeString {
   value: string;
@@ -134,6 +137,9 @@ const Table: React.FC<table> = ({
     }
   }, []);
 
+  const nama_opd =
+    User?.roles == "super_admin" ? SelectedOpd?.label : User?.nama_opd;
+
   useEffect(() => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     let url = "";
@@ -215,6 +221,14 @@ const Table: React.FC<table> = ({
     }
   };
 
+  const { cetakPdfSasaranOpd } = useCetakSasaranOpd(
+    Sasaran,
+    nama_opd,
+    tahun_awal,
+    tahun_akhir,
+    tahun_list,
+  );
+
   const fetchOptionPelaksana = (pelaksana: Pelaksana[]) => {
     const data = pelaksana.map((item: Pelaksana) => ({
       value: item.nip,
@@ -291,7 +305,18 @@ const Table: React.FC<table> = ({
   }
 
   return (
-    <>
+    <div>
+      {tipe === "opd" && (
+        <div className="flex items-center justify-between px-5 py-2">
+          <ButtonBlackBorder
+            className="flex items-center gap-1"
+            onClick={cetakPdfSasaranOpd}
+          >
+            <TbPrinter />
+            Cetak
+          </ButtonBlackBorder>
+        </div>
+      )}
       <div className="overflow-auto m-2 rounded-t-xl border">
         <table className="w-full">
           <thead>
@@ -777,7 +802,7 @@ const Table: React.FC<table> = ({
           onSuccess={() => setFetchTrigger((prev) => !prev)}
         />
       </div>
-    </>
+    </div>
   );
 };
 
