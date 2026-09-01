@@ -25,7 +25,7 @@ interface FormValue {
 interface modal {
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: () => void;
+    onSuccess: (data: PPTK) => void;
     Data: LaporanRincianBelanja | null;
     kode_opd: string;
     metode: "tambah" | "edit";
@@ -152,7 +152,7 @@ export const ModalPenanggungJawab: React.FC<modal> = ({ isOpen, onClose, onSucce
             if (result.code === 200 || result.code === 201) {
                 AlertNotification("Berhasil", `Berhasil mengubah data PPTK`, "success", 1000);
                 onClose();
-                onSuccess();
+                onSuccess(result.data);
             } else {
                 AlertNotification("Gagal", `${result.data}`, "error", 2000);
             }

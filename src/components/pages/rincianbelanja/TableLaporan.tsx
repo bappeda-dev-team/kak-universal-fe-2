@@ -28,10 +28,6 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
     const [Error, setError] = useState<boolean>(false);
     const [DataNull, setDataNull] = useState<boolean>(false);
 
-    const [ModalPJ, setModalPJ] = useState<boolean>(false);
-    const [DataModal, setDataModal] = useState<LaporanRincianBelanja | null>(null);
-    const [DataEdit, setDataEdit] = useState<PPTK | null>(null);
-
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const { branding } = useBrandingContext();
 
@@ -81,37 +77,6 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
             setError(true);
         }
     }, [role, kode_opd, nip, tahun, token, FetchTrigger]);
-
-    const handleModalPJ = (data: LaporanRincianBelanja | null, dataedit?: PPTK) => {
-        if (ModalPJ) {
-            setModalPJ(false);
-            setDataModal(null);
-            setDataEdit(null);
-        } else {
-            setModalPJ(true);
-            setDataModal(data);
-            setDataEdit(dataedit || null);
-        }
-    }
-    const hapusPJ = async(id: number) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try {
-            const response = await fetch(`${API_URL}/pptk/delete/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `${token}`,
-                    'Content-Type': 'application/json',
-                },
-            })
-            if (!response.ok) {
-                alert("cant fetch data")
-            }
-            AlertNotification("Berhasil", "Data PPTK Berhasil Dihapus", "success", 1000);
-            setFetchTrigger((prev) => !prev);
-        } catch (err) {
-            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
-        }
-    }
 
     if (Loading) {
         return (
@@ -186,63 +151,12 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                                 }
                                 <td className="border-r border-b px-6 py-4">Rp.{formatRupiah(data.total_anggaran)}</td>
                                 <td className="border-r border-b">
-                                    {data.pptk.length > 0 ?
-                                        data.pptk.map((pt: PPTK, pt_index: number) => (
-                                            <div key={pt_index} className="px-2 py-4 flex flex-col items-center gap-1">
-                                                <div className="p-2 border border-green-500 rounded-lg flex justify-between gap-1" key={pt_index}>
-                                                    <div className="flex flex-col gap-1">
-                                                        <div className="p-1 rounded-lg bg-white">
-                                                            <p className="font-semibold">Pelaksana :</p>
-                                                            <p>{pt.nama_pegawai || "unknown"}</p>
-                                                        </div>
-                                                        <div className="p-1 rounded-lg bg-white">
-                                                            <p className="font-semibold">Atasan :</p>
-                                                            <p>{pt.nama_atasan || "unknown"}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col items-center justify-center gap-1">
-                                                        <div className="p-1 rounded-full flex flex-col items-center gap-1 bg-white shadow-md">
-                                                            <button
-                                                                className="p-1 flex items-center gap-1 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white"
-                                                                onClick={() => handleModalPJ(data, pt)}
-                                                                title="Edit Data PPTK"
-                                                            >
-                                                                <TbPencil />
-                                                            </button>
-                                                            <button
-                                                                className="p-1 flex items-center gap-1 border border-red-600 text-red-600 rounded-full hover:bg-red-600 hover:text-white"
-                                                                title="Hapus Data PPTK"
-                                                                onClick={() => AlertQuestion("Hapus Data", "", "question", "Hapus", "Batal").then((resp) => {
-                                                                    if(resp.isConfirmed){
-                                                                        hapusPJ(pt.id);
-                                                                    }
-                                                                })}
-                                                            >
-                                                                <TbTrash />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <ButtonBlackBorder
-                                                    className="flex items-center gap-1 w-full rounded-full"
-                                                    onClick={() => handleModalPJ(data)}
-                                                >
-                                                    <TbCirclePlus />
-                                                    Tambah PPTK
-                                                </ButtonBlackBorder>
-                                            </div>
-                                        ))
-                                        :
-                                        <div className="flex items-center-gap-1 px-6 py-4">
-                                            <ButtonBlackBorder
-                                                className="flex items-center gap-1 w-full rounded-full"
-                                                onClick={() => handleModalPJ(data)}
-                                            >
-                                                <TbCirclePlus />
-                                                Tambah PPTK
-                                            </ButtonBlackBorder>
-                                        </div>
-                                    }
+                                    <RowPPTK 
+                                        kode_opd={kode_opd}
+                                        data_pptk={data.pptk}
+                                        token={token || ''}
+                                        data={data}
+                                    />
                                 </td>
                             </tr>
                             {data.rincian_belanja.map((rekin: RincianBelanja, index_rb: number) => (
@@ -310,15 +224,144 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                     ))
                 }
             </table>
-            <ModalPenanggungJawab
-                isOpen={ModalPJ}
-                onClose={() => handleModalPJ(null)}
-                onSuccess={() => setFetchTrigger((prev) => !prev)}
-                kode_opd={kode_opd}
-                Data={DataModal}
-                DataEdit={DataEdit}
-                metode="tambah"
-            />
         </div>
     )
 }
+
+interface RowPPTK {
+    data: LaporanRincianBelanja;
+    data_pptk: PPTK[];
+    token: string;
+    kode_opd: string;
+}
+export const RowPPTK: React.FC<RowPPTK> = ({ data, data_pptk, token, kode_opd }) => {
+
+    const [Data, setData] = useState<PPTK[]>(data_pptk);
+
+    const [ModalPJ, setModalPJ] = useState<boolean>(false);
+    const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
+    const [DataModal, setDataModal] = useState<LaporanRincianBelanja | null>(null);
+    const [DataEdit, setDataEdit] = useState<PPTK | null>(null);
+
+    const handleModalPJ = (data: LaporanRincianBelanja | null, metode: "tambah" | "edit", dataedit?: PPTK) => {
+        if (ModalPJ) {
+            setModalPJ(false);
+            setDataModal(null);
+            setDataEdit(null);
+            setJenisModal(metode);
+        } else {
+            setModalPJ(true);
+            setDataModal(data);
+            setDataEdit(dataedit || null);
+            setJenisModal(metode);
+        }
+    }
+    const updateData = (data: PPTK) => {
+    setData(prev => {
+        const exists = prev.some(item => item.id === data.id);
+        if (exists) {
+            // EDIT
+            return prev.map(item =>
+                item.id === data.id
+                    ? data
+                    : item
+            );
+        }
+        // TAMBAH
+        return [...prev, data];
+    });
+};
+    const hapusPJ = async (id: number) => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        try {
+            const response = await fetch(`${API_URL}/pptk/delete/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            })
+            if (!response.ok) {
+                alert("cant fetch data")
+            }
+            AlertNotification("Berhasil", "Data PPTK Berhasil Dihapus", "success", 1000);
+            setData(Data.filter((data) => (data.id !== id)))
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
+        }
+    }
+
+    return (
+        <>
+            {
+                Data.length > 0 ?
+                    Data.map((pt: PPTK, pt_index: number) => (
+                        <div key={pt_index} className="px-2 py-4 flex flex-col items-center gap-1">
+                            <div className="p-2 border border-green-500 rounded-lg flex justify-between gap-1" key={pt_index}>
+                                <div className="flex flex-col gap-1">
+                                    <div className="p-1 rounded-lg bg-white">
+                                        <p className="font-semibold">Pelaksana :</p>
+                                        <p>{pt.nama_pegawai || "unknown"}</p>
+                                    </div>
+                                    <div className="p-1 rounded-lg bg-white">
+                                        <p className="font-semibold">Atasan :</p>
+                                        <p>{pt.nama_atasan || "unknown"}</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-center justify-center gap-1">
+                                    <div className="p-1 rounded-full flex flex-col items-center gap-1 bg-white shadow-md">
+                                        <button
+                                            className="p-1 flex items-center gap-1 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white"
+                                            onClick={() => handleModalPJ(data, "edit", pt)}
+                                            title="Edit Data PPTK"
+                                        >
+                                            <TbPencil />
+                                        </button>
+                                        <button
+                                            className="p-1 flex items-center gap-1 border border-red-600 text-red-600 rounded-full hover:bg-red-600 hover:text-white"
+                                            title="Hapus Data PPTK"
+                                            onClick={() => AlertQuestion("Hapus Data", "", "question", "Hapus", "Batal").then((resp) => {
+                                                if (resp.isConfirmed) {
+                                                    hapusPJ(pt.id);
+                                                }
+                                            })}
+                                        >
+                                            <TbTrash />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <ButtonBlackBorder
+                                className="flex items-center gap-1 w-full rounded-full"
+                                onClick={() => handleModalPJ(data, "tambah")}
+                            >
+                                <TbCirclePlus />
+                                Tambah PPTK
+                            </ButtonBlackBorder>
+                        </div>
+                    ))
+                    :
+                    <div className="flex items-center-gap-1 px-6 py-4">
+                        <ButtonBlackBorder
+                            className="flex items-center gap-1 w-full rounded-full"
+                            onClick={() => handleModalPJ(data, "tambah")}
+                        >
+                            <TbCirclePlus />
+                            Tambah PPTK
+                        </ButtonBlackBorder>
+                    </div>
+            }
+            {ModalPJ &&
+                <ModalPenanggungJawab
+                    isOpen={ModalPJ}
+                    onClose={() => handleModalPJ(null, "tambah")}
+                    onSuccess={(data) => updateData(data)}
+                    kode_opd={kode_opd}
+                    Data={DataModal}
+                    DataEdit={DataEdit}
+                    metode={JenisModal}
+                />
+            }
+        </>
+    )
+} 
