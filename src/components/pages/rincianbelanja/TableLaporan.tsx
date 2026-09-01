@@ -188,7 +188,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                                 <td className="border-r border-b">
                                     {data.pptk.length > 0 ?
                                         data.pptk.map((pt: PPTK, pt_index: number) => (
-                                            <div className="px-2 py-4 flex flex-col items-center gap-1">
+                                            <div key={pt_index} className="px-2 py-4 flex flex-col items-center gap-1">
                                                 <div className="p-2 border border-green-500 rounded-lg flex justify-between gap-1" key={pt_index}>
                                                     <div className="flex flex-col gap-1">
                                                         <div className="p-1 rounded-lg bg-white">

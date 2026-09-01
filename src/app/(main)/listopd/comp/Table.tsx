@@ -96,7 +96,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                         }
                         if ("id" in data) {
                             return (
-                                <tr>
+                                <tr key={index}>
                                     <td rowSpan={2} className="border-r border-b border-black px-6 py-4 text-center">{index + 1}</td>
                                     <td colSpan={16} className="border-r border-b border-black px-6 py-4 bg-slate-200 italic">Bukan Pohon OPD</td>
                                 </tr>
