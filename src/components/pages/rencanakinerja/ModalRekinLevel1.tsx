@@ -8,6 +8,7 @@ import { getToken } from "@/components/lib/Cookie";
 import Select from 'react-select';
 import { LoadingButtonClip, LoadingBeat } from "@/components/global/Loading";
 import { OptionType, OptionTypeString } from "@/types";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 interface ModalProps {
     isOpen: boolean;
@@ -83,6 +84,8 @@ export const ModalRekinLevel1: React.FC<ModalProps> = ({ isOpen, onClose, tahun,
         reset,
         formState: { errors },
     } = useForm<FormValue>();
+    const { branding } = useBrandingContext();
+
     const [Rekin, setRekin] = useState<string>('');
     const [PreviewPohon, setPreviewPohon] = useState<boolean>(false);
 
@@ -150,10 +153,9 @@ export const ModalRekinLevel1: React.FC<ModalProps> = ({ isOpen, onClose, tahun,
         } else {
             // console.log(formDataNew);
             try {
-                const API_URL = process.env.NEXT_PUBLIC_API_URL;
-                let url = `rencana_kinerja/create`;
+                let url = `rencana_kinerja/create_level1`;
                 setProses(true);
-                const response = await fetch(`${API_URL}/${url}`, {
+                const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
                     method: "POST",
                     headers: {
                         Authorization: `${token}`,

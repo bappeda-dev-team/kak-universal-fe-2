@@ -137,11 +137,11 @@ export const ModalPenanggungJawab: React.FC<modal> = ({ isOpen, onClose, onSucce
             if (metode === "tambah") {
                 url = `pptk/create`;
             } else {
-                url = `pptk/update/${0}`;
+                url = `pptk/update/${DataEdit?.id}`;
             }
             setProses(true);
             const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
-                method: "POST",
+                method: metode === "tambah" ? "POST" : "PUT",
                 headers: {
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
