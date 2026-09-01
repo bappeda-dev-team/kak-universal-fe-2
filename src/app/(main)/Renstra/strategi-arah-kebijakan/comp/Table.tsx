@@ -394,7 +394,21 @@ const Table: React.FC<Table> = ({ Data, kode_opd, tahun, onSuccess }) => {
                                         {/* OPERASIONAL */}
                                         <td className="border-r border-b border-emerald-500 px-6 py-4">
                                           {operasional ? (
-                                            operasional.operasional_opd || "-"
+                                            <div className="flex flex-col gap-2">
+                                              <span className="font-medium text-gray-800">
+                                                {operasional.operasional_opd ||
+                                                  "-"}
+                                              </span>
+
+                                              {operasional.tahun_operasional_opd && (
+                                                <span className="w-fit rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                                  Tahun{" "}
+                                                  {
+                                                    operasional.tahun_operasional_opd
+                                                  }
+                                                </span>
+                                              )}
+                                            </div>
                                           ) : (
                                             <span className="text-gray-500">
                                               Operasional OPD belum dibuat
