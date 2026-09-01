@@ -333,74 +333,40 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                 <table className="w-full">
                     <thead>
                         <tr className="bg-emerald-500 text-white">
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-3 min-w-[50px] text-center"
-                            >
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[50px] text-center">
                                 No
                             </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-3 min-w-[300px]"
-                            >
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">
                                 Strategic OPD
                             </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-3 min-w-[300px]"
-                            >
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">
                                 Pemilik
                             </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-3 min-w-[300px]"
-                            >
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">
                                 Sasaran OPD
                             </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-3 min-w-[300px]"
-                            >
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">
                                 Tujuan OPD
                             </th>
                             {tipe === "opd" && (
-                                <th
-                                    rowSpan={2}
-                                    className="border-r border-b px-6 py-3 min-w-[100px]"
-                                >
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">
                                     Aksi
                                 </th>
                             )}
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-3 min-w-[200px]"
-                            >
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">
                                 Indikator
                             </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-3 min-w-[200px]"
-                            >
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">
                                 Definisi Operasional
                             </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-3 min-w-[200px]"
-                            >
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">
                                 Rumus Perhitungan
                             </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-3 min-w-[200px]"
-                            >
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">
                                 Sumber Data
                             </th>
                             {tahun_list.map((item: any) => (
-                                <th
-                                    key={item}
-                                    colSpan={2}
-                                    className="border-l border-b px-6 py-3 min-w-[100px]"
-                                >
+                                <th key={item} colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">
                                     {item}
                                 </th>
                             ))}
@@ -418,66 +384,16 @@ const Table: React.FC<table> = ({ tipe, id_periode, tahun_awal, tahun_akhir, jen
                             ))}
                         </tr>
                         <tr className="bg-emerald-500 text-white">
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[50px] text-center"
-                            >
-                                1
-                            </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[300px]"
-                            >
-                                2
-                            </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[300px]"
-                            >
-                                3
-                            </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[300px]"
-                            >
-                                4
-                            </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[300px]"
-                            >
-                                5
-                            </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[100px]"
-                            >
-                                6
-                            </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[200px]"
-                            >
-                                7
-                            </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[200px]"
-                            >
-                                8
-                            </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[200px]"
-                            >
-                                9
-                            </th>
-                            <th
-                                rowSpan={2}
-                                className="border-r border-b px-6 py-1 min-w-[200px]"
-                            >
-                                10
-                            </th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[50px] text-center">1</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[300px]">2</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[300px]">3</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[300px]">4</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[300px]">5</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[100px]">6</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[200px]">7</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[200px]">8</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[200px]">9</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-1 min-w-[200px]">10</th>
                         </tr>
                         <tr className="bg-emerald-500 text-white">
                             <React.Fragment>
