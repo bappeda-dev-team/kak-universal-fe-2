@@ -5,9 +5,12 @@ import { ButtonBlackBorder } from "@/components/global/Button";
 import { getToken } from "@/components/lib/Cookie";
 import { OpdTahunNull, TahunNull } from "@/components/global/OpdTahunNull";
 import { LoadingClip } from "@/components/global/Loading";
-import { TbPencil } from "react-icons/tb";
+import { TbCirclePlus, TbPencil, TbTrash } from "react-icons/tb";
 import { ModalPenanggungJawab } from "./ModalPenanggungJawab";
-import { IndikatorSubKegiatan, IndikatorRencanaKinerja, RencanaAksi, RincianBelanja, LaporanRincianBelanja, Target } from "./type"
+import { IndikatorSubKegiatan, IndikatorRencanaKinerja, RencanaAksi, RincianBelanja, LaporanRincianBelanja, Target, PPTK } from "./type"
+import { formatRupiah } from "@/components/utils/format-rupiah";
+import { useBrandingContext } from "@/context/BrandingContext";
+import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 
 interface TableLaporan {
     tahun: string;
@@ -27,17 +30,18 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
 
     const [ModalPJ, setModalPJ] = useState<boolean>(false);
     const [DataModal, setDataModal] = useState<LaporanRincianBelanja | null>(null);
+    const [DataEdit, setDataEdit] = useState<PPTK | null>(null);
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+    const { branding } = useBrandingContext();
 
     const token = getToken();
 
     useEffect(() => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchLaporan = async (url: string) => {
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/${url}`, {
+                const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -76,22 +80,36 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
         } else {
             setError(true);
         }
-    }, [role, kode_opd, nip, tahun, token]);
+    }, [role, kode_opd, nip, tahun, token, FetchTrigger]);
 
-    function formatRupiah(angka: number) {
-        if (typeof angka !== 'number') {
-            return String(angka); // Jika bukan angka, kembalikan sebagai string
-        }
-        return angka.toLocaleString('id-ID'); // 'id-ID' untuk format Indonesia
-    }
-
-    const handleModalPJ = (data: LaporanRincianBelanja | null) => {
+    const handleModalPJ = (data: LaporanRincianBelanja | null, dataedit?: PPTK) => {
         if (ModalPJ) {
             setModalPJ(false);
             setDataModal(null);
+            setDataEdit(null);
         } else {
             setModalPJ(true);
             setDataModal(data);
+            setDataEdit(dataedit || null);
+        }
+    }
+    const hapusPJ = async(id: number) => {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        try {
+            const response = await fetch(`${API_URL}/pptk/delete/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            })
+            if (!response.ok) {
+                alert("cant fetch data")
+            }
+            AlertNotification("Berhasil", "Data PPTK Berhasil Dihapus", "success", 1000);
+            setFetchTrigger((prev) => !prev);
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
         }
     }
 
@@ -132,7 +150,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                         <th className="border-r border-b px-6 py-3 min-w-[300px]">Indikator Kinerja</th>
                         <th className="border-r border-b px-6 py-3 min-w-[100px]">Target/Satuan</th>
                         <th className="border-r border-b px-6 py-3 min-w-[170px]">Anggaran</th>
-                        <th className="border-r border-b px-6 py-3 min-w-[170px]">Penanggung Jawab</th>
+                        <th className="border-r border-b px-6 py-3 min-w-[300px]">Pelaksana & Atasan</th>
                     </tr>
                 </thead>
                 {DataNull ?
@@ -167,16 +185,64 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                                     ))
                                 }
                                 <td className="border-r border-b px-6 py-4">Rp.{formatRupiah(data.total_anggaran)}</td>
-                                <td className="border-r border-b px-6 py-4">
-                                    <div className="flex items-center-gap-1">
-                                        <ButtonBlackBorder
-                                            className="flex items-center gap-1 w-full rounded-full"
-                                            onClick={() => handleModalPJ(data)}
-                                        >
-                                            <TbPencil />
-                                            Edit
-                                        </ButtonBlackBorder>
-                                    </div>
+                                <td className="border-r border-b">
+                                    {data.pptk.length > 0 ?
+                                        data.pptk.map((pt: PPTK, pt_index: number) => (
+                                            <div className="px-2 py-4 flex flex-col items-center gap-1">
+                                                <div className="p-2 border border-green-500 rounded-lg flex justify-between gap-1" key={pt_index}>
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="p-1 rounded-lg bg-white">
+                                                            <p className="font-semibold">Pelaksana :</p>
+                                                            <p>{pt.nama_pegawai || "unknown"}</p>
+                                                        </div>
+                                                        <div className="p-1 rounded-lg bg-white">
+                                                            <p className="font-semibold">Atasan :</p>
+                                                            <p>{pt.nama_atasan || "unknown"}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col items-center justify-center gap-1">
+                                                        <div className="p-1 rounded-full flex flex-col items-center gap-1 bg-white shadow-md">
+                                                            <button
+                                                                className="p-1 flex items-center gap-1 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white"
+                                                                onClick={() => handleModalPJ(data, pt)}
+                                                                title="Edit Data PPTK"
+                                                            >
+                                                                <TbPencil />
+                                                            </button>
+                                                            <button
+                                                                className="p-1 flex items-center gap-1 border border-red-600 text-red-600 rounded-full hover:bg-red-600 hover:text-white"
+                                                                title="Hapus Data PPTK"
+                                                                onClick={() => AlertQuestion("Hapus Data", "", "question", "Hapus", "Batal").then((resp) => {
+                                                                    if(resp.isConfirmed){
+                                                                        hapusPJ(pt.id);
+                                                                    }
+                                                                })}
+                                                            >
+                                                                <TbTrash />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <ButtonBlackBorder
+                                                    className="flex items-center gap-1 w-full rounded-full"
+                                                    onClick={() => handleModalPJ(data)}
+                                                >
+                                                    <TbCirclePlus />
+                                                    Tambah PPTK
+                                                </ButtonBlackBorder>
+                                            </div>
+                                        ))
+                                        :
+                                        <div className="flex items-center-gap-1 px-6 py-4">
+                                            <ButtonBlackBorder
+                                                className="flex items-center gap-1 w-full rounded-full"
+                                                onClick={() => handleModalPJ(data)}
+                                            >
+                                                <TbCirclePlus />
+                                                Tambah PPTK
+                                            </ButtonBlackBorder>
+                                        </div>
+                                    }
                                 </td>
                             </tr>
                             {data.rincian_belanja.map((rekin: RincianBelanja, index_rb: number) => (
@@ -250,6 +316,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd
                 onSuccess={() => setFetchTrigger((prev) => !prev)}
                 kode_opd={kode_opd}
                 Data={DataModal}
+                DataEdit={DataEdit}
                 metode="tambah"
             />
         </div>

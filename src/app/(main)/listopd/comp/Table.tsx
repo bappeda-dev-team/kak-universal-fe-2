@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react";
-import { DataTable, TematikFindall, Indikator } from "../type"
+import { DataTable, TematikFindall, Indikator, BidangUrusan, TujuanOpd } from "../type"
 
 interface Table {
     DataTable: DataTable[];
@@ -40,51 +40,69 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                         </td>
                     </tr>
                     :
-                    DataTable.map((data: DataTable, index: number) => {
-                        return (
-                            <React.Fragment key={index}>
-                                <tr key={index}>
-                                    <td rowSpan={data.childs.length ? data.childs.length + 1 : 2} className="border-r border-b border-black px-6 py-4 text-center">{index + 1}</td>
-                                    <td rowSpan={data.childs.length ? data.childs.length + 1 : 2} className="border-r border-b border-black px-6 py-4 bg-yellow-200">
-                                        <div className="flex flex-col items-center gap-1">
-                                            <p className="font-bold">{data.nama_opd || "-"}</p>
-                                            <p>{data.kode_opd || "-"}</p>
-                                        </div>
-                                    </td>
-                                    <td rowSpan={data.childs.length ? data.childs.length + 1 : 2} className="border-r border-b border-black px-6 py-4 bg-yellow-200 italic">Bidang Urusan Dalam Pengembangan</td>
-                                    <td rowSpan={data.childs.length ? data.childs.length + 1 : 2} colSpan={3} className="border-r border-b border-black px-6 py-4 bg-slate-200 italic">Tujuan OPD Dalam Pengembangan</td>
-                                </tr>
-                                {data.childs.length > 0 ?
-                                    data.childs.map((s: TematikFindall, s_index: number) => (
-                                        <tr key={s_index}>
-                                            <td className="border-r border-b border-black px-6 py-4 bg-red-200">{s.tema || "pohon unknown"}</td>
-                                            <td colSpan={2} className="border-r border-b border-black bg-red-200">
-                                                {(s.indikator && s.indikator.length > 0) ?
-                                                    s.indikator.map((i: Indikator, i_index: number) => (
-                                                        <React.Fragment key={i_index}>
-                                                            <p>{i.nama_indikator || ""}</p>
-                                                            <p>-</p>
+                    DataTable.map((data: DataTable | TematikFindall, index: number) => {
+                        if ("kode_opd" in data) {
+                            return (
+                                <React.Fragment key={index}>
+                                    <tr key={index}>
+                                        <td rowSpan={2} className="border-r border-b border-black px-6 py-4 text-center">{index + 1}</td>
+                                        <td rowSpan={2} className="border-r border-b border-black px-6 py-4 bg-yellow-200">
+                                            <div className="flex flex-col gap-1">
+                                                <p className="font-bold">{data.nama_opd || "-"}</p>
+                                                <p>{data.kode_opd || "-"}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {data.childs.length > 0 ?
+                                        data.childs.map((item: BidangUrusan, item_index: number) => (
+                                            <tr key={item_index}>
+                                                <td className="border-r border-b border-black px-6 py-4 bg-yellow-200">
+                                                    {item.nama_bidang_urusan || "unknown"}
+                                                </td>
+                                                {item.childs.length > 0 ?
+                                                    item.childs.map((tujuan: TujuanOpd, tujuan_index: number) => (
+                                                        <React.Fragment key={tujuan.id_tujuan_opd || tujuan_index}>
+                                                            <td className="border-r border-b border-black px-6 py-4 bg-slate-200"><p>{tujuan.nama_tujuan_opd || "tujuan unknown"}</p></td>
+                                                            <td colSpan={2} className="border-r border-b border-black bg-slate-200">Dalam Pengembangan</td>
+                                                            <td colSpan={3} className="border-r border-b border-black bg-red-200">
+                                                                {tujuan.childs.length > 0 ?
+                                                                    <div className="flex flex-col h-full">
+                                                                        {tujuan.childs.map((s: TematikFindall, s_index: number) => (
+                                                                            <div key={s_index}className={`${(tujuan.childs.length > 1 && s_index !== tujuan.childs.length - 1 ? "border-b border-black" : "")}`}>
+                                                                                <p className={`p-2`}>{s.tema || "Strategic Unknown"}</p>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div> 
+                                                                :
+                                                                    <p>Tidak ada Pohon OPD</p>
+                                                                }
+                                                            </td>
+                                                            <td colSpan={3} className="border-r bor7der-b border-black px-6 py-4 bg-blue-200">Tactical Dalam Pengembangan</td>
+                                                            <td colSpan={3} className="border-r border-b border-black px-6 py-4 bg-green-200">Operational Dalam Pengembangan</td>
                                                         </React.Fragment>
                                                     ))
                                                     :
-                                                    <div className="flex justify-center h-full bg-red-500">
-                                                        <div className="flex-1 justify-center items-center">
-                                                            -
-                                                        </div>
-                                                    </div>
+                                                    <td colSpan={3} className="border-r border-b border-black px-6 py-4 bg-slate-200">Tidak Ada Pohon OPD</td>
                                                 }
-                                            </td>
-                                            <td colSpan={3} className="border-r border-b border-black px-6 py-4 bg-blue-200">Tactical Dalam Pengembangan</td>
-                                            <td colSpan={3} className="border-r border-b border-black px-6 py-4 bg-green-200">Operational Dalam Pengembangan</td>
+                                            </tr>
+                                        ))
+                                        :
+                                        <tr>
+                                            <td colSpan={16} className="border-r border-b border-black px-6 py-4 bg-slate-200">Tidak Ada Bidang Urusan</td>
                                         </tr>
-                                    ))
-                                    :
-                                    <tr>
-                                        <td colSpan={9} className="border-r border-b border-black px-6 py-4 bg-red-200">Tidak ada pohon</td>
-                                    </tr>
-                                }
-                            </React.Fragment>
-                        )
+                                    }
+                                </React.Fragment>
+                            )
+                        }
+                        if ("id" in data) {
+                            return (
+                                <tr>
+                                    <td rowSpan={2} className="border-r border-b border-black px-6 py-4 text-center">{index + 1}</td>
+                                    <td colSpan={16} className="border-r border-b border-black px-6 py-4 bg-slate-200 italic">Bukan Pohon OPD</td>
+                                </tr>
+                            )
+                        }
+
                     })
                 }
             </tbody>

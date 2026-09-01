@@ -36,6 +36,19 @@ export interface RincianBelanja {
     rencana_aksi: RencanaAksi[] | null;
 }
 
+export interface PPTK {
+    id: number;
+    nip: string;
+    nama_pegawai: string;
+    kode_opd: string;
+    tahun: number;
+    kode_sub_kegiatan: string;
+    nip_atasan: string;
+    nama_atasan: string;
+    aktif_at: string;
+    nonaktif_at: string;
+}
+
 export interface LaporanRincianBelanja {
     kode_opd: string;
     kode_subkegiatan: string;
@@ -43,4 +56,5 @@ export interface LaporanRincianBelanja {
     indikator_subkegiatan: IndikatorSubKegiatan[];
     total_anggaran: number;
     rincian_belanja: RincianBelanja[];
+    pptk: PPTK[];
 }
