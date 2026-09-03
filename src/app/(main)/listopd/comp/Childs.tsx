@@ -20,6 +20,8 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
     const [IdTable, setIdTable] = useState<number | null>(null);
     const [DataTable, setDataTable] = useState<any>(null);
 
+    const [hasOpdData, setHasOpdData] = useState(false);
+
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
 
@@ -57,6 +59,56 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
         fetchTematik();
 
     }, [branding, id_tematik]);
+
+    const checkHasOpd = (nodes: any) => {
+        if (!nodes) return false;
+
+        // handle kalau nodes berupa array atau objek tunggal
+        const list = Array.isArray(nodes) ? nodes : [nodes];
+
+        for (const node of list) {
+            if (!node || typeof node !== "object") continue;
+
+            // cek apakah node ini punya properti kode_opd atau nama_opd
+            if (
+                Object.prototype.hasOwnProperty.call(node, "kode_opd") ||
+                Object.prototype.hasOwnProperty.call(node, "nama_opd")
+            ) {
+                return true;
+            }
+
+            // lanjut cek ke childs (rekursif)
+            if (node.childs) {
+                if (checkHasOpd(node.childs)) return true;
+            }
+        }
+
+        return false;
+    };
+    const splitData = (nodes: any) => {
+        const dataOpd: TematikFindall[] = [];
+        const nonDataOpd: any[] = [];
+
+        (nodes ?? []).forEach((node: any) => {
+            if (!node) return;
+
+            const isOpd =
+                Object.prototype.hasOwnProperty.call(node, "kode_opd") ||
+                Object.prototype.hasOwnProperty.call(node, "nama_opd");
+
+            if (isOpd) {
+                dataOpd.push(node);
+            } else {
+                nonDataOpd.push(node);
+            }
+        });
+
+        return { dataOpd, nonDataOpd };
+    };
+
+    useEffect(() => {
+        setHasOpdData(checkHasOpd(Data));
+    }, [Data]);
 
     if (Loading) {
         return (
@@ -100,103 +152,78 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
         <div className="flex flex-col gap-12">
             {Data?.childs?.map(
                 (item: TematikFindall, index: number) => {
-                    // CEK APAKAH ADA SUB SUB TEMATIK
-                    const adaSubSub = item.childs?.every(
-                        (child: TematikFindall) =>
-                            child.level_pohon != null &&
-                            child.level_pohon < 4
-                    );
-
+                    const { dataOpd, nonDataOpd } = splitData(item.childs);
                     return (
-                        adaSubSub ? (
-                            // KONDISI ADA SUB SUB TEMATIK
-                            <>
-                                <div key={index} className="relative ml-24 flex items-center justify-between min-h-[54px] px-3 py-3 rounded-lg border border-emerald-600">
-                                    {/* garis vertikal */}
-                                    <div className="absolute left-[-72px] top-1/2 -translate-y-1/2 w-[72px] h-[2px] rounded-lg bg-emerald-600" />
-                                    <h1 className="text-base ml-5 text-emerald-700 font-bold">{item.jenis_pohon || "Jenis Unknown"} - {item.tema || "Tema Unknown"}</h1>
-                                </div>
-                                {item?.childs?.map((data: TematikFindall, data_index: number) => {
-                                    // CEK APAKAH ADA SUPER SUB TEMATIK
-                                    const adaSuperSub = data.childs?.every(
-                                        (child: TematikFindall) =>
-                                            child.level_pohon != null &&
-                                            child.level_pohon < 4
-                                    );
-                                    return (
-                                        adaSuperSub ? (
-                                            // KONDISI ADA SUPER SUB TEMATIK
-                                            <React.Fragment key={data_index}>
-                                                <div key={index} className="relative ml-[150px] flex items-center justify-between min-h-[54px] px-3 py-3 rounded-lg border border-emerald-600">
-                                                    <div className="absolute left-[-124px] top-1/2 -translate-y-1/2 w-[122px] h-[2px] rounded-lg bg-emerald-600" />
-                                                    <h1 className="text-base ml-5 text-emerald-700 font-bold">{data.jenis_pohon || "Jenis Unknown"} - {data.tema || "Tema Unknown"}</h1>
-                                                </div>
-                                                {data.childs?.map((s: TematikFindall, super_index: number) => (
-                                                    <div
-                                                        key={super_index}
-                                                        className="relative ml-[250px] flex items-center justify-between min-h-[54px] px-3 py-3 rounded-lg border border-emerald-600"
-                                                    >
-                                                        <div className="absolute left-[-228px] top-1/2 -translate-y-1/2 w-[228px] h-[2px] rounded-lg bg-emerald-600" />
-                                                        <h1 className="text-base ml-5 text-emerald-700 font-bold">{s.jenis_pohon || "Jenis Unknown"} - {s.tema || "Tema Unknown"}</h1>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                setIdTable(s.id);
-                                                                onTableShown?.(true);
-                                                                setDataTable(s.childs)
-                                                            }}
-                                                            className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
-                                                        >
-                                                            <TbSearch />
-                                                            Detail
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </React.Fragment>
-                                        ) : (
-                                            // KONDISI TIDAK ADA SUPER SUB TEMATIK
-                                            <React.Fragment key={data_index}>
-                                                <div key={index} className="relative ml-[150px] flex items-center justify-between min-h-[54px] px-3 py-3 rounded-lg border border-emerald-600">
-                                                    <div className="absolute left-[-124px] top-1/2 -translate-y-1/2 w-[122px] h-[2px] rounded-lg bg-emerald-600" />
-                                                    <h1 className="text-base ml-5 text-emerald-700 font-bold">{data.jenis_pohon || "Jenis Unknown"} - {data.tema || "Tema Unknown"}</h1>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            setIdTable(data.id);
-                                                            onTableShown?.(true);
-                                                            setDataTable(data.childs)
-                                                        }}
-                                                        className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
-                                                    >
-                                                        <TbSearch />
-                                                        Detail
-                                                    </button>
-                                                </div>
-                                            </React.Fragment>
-                                        )
-                                    )
-                                })}
-                            </>
-                        ) : (
-                            // KONDISI TIDAK ADA SUB SUB TEMATIK
-                            <div key={index} className="relative ml-24 flex items-center justify-between min-h-[54px] px-3 py-3 rounded-lg border border-emerald-600">
+                        // SUB TEMATIK
+                        <React.Fragment key={index}>
+                            <div className="relative ml-24 flex items-center justify-between min-h-[54px] px-3 py-3 rounded-lg border border-emerald-600">
                                 {/* garis vertikal */}
                                 <div className="absolute left-[-72px] top-1/2 -translate-y-1/2 w-[72px] h-[2px] rounded-lg bg-emerald-600" />
-                                <h1 className="text-base ml-5 text-emerald-700 font-bold">{item.jenis_pohon || "Jenis Unknown"} - {item.tema || "-"}</h1>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setIdTable(item.id);
-                                        onTableShown?.(true);
-                                        setDataTable(item.childs)
-                                    }}
-                                    className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
-                                >
-                                    <TbSearch />
-                                    Detail
-                                </button>
+                                <h1 className="text-base ml-5 text-slate-900 font-bold">{item.jenis_pohon || "Jenis Unknown"} - {item.tema || "Tema Unknown"}</h1>
+                                {dataOpd.length > 0 &&
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setIdTable(item.id);
+                                            onTableShown?.(true);
+                                            setDataTable(dataOpd)
+                                        }}
+                                        className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
+                                    >
+                                        <TbSearch />
+                                        Detail
+                                    </button>
+                                }
                             </div>
-                        )
+                            {nonDataOpd?.map((data: TematikFindall, data_index: number) => {
+                                const { dataOpd: dataOpd2, nonDataOpd: nonDataOpd2 } = splitData(data.childs);
+                                return (
+                                    <React.Fragment key={data_index}>
+                                        {/* SUB SUB TEMATIK */}
+                                        <div key={index} className="relative ml-[150px] flex items-center justify-between min-h-[54px] px-3 py-3 rounded-lg border border-emerald-600">
+                                            <div className="absolute left-[-124px] top-1/2 -translate-y-1/2 w-[122px] h-[2px] rounded-lg bg-emerald-600" />
+                                            <h1 className="text-base ml-5 text-slate-700 font-bold">{data.jenis_pohon || "Jenis Unknown"} - {data.tema || "Tema Unknown"}</h1>
+                                            {dataOpd2 &&
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setIdTable(data.id);
+                                                        onTableShown?.(true);
+                                                        setDataTable(dataOpd2);
+                                                    }}
+                                                    className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
+                                                >
+                                                    <TbSearch />
+                                                    Detail
+                                                </button>
+                                            }
+                                        </div>
+                                        {nonDataOpd2?.map((s: TematikFindall, super_index: number) => (
+                                            // SUPER SUB TEMATIK
+                                            <div
+                                                key={super_index}
+                                                className="relative ml-[250px] flex items-center justify-between min-h-[54px] px-3 py-3 rounded-lg border border-emerald-600"
+                                            >
+                                                <div className="absolute left-[-228px] top-1/2 -translate-y-1/2 w-[228px] h-[2px] rounded-lg bg-emerald-600" />
+                                                <h1 className="text-base ml-5 text-slate-400 font-bold">{s.jenis_pohon || "Jenis Unknown"} - {s.tema || "Tema Unknown"}</h1>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setIdTable(s.id);
+                                                        onTableShown?.(true);
+                                                        setDataTable(s.childs)
+                                                    }}
+                                                    className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
+                                                >
+                                                    <TbSearch />
+                                                    Detail
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </React.Fragment>
+                                )
+                            })}
+                        </React.Fragment>
                     )
                 }
             )}
