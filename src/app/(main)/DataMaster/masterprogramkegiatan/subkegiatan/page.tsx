@@ -1,5 +1,14 @@
+'use client'
+
 import { FiHome } from "react-icons/fi"
 import Table from "@/components/pages/datamaster/masterprogramkegiatan/subkegiatan/Table";
+import { useState, useEffect } from "react";
+import { useBrandingContext } from "@/context/BrandingContext";
+import { getToken } from "@/components/lib/Cookie";
+import { generatePagination } from "@/components/global/PaginationNav";
+import { LoadingBeat } from "@/components/global/Loading";
+import { ButtonBlackBorder, ButtonSky } from "@/components/global/Button";
+import { TbCirclePlus, TbSearch } from "react-icons/tb";
 
 const SubKegiatan = () => {
     const { branding } = useBrandingContext();
