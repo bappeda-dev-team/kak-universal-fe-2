@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { ButtonBlackBorder } from "@/components/global/Button";
@@ -7,361 +7,529 @@ import { OpdTahunNull, TahunNull } from "@/components/global/OpdTahunNull";
 import { LoadingClip } from "@/components/global/Loading";
 import { TbCirclePlus, TbPencil, TbTrash } from "react-icons/tb";
 import { ModalPenanggungJawab } from "./ModalPenanggungJawab";
-import { IndikatorSubKegiatan, IndikatorRencanaKinerja, RencanaAksi, RincianBelanja, LaporanRincianBelanja, Target, PPTK } from "./type"
+import {
+  IndikatorSubKegiatan,
+  IndikatorRencanaKinerja,
+  RencanaAksi,
+  RincianBelanja,
+  LaporanRincianBelanja,
+  Target,
+  KandidatPPTK,
+  PPTK,
+} from "./type";
 import { formatRupiah } from "@/components/utils/format-rupiah";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 
 interface TableLaporan {
-    tahun: string;
-    kode_opd: string;
-    nama_opd?: string;
-    nip?: string;
-    role: string;
+  tahun: string;
+  kode_opd: string;
+  nama_opd?: string;
+  nip?: string;
+  role: string;
 }
 
-export const TableLaporan: React.FC<TableLaporan> = ({ tahun, kode_opd, nama_opd, nip, role }) => {
+export const TableLaporan: React.FC<TableLaporan> = ({
+  tahun,
+  kode_opd,
+  nama_opd,
+  nip,
+  role,
+}) => {
+  const [Laporan, setLaporan] = useState<LaporanRincianBelanja[]>([]);
 
-    const [Laporan, setLaporan] = useState<LaporanRincianBelanja[]>([]);
+  const [Loading, setLoading] = useState<boolean>(false);
+  const [Error, setError] = useState<boolean>(false);
+  const [DataNull, setDataNull] = useState<boolean>(false);
 
-    const [Loading, setLoading] = useState<boolean>(false);
-    const [Error, setError] = useState<boolean>(false);
-    const [DataNull, setDataNull] = useState<boolean>(false);
+  const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+  const { branding } = useBrandingContext();
 
-    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
-    const { branding } = useBrandingContext();
+  const token = getToken();
 
-    const token = getToken();
-
-    useEffect(() => {
-        const fetchLaporan = async (url: string) => {
-            try {
-                setLoading(true);
-                const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
-                    headers: {
-                        Authorization: `${token}`,
-                        'Content-Type': 'application/json',
-                    }
-                });
-                const result = await response.json();
-                const data = result.data;
-                if (result.code === 200 || result.code === 201) {
-                    if (data === null) {
-                        setLaporan([]);
-                        setDataNull(true);
-                        setError(false);
-                    } else {
-                        setLaporan(data);
-                        setDataNull(false);
-                        setError(false);
-                    }
-                } else {
-                    setDataNull(false);
-                    setError(true);
-                }
-            } catch (err) {
-                setDataNull(false);
-                setError(true);
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        }
-        if (role != undefined) {
-            if (role == 'super_admin' || role == 'admin_opd' || role == 'reviewer') {
-                fetchLaporan(`rincian_belanja/laporan?kode_opd=${kode_opd}&tahun=${tahun}`)
-            } else {
-                fetchLaporan(`rincian_belanja/pegawai/${nip}/${tahun}`)
-            }
+  useEffect(() => {
+    const fetchLaporan = async (url: string) => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const result = await response.json();
+        const data = result.data;
+        if (result.code === 200 || result.code === 201) {
+          if (data === null) {
+            setLaporan([]);
+            setDataNull(true);
+            setError(false);
+          } else {
+            setLaporan(data);
+            setDataNull(false);
+            setError(false);
+          }
         } else {
-            setError(true);
+          setDataNull(false);
+          setError(true);
         }
-    }, [role, kode_opd, nip, tahun, token, FetchTrigger]);
-
-    if (Loading) {
-        return (
-            <div className="w-full border p-5 rounded-xl shadow-xl">
-                <LoadingClip className="mx-5 py-5" />
-            </div>
+      } catch (err) {
+        setDataNull(false);
+        setError(true);
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (role != undefined) {
+      if (role == "super_admin" || role == "admin_opd" || role == "reviewer") {
+        fetchLaporan(
+          `rincian_belanja/laporan?kode_opd=${kode_opd}&tahun=${tahun}`,
         );
-    } else if (Error) {
-        return (
-            <div className="w-full border p-5 rounded-xl shadow-xl">
-                <h1 className="text-red-500 font-bold mx-5 py-5">Periksa koneksi internet atau database server</h1>
-            </div>
-        )
-    } else if (tahun == undefined) {
-        return <TahunNull />
-    } else if (role == 'super_admin' || role == 'reviewer') {
-        if (kode_opd == undefined) {
-            return (
-                <>
-                    <div className="w-full flex flex-col p-5 border-b-2 border-x-2 rounded-b-xl">
-                        <OpdTahunNull />
-                    </div>
-                </>
-            )
-        }
+      } else {
+        fetchLaporan(`rincian_belanja/pegawai/${nip}/${tahun}`);
+      }
+    } else {
+      setError(true);
     }
+  }, [role, kode_opd, nip, tahun, token, FetchTrigger]);
 
+  if (Loading) {
     return (
-        <div className="overflow-auto m-3 rounded-t-xl border w-full">
-            <table className="w-full">
-                <thead className="bg-green-500 text-white">
-                    <tr>
-                        <th className="border-r border-b px-6 py-3 min-w-[50px]">No</th>
-                        <th className="border-r border-b px-6 py-3 min-w-[200px]">Pemilik</th>
-                        <th className="border-r border-b px-6 py-3 min-w-[300px]">Rencana Kinerja</th>
-                        <th className="border-r border-b px-6 py-3 min-w-[300px]">Indikator Kinerja</th>
-                        <th className="border-r border-b px-6 py-3 min-w-[100px]">Target/Satuan</th>
-                        <th className="border-r border-b px-6 py-3 min-w-[170px]">Anggaran</th>
-                        <th className="border-r border-b px-6 py-3 min-w-[300px]">Pelaksana & Atasan</th>
-                    </tr>
-                </thead>
-                {DataNull ?
-                    <tbody>
-                        <tr>
-                            <td className="px-6 py-3" colSpan={30}>
-                                Data Kosong / Belum Ditambahkan
+      <div className="w-full border p-5 rounded-xl shadow-xl">
+        <LoadingClip className="mx-5 py-5" />
+      </div>
+    );
+  } else if (Error) {
+    return (
+      <div className="w-full border p-5 rounded-xl shadow-xl">
+        <h1 className="text-red-500 font-bold mx-5 py-5">
+          Periksa koneksi internet atau database server
+        </h1>
+      </div>
+    );
+  } else if (tahun == undefined) {
+    return <TahunNull />;
+  } else if (role == "super_admin" || role == "reviewer") {
+    if (kode_opd == undefined) {
+      return (
+        <>
+          <div className="w-full flex flex-col p-5 border-b-2 border-x-2 rounded-b-xl">
+            <OpdTahunNull />
+          </div>
+        </>
+      );
+    }
+  }
+
+  return (
+    <div className="overflow-auto m-3 rounded-t-xl border w-full">
+      <table className="w-full">
+        <thead className="bg-green-500 text-white">
+          <tr>
+            <th className="border-r border-b px-6 py-3 min-w-[50px]">No</th>
+            <th className="border-r border-b px-6 py-3 min-w-[200px]">
+              Pemilik
+            </th>
+            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              Rencana Kinerja
+            </th>
+            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              Indikator Kinerja
+            </th>
+            <th className="border-r border-b px-6 py-3 min-w-[100px]">
+              Target/Satuan
+            </th>
+            <th className="border-r border-b px-6 py-3 min-w-[170px]">
+              Anggaran
+            </th>
+            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              Pelaksana & Atasan
+            </th>
+            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              Penanggung jawab
+            </th>
+          </tr>
+        </thead>
+        {DataNull ? (
+          <tbody>
+            <tr>
+              <td className="px-6 py-3" colSpan={30}>
+                Data Kosong / Belum Ditambahkan
+              </td>
+            </tr>
+          </tbody>
+        ) : (
+          Laporan.map((data: LaporanRincianBelanja, index: number) => (
+            <tbody key={index}>
+              <tr className="bg-emerald-100 text">
+                <td className="border-r border-b px-6 py-4">{index + 1}</td>
+                <td colSpan={2} className="border-r border-b px-6 py-4">
+                  Sub Kegiatan: {data.nama_subkegiatan || "-"} (
+                  {data.kode_subkegiatan || "tanpa kode"})
+                </td>
+                {data.indikator_subkegiatan === null ? (
+                  <React.Fragment>
+                    <td className="border-r border-b px-6 py-4 text-center">
+                      -
+                    </td>
+                    <td className="border-r border-b px-6 py-4 text-center">
+                      -
+                    </td>
+                  </React.Fragment>
+                ) : (
+                  data.indikator_subkegiatan.map(
+                    (i: IndikatorSubKegiatan, index_isk: number) => (
+                      <React.Fragment key={index_isk}>
+                        <td className="border-r border-b px-6 py-4">
+                          {i.nama_indikator || "-"}
+                        </td>
+                        {i.targets.map((t: Target, index_target: number) => (
+                          <React.Fragment key={index_target}>
+                            <td className="border-r border-b px-6 py-4 text-center">
+                              {t.target || "-"} {t.satuan || "-"}
                             </td>
-                        </tr>
-                    </tbody>
-                    :
-                    Laporan.map((data: LaporanRincianBelanja, index: number) => (
-                        <tbody key={index}>
-                            <tr className="bg-emerald-100 text">
-                                <td className="border-r border-b px-6 py-4">{index + 1}</td>
-                                <td colSpan={2} className="border-r border-b px-6 py-4">Sub Kegiatan: {data.nama_subkegiatan || "-"} ({data.kode_subkegiatan || "tanpa kode"})</td>
-                                {data.indikator_subkegiatan === null ?
-                                    <React.Fragment>
-                                        <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                        <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                    </React.Fragment>
-                                    :
-                                    data.indikator_subkegiatan.map((i: IndikatorSubKegiatan, index_isk: number) => (
-                                        <React.Fragment key={index_isk}>
-                                            <td className="border-r border-b px-6 py-4">{i.nama_indikator || "-"}</td>
-                                            {i.targets.map((t: Target, index_target: number) => (
-                                                <React.Fragment key={index_target}>
-                                                    <td className="border-r border-b px-6 py-4 text-center">{t.target || "-"} {t.satuan || "-"}</td>
-                                                </React.Fragment>
-                                            ))}
-                                        </React.Fragment>
-                                    ))
-                                }
-                                <td className="border-r border-b px-6 py-4">Rp.{formatRupiah(data.total_anggaran)}</td>
-                                <td className="border-r border-b">
-                                    <RowPPTK 
-                                        kode_opd={kode_opd}
-                                        data_pptk={data.pptk}
-                                        token={token || ''}
-                                        data={data}
-                                    />
+                          </React.Fragment>
+                        ))}
+                      </React.Fragment>
+                    ),
+                  )
+                )}
+                <td className="border-r border-b px-6 py-4">
+                  Rp.{formatRupiah(data.total_anggaran)}
+                </td>
+                <td className="border-r border-b">
+                  {data.kandidat_pptk && data.kandidat_pptk.length > 0 ? (
+                    <div className="space-y-2">
+                      {data.kandidat_pptk.map((kandidat, index) => (
+                        <div
+                          key={kandidat.nip || index}
+                          className="border rounded-lg p-3 bg-gray-50"
+                        >
+                          <div className="font-medium text-gray-800">
+                            {kandidat.nama}
+                          </div>
+
+                          <div className="text-sm text-gray-600">
+                            NIP: {kandidat.nip}
+                          </div>
+
+                          <div className="text-sm text-gray-600">
+                            Level: {kandidat.level}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-gray-500">
+                      Tidak ada kandidat PPTK
+                    </span>
+                  )}
+                </td>
+                <td className="border-r border-b">
+                  <RowPPTK
+                    kode_opd={kode_opd}
+                    data_pptk={data.pptk}
+                    token={token || ""}
+                    data={data}
+                  />
+                </td>
+              </tr>
+              {data.rincian_belanja.map(
+                (rekin: RincianBelanja, index_rb: number) => (
+                  <React.Fragment key={index_rb}>
+                    <tr>
+                      <td
+                        rowSpan={rekin.indikator ? rekin.indikator.length : 2}
+                        className="border-r border-b px-6 py-4"
+                      >
+                        {index + 1}.{index_rb + 1}
+                      </td>
+                      <td
+                        rowSpan={rekin.indikator ? rekin.indikator.length : 2}
+                        className="border-r border-b px-6 py-4"
+                      >
+                        {rekin.nama_pegawai || "-"}
+                      </td>
+                      <td
+                        rowSpan={rekin.indikator ? rekin.indikator.length : 2}
+                        className="border-r border-b px-6 py-4"
+                      >
+                        {rekin.rencana_kinerja || "-"}
+                      </td>
+                      {/* Kolom indikator pertama */}
+                      {rekin.indikator === null ? (
+                        <React.Fragment>
+                          <td className="border-r border-b px-6 py-4">-</td>
+                          <td className="border-r border-b px-6 py-4 text-center">
+                            -
+                          </td>
+                        </React.Fragment>
+                      ) : (
+                        <React.Fragment>
+                          <td className="border-r border-b px-6 py-4">
+                            {rekin.indikator[0].nama_indikator || "-"}
+                          </td>
+                          {rekin.indikator[0].targets.length === 0 ||
+                          rekin.indikator[0].targets === null ? (
+                            <td className="border-r border-b px-6 py-4 text-center">
+                              -
+                            </td>
+                          ) : (
+                            rekin.indikator[0].targets.map(
+                              (t: Target, index_t: number) => (
+                                <td
+                                  key={t.id_target || index_t}
+                                  className="border-r border-b px-6 py-4 text-center"
+                                >
+                                  {t.target || "-"} {t.satuan || "-"}
                                 </td>
-                            </tr>
-                            {data.rincian_belanja.map((rekin: RincianBelanja, index_rb: number) => (
-                                <React.Fragment key={index_rb}>
-                                    <tr>
-                                        <td rowSpan={rekin.indikator ? rekin.indikator.length : 2} className="border-r border-b px-6 py-4">{index + 1}.{index_rb + 1}</td>
-                                        <td rowSpan={rekin.indikator ? rekin.indikator.length : 2} className="border-r border-b px-6 py-4">{rekin.nama_pegawai || "-"}</td>
-                                        <td rowSpan={rekin.indikator ? rekin.indikator.length : 2} className="border-r border-b px-6 py-4">{rekin.rencana_kinerja || "-"}</td>
-                                        {/* Kolom indikator pertama */}
-                                        {rekin.indikator === null ? (
-                                            <React.Fragment>
-                                                <td className="border-r border-b px-6 py-4">-</td>
-                                                <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                            </React.Fragment>
-                                        ) : (
-                                            <React.Fragment>
-                                                <td className="border-r border-b px-6 py-4">{rekin.indikator[0].nama_indikator || "-"}</td>
-                                                {rekin.indikator[0].targets.length === 0 || rekin.indikator[0].targets === null ? (
-                                                    <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                                ) : (
-                                                    rekin.indikator[0].targets.map((t: Target, index_t: number) => (
-                                                        <td key={t.id_target || index_t} className="border-r border-b px-6 py-4 text-center">{t.target || "-"} {t.satuan || "-"}</td>
-                                                    ))
-                                                )}
-                                            </React.Fragment>
-                                        )}
-                                        <td rowSpan={rekin.indikator ? rekin.indikator.length : 2} className="border-r border-b px-6 py-4">Rp.{formatRupiah(rekin.total_anggaran || 0)}</td>
-                                    </tr>
-                                    {/* Baris-baris untuk indikator selanjutnya */}
-                                    {rekin.indikator ?
-                                        rekin.indikator.slice(1).map((i: IndikatorRencanaKinerja, index_i) => (
-                                            <tr key={i.id_indikator || index_i}>
-                                                <td className="border-r border-b px-6 py-4">{i.nama_indikator || "-"}</td>
-                                                {i.targets.length === 0 || i.targets === null ? (
-                                                    <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                                ) : (
-                                                    i.targets.map((t: Target, index_t: number) => (
-                                                        <td key={t.id_target || index_t} className="border-r border-b px-6 py-4 text-center">{t.target || "-"} {t.satuan || "-"}</td>
-                                                    ))
-                                                )}
-                                            </tr>
-                                        ))
-                                        :
-                                        <tr>
-                                            <td className="border-r border-b px-6 py-4">-</td>
-                                            <td className="border-r border-b px-6 py-4 text-center">-</td>
-                                        </tr>
-                                    }
-                                    {rekin.rencana_aksi === null ?
-                                        <tr>
-                                            <td colSpan={5} className="border-r border-b px-6 py-4 text-red-500">Renaksi Belum di tambahkan di rencana kinerja</td>
-                                            <td className="border-r border-b px-6 py-4">Rp.0</td>
-                                        </tr>
-                                        :
-                                        rekin.rencana_aksi.map((renaksi: RencanaAksi, index_renaksi: number) => (
-                                            <tr key={renaksi.renaksi_id || index_renaksi}>
-                                                <td colSpan={5} className="border-r border-b px-6 py-4">Renaksi {index_renaksi + 1}: {renaksi.renaksi}</td>
-                                                <td className="border-r border-b px-6 py-4">Rp.{formatRupiah(renaksi.anggaran || 0)}</td>
-                                            </tr>
-                                        ))
-                                    }
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-                    ))
-                }
-            </table>
-        </div>
-    )
-}
+                              ),
+                            )
+                          )}
+                        </React.Fragment>
+                      )}
+                      <td
+                        rowSpan={rekin.indikator ? rekin.indikator.length : 2}
+                        className="border-r border-b px-6 py-4"
+                      >
+                        Rp.{formatRupiah(rekin.total_anggaran || 0)}
+                      </td>
+                    </tr>
+                    {/* Baris-baris untuk indikator selanjutnya */}
+                    {rekin.indikator ? (
+                      rekin.indikator
+                        .slice(1)
+                        .map((i: IndikatorRencanaKinerja, index_i) => (
+                          <tr key={i.id_indikator || index_i}>
+                            <td className="border-r border-b px-6 py-4">
+                              {i.nama_indikator || "-"}
+                            </td>
+                            {i.targets.length === 0 || i.targets === null ? (
+                              <td className="border-r border-b px-6 py-4 text-center">
+                                -
+                              </td>
+                            ) : (
+                              i.targets.map((t: Target, index_t: number) => (
+                                <td
+                                  key={t.id_target || index_t}
+                                  className="border-r border-b px-6 py-4 text-center"
+                                >
+                                  {t.target || "-"} {t.satuan || "-"}
+                                </td>
+                              ))
+                            )}
+                          </tr>
+                        ))
+                    ) : (
+                      <tr>
+                        <td className="border-r border-b px-6 py-4">-</td>
+                        <td className="border-r border-b px-6 py-4 text-center">
+                          -
+                        </td>
+                      </tr>
+                    )}
+                    {rekin.rencana_aksi === null ? (
+                      <tr>
+                        <td
+                          colSpan={5}
+                          className="border-r border-b px-6 py-4 text-red-500"
+                        >
+                          Renaksi Belum di tambahkan di rencana kinerja
+                        </td>
+                        <td className="border-r border-b px-6 py-4">Rp.0</td>
+                      </tr>
+                    ) : (
+                      rekin.rencana_aksi.map(
+                        (renaksi: RencanaAksi, index_renaksi: number) => (
+                          <tr key={renaksi.renaksi_id || index_renaksi}>
+                            <td
+                              colSpan={5}
+                              className="border-r border-b px-6 py-4"
+                            >
+                              Renaksi {index_renaksi + 1}: {renaksi.renaksi}
+                            </td>
+                            <td className="border-r border-b px-6 py-4">
+                              Rp.{formatRupiah(renaksi.anggaran || 0)}
+                            </td>
+                          </tr>
+                        ),
+                      )
+                    )}
+                  </React.Fragment>
+                ),
+              )}
+            </tbody>
+          ))
+        )}
+      </table>
+    </div>
+  );
+};
 
 interface RowPPTK {
-    data: LaporanRincianBelanja;
-    data_pptk: PPTK[];
-    token: string;
-    kode_opd: string;
+  data: LaporanRincianBelanja;
+  data_pptk: PPTK[];
+  token: string;
+  kode_opd: string;
 }
-export const RowPPTK: React.FC<RowPPTK> = ({ data, data_pptk, token, kode_opd }) => {
+export const RowPPTK: React.FC<RowPPTK> = ({
+  data,
+  data_pptk,
+  token,
+  kode_opd,
+}) => {
+  const [Data, setData] = useState<PPTK[]>(data_pptk);
 
-    const [Data, setData] = useState<PPTK[]>(data_pptk);
+  const [ModalPJ, setModalPJ] = useState<boolean>(false);
+  const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
+  const [DataModal, setDataModal] = useState<LaporanRincianBelanja | null>(
+    null,
+  );
+  const [DataEdit, setDataEdit] = useState<PPTK | null>(null);
 
-    const [ModalPJ, setModalPJ] = useState<boolean>(false);
-    const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
-    const [DataModal, setDataModal] = useState<LaporanRincianBelanja | null>(null);
-    const [DataEdit, setDataEdit] = useState<PPTK | null>(null);
-
-    const handleModalPJ = (data: LaporanRincianBelanja | null, metode: "tambah" | "edit", dataedit?: PPTK) => {
-        if (ModalPJ) {
-            setModalPJ(false);
-            setDataModal(null);
-            setDataEdit(null);
-            setJenisModal(metode);
-        } else {
-            setModalPJ(true);
-            setDataModal(data);
-            setDataEdit(dataedit || null);
-            setJenisModal(metode);
-        }
+  const handleModalPJ = (
+    data: LaporanRincianBelanja | null,
+    metode: "tambah" | "edit",
+    dataedit?: PPTK,
+  ) => {
+    if (ModalPJ) {
+      setModalPJ(false);
+      setDataModal(null);
+      setDataEdit(null);
+      setJenisModal(metode);
+    } else {
+      setModalPJ(true);
+      setDataModal(data);
+      setDataEdit(dataedit || null);
+      setJenisModal(metode);
     }
-    const updateData = (data: PPTK) => {
-    setData(prev => {
-        const exists = prev.some(item => item.id === data.id);
-        if (exists) {
-            // EDIT
-            return prev.map(item =>
-                item.id === data.id
-                    ? data
-                    : item
-            );
-        }
-        // TAMBAH
-        return [...prev, data];
+  };
+  const updateData = (data: PPTK) => {
+    setData((prev) => {
+      const exists = prev.some((item) => item.id === data.id);
+      if (exists) {
+        // EDIT
+        return prev.map((item) => (item.id === data.id ? data : item));
+      }
+      // TAMBAH
+      return [...prev, data];
     });
-};
-    const hapusPJ = async (id: number) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try {
-            const response = await fetch(`${API_URL}/pptk/delete/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `${token}`,
-                    'Content-Type': 'application/json',
-                },
-            })
-            if (!response.ok) {
-                alert("cant fetch data")
-            }
-            AlertNotification("Berhasil", "Data PPTK Berhasil Dihapus", "success", 1000);
-            setData(Data.filter((data) => (data.id !== id)))
-        } catch (err) {
-            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
-        }
+  };
+  const hapusPJ = async (id: number) => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    try {
+      const response = await fetch(`${API_URL}/pptk/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        alert("cant fetch data");
+      }
+      AlertNotification(
+        "Berhasil",
+        "Data PPTK Berhasil Dihapus",
+        "success",
+        1000,
+      );
+      setData(Data.filter((data) => data.id !== id));
+    } catch (err) {
+      AlertNotification(
+        "Gagal",
+        "cek koneksi internet atau database server",
+        "error",
+        2000,
+      );
     }
+  };
 
-    return (
-        <>
-            {
-                Data.length > 0 ?
-                    Data.map((pt: PPTK, pt_index: number) => (
-                        <div key={pt_index} className="px-2 py-4 flex flex-col items-center gap-1">
-                            <div className="p-2 border border-green-500 rounded-lg flex justify-between gap-1" key={pt_index}>
-                                <div className="flex flex-col gap-1">
-                                    <div className="p-1 rounded-lg bg-white">
-                                        <p className="font-semibold">Pelaksana :</p>
-                                        <p>{pt.nama_pegawai || "unknown"}</p>
-                                    </div>
-                                    <div className="p-1 rounded-lg bg-white">
-                                        <p className="font-semibold">Atasan :</p>
-                                        <p>{pt.nama_atasan || "unknown"}</p>
-                                    </div>
-                                </div>
-                                <div className="flex flex-col items-center justify-center gap-1">
-                                    <div className="p-1 rounded-full flex flex-col items-center gap-1 bg-white shadow-md">
-                                        <button
-                                            className="p-1 flex items-center gap-1 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white"
-                                            onClick={() => handleModalPJ(data, "edit", pt)}
-                                            title="Edit Data PPTK"
-                                        >
-                                            <TbPencil />
-                                        </button>
-                                        <button
-                                            className="p-1 flex items-center gap-1 border border-red-600 text-red-600 rounded-full hover:bg-red-600 hover:text-white"
-                                            title="Hapus Data PPTK"
-                                            onClick={() => AlertQuestion("Hapus Data", "", "question", "Hapus", "Batal").then((resp) => {
-                                                if (resp.isConfirmed) {
-                                                    hapusPJ(pt.id);
-                                                }
-                                            })}
-                                        >
-                                            <TbTrash />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <ButtonBlackBorder
-                                className="flex items-center gap-1 w-full rounded-full"
-                                onClick={() => handleModalPJ(data, "tambah")}
-                            >
-                                <TbCirclePlus />
-                                Tambah PPTK
-                            </ButtonBlackBorder>
-                        </div>
-                    ))
-                    :
-                    <div className="flex items-center-gap-1 px-6 py-4">
-                        <ButtonBlackBorder
-                            className="flex items-center gap-1 w-full rounded-full"
-                            onClick={() => handleModalPJ(data, "tambah")}
-                        >
-                            <TbCirclePlus />
-                            Tambah PPTK
-                        </ButtonBlackBorder>
-                    </div>
-            }
-            {ModalPJ &&
-                <ModalPenanggungJawab
-                    isOpen={ModalPJ}
-                    onClose={() => handleModalPJ(null, "tambah")}
-                    onSuccess={(data) => updateData(data)}
-                    kode_opd={kode_opd}
-                    Data={DataModal}
-                    DataEdit={DataEdit}
-                    metode={JenisModal}
-                />
-            }
-        </>
-    )
-} 
+  return (
+    <>
+      {Data.length > 0 ? (
+        Data.map((pt: PPTK, pt_index: number) => (
+          <div
+            key={pt_index}
+            className="px-2 py-4 flex flex-col items-center gap-1"
+          >
+            <div
+              className="p-2 border border-green-500 rounded-lg flex justify-between gap-1"
+              key={pt_index}
+            >
+              <div className="flex flex-col items-center justify-center gap-1">
+                <div className="p-1 rounded-lg bg-white">
+                  {/* <p className="font-semibold">Pelaksana :</p> */}
+                  <p>{pt.nama_pegawai || "unknown"}</p>
+                </div>
+                {/* <div className="p-1 rounded-lg bg-white">
+                  <p className="font-semibold">Atasan :</p>
+                  <p>{pt.nama_atasan || "unknown"}</p>
+                </div> */}
+              </div>
+              <div className="flex flex-col items-center justify-center gap-1">
+                <div className="p-1 rounded-full flex flex-col items-center gap-1 bg-white shadow-md">
+                  <button
+                    className="p-1 flex items-center gap-1 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white"
+                    onClick={() => handleModalPJ(data, "edit", pt)}
+                    title="Edit Data PPTK"
+                  >
+                    <TbPencil />
+                  </button>
+                  {/* <button
+                    className="p-1 flex items-center gap-1 border border-red-600 text-red-600 rounded-full hover:bg-red-600 hover:text-white"
+                    title="Hapus Data PPTK"
+                    onClick={() =>
+                      AlertQuestion(
+                        "Hapus Data",
+                        "",
+                        "question",
+                        "Hapus",
+                        "Batal",
+                      ).then((resp) => {
+                        if (resp.isConfirmed) {
+                          hapusPJ(pt.id);
+                        }
+                      })
+                    }
+                  >
+                    <TbTrash />
+                  </button> */}
+                </div>
+              </div>
+            </div>
+            {/* <ButtonBlackBorder
+              className="flex items-center gap-1 w-full rounded-full"
+              onClick={() => handleModalPJ(data, "tambah")}
+            >
+              <TbCirclePlus />
+              Tambah PPTK
+            </ButtonBlackBorder> */}
+          </div>
+        ))
+      ) : (
+        <div className="flex items-center-gap-1 px-6 py-4">
+          <ButtonBlackBorder
+            className="flex items-center gap-1 w-full rounded-full"
+            onClick={() => handleModalPJ(data, "tambah")}
+          >
+            <TbCirclePlus />
+            Tambah PJ
+          </ButtonBlackBorder>
+        </div>
+      )}
+      {ModalPJ && (
+        <ModalPenanggungJawab
+          isOpen={ModalPJ}
+          onClose={() => handleModalPJ(null, "tambah")}
+          onSuccess={(data) => updateData(data)}
+          kode_opd={kode_opd}
+          Data={DataModal}
+          DataEdit={DataEdit}
+          metode={JenisModal}
+        />
+      )}
+    </>
+  );
+};
