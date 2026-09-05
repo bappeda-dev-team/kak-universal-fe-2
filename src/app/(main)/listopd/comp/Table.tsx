@@ -9,8 +9,8 @@ interface Table {
 
 export const Table: React.FC<Table> = ({ DataTable }) => {
 
-    console.log("data table : ", DataTable);
-
+    console.log(DataTable);
+    
     return (
         <table className="w-full">
             <thead>
@@ -22,7 +22,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                     <th className="border-r border-b px-6 py-3 border-black bg-slate-300 min-w-[300px]">Indikator</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-slate-300 min-w-[300px]">Target/Satuan</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-red-300 min-w-[300px]">Strategic OPD</th>
-                    <th className="border-b px-6 py-3 border-black bg-red-300 min-w-[300px]">Indikator</th>
+                    <th className="border-r border-b px-6 py-3 border-black bg-red-300 min-w-[300px]">Indikator</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-red-300 min-w-[300px]">Target/Satuan</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-blue-300 min-w-[300px]">Tactical</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-blue-300 min-w-[300px]">Indikator</th>
@@ -33,7 +33,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                 </tr>
             </thead>
             <tbody>
-                {DataTable === undefined ?
+                {DataTable === undefined || DataTable.length === 0  ?
                     <tr>
                         <td className="px-6 py-3 uppercase" colSpan={16}>
                             Tidak ada OPD terlibat
@@ -46,7 +46,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                                 <React.Fragment key={index}>
                                     <tr key={index}>
                                         <td rowSpan={2} className="border-r border-b border-black px-6 py-4 text-center">{index + 1}</td>
-                                        <td rowSpan={2} className="border-r border-b border-black px-6 py-4 bg-yellow-200">
+                                        <td rowSpan={2} className="border-r border-b border-black px-6 py-4 bg-yellow-100">
                                             <div className="flex flex-col gap-1">
                                                 <p className="font-bold">{data.nama_opd || "-"}</p>
                                                 <p>{data.kode_opd || "-"}</p>
@@ -56,8 +56,8 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                                     {data.childs.length > 0 ?
                                         data.childs.map((item: BidangUrusan, item_index: number) => (
                                             <tr key={item_index}>
-                                                <td className="border-r border-b border-black px-6 py-4 bg-yellow-200">
-                                                    {item.nama_bidang_urusan || "unknown"}
+                                                <td className="border-r border-b border-black px-6 py-4 bg-yellow-100">
+                                                    {item.nama_bidang_urusan || "-"}
                                                 </td>
                                                 {item.childs.length > 0 ?
                                                     item.childs.map((tujuan: TujuanOpd, tujuan_index: number) => (
@@ -88,7 +88,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                                         ))
                                         :
                                         <tr>
-                                            <td colSpan={16} className="border-r border-b border-black px-6 py-4 bg-slate-200">Tidak Ada Bidang Urusan</td>
+                                            <td colSpan={16} className="border-r border-b border-black px-6 py-4 bg-yellow-100">Tidak Ada Bidang Urusan</td>
                                         </tr>
                                     }
                                 </React.Fragment>
@@ -96,7 +96,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                         }
                         if ("id" in data) {
                             return (
-                                <tr>
+                                <tr key={index}>
                                     <td rowSpan={2} className="border-r border-b border-black px-6 py-4 text-center">{index + 1}</td>
                                     <td colSpan={16} className="border-r border-b border-black px-6 py-4 bg-slate-200 italic">Bukan Pohon OPD</td>
                                 </tr>
