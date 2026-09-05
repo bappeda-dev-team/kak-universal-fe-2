@@ -324,6 +324,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       url === "/listopd" ||
       url === "/reviewpemda" ||
       url === "/reviewopd" ||
+      url === "/permasalahan-opd-view" ||
+      url === "/isu-strategis-opd-view" ||
       url === "/tujuanopdview" ||
       url === "/sasaranopdview" ||
       url === "/ikuopdview" ||
@@ -351,6 +353,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setRenstraView(false);
     }
     if (
+      url === "/permasalahan-opd-view" ||
+      url === "/isu-strategis-opd-view" ||
       url === "/tujuanopdview" ||
       url === "/sasaranopdview" ||
       url === "/ikuopdview" ||
@@ -727,173 +731,173 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
           {(User?.roles == "super_admin" ||
             User?.roles == "admin_opd" ||
             User?.roles == "reviewer") && (
-            <li
-              className={`flex justify-between items-center font-medium gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
-              onClick={() => setDataMasterOpd(DataMasterOpd ? false : true)}
-            >
-              <div className="flex items-center gap-2">
-                <TbDatabasePlus className="text-xl" />
-                <span
-                  className={`${!isOpen && "hidden"} origin-left duration-200`}
-                >
-                  Data Master OPD
-                </span>
-              </div>
-              <TbChevronRight
-                className={`transition-all duration-200 ease-in-out ${DataMasterOpd ? "rotate-90" : ""}`}
-              />
-            </li>
-          )}
+              <li
+                className={`flex justify-between items-center font-medium gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
+                onClick={() => setDataMasterOpd(DataMasterOpd ? false : true)}
+              >
+                <div className="flex items-center gap-2">
+                  <TbDatabasePlus className="text-xl" />
+                  <span
+                    className={`${!isOpen && "hidden"} origin-left duration-200`}
+                  >
+                    Data Master OPD
+                  </span>
+                </div>
+                <TbChevronRight
+                  className={`transition-all duration-200 ease-in-out ${DataMasterOpd ? "rotate-90" : ""}`}
+                />
+              </li>
+            )}
           {/* SUB MENU DATA MASTER OPD */}
           {(User?.roles == "super_admin" ||
             User?.roles == "admin_opd" ||
             User?.roles == "reviewer") && (
-            <div
-              className={`transition-all duration-300 ease-in-out ${DataMasterOpd ? "px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}
-            >
-              <Link href="/DataMasterOpd/jabatan-opd">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/jabatan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
-                  <TbBadges className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
-                    Master Jabatan
-                  </span>
-                </li>
-              </Link>
-              <Link href="/DataMasterOpd/useropd">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/useropd" || url === "/DataMasterOpd/useropd/tambah" || url === `/useropd/${id}` ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
-                  <TbUser className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
-                    User OPD
-                  </span>
-                </li>
-              </Link>
-              <Link href="/DataMasterOpd/subkegiatanopd">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/subkegiatanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
-                  <TbFileCode2 className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
-                    Sub Kegiatan OPD
-                  </span>
-                </li>
-              </Link>
-              <Link href="/DataMasterOpd/potensi-perangkat-daerah">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/potensi-perangkat-daerah" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
-                  <TbPencilPlus className="text-3xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200 text-sm`}
-                  >
-                    Master Potensi Perangkat Daerah
-                  </span>
-                </li>
-              </Link>
-              <Link href="/DataMasterOpd/nspk">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/nspk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
-                  <TbClipboardCheck className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
-                    Master NSPK
-                  </span>
-                </li>
-              </Link>
-              <li
-                className={`flex justify-between font-medium items-center gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
-                onClick={() => setIsu(Isu ? false : true)}
-              >
-                <div className="flex items-center gap-2">
-                  <TbBuildingCommunity className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
-                    Master Isu
-                  </span>
-                </div>
-                <TbChevronRight
-                  className={`transition-all duration-200 ease-in-out ${Isu ? "rotate-90" : ""}`}
-                />
-              </li>
-              {/* SUBS MENU RENSTRA */}
               <div
-                className={`transition-all duration-300 ease-in-out ${Isu ? "px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}
+                className={`transition-all duration-300 ease-in-out ${DataMasterOpd ? "px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}
               >
-                <Link href="/DataMasterOpd/isu-global">
+                <Link href="/DataMasterOpd/jabatan-opd">
                   <li
-                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-global" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/jabatan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                   >
-                    <TbWorldSearch className="text-xl" />
+                    <TbBadges className="text-xl" />
                     <span
                       className={`${!isOpen && "hidden"} origin-left duration-200`}
                     >
-                      Global
+                      Master Jabatan
                     </span>
                   </li>
                 </Link>
-                <Link href="/DataMasterOpd/isu-nasional">
+                <Link href="/DataMasterOpd/useropd">
                   <li
-                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-nasional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/useropd" || url === "/DataMasterOpd/useropd/tambah" || url === `/useropd/${id}` ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                   >
-                    <TbFlag className="text-xl" />
+                    <TbUser className="text-xl" />
                     <span
                       className={`${!isOpen && "hidden"} origin-left duration-200`}
                     >
-                      Nasional
+                      User OPD
                     </span>
                   </li>
                 </Link>
-                <Link href="/DataMasterOpd/isu-regional">
+                <Link href="/DataMasterOpd/subkegiatanopd">
                   <li
-                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-regional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/subkegiatanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
                   >
-                    <TbFlagPin className="text-xl" />
+                    <TbFileCode2 className="text-xl" />
                     <span
                       className={`${!isOpen && "hidden"} origin-left duration-200`}
                     >
-                      Regional
+                      Sub Kegiatan OPD
+                    </span>
+                  </li>
+                </Link>
+                <Link href="/DataMasterOpd/potensi-perangkat-daerah">
+                  <li
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/potensi-perangkat-daerah" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  >
+                    <TbPencilPlus className="text-3xl" />
+                    <span
+                      className={`${!isOpen && "hidden"} origin-left duration-200 text-sm`}
+                    >
+                      Master Potensi Perangkat Daerah
+                    </span>
+                  </li>
+                </Link>
+                <Link href="/DataMasterOpd/nspk">
+                  <li
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/nspk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  >
+                    <TbClipboardCheck className="text-xl" />
+                    <span
+                      className={`${!isOpen && "hidden"} origin-left duration-200`}
+                    >
+                      Master NSPK
+                    </span>
+                  </li>
+                </Link>
+                <li
+                  className={`flex justify-between font-medium items-center gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
+                  onClick={() => setIsu(Isu ? false : true)}
+                >
+                  <div className="flex items-center gap-2">
+                    <TbBuildingCommunity className="text-xl" />
+                    <span
+                      className={`${!isOpen && "hidden"} origin-left duration-200`}
+                    >
+                      Master Isu
+                    </span>
+                  </div>
+                  <TbChevronRight
+                    className={`transition-all duration-200 ease-in-out ${Isu ? "rotate-90" : ""}`}
+                  />
+                </li>
+                {/* SUBS MENU RENSTRA */}
+                <div
+                  className={`transition-all duration-300 ease-in-out ${Isu ? "px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}
+                >
+                  <Link href="/DataMasterOpd/isu-global">
+                    <li
+                      className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-global" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                    >
+                      <TbWorldSearch className="text-xl" />
+                      <span
+                        className={`${!isOpen && "hidden"} origin-left duration-200`}
+                      >
+                        Global
+                      </span>
+                    </li>
+                  </Link>
+                  <Link href="/DataMasterOpd/isu-nasional">
+                    <li
+                      className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-nasional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                    >
+                      <TbFlag className="text-xl" />
+                      <span
+                        className={`${!isOpen && "hidden"} origin-left duration-200`}
+                      >
+                        Nasional
+                      </span>
+                    </li>
+                  </Link>
+                  <Link href="/DataMasterOpd/isu-regional">
+                    <li
+                      className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/DataMasterOpd/isu-regional" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                    >
+                      <TbFlagPin className="text-xl" />
+                      <span
+                        className={`${!isOpen && "hidden"} origin-left duration-200`}
+                      >
+                        Regional
+                      </span>
+                    </li>
+                  </Link>
+                </div>
+                <Link href="/DataMasterOpd/ikk">
+                  <li
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/ikk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  >
+                    <TbLockSquare className="text-xl" />
+                    <span
+                      className={`${!isOpen && "hidden"} origin-left duration-200`}
+                    >
+                      Master IKK
+                    </span>
+                  </li>
+                </Link>
+                <Link href="/DataMasterOpd/master-rb">
+                  <li
+                    className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                  >
+                    <TbDice4Filled className="text-xl" />
+                    <span
+                      className={`${!isOpen && "hidden"} origin-left duration-200`}
+                    >
+                      Master RB
                     </span>
                   </li>
                 </Link>
               </div>
-              <Link href="/DataMasterOpd/ikk">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/ikk" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
-                  <TbLockSquare className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
-                    Master IKK
-                  </span>
-                </li>
-              </Link>
-              <Link href="/DataMasterOpd/master-rb">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMasterOpd/master-rb" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
-                  <TbDice4Filled className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
-                    Master RB
-                  </span>
-                </li>
-              </Link>
-            </div>
-          )}
+            )}
 
           {/* LABEL PERENCANAAN PEMDA */}
           {(User?.roles == "super_admin" || User?.roles == "reviewer") && (
@@ -1277,23 +1281,23 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
           {(User?.roles == "super_admin" ||
             User?.roles == "admin_opd" ||
             User?.roles == "reviewer") && (
-            <li
-              className={`flex justify-between font-medium items-center gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
-              onClick={() => setPerencanaanOPD(PerencanaanOPD ? false : true)}
-            >
-              <div className="flex items-center gap-2">
-                <TbBuildingCommunity className="text-xl" />
-                <span
-                  className={`${!isOpen && "hidden"} origin-left duration-200`}
-                >
-                  Perencanaan OPD
-                </span>
-              </div>
-              <TbChevronRight
-                className={`transition-all duration-200 ease-in-out ${PerencanaanOPD ? "rotate-90" : ""}`}
-              />
-            </li>
-          )}
+              <li
+                className={`flex justify-between font-medium items-center gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
+                onClick={() => setPerencanaanOPD(PerencanaanOPD ? false : true)}
+              >
+                <div className="flex items-center gap-2">
+                  <TbBuildingCommunity className="text-xl" />
+                  <span
+                    className={`${!isOpen && "hidden"} origin-left duration-200`}
+                  >
+                    Perencanaan OPD
+                  </span>
+                </div>
+                <TbChevronRight
+                  className={`transition-all duration-200 ease-in-out ${PerencanaanOPD ? "rotate-90" : ""}`}
+                />
+              </li>
+            )}
           {/* SUB MENU PERENCANAAN OPD */}
           {User?.roles == "super_admin" || User?.roles == "admin_opd" ? (
             <div
@@ -1754,23 +1758,23 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             User?.roles == "level_2" ||
             User?.roles == "level_3" ||
             User?.roles == "level_4") && (
-            <li
-              className={`flex font-medium justify-between items-center gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
-              onClick={() => setPerencanaan(Perencanaan ? false : true)}
-            >
-              <div className="flex items-center gap-2">
-                <TbBuildingFortress className="text-xl" />
-                <span
-                  className={`${!isOpen && "hidden"} origin-left duration-200`}
-                >
-                  Perencanaan ASN
-                </span>
-              </div>
-              <TbChevronRight
-                className={`transition-all duration-200 ease-in-out ${Perencanaan ? "rotate-90" : ""}`}
-              />
-            </li>
-          )}
+              <li
+                className={`flex font-medium justify-between items-center gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
+                onClick={() => setPerencanaan(Perencanaan ? false : true)}
+              >
+                <div className="flex items-center gap-2">
+                  <TbBuildingFortress className="text-xl" />
+                  <span
+                    className={`${!isOpen && "hidden"} origin-left duration-200`}
+                  >
+                    Perencanaan ASN
+                  </span>
+                </div>
+                <TbChevronRight
+                  className={`transition-all duration-200 ease-in-out ${Perencanaan ? "rotate-90" : ""}`}
+                />
+              </li>
+            )}
           {/* SUB MENU PERENCANAAN ASN */}
           <div
             className={`transition-all duration-300 ease-in-out ${Perencanaan ? "px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}
@@ -2011,102 +2015,84 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               />
             </li>
             {/* SUBS MENU LAPORAN RENSTRA OPD */}
-            <div
-              className={`transition-all duration-300 ease-in-out ${RenstraView ? "px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}
-            >
-              <Link href="/tujuanopdview">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/tujuanopdview" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
+            <div className={`transition-all duration-300 ease-in-out ${RenstraView ? "px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
+              <Link href="/permasalahan-opd-view">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/permasalahan-opd-view" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbMapPin className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
+                  <span className={`${!isOpen && "hidden"} text-sm origin-left duration-200`}>
+                    Permasalahan
+                  </span>
+                </li>
+              </Link>
+              <Link href="/isu-strategis-opd-view">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/isu-strategis-opd-view" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbMapPin className="text-xl" />
+                  <span className={`${!isOpen && "hidden"} text-sm origin-left duration-200`}>
+                    Isu Strategis
+                  </span>
+                </li>
+              </Link>
+              <Link href="/tujuanopdview">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/tujuanopdview" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbMapPin className="text-xl" />
+                  <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                     Tujuan OPD
                   </span>
                 </li>
               </Link>
               <Link href="/sasaranopdview">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/sasaranopdview" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/sasaranopdview" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbTarget className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
+                  <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                     Sasaran OPD
                   </span>
                 </li>
               </Link>
               <Link href="/ikuopdview">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/ikuopdview" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/ikuopdview" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbChartBar className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
+                  <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                     IKU OPD
                   </span>
                 </li>
               </Link>
               <Link href="/laporanrenstra">
-                <li
-                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrenstra" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-                >
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrenstra" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbShoppingCartDollar className="text-xl" />
-                  <span
-                    className={`${!isOpen && "hidden"} origin-left duration-200`}
-                  >
+                  <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                     Matrix Renstra
                   </span>
                 </li>
               </Link>
             </div>
             <Link href="/perjanjian-kinerja">
-              <li
-                className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/perjanjian-kinerja" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-              >
+              <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/perjanjian-kinerja" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                 <TbChecklist className="text-xl" />
-                <span
-                  className={`${!isOpen && "hidden"} origin-left duration-200`}
-                >
+                <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                   Perjanjian Kinerja
                 </span>
               </li>
             </Link>
             <Link href="/laporan-kak">
-              <li
-                className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/laporan-kak" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-              >
+              <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/laporan-kak" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                 <TbChecklist className="text-xl" />
-                <span
-                  className={`${!isOpen && "hidden"} origin-left duration-200`}
-                >
+                <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                   Rencana Kinerja KAK
                 </span>
               </li>
             </Link>
             <Link href="/laporanrincianbelanja">
-              <li
-                className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrincianbelanja" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-              >
+              <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrincianbelanja" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                 <TbDeviceImacDollar className="text-xl" />
-                <span
-                  className={`${!isOpen && "hidden"} origin-left duration-200`}
-                >
+                <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                   Rincian Belanja
                 </span>
               </li>
             </Link>
             <Link href="/laporantaggingpohon">
-              <li
-                className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporantaggingpohon" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
-              >
+              <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporantaggingpohon" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                 <TbCircleCheck className="text-xl" />
-                <span
-                  className={`${!isOpen && "hidden"} origin-left duration-200`}
-                >
+                <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                   Renaksi Tematik
                 </span>
               </li>

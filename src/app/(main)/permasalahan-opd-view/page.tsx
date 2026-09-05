@@ -4,10 +4,9 @@ import { TablePermasalahan } from '@/components/pages/permasalahan/TablePermasal
 import { FiHome } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import { getOpdTahun, getUser } from '@/components/lib/Cookie';
-import Maintenance from '@/components/global/Maintenance';
 import { OpdTahunNull, TahunNull } from '@/components/global/OpdTahunNull';
 
-const PermasalahanaOpd = () => {
+const PermasalahanaOpdView = () => {
 
     const [Tahun, setTahun] = useState<any>(null);
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
@@ -62,9 +61,9 @@ const PermasalahanaOpd = () => {
         <>
             <div className="flex items-center">
                 <a href="/" className="mr-1"><FiHome /></a>
-                <p className="mr-1">/ Perencanaan OPD</p>
+                <p className="mr-1">/ Laporan</p>
+                <p className="mr-1">/ Renstra</p>
                 <p className="mr-1">/ Permasalahan</p>
-                <p>/ Permasalahan OPD</p>
             </div>
             <div className="mt-3 rounded-xl shadow-lg border">
                 <div className="flex flex-wrap items-center justify-between border-b px-5 py-5">
@@ -77,13 +76,12 @@ const PermasalahanaOpd = () => {
                     <TablePermasalahan
                         tahun={Tahun?.value}
                         kode_opd={(User?.roles == 'super_admin' || User?.roles == 'reviewer') ? SelectedOpd?.value : User?.kode_opd}
-                        jenis="opd"
+                        jenis='laporan'
                     />
-                    {/* <Maintenance /> */}
                 </div>
             </div>
         </>
     )
 }
 
-export default PermasalahanaOpd;
+export default PermasalahanaOpdView;

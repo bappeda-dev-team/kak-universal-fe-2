@@ -117,10 +117,8 @@ const Table: React.FC<table> = ({
     }
   }, []);
 
-  const kode_opd =
-    User?.roles == "super_admin" ? SelectedOpd?.value : User?.kode_opd;
-  const nama_opd =
-    User?.roles == "super_admin" ? SelectedOpd?.label : User?.nama_opd;
+  const kode_opd = User?.roles == "super_admin" ? SelectedOpd?.value : User?.kode_opd;
+  const nama_opd = User?.roles == "super_admin" ? SelectedOpd?.label : User?.nama_opd;
 
   useEffect(() => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -434,7 +432,6 @@ const Table: React.FC<table> = ({
                 <th className="border-l border-b px-6 py-1 min-w-[50px]">17</th>
                 <th className="border-l border-b px-6 py-1 min-w-[50px]">18</th>
                 <th className="border-l border-b px-6 py-1 min-w-[50px]">19</th>
-                <th className="border-l border-b px-6 py-1 min-w-[50px]">20</th>
               </React.Fragment>
             </tr>
           </thead>

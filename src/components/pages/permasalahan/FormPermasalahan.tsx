@@ -125,6 +125,7 @@ export const FormPermasalahan: React.FC<FormPermasalahan> = ({ data, jenis, rowS
                     data={DataResult}
                     rowSpan={rowSpan}
                     tahun={branding_tahun}
+                    jenis="opd"
                 />
                 :
                 <td rowSpan={rowSpan} colSpan={2} className="border-r border-b border-black px-6 py-4">
