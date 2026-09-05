@@ -25,7 +25,7 @@ import { useBrandingContext } from '@/context/BrandingContext';
 interface SidebarProps {
   isOpen: boolean | null;
   isZoomed: boolean | null;
-  toggleSidebar: () => void;
+  toggleSidebar():  void;
 }
 
 // TODO: REFACTOR SIDEBAR LOGIC

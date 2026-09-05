@@ -100,7 +100,6 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Perangkat Daerah</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pohon</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Level Pohon</th>
-
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Pelaksana</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[100px]">Rencana Kinerja</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Program</th>
@@ -140,13 +139,12 @@ export const Table: React.FC<Table> = ({ tahun }) => {
                                             <tr>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{index + 1}</td>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.nama_program_unggulan || "-"}</td>
-                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">Rencana Implementasi</td>
+                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.rencana_implementasi || "-"}</td>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.nama_opd || "-"}</td>
                                                 <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">
                                                     <p>{p.nama_pohon || "-"} </p>
                                                     <p className="font-semibold">({p.id_pohon || "-"})</p>
                                                 </td>
-                                                <td rowSpan={p.pelaksanas ? TotalRow : 2} className="border-r border-b px-6 py-4">{p.jenis_pohon || "-"}</td>
                                             </tr>
                                             {p.pelaksanas ?
                                                 p.pelaksanas.map((p: Pelaksana, sub_index: number) => (
