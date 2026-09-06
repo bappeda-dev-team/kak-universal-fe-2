@@ -145,7 +145,7 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
                 </ButtonBlackBorder>
                 <h1 className="font-bold py-1 px-3 border border-black rounded-lg">{JenisLabel?.value || ''} - {JenisLabel?.label || ""}</h1>
                 <div className={`transition-all duration-300 ease-in-out border border-black w-full`}>
-                    <div className="overflow-auto">
+                    <div className="overflow-auto max-h-[70vh]">
                         <Table DataTable={DataTable} />
                     </div>
                 </div>

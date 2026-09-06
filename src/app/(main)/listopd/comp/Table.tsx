@@ -233,7 +233,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
 
     return (
         <table className="w-full">
-            <thead className="sticky top-0 z-10">
+            <thead className="sticky top-0 z-10 shadow-md">
                 <tr>
                     <th className="border-r border-b px-6 py-3 border-black bg-yellow-300 min-w-[20px]">No</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-yellow-300 min-w-[200px]">Perangkat Daerah</th>
