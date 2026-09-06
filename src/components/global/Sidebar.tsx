@@ -70,6 +70,9 @@ import {
   TbPencilPlus,
   TbClipboardCheck,
   TbAppsFilled,
+  TbCurrencyDollar,
+  TbFiles,
+  TbCardsFilled,
 } from "react-icons/tb";
 import Image from "next/image";
 import { usePathname, useParams } from "next/navigation";
@@ -1923,7 +1926,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               <li
                 className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/listopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
               >
-                <TbListDetails className="text-xl" />
+                <TbCardsFilled className="text-xl" />
                 <span
                   className={`${!isOpen && "hidden"} origin-left duration-200`}
                 >
@@ -2018,7 +2021,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             <div className={`transition-all duration-300 ease-in-out ${RenstraView ? "px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
               <Link href="/permasalahan-opd-view">
                 <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/permasalahan-opd-view" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                  <TbMapPin className="text-xl" />
+                  <TbAlertTriangle className="text-xl" />
                   <span className={`${!isOpen && "hidden"} text-sm origin-left duration-200`}>
                     Permasalahan
                   </span>
@@ -2026,7 +2029,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               </Link>
               <Link href="/isu-strategis-opd-view">
                 <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/isu-strategis-opd-view" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                  <TbMapPin className="text-xl" />
+                  <TbLayoutList className="text-xl" />
                   <span className={`${!isOpen && "hidden"} text-sm origin-left duration-200`}>
                     Isu Strategis
                   </span>
@@ -2075,7 +2078,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             </Link>
             <Link href="/laporan-kak">
               <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/laporan-kak" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                <TbChecklist className="text-xl" />
+                <TbFiles className="text-xl" />
                 <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                   Rencana Kinerja KAK
                 </span>
@@ -2083,7 +2086,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             </Link>
             <Link href="/laporanrincianbelanja">
               <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrincianbelanja" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                <TbDeviceImacDollar className="text-xl" />
+                <TbCurrencyDollar className="text-xl" />
                 <span className={`${!isOpen && "hidden"} origin-left duration-200`}>
                   Rincian Belanja
                 </span>

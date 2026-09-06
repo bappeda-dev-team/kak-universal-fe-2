@@ -37,8 +37,8 @@ const IndikatorTargetCell: React.FC<{ item?: TematikFindall }> = ({ item }) => {
                         key={ind.id_indikator}
                         className="px-2 py-1 rounded-md bg-white/70 border border-black/10"
                     >
-                        <p className="text-xs font-medium leading-snug">{ind.nama_indikator || "-"}</p>
-                        <p className="text-sm font-bold text-emerald-700 mt-0.5">{targetText}</p>
+                        <p className="text-sm leading-snug">{ind.nama_indikator || "-"}</p>
+                        <p className="text-sm font-semibold text-emerald-700 mt-0.5">{targetText}</p>
                     </li>
                 );
             })}
@@ -232,7 +232,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
         <table className="w-full">
             <thead className="sticky top-0 z-10 shadow-md">
                 <tr>
-                    <th className="border-r border-b px-6 py-3 border-black bg-yellow-300 min-w-[20px]">No</th>
+                    <th className="border-r border-b px-6 py-3 border-black min-w-[20px]">No</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-yellow-300 min-w-[200px]">Perangkat Daerah</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-yellow-300 min-w-[300px]">Bidang Urusan</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-slate-300 min-w-[300px]">Tujuan OPD</th>
@@ -243,6 +243,13 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                     <th className="border-r border-b px-6 py-3 border-black bg-blue-300 min-w-[320px]">Indikator & Target/Satuan</th>
                     <th className="border-r border-b px-6 py-3 border-black bg-green-300 min-w-[300px]">Operational</th>
                     <th className="border-b px-6 py-3 border-black bg-green-300 min-w-[320px]">Indikator & Target/Satuan</th>
+                </tr>
+                <tr>
+                    {["bg-white", "bg-yellow-300", "bg-yellow-300", "bg-slate-300", "bg-slate-300", "bg-red-300", "bg-red-300", "bg-blue-300", "bg-blue-300", "bg-green-300", "bg-green-300"].map((bg, index) => (
+                        <th key={index} className={`border-r border-black text-center ${bg}`}>
+                            {index + 1}
+                        </th>
+                    ))}
                 </tr>
             </thead>
             <tbody>
@@ -287,13 +294,13 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                                 )}
 
                                 {row.buEmpty ? (
-                                    <td colSpan={9} className="bg-yellow-100 italic border-r border-b border-black px-6 py-4">Tidak Ada Pohon OPD</td>
+                                    <td colSpan={9} className="bg-yellow-100 italic border-r border-b border-black px-6 py-4 text-red-300">Tidak Ada Pohon OPD</td>
                                 ) : row.isFirst.bu && (
                                     <td rowSpan={row.buRowSpan} className={`${td} bg-yellow-100`}>{buName || "-"}</td>
                                 )}
 
                                 {!row.buEmpty && (row.tujuanEmpty ? (
-                                    <td colSpan={8} className="bg-slate-100 italic border-r border-b border-black px-6 py-4">Tidak Ada Pohon OPD</td>
+                                    <td colSpan={8} className="bg-slate-100 italic border-r border-b border-black px-6 py-4 text-red-300">Tidak Ada Pohon OPD</td>
                                 ) : row.isFirst.tujuan && (
                                     <>
                                         <td rowSpan={row.tujuanRowSpan} className={`${td} bg-slate-100`}>{tujuanName || "-"}</td>
@@ -302,7 +309,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                                 ))}
 
                                 {!row.buEmpty && !row.tujuanEmpty && (row.strategicEmpty ? (
-                                    <td colSpan={6} className="bg-red-100 italic border-r border-b border-black px-6 py-4">Tidak Ada Pohon OPD</td>
+                                    <td colSpan={6} className="bg-red-100 italic border-r border-b border-black px-6 py-4 text-red-300">Tidak Ada Pohon OPD</td>
                                 ) : row.isFirst.strategic && (
                                     <>
                                         <td rowSpan={row.strategicRowSpan} className={`${td} bg-red-100`}>{row.strategic?.tema || "-"}</td>
@@ -311,7 +318,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                                 ))}
 
                                 {!row.buEmpty && !row.tujuanEmpty && !row.strategicEmpty && (row.tacticalEmpty ? (
-                                    <td colSpan={3} className="bg-blue-100 italic border-r border-b border-black px-6 py-4">Tidak Ada Pohon OPD</td>
+                                    <td colSpan={3} className="bg-blue-100 italic border-r border-b border-black px-6 py-4 text-red-300">Tidak Ada Pohon OPD</td>
                                 ) : row.isFirst.tactical && (
                                     <>
                                         <td rowSpan={row.tacticalRowSpan} className={`${td} bg-blue-100`}>{row.tactical?.tema || "-"}</td>
@@ -320,7 +327,7 @@ export const Table: React.FC<Table> = ({ DataTable }) => {
                                 ))}
 
                                 {!row.buEmpty && !row.tujuanEmpty && !row.strategicEmpty && !row.tacticalEmpty && (row.operationalEmpty ? (
-                                    <td colSpan={2} className="bg-green-100 italic border-r border-b border-black px-6 py-4">Tidak Ada Pohon OPD</td>
+                                    <td colSpan={2} className="bg-green-100 italic border-r border-b border-black px-6 py-4 text-red-300">Tidak Ada Pohon OPD</td>
                                 ) : (
                                     <>
                                         <td className={`${td} bg-green-100`}>{row.operational?.tema || "-"}</td>
