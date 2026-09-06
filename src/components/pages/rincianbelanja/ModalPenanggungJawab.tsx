@@ -23,7 +23,7 @@ interface FormValue {
   kode_opd: string;
   kode_sub_kegiatan: string;
   nip_atasan: OptionTypeString;
-  nonaktif_at: string;
+  aktif_at: string;
   level: OptionTypeString;
 }
 
@@ -49,6 +49,8 @@ export const ModalPenanggungJawab: React.FC<modal> = ({
   const token = getToken();
   const { branding } = useBrandingContext();
 
+  const today = new Date().toISOString().split("T")[0];
+
   const { reset, control, handleSubmit } = useForm<FormValue>({
     defaultValues: {
       nip: {
@@ -62,7 +64,7 @@ export const ModalPenanggungJawab: React.FC<modal> = ({
         value: DataEdit?.nip_atasan,
         label: DataEdit?.nama_atasan,
       },
-      nonaktif_at: "",
+      aktif_at: today,
     },
   });
 
@@ -133,7 +135,7 @@ export const ModalPenanggungJawab: React.FC<modal> = ({
     const payload = {
       //key : value
       ...data,
-      nonaktif_at: data.nonaktif_at ? `${data.nonaktif_at}:00+07:00` : null,
+      aktif_at: data.aktif_at ? `${data.aktif_at}:00+07:00` : null,
       nip: data.nip?.value,
       kode_opd: kode_opd,
       tahun: Number(branding?.tahun?.value),
@@ -320,18 +322,18 @@ export const ModalPenanggungJawab: React.FC<modal> = ({
                         </div> */}
 
             <Controller
-              name="nonaktif_at"
+              name="aktif_at"
               control={control}
               render={({ field }) => (
                 <div className="flex flex-col py-3">
                   <label
                     className="flex items-center gap-1 uppercase text-xs font-bold text-gray-700 my-2"
-                    htmlFor="nonaktif_at"
+                    htmlFor="aktif_at"
                   >
-                    <p>Non Aktif</p>
-                    <p className="font-light italic text-xs text-slate-400">
+                    <p>Aktif :</p>
+                    {/* <p className="font-light italic text-xs text-slate-400">
                       Kosongkan jika tidak di non aktifkan
-                    </p>
+                    </p> */}
                   </label>
                   <input
                     {...field}
