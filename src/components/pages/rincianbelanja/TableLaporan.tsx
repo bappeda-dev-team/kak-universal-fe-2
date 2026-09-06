@@ -18,7 +18,6 @@ import {
 } from "./type";
 import { formatRupiah } from "@/components/utils/format-rupiah";
 import { useBrandingContext } from "@/context/BrandingContext";
-import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 
 interface TableLaporan {
     tahun: string;
@@ -31,7 +30,6 @@ interface TableLaporan {
 export const TableLaporan: React.FC<TableLaporan> = ({
     tahun,
     kode_opd,
-    nama_opd,
     nip,
     role,
 }) => {
@@ -404,45 +402,9 @@ export const RowPPTK: React.FC<RowPPTK> = ({
             setJenisModal(metode);
         }
     };
+
     const updateData = (data: PPTK) => {
-        setData((prev) => {
-            const exists = prev.some((item) => item.id === data.id);
-            if (exists) {
-                // EDIT
-                return prev.map((item) => (item.id === data.id ? data : item));
-            }
-            // TAMBAH
-            return [...prev, data];
-        });
-    };
-    const hapusPJ = async (id: number) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try {
-            const response = await fetch(`${API_URL}/pptk/delete/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!response.ok) {
-                alert("cant fetch data");
-            }
-            AlertNotification(
-                "Berhasil",
-                "Data PPTK Berhasil Dihapus",
-                "success",
-                1000,
-            );
-            setData(Data.filter((data) => data.id !== id));
-        } catch (err) {
-            AlertNotification(
-                "Gagal",
-                "cek koneksi internet atau database server",
-                "error",
-                2000,
-            );
-        }
+        setData([data])
     };
 
     return (
@@ -462,10 +424,6 @@ export const RowPPTK: React.FC<RowPPTK> = ({
                                     {/* <p className="font-semibold">Pelaksana :</p> */}
                                     <p>{pt.nama_pegawai || "unknown"}</p>
                                 </div>
-                                {/* <div className="p-1 rounded-lg bg-white">
-                  <p className="font-semibold">Atasan :</p>
-                  <p>{pt.nama_atasan || "unknown"}</p>
-                </div> */}
                             </div>
                             <div className="flex flex-col items-center justify-center gap-1">
                                 <div className="p-1 rounded-full flex flex-col items-center gap-1 bg-white shadow-md">
@@ -476,35 +434,9 @@ export const RowPPTK: React.FC<RowPPTK> = ({
                                     >
                                         <TbPencil />
                                     </button>
-                                    {/* <button
-                    className="p-1 flex items-center gap-1 border border-red-600 text-red-600 rounded-full hover:bg-red-600 hover:text-white"
-                    title="Hapus Data PPTK"
-                    onClick={() =>
-                      AlertQuestion(
-                        "Hapus Data",
-                        "",
-                        "question",
-                        "Hapus",
-                        "Batal",
-                      ).then((resp) => {
-                        if (resp.isConfirmed) {
-                          hapusPJ(pt.id);
-                        }
-                      })
-                    }
-                  >
-                    <TbTrash />
-                  </button> */}
                                 </div>
                             </div>
                         </div>
-                        {/* <ButtonBlackBorder
-              className="flex items-center gap-1 w-full rounded-full"
-              onClick={() => handleModalPJ(data, "tambah")}
-            >
-              <TbCirclePlus />
-              Tambah PPTK
-            </ButtonBlackBorder> */}
                     </div>
                 ))
             ) : (
