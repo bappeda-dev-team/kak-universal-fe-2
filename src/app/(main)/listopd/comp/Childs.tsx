@@ -5,9 +5,10 @@ import { LoadingButtonClip2 } from "@/components/global/Loading";
 import { TbAlertCircle, TbArrowBack, TbSearch } from "react-icons/tb";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { getToken } from "@/components/lib/Cookie";
-import { TematikFindall, DataTable } from "../type";
+import { TematikFindall } from "../type";
 import { Table } from "./Table";
 import { ButtonBlackBorder } from "@/components/global/Button";
+import { OptionTypeString } from "@/types";
 
 interface Childs {
     id_tematik: number;
@@ -19,6 +20,7 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
     const [Data, setData] = useState<TematikFindall | null>(null);
     const [IdTable, setIdTable] = useState<number | null>(null);
     const [DataTable, setDataTable] = useState<any>(null);
+    const [JenisLabel, setJenisLabel] = useState<OptionTypeString | null>(null);
 
     const [hasOpdData, setHasOpdData] = useState(false);
 
@@ -135,13 +137,15 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
                         setIdTable(null);
                         setDataTable(null);
                         onTableShown?.(false);
+                        setJenisLabel(null);
                     }}
                 >
                     <TbArrowBack />
                     Kembali Ke List Sub Tematik
                 </ButtonBlackBorder>
+                <h1 className="font-bold py-1 px-3 border border-black rounded-lg">{JenisLabel?.value || ''} - {JenisLabel?.label || ""}</h1>
                 <div className={`transition-all duration-300 ease-in-out border border-black w-full`}>
-                    <div className="overflow-auto">
+                    <div className="overflow-auto max-h-[70vh]">
                         <Table DataTable={DataTable} />
                     </div>
                 </div>
@@ -166,7 +170,11 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
                                         onClick={() => {
                                             setIdTable(item.id);
                                             onTableShown?.(true);
-                                            setDataTable(dataOpd)
+                                            setDataTable(dataOpd);
+                                            setJenisLabel({
+                                                label: item.tema,
+                                                value: item.jenis_pohon || "",
+                                            })
                                         }}
                                         className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
                                     >
@@ -190,6 +198,10 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
                                                         setIdTable(data.id);
                                                         onTableShown?.(true);
                                                         setDataTable(dataOpd2);
+                                                        setJenisLabel({
+                                                            label: data.tema,
+                                                            value: data.jenis_pohon || "",
+                                                        })
                                                     }}
                                                     className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
                                                 >
@@ -211,7 +223,11 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
                                                     onClick={() => {
                                                         setIdTable(s.id);
                                                         onTableShown?.(true);
-                                                        setDataTable(s.childs)
+                                                        setDataTable(s.childs);
+                                                        setJenisLabel({
+                                                            label: s.tema,
+                                                            value: s.jenis_pohon || "",
+                                                        })
                                                     }}
                                                     className="flex items-center gap-1 px-5 py-2 rounded-lg bg-emerald-600 text-sm hover:bg-emerald-800 text-white transition-all"
                                                 >

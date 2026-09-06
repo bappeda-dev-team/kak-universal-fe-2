@@ -21,9 +21,10 @@ import {
 interface Table {
   kode_opd: string;
   tahun: number;
+  jenis: "opd" | "laporan";
 }
 
-const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
+const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun, jenis }) => {
   const { branding } = useBrandingContext();
   const [Isu, setIsu] = useState<IsuStrategis[]>([]);
 
@@ -265,34 +266,36 @@ const TableIsuStrategis: React.FC<Table> = ({ kode_opd, tahun }) => {
                         rowSpan={i.permasalahan_opd ? TotalRow : 2}
                         className="border-r border-b border-emerald-500 px-6 py-4"
                       >
-                        <div className="flex flex-col jutify-center items-center gap-2">
-                          <ButtonSkyBorder
-                            className="flex items-center gap-1 w-full"
-                            onClick={() => handleModal("edit", i)}
-                          >
-                            <TbPencil />
-                            Edit
-                          </ButtonSkyBorder>
-                          {/* <ButtonRedBorder
-                            className="flex items-center gap-1 w-full"
-                            onClick={() => {
-                              AlertQuestion(
-                                "Hapus?",
-                                "Data Isu Strategis akan di hapus?",
-                                "question",
-                                "Hapus",
-                                "Batal",
-                              ).then((result) => {
-                                if (result.isConfirmed) {
-                                  hapusIsu(i.id);
-                                }
-                              });
-                            }}
-                          >
-                            <TbTrash />
-                            Hapus
-                          </ButtonRedBorder> */}
-                        </div>
+                        {jenis === "opd" &&
+                          <div className="flex flex-col jutify-center items-center gap-2">
+                            <ButtonSkyBorder
+                              className="flex items-center gap-1 w-full"
+                              onClick={() => handleModal("edit", i)}
+                            >
+                              <TbPencil />
+                              Edit
+                            </ButtonSkyBorder>
+                            {/* <ButtonRedBorder
+                              className="flex items-center gap-1 w-full"
+                              onClick={() => {
+                                AlertQuestion(
+                                  "Hapus?",
+                                  "Data Isu Strategis akan di hapus?",
+                                  "question",
+                                  "Hapus",
+                                  "Batal",
+                                ).then((result) => {
+                                  if (result.isConfirmed) {
+                                    hapusIsu(i.id);
+                                  }
+                                });
+                              }}
+                            >
+                              <TbTrash />
+                              Hapus
+                            </ButtonRedBorder> */}
+                          </div>
+                        }
                       </td>
                     </tr>
                     {!i.permasalahan_opd || i.permasalahan_opd.length === 0 ? (
