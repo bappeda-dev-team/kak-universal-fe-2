@@ -378,6 +378,15 @@ const Table: React.FC<Table> = ({ Data, kode_opd, tahun, onSuccess }) => {
                                             className="border-r border-b border-emerald-500 px-6 py-4"
                                           >
                                             {st.strategi_opd || "-"}
+
+                                            {st.tahun_strategi_opd && (
+                                              <span className="w-fit rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                                 Tahun{" "}
+                                                 {
+                                                   st.tahun_strategi_opd
+                                                 }
+                                               </span>
+                                            )}
                                           </td>
                                         )}
 
@@ -388,6 +397,15 @@ const Table: React.FC<Table> = ({ Data, kode_opd, tahun, onSuccess }) => {
                                             className="border-r border-b border-emerald-500 px-6 py-4"
                                           >
                                             {tactical.tactical_opd || "-"}
+
+                                              {tactical.tahun_tactical_opd && (
+                                                <span className="w-fit rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                                  Tahun{" "}
+                                                  {
+                                                    tactical.tahun_tactical_opd
+                                                  }
+                                                </span>
+                                              )}
                                           </td>
                                         )}
 
