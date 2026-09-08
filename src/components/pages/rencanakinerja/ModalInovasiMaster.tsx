@@ -145,7 +145,7 @@ export const ModalInovasi: React.FC<modal> = ({
                   className="border px-4 py-2 rounded-lg"
                   id="judul_inovasi`"
                   type="text"
-                  placeholder="masukkan Judul Inovasi"
+                  placeholder="masukkan Nama Inovasi"
                   value={field.value || JudulInovasi}
                   onChange={(e) => {
                     field.onChange(e);

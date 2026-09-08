@@ -13,7 +13,7 @@ import {
 } from "@/components/global/Button";
 import { TbCirclePlus, TbRefresh } from "react-icons/tb";
 import { ModalIkk } from "./ModalIkk";
-import { NspkFindall } from "../type";
+import { JenisInovasiFindall } from "../type";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { TbTrash, TbPencil } from "react-icons/tb";
 
@@ -23,10 +23,10 @@ interface Table {
 }
 
 const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
-  const [Data, setData] = useState<NspkFindall[]>([]);
+  const [Data, setData] = useState<JenisInovasiFindall[]>([]);
   const [Error, setError] = useState<boolean | null>(null);
 
-  const [DataModal, setDataModal] = useState<NspkFindall | null>(null);
+  const [DataModal, setDataModal] = useState<JenisInovasiFindall | null>(null);
   const [ModalOpen, setModalOpen] = useState<boolean>(false);
   const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
   const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
@@ -35,19 +35,13 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
   const token = getToken();
   const { branding } = useBrandingContext();
 
-  const tahun = Tahun;
-
-  const filteredData = Data.filter(
-    (item) => Number(item.tahun) === Number(tahun),
-  );
-
   useEffect(() => {
     const fetchOpd = async () => {
       setLoading(true);
       setError(false);
       try {
         const response = await fetch(
-          `${branding?.api_perencanaan}/nspk/findall/${kode_opd}`,
+          `${branding?.api_perencanaan}/jenis-inovasi/findall`,
           {
             headers: {
               Authorization: `${token}`,
@@ -86,7 +80,7 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
   };
   const handleModalOpen = (
     jenis: "tambah" | "edit",
-    data: NspkFindall | null,
+    data: JenisInovasiFindall | null,
   ) => {
     if (ModalOpen) {
       setModalOpen(false);
@@ -102,7 +96,7 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
   const hapusData = async (id: number) => {
     try {
       const response = await fetch(
-        `${branding?.api_perencanaan}/nspk/delete/${id}`,
+        `${branding?.api_perencanaan}/jenis-inovasi/delete/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -116,7 +110,7 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
         setData(Data.filter((data: any) => data.id !== id));
         AlertNotification(
           "Berhasil",
-          "Data Norma Standar Prosedur dan Kriteria Berhasil Dihapus",
+          "Data Jenis Inovasi Berhasil Dihapus",
           "success",
           1000,
         );
@@ -193,7 +187,7 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
                 </tr>
               </thead>
               <tbody>
-                {/* {filteredData.length === 0 ? (
+                {Data.length === 0 ? (
                   <tr>
                     <td
                       colSpan={4}
@@ -203,49 +197,53 @@ const Table: React.FC<Table> = ({ kode_opd, Tahun }) => {
                     </td>
                   </tr>
                 ) : (
-                  filteredData.map((item: NspkFindall, index: number) => ( */}
-                <tr>
-                  {/* No */}
-                  <td className="border border-emerald-500 px-4 py-4 text-center">
-                    {1}
-                  </td>
+                  Data.map((item: JenisInovasiFindall, index: number) => (
+                    <tr key={item.id}>
+                      {/* No */}
+                      <td className="border border-emerald-500 px-4 py-4 text-center">
+                        {index + 1}
+                      </td>
 
-                  {/* Isu */}
-                  <td className="border border-emerald-500 px-6 py-4">
-                    Pengembangan
-                  </td>
+                      {/* Isu */}
+                      <td className="border border-emerald-500 px-6 py-4">
+                        {item.jenis}
+                      </td>
 
-                  {/* Aksi */}
-                  <td className="border border-emerald-500 px-6 py-4">
-                    <div className="flex gap-2">
-                      <ButtonGreenBorder className="flex items-center gap-1">
-                        <TbPencil />
-                        Edit
-                      </ButtonGreenBorder>
+                      {/* Aksi */}
+                      <td className="border border-emerald-500 px-6 py-4">
+                        <div className="flex gap-2">
+                          <ButtonGreenBorder
+                            className="flex items-center gap-1"
+                            onClick={() => handleModalOpen("edit", item)}
+                          >
+                            <TbPencil />
+                            Edit
+                          </ButtonGreenBorder>
 
-                      <ButtonRedBorder
-                        className="flex items-center gap-1"
-                        onClick={() => {
-                          AlertQuestion(
-                            "Hapus?",
-                            "Hapus Norma Standar Prosedur dan Kriteria yang dipilih?",
-                            "question",
-                            "Hapus",
-                            "Batal",
-                          ).then((result) => {
-                            if (result.isConfirmed) {
-                            }
-                          });
-                        }}
-                      >
-                        <TbTrash />
-                        Hapus
-                      </ButtonRedBorder>
-                    </div>
-                  </td>
-                </tr>
-                {/* ))
-                )} */}
+                          <ButtonRedBorder
+                            className="flex items-center gap-1"
+                            onClick={() => {
+                              AlertQuestion(
+                                "Hapus?",
+                                "Hapus Jenis Inovasi yang dipilih?",
+                                "question",
+                                "Hapus",
+                                "Batal",
+                              ).then((result) => {
+                                if (result.isConfirmed) {
+                                  hapusData(item.id);
+                                }
+                              });
+                            }}
+                          >
+                            <TbTrash />
+                            Hapus
+                          </ButtonRedBorder>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

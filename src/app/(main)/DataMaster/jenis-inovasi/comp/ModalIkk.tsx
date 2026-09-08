@@ -17,13 +17,13 @@ import { AlertNotification } from "@/components/global/Alert";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import Select from "react-select";
 import { OptionTypeString } from "@/types";
-import { NspkFindall, FormValue } from "../type";
+import { JenisInovasiFindall, FormValue } from "../type";
 import { useBrandingContext } from "@/context/BrandingContext";
 
 interface modal {
   isOpen: boolean;
   onClose: () => void;
-  Data: NspkFindall | null;
+  Data: JenisInovasiFindall | null;
   jenis: "tambah" | "edit";
   kode_opd: string;
   tahun: number;
@@ -45,7 +45,7 @@ export const ModalIkk: React.FC<modal> = ({
     formState: { errors },
   } = useForm<FormValue>({
     defaultValues: {
-      nspk: Data?.nspk || "",
+      jenis: Data?.jenis || "",
     },
   });
   const { branding } = useBrandingContext();
@@ -57,18 +57,16 @@ export const ModalIkk: React.FC<modal> = ({
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
     const formData = {
       //key : value
-      nspk: data.nspk,
-      kode_opd: kode_opd,
-      tahun: tahun,
+      jenis: data.jenis,
     };
     // console.log(formData);
     try {
       setProses(true);
       let url = "";
       if (jenis === "tambah") {
-        url = "nspk/create";
+        url = "jenis-inovasi/create";
       } else if (jenis === "edit") {
-        url = `nspk/update/${Data?.id}`;
+        url = `jenis-inovasi/update/${Data?.id}`;
       } else {
         url = "";
       }
@@ -84,7 +82,7 @@ export const ModalIkk: React.FC<modal> = ({
       if (result.code === 201 || result.code === 200) {
         AlertNotification(
           "Berhasil",
-          `Berhasil ${jenis === "edit" ? "mengubah" : "menambah"} Norma Standar Prosedur dan Kriteria`,
+          `Berhasil ${jenis === "edit" ? "mengubah" : "menambah"} Jenis Inovasi`,
           "success",
           1000,
         );
@@ -132,7 +130,7 @@ export const ModalIkk: React.FC<modal> = ({
                 Jenis Inovasi:
               </label>
               <Controller
-                name="nspk"
+                name="jenis"
                 control={control}
                 render={({ field }) => (
                   <input
