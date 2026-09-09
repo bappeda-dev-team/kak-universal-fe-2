@@ -9,7 +9,7 @@ interface RPJMDLayoutProps {
     children: React.ReactNode;
 }
 
-export default function RenjaLayout({
+export default function RPJMDLayout({
     children
 }: RPJMDLayoutProps) {
 

@@ -1,14 +1,10 @@
 export interface FormValue {
-  kode_opd: string;
-  nspk: string;
-  tahun: number;
+  jenis: string;
 }
 
-export interface NspkFindall {
+export interface JenisInovasiFindall {
   id: number;
-  nama_opd: string;
-  nspk: string;
-  tahun: number;
+  jenis: string;
   created_at: string;
   updated_at: string;
 }
