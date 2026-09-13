@@ -7,7 +7,6 @@ import { useBrandingContext } from "@/context/BrandingContext";
 import { getToken } from "@/components/lib/Cookie";
 import { TematikFindall } from "../type";
 import { Table } from "./Table";
-import { ButtonBlackBorder } from "@/components/global/Button";
 import { OptionTypeString } from "@/types";
 
 interface Childs {
@@ -130,21 +129,29 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
         );
     } else if (IdTable != null) {
         return (
-            <div className="w-full flex flex-col items-center gap-2">
-                <ButtonBlackBorder
-                    className="flex items-center gap-1 w-full"
-                    onClick={() => {
-                        setIdTable(null);
-                        setDataTable(null);
-                        onTableShown?.(false);
-                        setJenisLabel(null);
-                    }}
-                >
-                    <TbArrowBack />
-                    Kembali Ke List Sub Tematik
-                </ButtonBlackBorder>
-                <h1 className="font-bold py-1 px-3 border border-black rounded-lg">{JenisLabel?.value || ''} - {JenisLabel?.label || ""}</h1>
-                <div className={`transition-all duration-300 ease-in-out border border-black w-full`}>
+            <div className="w-full flex flex-col gap-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <span className="text-[10px] uppercase tracking-widest font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 whitespace-nowrap">
+                            {JenisLabel?.value || "Detail"}
+                        </span>
+                        <h1 className="font-bold text-lg text-slate-800 leading-snug break-words">{JenisLabel?.label || ""}</h1>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setIdTable(null);
+                            setDataTable(null);
+                            onTableShown?.(false);
+                            setJenisLabel(null);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-800 transition-all shadow-sm"
+                    >
+                        <TbArrowBack className="text-base" />
+                        Kembali Ke List Sub Tematik
+                    </button>
+                </div>
+                <div className={`transition-all duration-300 ease-in-out border border-black/20 rounded-xl overflow-hidden w-full shadow-sm`}>
                     <div className="overflow-auto max-h-[70vh]">
                         <Table DataTable={DataTable} />
                     </div>
