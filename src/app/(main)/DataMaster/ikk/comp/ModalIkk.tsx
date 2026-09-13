@@ -61,20 +61,10 @@ export const ModalIkk: React.FC<modal> = ({
       indikators: Data?.indikators
         ? Data?.indikators?.map((i: Indikator) => ({
             indikator: i.indikator,
-            targets: i.targets.map((t: Target) => ({
-              target: t.target,
-              satuan: t.satuan,
-            })),
           }))
         : [
             {
               indikator: "",
-              targets: [
-                {
-                  target: "",
-                  satuan: "",
-                },
-              ],
             },
           ],
     },
@@ -89,12 +79,6 @@ export const ModalIkk: React.FC<modal> = ({
   const handleTambahIndikator = () => {
     append({
       indikator: "",
-      targets: [
-        {
-          target: "",
-          satuan: "",
-        },
-      ],
     });
   };
 
@@ -154,10 +138,6 @@ export const ModalIkk: React.FC<modal> = ({
       keterangan: data.keterangan,
       indikators: data?.indikators.map((i: Indikator) => ({
         indikator: i.indikator,
-        targets: i.targets.map((t: Target) => ({
-          target: t.target,
-          satuan: t.satuan,
-        })),
       })),
     };
     // console.log(formData);
