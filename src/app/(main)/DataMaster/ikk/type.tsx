@@ -10,6 +10,7 @@ export interface FormValue {
 }
 export interface Indikator {
   indikator: string;
+  targets: Target[];
 }
 export interface Target {
   target: string;
