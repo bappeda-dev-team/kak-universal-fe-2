@@ -89,7 +89,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
 
     useEffect(() => {
         const fetchDetailRenaksiOpd = async () => {
-            const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
+            const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL;
             try {
                 setLoadingDetail(true);
                 const response = await fetch(`${API_URL_RENAKSI_OPD}/renaksi-opd/detail/${id}`, {
@@ -152,7 +152,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
     }
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
+        const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL;
         const formDataNew = {
             //key : value
             sasaranopd_id: id_sasaran,

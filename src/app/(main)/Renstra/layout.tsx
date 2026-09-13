@@ -9,7 +9,7 @@ interface RenstraLayoutProps {
     children: React.ReactNode;
 }
 
-export default function RenjaLayout({
+export default function RenstraLayout({
     children
 }: RenstraLayoutProps) {
 

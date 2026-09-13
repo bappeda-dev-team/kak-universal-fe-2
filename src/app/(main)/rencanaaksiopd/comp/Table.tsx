@@ -254,7 +254,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
   };
 
   const hapusRenaksiOpd = async (id: number) => {
-    const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
+    const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL;
     // console.log(id);
     try {
       const response = await fetch(
@@ -288,7 +288,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
     }
   };
   const syncRenaksiOpd = async (id: string) => {
-    const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
+    const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL;
     // console.log(id);
     try {
       const response = await fetch(
@@ -320,7 +320,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
   };
 
   useEffect(() => {
-    const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD;
+    const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL;
     const fetchRekinById = async () => {
       setLoading(true);
       try {
