@@ -161,7 +161,7 @@ export const Table = () => {
                                 <th className="border-r border-b px-6 py-1 w-[100px]">Realisasi</th>
                             </tr>
                             <tr className="bg-yellow-600 text-white">
-                                {Array.from({ length: 24 }, (_, index) => (
+                                {Array.from({ length: 25 }, (_, index) => (
                                     <th key={index} className="border-r border-b px-2 py-1 text-center">{index + 1}</th>
                                 ))}
                             </tr>
