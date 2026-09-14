@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { getToken } from "@/components/lib/Cookie";
-import { ButtonSky, ButtonSkyBorder, ButtonGreenBorder, ButtonRedBorder, ButtonBlackBorder } from "@/components/global/Button";
+import { ButtonBlack, ButtonSkyBorder, ButtonGreenBorder, ButtonRedBorder, ButtonBlackBorder } from "@/components/global/Button";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { useRouter } from "next/navigation";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { ModalIndikatorRenja, ModalEditIndikatorRenja } from "./ModalIndikatorRenja";
-import { TbCirclePlus, TbLockFilled, TbLockOpen, TbPencil, TbRefresh, TbTrash } from "react-icons/tb";
+import { TbCirclePlus, TbLock, TbLockOpen, TbPencil, TbRefresh, TbTrash } from "react-icons/tb";
 
 interface Target {
     id: string;
@@ -66,6 +66,7 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
     const [IdTujuan, setIdTujuan] = useState<number>(0);
 
     const [Loading, setLoading] = useState<boolean>(false);
+    const [LoadingStatus, setLoadingStatus] = useState<boolean>(false);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [Proses, setProses] = useState<boolean>(false);
     const token = getToken();
@@ -102,8 +103,58 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                 setLoading(false);
             }
         }
+        const fetchStatusLock = async () => {
+            setLoadingStatus(true);
+            try {
+                const response = await fetch(`${branding?.api_perencanaan}/tujuan_opd/lock/${kode_opd}/${tahun}`, {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const result = await response.json();
+                const data = result.data.locked;
+                setLock(data);
+            } catch (err) {
+                setError(true);
+                console.error(err)
+            } finally {
+                setLoadingStatus(false);
+            }
+        }
+        if(menu === "penetapan"){
+            fetchStatusLock();
+        }
         fetchTujuan();
     }, [kode_opd, tahun, token, router, FetchTrigger, branding?.api_perencanaan, menu])
+
+    const handleLock = async (method: "POST" | "DELETE") => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${branding?.api_perencanaan}/tujuan_opd/lock/${kode_opd}/${tahun}`, {
+                method: method,
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const result = await response.json();
+            if (result.code === 200) {
+                AlertNotification("Terkunci", "", "success", 3000, true);
+                setLock(result.data.locked);
+            } else if (result.code === 401) {
+                AlertNotification("Login Kembali", "", "warning", 2000);
+                router.push('/login');
+            } else {
+                AlertNotification("Error", `${result.data || `error saat mengunci`}`, "warning", 2000);
+            }
+        } catch (err) {
+            AlertNotification("Error", `${err}`, "warning", 2000);
+            console.log(err);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const handleFetchTrigger = () => { setFetchTrigger((prev) => !prev) }
     const handleTambahIndikator = (tujuan_id: number) => {
@@ -160,182 +211,205 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
 
     return (
         <>
-            {menu === "penetapan" &&
-                <div className="px-3 py-2">
-                    <div className={`flex items-center justify-between p-2 text-white rounded-lg ${Lock ? "bg-red-500" : "bg-emerald-500"}`}>
-                        {Lock ?
-                            <div className="flex items-center gap-1">
-                                <TbLockFilled />
-                                <p>Data terkunci tidak bisa di ubah</p>
-                            </div>
-                            :
-                            <div className="flex items-center gap-1">
-                                <TbLockOpen />
-                                <p>Data terbuka dan bisa di ubah</p>
-                            </div>
-                        }
-                        {Lock ?
-                            <ButtonBlackBorder className="bg-white flex items-center gap-1">
-                                <TbLockOpen />
-                                Buka Kunci
-                            </ButtonBlackBorder>
-                            :
-                            <div className="flex items-center gap-1">
-                                <ButtonSkyBorder className="bg-white flex items-center gap-1">
-                                    <TbRefresh />
-                                    Sync
-                                </ButtonSkyBorder>
-                                <ButtonBlackBorder className="bg-white flex items-center gap-1">
-                                    <TbLockFilled />
-                                    Kunci Data
-                                </ButtonBlackBorder>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-            <div className="overflow-auto m-2 rounded-t-xl border">
-                <table className="w-full">
-                    <thead>
-                        <tr className={`text-xm ${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
-                            <td rowSpan={2} className="border-r border-b px-6 py-3 max-w-[100px] text-center">No</td>
-                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Urusan & Bidang Urusan</td>
-                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Tujuan OPD</td>
-                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Aksi</td>
-                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</td>
-                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi Operasional</td>
-                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</td>
-                            <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
-                            <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{branding?.tahun?.value || 0}</th>
-                        </tr>
-                        <tr className={`${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
-                            <th className="border-l border-b px-6 py-3 min-w-[50px]">Target</th>
-                            <th className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Data.length == 0 ?
-                            <tr>
-                                <td className="px-6 py-3 uppercase" colSpan={13}>
-                                    Tidak ada User / Belum Ditambahkan
-                                </td>
-                            </tr>
-                            :
-                            Data.map((item: Tujuan, index: number) => {
-                                const TotalRow = item.tujuan_opd.reduce((total, item) => total + (item.indikator.length === 0 ? 1 : item.indikator.length), 0) + item.tujuan_opd.length + 1;
-                                return (
-                                    <React.Fragment key={index}>
-                                        <tr>
-                                            <td rowSpan={TotalRow} className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} py-4 px-3 text-center`}>
-                                                {index + 1}
-                                            </td>
-                                            <td rowSpan={TotalRow} className={`border-r border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-4`}>
-                                                <div className="flex flex-col gap-2">
-                                                    <p className={`border-b ${Lock ? "border-red-500" : "border-emerald-500"} pb-2`}>{item.urusan ? `${item.kode_urusan} - ${item.urusan}` : "-"}</p>
-                                                    <p>{item.kode_bidang_urusan ? `${item.kode_bidang_urusan} - ${item.nama_bidang_urusan}` : "-"}</p>
+            <div className="flex flex-col gap-2 mt-2">
+                {menu === "penetapan" &&
+                    <div className="flex w-full p-2">
+                        <div className={`w-full p-2 flex items-start border rounded-lg ${Lock ? "border-red-800 bg-red-300" : "border-emerald-800 bg-emerald-300"}`}>
+                            {LoadingStatus ?
+                                <div className="flex items-center gap-1">
+                                    <LoadingClip />
+                                    Loading Status Lock Tujuan Pemda Penetapan
+                                </div>
+                                :
+                                <div className={`flex items-center justify-between w-full gap-1 ${Lock ? "text-red-800" : "text-emerald-800"}`}>
+                                    {Lock ?
+                                        <>
+                                            <div className="flex items-center gap-2">
+                                                <p className="p-1 border border-red-800 rounded-full"><TbLock /></p>
+                                                <div className="flex flex-col">
+                                                    <p className="font-semibold">Tujuan Pemda Penetapan Terkunci</p>
+                                                    <p className="text-sm font-light">Tidak bisa mengubah data yang terkunci / Lock</p>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                        {item.tujuan_opd.map((item: TujuanOpd) => (
-                                            <React.Fragment key={item.id_tujuan_opd}>
-                                                <tr>
-                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-full`} rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
-                                                        <p className="flex min-h-[100px] bg-white items-center">
-                                                            {item.tujuan || "-"}
-                                                        </p>
-                                                    </td>
-                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-full`} rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
-                                                        <div className="flex justify-center">
-                                                            <ButtonSkyBorder
-                                                                className="flex items-center gap-1"
-                                                                onClick={() => handleTambahIndikator(item.id_tujuan_opd)}
-                                                            >
-                                                                <TbCirclePlus />
-                                                                Indikator
-                                                            </ButtonSkyBorder>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                {/* INDIKATOR */}
-                                                {item.indikator.length === 0 ? (
-                                                    <React.Fragment>
-                                                        <tr>
-                                                            <td colSpan={30} className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 bg-yellow-500 text-white`}>indikator tujuan belum di tambahkan</td>
-                                                        </tr>
-                                                    </React.Fragment>
-                                                ) : (
-                                                    item.indikator.map((i: Indikator) => (
-                                                        <tr key={i.id}>
-                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>
-                                                                <div className="flex flex-col gap-2">
-                                                                    <p>{i.indikator || "-"}</p>
-                                                                    <div className="flex items-center justify-center gap-1 pt-2 border-t border-gray-300">
-                                                                        <ButtonGreenBorder
-                                                                            onClick={() => handleEditIndikator(i)}
-                                                                            className="rounded-full"
-                                                                        >
-                                                                            <TbPencil />
-                                                                        </ButtonGreenBorder>
-                                                                        <ButtonRedBorder
-                                                                            onClick={() => AlertQuestion("Hapus", "Hapus Indikator ini?", "question", "Hapus", "Batal").then((resp) => {
-                                                                                if (resp.isConfirmed) {
-                                                                                    hapusIndikator(i.kode_indikator);
-                                                                                }
-                                                                            })}
-                                                                        >
-                                                                            <TbTrash />
-                                                                        </ButtonRedBorder>
+                                            </div>
+                                            <ButtonBlack
+                                                className="flex items-center gap-1"
+                                                onClick={() => AlertQuestion("Buka Kunci / Unlock ?", "", "question", "Unlock", "Batal").then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        handleLock("DELETE");
+                                                    }
+                                                })}
+                                            >
+                                                <TbLockOpen />
+                                                Unlock
+                                            </ButtonBlack>
+                                        </>
+                                        :
+                                        <>
+                                            <div className="flex items-center gap-2">
+                                                <p className="p-1 border border-emerald-800 rounded-full"><TbLockOpen /></p>
+                                                <p>Tujuan Pemda Penetapan Tidak Terkunci</p>
+                                            </div>
+                                            <ButtonBlack
+                                                className="flex items-center gap-1"
+                                                onClick={() => AlertQuestion("Kunci / Lock ?", "", "question", "Lock", "Batal").then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        handleLock("POST");
+                                                    }
+                                                })}
+                                            >
+                                                <TbLock />
+                                                Lock
+                                            </ButtonBlack>
+                                        </>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                <div className="overflow-auto m-2 rounded-t-xl border">
+                    <table className="w-full">
+                        <thead>
+                            <tr className={`text-xm ${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
+                                <td rowSpan={2} className="border-r border-b px-6 py-3 max-w-[100px] text-center">No</td>
+                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Urusan & Bidang Urusan</td>
+                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Tujuan OPD</td>
+                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Aksi</td>
+                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</td>
+                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi Operasional</td>
+                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</td>
+                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
+                                <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{branding?.tahun?.value || 0}</th>
+                            </tr>
+                            <tr className={`${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
+                                <th className="border-l border-b px-6 py-3 min-w-[50px]">Target</th>
+                                <th className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Data.length == 0 ?
+                                <tr>
+                                    <td className="px-6 py-3 uppercase" colSpan={13}>
+                                        Tidak ada User / Belum Ditambahkan
+                                    </td>
+                                </tr>
+                                :
+                                Data.map((item: Tujuan, index: number) => {
+                                    const TotalRow = item.tujuan_opd.reduce((total, item) => total + (item.indikator.length === 0 ? 1 : item.indikator.length), 0) + item.tujuan_opd.length + 1;
+                                    return (
+                                        <React.Fragment key={index}>
+                                            <tr>
+                                                <td rowSpan={TotalRow} className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} py-4 px-3 text-center`}>
+                                                    {index + 1}
+                                                </td>
+                                                <td rowSpan={TotalRow} className={`border-r border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-4`}>
+                                                    <div className="flex flex-col gap-2">
+                                                        <p className={`border-b ${Lock ? "border-red-500" : "border-emerald-500"} pb-2`}>{item.urusan ? `${item.kode_urusan} - ${item.urusan}` : "-"}</p>
+                                                        <p>{item.kode_bidang_urusan ? `${item.kode_bidang_urusan} - ${item.nama_bidang_urusan}` : "-"}</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {item.tujuan_opd.map((item: TujuanOpd) => (
+                                                <React.Fragment key={item.id_tujuan_opd}>
+                                                    <tr>
+                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-full`} rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                            <p className="flex min-h-[100px] bg-white items-center">
+                                                                {item.tujuan || "-"}
+                                                            </p>
+                                                        </td>
+                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-full`} rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}>
+                                                            <div className="flex justify-center">
+                                                                <ButtonSkyBorder
+                                                                    className="flex items-center gap-1"
+                                                                    onClick={() => handleTambahIndikator(item.id_tujuan_opd)}
+                                                                >
+                                                                    <TbCirclePlus />
+                                                                    Indikator
+                                                                </ButtonSkyBorder>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {/* INDIKATOR */}
+                                                    {item.indikator.length === 0 ? (
+                                                        <React.Fragment>
+                                                            <tr>
+                                                                <td colSpan={30} className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 bg-yellow-500 text-white`}>indikator tujuan belum di tambahkan</td>
+                                                            </tr>
+                                                        </React.Fragment>
+                                                    ) : (
+                                                        item.indikator.map((i: Indikator) => (
+                                                            <tr key={i.id}>
+                                                                <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>
+                                                                    <div className="flex flex-col gap-2">
+                                                                        <p>{i.indikator || "-"}</p>
+                                                                        <div className="flex items-center justify-center gap-1 pt-2 border-t border-gray-300">
+                                                                            <ButtonGreenBorder
+                                                                                onClick={() => handleEditIndikator(i)}
+                                                                                className="rounded-full"
+                                                                            >
+                                                                                <TbPencil />
+                                                                            </ButtonGreenBorder>
+                                                                            <ButtonRedBorder
+                                                                                onClick={() => AlertQuestion("Hapus", "Hapus Indikator ini?", "question", "Hapus", "Batal").then((resp) => {
+                                                                                    if (resp.isConfirmed) {
+                                                                                        hapusIndikator(i.kode_indikator);
+                                                                                    }
+                                                                                })}
+                                                                            >
+                                                                                <TbTrash />
+                                                                            </ButtonRedBorder>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </td>
-                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.definisi_operasional || "-"}</td>
-                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.rumus_perhitungan || "-"}</td>
-                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.sumber_data || "-"}</td>
-                                                            {i.target ?
-                                                                i.target.map((t: Target) => (
-                                                                    <React.Fragment key={t.id}>
-                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
-                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
-                                                                    </React.Fragment>
-                                                                ))
-                                                                :
-                                                                <>
-                                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>-</td>
-                                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>-</td>
-                                                                </>
-                                                            }
-                                                        </tr>
-                                                    ))
-                                                )}
-                                            </React.Fragment>
-                                        ))}
-                                    </React.Fragment>
-                                )
-                            })
-                        }
-                    </tbody>
-                </table>
-                {ModalTambahIndikator &&
-                    <ModalIndikatorRenja
-                        isOpen={ModalTambahIndikator}
-                        onClose={() => handleTambahIndikator(0)}
-                        onSuccess={() => handleFetchTrigger()}
-                        tujuan_id={String(IdTujuan)}
-                        tahun={tahun}
-                        jenis="tujuan_opd"
-                        menu={menu}
-                    />
-                }
-                {ModalEditIndikator &&
-                    <ModalEditIndikatorRenja
-                        isOpen={ModalEditIndikator}
-                        onClose={() => handleEditIndikator(null)}
-                        onSuccess={() => handleFetchTrigger()}
-                        Data={DataEdit}
-                        jenis="tujuan_opd"
-                        menu={menu}
-                    />
-                }
+                                                                </td>
+                                                                <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.definisi_operasional || "-"}</td>
+                                                                <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.rumus_perhitungan || "-"}</td>
+                                                                <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.sumber_data || "-"}</td>
+                                                                {i.target ?
+                                                                    i.target.map((t: Target) => (
+                                                                        <React.Fragment key={t.id}>
+                                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
+                                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
+                                                                        </React.Fragment>
+                                                                    ))
+                                                                    :
+                                                                    <>
+                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>-</td>
+                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>-</td>
+                                                                    </>
+                                                                }
+                                                            </tr>
+                                                        ))
+                                                    )}
+                                                </React.Fragment>
+                                            ))}
+                                        </React.Fragment>
+                                    )
+                                })
+                            }
+                        </tbody>
+                    </table>
+                    {ModalTambahIndikator &&
+                        <ModalIndikatorRenja
+                            isOpen={ModalTambahIndikator}
+                            onClose={() => handleTambahIndikator(0)}
+                            onSuccess={() => handleFetchTrigger()}
+                            tujuan_id={String(IdTujuan)}
+                            tahun={tahun}
+                            jenis="tujuan_opd"
+                            menu={menu}
+                        />
+                    }
+                    {ModalEditIndikator &&
+                        <ModalEditIndikatorRenja
+                            isOpen={ModalEditIndikator}
+                            onClose={() => handleEditIndikator(null)}
+                            onSuccess={() => handleFetchTrigger()}
+                            Data={DataEdit}
+                            jenis="tujuan_opd"
+                            menu={menu}
+                        />
+                    }
+                </div>
             </div>
         </>
     )
