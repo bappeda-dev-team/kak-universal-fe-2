@@ -22,6 +22,10 @@ export interface TematikFindall {
     childs?: TematikFindall[];
     jenis_pohon?: string;
     level_pohon?: number;
+    misi: Misi[];
+}
+export interface Misi {
+    misi: string;
 }
 export interface Indikator {
     id_indikator: string;

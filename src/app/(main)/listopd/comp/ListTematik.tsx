@@ -14,12 +14,12 @@ interface ListTematik {
 
 export const ListTematik: React.FC<ListTematik> = ({ tahun }) => {
 
-    const MisiDummy = [
-        { "id_misi": 1, "misi": "Membangun dan meningkatkan sarana dan prasarana publik yang berkualitas, adil, berkelanjutan dan berwawasan lingkungan" },
-        { "id_misi": 2, "misi": "Meningkatkan taraf hidup masyarakat dengan memanfaatkan potensi sumberdaya alam, memberdayakan usaha ekonomi kecil menengah yang berbasis kerakyatan, dan perluasan lapangan kerja termasuk pengembangan ekonomi kreatif berbasis pariwisata dan kearifan lokal" },
-        { "id_misi": 3, "misi": "Mewujudkan masyarakat yang cerdas, sehat, sejahtera, bermartabat dan berdaya saing tinggi" },
-        { "id_misi": 4, "misi": "Menciptakan tata pemerintahan yang bersih, berwibawa, transparan, dan akuntabel" },
-    ]
+    // const MisiDummy = [
+    //     { "id_misi": 1, "misi": "Membangun dan meningkatkan sarana dan prasarana publik yang berkualitas, adil, berkelanjutan dan berwawasan lingkungan" },
+    //     { "id_misi": 2, "misi": "Meningkatkan taraf hidup masyarakat dengan memanfaatkan potensi sumberdaya alam, memberdayakan usaha ekonomi kecil menengah yang berbasis kerakyatan, dan perluasan lapangan kerja termasuk pengembangan ekonomi kreatif berbasis pariwisata dan kearifan lokal" },
+    //     { "id_misi": 3, "misi": "Mewujudkan masyarakat yang cerdas, sehat, sejahtera, bermartabat dan berdaya saing tinggi" },
+    //     { "id_misi": 4, "misi": "Menciptakan tata pemerintahan yang bersih, berwibawa, transparan, dan akuntabel" },
+    // ]
 
     const [Tematik, setTematik] = useState<TematikFindall[]>([]);
 
@@ -140,8 +140,8 @@ export const ListTematik: React.FC<ListTematik> = ({ tahun }) => {
                                         Misi RPJMD Terkait
                                     </h2>
                                     <ol className="flex flex-col gap-2.5">
-                                        {MisiDummy.length > 0 ?
-                                            MisiDummy.map((misi: Misi, m_index: number) => (
+                                        {data.misi.length > 0 ?
+                                            data.misi.map((misi: Misi, m_index: number) => (
                                                 <li key={m_index} className="flex items-start gap-3">
                                                     <span className={`flex-none w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${isShown ? "bg-emerald-500 text-white" : "bg-emerald-100 text-emerald-700"}`}>
                                                         {m_index + 1}
