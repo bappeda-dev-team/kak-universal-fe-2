@@ -86,7 +86,7 @@ export const TablePerencanaan = () => {
                     },
                 });
                 const result = await response.json();
-                const data = result.rencana_kinerja;
+                const data = result.data;
                 if (data == null) {
                     setDataNull(true);
                     setRekin([]);
