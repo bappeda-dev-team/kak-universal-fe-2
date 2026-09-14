@@ -291,12 +291,19 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                                                             <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.definisi_operasional || "-"}</td>
                                                             <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.rumus_perhitungan || "-"}</td>
                                                             <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.sumber_data || "-"}</td>
-                                                            {i.target.map((t: Target) => (
-                                                                <React.Fragment key={t.id}>
-                                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
-                                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
-                                                                </React.Fragment>
-                                                            ))}
+                                                            {i.target ?
+                                                                i.target.map((t: Target) => (
+                                                                    <React.Fragment key={t.id}>
+                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
+                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
+                                                                    </React.Fragment>
+                                                                ))
+                                                                :
+                                                                <>
+                                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>-</td>
+                                                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>-</td>
+                                                                </>
+                                                            }
                                                         </tr>
                                                     ))
                                                 )}
