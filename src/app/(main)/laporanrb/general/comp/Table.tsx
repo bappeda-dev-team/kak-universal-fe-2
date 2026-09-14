@@ -1,14 +1,9 @@
 'use client'
 
 import React, { useEffect, useState } from "react"
-import { ButtonSkyBorder, ButtonRedBorder } from "@/components/global/Button"
-import { TbCirclePlus, TbPencil, TbTrash } from "react-icons/tb"
 import { useBrandingContext } from "@/context/BrandingContext"
-// import { ModalMasterRb } from "./ModalMasterRb"
-import { AlertQuestion, AlertNotification } from "@/components/global/Alert"
 import { getToken } from "@/components/lib/Cookie"
 import { LoadingClip } from "@/components/global/Loading"
-// import { RB, IndikatorRB, TargetRB } from "../type"
 
 interface RencanaAksi {
     rencana_aksi: string;
@@ -19,6 +14,10 @@ interface RencanaAksi {
     opd_koordinator: string;
     nip_pelaksana: string;
     nama_pelaksana: string;
+    subkegiatan: {
+        kode_subkegiatan: string;
+        nama_subkegiatan: string;
+    }
     opd_crosscuttings: [];
 }
 
@@ -152,6 +151,7 @@ export const Table = () => {
                                 <th colSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Periode Pelaksanaan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Satuan Output</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 w-[200px]">Capaian (%)</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 w-[200px]">Sub Kegiatan</th>
                                 <th colSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Biaya</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">OPD Koordinator</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Pelaksana</th>
@@ -239,6 +239,13 @@ export const Table = () => {
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                     {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.capaian ?? "-"}
                                                 </td>
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                    {renaksi[0]?.subkegiatan ? 
+                                                        `${renaksi[0]?.subkegiatan?.kode_subkegiatan || ""} - ${renaksi[0]?.subkegiatan?.nama_subkegiatan || ""}`
+                                                    :
+                                                        <>-</>
+                                                    }
+                                                </td>
 
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">{renaksi[0]?.anggaran ?? "-"}</td>
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">{renaksi[0]?.realisasi_anggaran ?? "-"}</td>
@@ -309,6 +316,13 @@ export const Table = () => {
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                         {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.capaian ?? "-"}
                                                     </td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                        {ra.subkegiatan ?
+                                                            `${ra.subkegiatan.kode_subkegiatan || ""} - ${ra.subkegiatan.nama_subkegiatan || ""}`
+                                                            :
+                                                            <>-</>
+                                                        }
+                                                    </td>
 
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.anggaran}</td>
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.realisasi_anggaran}</td>
@@ -317,7 +331,7 @@ export const Table = () => {
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-left">
                                                         {ra.nama_pelaksana}<br />{ra.nip_pelaksana}
                                                     </td>
-                                                    {ra.opd_crosscuttings  ?
+                                                    {ra.opd_crosscuttings ?
                                                         ra.opd_crosscuttings?.map((cr: Crosscutting, sr_index: number) => (
                                                             <td key={sr_index} className="border border-white bg-blue-100 px-6 py-4 text-center">{cr.nama_opd || "-"}</td>
                                                         ))
