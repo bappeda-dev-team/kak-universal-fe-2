@@ -14,13 +14,6 @@ interface ListTematik {
 
 export const ListTematik: React.FC<ListTematik> = ({ tahun }) => {
 
-    // const MisiDummy = [
-    //     { "id_misi": 1, "misi": "Membangun dan meningkatkan sarana dan prasarana publik yang berkualitas, adil, berkelanjutan dan berwawasan lingkungan" },
-    //     { "id_misi": 2, "misi": "Meningkatkan taraf hidup masyarakat dengan memanfaatkan potensi sumberdaya alam, memberdayakan usaha ekonomi kecil menengah yang berbasis kerakyatan, dan perluasan lapangan kerja termasuk pengembangan ekonomi kreatif berbasis pariwisata dan kearifan lokal" },
-    //     { "id_misi": 3, "misi": "Mewujudkan masyarakat yang cerdas, sehat, sejahtera, bermartabat dan berdaya saing tinggi" },
-    //     { "id_misi": 4, "misi": "Menciptakan tata pemerintahan yang bersih, berwibawa, transparan, dan akuntabel" },
-    // ]
-
     const [Tematik, setTematik] = useState<TematikFindall[]>([]);
 
     const [IsError, setIsError] = useState<boolean>(false);
