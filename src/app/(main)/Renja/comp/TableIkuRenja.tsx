@@ -175,7 +175,7 @@ const TableIkuRenja: React.FC<table> = ({ tahun, kode_opd, menu }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {DataNull ? (
+                        {DataNull || IKU.length === 0 ? (
                             <tr>
                                 <td className="px-6 py-3" colSpan={30}>
                                     Data Kosong / Belum Ditambahkan

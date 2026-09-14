@@ -33,3 +33,7 @@ export interface Target {
     target: string;
     satuan: string;
 };
+export interface Misi {
+    id_misi: number;
+    misi: string;
+}
