@@ -45,6 +45,7 @@ export interface RencanaKinerja {
     tw4: number;
     keterangan: string;
     total_anggaran: number;
+    indikator_rencana_kinerja: IndikatorRencanaKinerja[]; 
     subkegiatan: SubKegiatan[];
 }
 
@@ -53,4 +54,19 @@ export interface Rekin {
     nama_sasaran_opd: string;
     tahun_renaksi: string;
     rencana_kinerja: RencanaKinerja[];
+}
+
+export interface IndikatorRencanaKinerja {
+    id_indikator: string;
+    rencana_kinerja_id: string;
+    nama_indikator: string;
+    targets: Target[];
+    manual_ik_exist: boolean;
+}
+export interface Target {
+    id_target: string;
+    indikator_id: string;
+    target: string;
+    satuan: string;
+    tahun: string;
 }
