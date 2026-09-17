@@ -1,8 +1,18 @@
 "use client";
 
 import jsPDF from "jspdf";
+import {
+    AlignmentType,
+    Document,
+    Packer,
+    Paragraph,
+    TextRun,
+    convertMillimetersToTwip,
+} from "docx";
 import { TablePaguTotalMatrixRenstraCetak } from "./TablePaguTotalMatrixRenstraCetak";
+import { TablePaguTotalMatrixRenstraWord } from "./TablePaguTotalMatrixRenstraWord";
 import { TableUrusanCetak } from "./TableUrusanCetak";
+import { TableUrusanWord } from "./TableUrusanWord";
 
 interface matrix {
     kode_opd: string
@@ -124,8 +134,92 @@ export function useCetakMatrixRenstra(
             });
         });
 
-        doc.save(`Matrix Renstra ${nama_opd || "unknown"} Periode ${tahun_awal || "-"}-${tahun_akhir || "-"}.pdf`);
+        doc.save(`Matrix Renstra ${nama_opd || "unknown"} Periode ${tahun_awal || "-"}-${tahun_akhir || "-"}.docx`);
     };
 
-    return { cetakPdfMatrixRenstra };
+    const cetakWordMatrixRenstra = async () => {
+        // if (!data) return;
+
+        const pageWidth = convertMillimetersToTwip(420);
+        const pageHeight = convertMillimetersToTwip(297);
+        const margin = convertMillimetersToTwip(5);
+
+        const children: (Paragraph | any)[] = [];
+
+        const title = (text: string, size: number, bold = false) =>
+            new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({
+                        text,
+                        bold,
+                        size,
+                        color: "000000",
+                    }),
+                ],
+                spacing: { after: convertMillimetersToTwip(2) },
+            });
+
+        children.push(title("Matrix Renstra", 28, true));
+        children.push(title(nama_opd, 24, false));
+        children.push(title(`Periode ${tahun_awal} - ${tahun_akhir}`, 24, false));
+        children.push(new Paragraph({ spacing: { after: convertMillimetersToTwip(6) } }));
+
+        data.urusan?.forEach((item) => {
+            children.push(TableUrusanWord(tahun_list, kode_opd, "Urusan", item, item.indikator, item.anggaran));
+
+            item.bidang_urusan?.forEach((bu) => {
+                children.push(TableUrusanWord(tahun_list, kode_opd, "Bidang Urusan", bu, bu.indikator, bu.anggaran));
+
+                bu.program?.forEach((p) => {
+                    children.push(TableUrusanWord(tahun_list, kode_opd, "Program", p, p.indikator, p.anggaran));
+
+                    p.kegiatan?.forEach((k) => {
+                        children.push(TableUrusanWord(tahun_list, kode_opd, "Kegiatan", k, k.indikator, k.anggaran));
+
+                        k.subkegiatan?.forEach((sk) => {
+                            children.push(TableUrusanWord(tahun_list, kode_opd, "Sub Kegiatan", sk, sk.indikator, sk.anggaran));
+                        });
+                    });
+                });
+            });
+        });
+
+        children.push(new Paragraph({ spacing: { before: convertMillimetersToTwip(6) } }));
+        children.push(TablePaguTotalMatrixRenstraWord(tahun_list, data.pagu_total));
+
+        const doc = new Document({
+            sections: [
+                {
+                    properties: {
+                        page: {
+                            size: {
+                                width: pageWidth,
+                                height: pageHeight,
+                            },
+                            margin: {
+                                top: convertMillimetersToTwip(15),
+                                bottom: convertMillimetersToTwip(15),
+                                left: margin,
+                                right: margin,
+                            },
+                        },
+                    },
+                    children,
+                },
+            ],
+        });
+
+        const blob = await Packer.toBlob(doc);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `Matrix Renstra ${nama_opd || "unknown"} Periode ${tahun_awal || "-"}-${tahun_akhir || "-"}.docx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    };
+
+    return { cetakPdfMatrixRenstra, cetakWordMatrixRenstra };
 }
