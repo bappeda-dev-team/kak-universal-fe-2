@@ -3,7 +3,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 import { Font } from '@react-pdf/renderer';
-import { RencanaKinerja, IndikatorSasaranOpd } from '../../type';
+import { RencanaKinerja, IndikatorSasaranOpd, IndikatorRencanaKinerja, Target } from '../../type';
 import { formatRupiah } from '@/components/utils/format-rupiah';
 
 Font.register({ family: 'Times-Roman', src: '/font/times.ttf', fontStyle: 'normal', fontWeight: 'normal' });
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
         borderRightWidth: 1,
     },
     colBorderBottom: {
-        borderBottom: 1,
+        borderBottomWidth: 1,
     },
     tableCell: {
         margin: 'auto', // Tidak perlu margin, padding sudah diatur di tableCol
@@ -204,7 +204,7 @@ const DocumentRenaksiOpd: React.FC<Modal> = ({ Data, sasaran, indikator, nama_op
                         <View style={[styles.tableColHeader, styles.col7, styles.colBorderRight, styles.colBorderBottom]}>
                             <Text style={styles.tableCell}>TW4</Text>
                         </View>
-                        <View style={[styles.tableColHeader, styles.col4, styles.colBorderRight, styles.colBorderBottom]}>
+                        <View style={[styles.tableColHeader, styles.col4, styles.colBorderBottom]}>
                             <Text style={styles.tableCell}>Keterangan</Text>
                         </View>
                     </View>
@@ -242,7 +242,7 @@ const DocumentRenaksiOpd: React.FC<Modal> = ({ Data, sasaran, indikator, nama_op
                         <View style={[styles.tableColHeader, styles.col7, styles.colBorderRight, styles.colBorderBottom]}>
                             <Text style={styles.tableCell}>(11)</Text>
                         </View>
-                        <View style={[styles.tableColHeader, styles.col4, styles.colBorderRight, styles.colBorderBottom]}>
+                        <View style={[styles.tableColHeader, styles.col4, styles.colBorderBottom]}>
                             <Text style={styles.tableCell}>(12)</Text>
                         </View>
                     </View>
@@ -258,11 +258,27 @@ const DocumentRenaksiOpd: React.FC<Modal> = ({ Data, sasaran, indikator, nama_op
                             </View>
                             {/* Indikator */}
                             <View style={[styles.tableCol, styles.col2, styles.colBorderRight, styles.colBorderBottom]}>
-                                <Text style={styles.tableCell}>-</Text>
+                                {data.indikator_rencana_kinerja ?
+                                    data.indikator_rencana_kinerja.map((i: IndikatorRencanaKinerja, i_index: number) => (
+                                        <Text style={styles.tableCell} key={i_index}>{i.nama_indikator}</Text>
+                                    ))
+                                    :
+                                    <Text style={styles.tableCell}>-</Text>
+                                }
                             </View>
                             {/* Target Satuan */}
                             <View style={[styles.tableCol, styles.col4, styles.colBorderRight, styles.colBorderBottom]}>
-                                <Text style={styles.tableCell}>-</Text>
+                                {data.indikator_rencana_kinerja ?
+                                    data.indikator_rencana_kinerja.map((i: IndikatorRencanaKinerja, i_index: number) => (
+                                        <Text style={styles.tableCell} key={i_index}>
+                                            {i.targets.map((t: Target, t_index: number) =>
+                                                `${t.target} ${t.satuan}`
+                                            ).join("\n")}
+                                        </Text>
+                                    ))
+                                    :
+                                    <Text style={styles.tableCell}>-</Text>
+                                }
                             </View>
                             {/* Sub Kegiatan */}
                             <View style={[styles.tableCol, styles.col3, styles.colBorderRight, styles.colBorderBottom]}>
@@ -293,7 +309,7 @@ const DocumentRenaksiOpd: React.FC<Modal> = ({ Data, sasaran, indikator, nama_op
                                 <Text style={styles.tableCell}>{data.tw4 || 0}</Text>
                             </View>
                             {/* Keterangan */}
-                            <View style={[styles.tableCol, styles.col4, styles.colBorderRight, styles.colBorderBottom]}>
+                            <View style={[styles.tableCol, styles.col4, styles.colBorderBottom]}>
                                 <Text style={styles.tableCell}>{data.keterangan || ""}</Text>
                             </View>
                         </View>
