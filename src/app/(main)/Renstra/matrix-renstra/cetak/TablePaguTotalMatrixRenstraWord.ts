@@ -22,7 +22,8 @@ interface pagu {
 const pageUsable = 410;
 const colKode = 34;
 const colJenis = 58;
-const indikatorPerTahun = 30;
+const colIndikator = 60;
+const targetPerTahun = 30;
 const paguPerTahun = 20;
 
 const cellBorders = {
@@ -54,12 +55,13 @@ const cell = (
 
 export function TablePaguTotalMatrixRenstraWord(tahun_list: string[], pagu: pagu[]): Table {
     const numYears = Math.max(tahun_list.length, 1);
-    const exactTotal = colKode + colJenis + numYears * (indikatorPerTahun + paguPerTahun);
+    const exactTotal = colKode + colJenis + colIndikator + numYears * (targetPerTahun + paguPerTahun);
     const tableWidth = Math.min(exactTotal, pageUsable);
     const scale = tableWidth / exactTotal;
     const kodeWidth = colKode * scale;
     const jenisWidth = colJenis * scale;
-    const indikatorWidth = indikatorPerTahun * scale;
+    const indikatorWidth = colIndikator * scale;
+    const targetWidth = targetPerTahun * scale;
     const paguWidth = paguPerTahun * scale;
 
     const row: TableRow = new TableRow({
@@ -76,11 +78,11 @@ export function TablePaguTotalMatrixRenstraWord(tahun_list: string[], pagu: pagu
                         }),
                     ],
                 }),
-            ], kodeWidth + jenisWidth, { columnSpan: 2 }),
+            ], kodeWidth + jenisWidth + indikatorWidth, { columnSpan: 3 }),
             ...tahun_list.flatMap((tahun) => {
                 const item = pagu.find((p) => p.tahun === tahun);
                 return [
-                    cell([new Paragraph({ children: [] })], indikatorWidth, {}),
+                    cell([new Paragraph({ children: [] })], targetWidth, {}),
                     cell([
                         new Paragraph({
                             alignment: AlignmentType.CENTER,
@@ -111,8 +113,9 @@ export function TablePaguTotalMatrixRenstraWord(tahun_list: string[], pagu: pagu
         columnWidths: [
             convertMillimetersToTwip(kodeWidth),
             convertMillimetersToTwip(jenisWidth),
+            convertMillimetersToTwip(indikatorWidth),
             ...tahun_list.flatMap(() => [
-                convertMillimetersToTwip(indikatorWidth),
+                convertMillimetersToTwip(targetWidth),
                 convertMillimetersToTwip(paguWidth),
             ]),
         ],
