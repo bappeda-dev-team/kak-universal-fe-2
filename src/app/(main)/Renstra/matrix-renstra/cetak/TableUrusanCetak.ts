@@ -66,6 +66,14 @@ export function TableUrusanCetak(
         };
     });
 
+    const numYears = Math.max(tahun_list.length, 1);
+    const usableWidth = 320;
+    const colKode = 30;
+    const colJenis = 46;
+    const sisaWidth = usableWidth - colKode - colJenis;
+    const targetWidth = (sisaWidth / numYears) * 0.62;
+    const paguWidth = (sisaWidth / numYears) * 0.38;
+
     const headerRow1 = [
         { content: "Kode", rowSpan: 2, styles: { halign: "center" } },
         { content: jenis, rowSpan: 2, styles: { halign: "center" } },
@@ -108,34 +116,29 @@ export function TableUrusanCetak(
         ])
     ]);
 
+    const columnStyles: any = {
+        0: { cellWidth: colKode },
+        1: { cellWidth: colJenis },
+    };
+    tahun_list.forEach((_, i) => {
+        columnStyles[2 + i * 2] = { cellWidth: targetWidth };
+        columnStyles[3 + i * 2] = { cellWidth: paguWidth };
+    });
+
     autoTable(doc, {
         startY: startY,
         head: [headerRow1, headerRow2] as RowInput[],
         body: body,
         theme: "grid",
+        margin: { left: 5, right: 5, top: 20, bottom: 20 },
         styles: {
             fontSize: 9,
             valign: "middle",
-            cellPadding: 3,
+            cellPadding: 2,
             lineWidth: 0.2,
             lineColor: [0, 0, 0],
         },
-        columnStyles: {
-            0: { cellWidth: 34 },
-            1: { cellWidth: 58 },
-            2: { cellWidth: 30 },
-            3: { cellWidth: 20 },
-            4: { cellWidth: 30 },
-            5: { cellWidth: 20 },
-            6: { cellWidth: 30 },
-            7: { cellWidth: 20 },
-            8: { cellWidth: 30 },
-            9: { cellWidth: 20 },
-            10: { cellWidth: 30 },
-            11: { cellWidth: 20 },
-            12: { cellWidth: 30 },
-            13: { cellWidth: 20 },
-        },
+        columnStyles,
         headStyles: {
             fillColor: bg,
             textColor: text,
