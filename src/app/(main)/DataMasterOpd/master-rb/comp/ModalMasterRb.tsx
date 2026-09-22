@@ -212,6 +212,22 @@ export const ModalMasterRb: React.FC<ModalProps> = ({ Data, isOpen, onClose, onS
                             render={({ field }) => (
                                 <div className="flex flex-col py-3">
                                     <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                        Tema RB :
+                                    </label>
+                                    <input
+                                        {...field}
+                                        className="border px-4 py-2 rounded-lg"
+                                        placeholder={`Masukkan Tema RB`}
+                                    />
+                                </div>
+                            )}
+                        />
+                        <Controller
+                            name={`kegiatan_utama`}
+                            control={control}
+                            render={({ field }) => (
+                                <div className="flex flex-col py-3">
+                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
                                         Kegiatan Utama :
                                     </label>
                                     <input
