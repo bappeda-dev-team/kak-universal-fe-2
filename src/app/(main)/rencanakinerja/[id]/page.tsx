@@ -77,7 +77,7 @@ const RincianRencanaKinerja = () => {
               id={id_rekin}
               nip={User?.nip}
             />
-            <InovasiMaster id={id_rekin} />
+            <InovasiMaster id={id_rekin} tahun={Tahun?.value} />
             {/* <Inovasi id={id_rekin} /> */}
             <div className="w-full my-4">
               <ButtonGreen
