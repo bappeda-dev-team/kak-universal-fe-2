@@ -2,8 +2,8 @@
 
 import { getToken } from "@/components/lib/Cookie";
 import React, { useEffect, useState } from "react";
-import { ButtonSkyBorder } from "@/components/global/Button";
-import { TbCirclePlus, TbPencil, TbPrinter } from "react-icons/tb";
+import { ButtonSkyBorder, ButtonRedBorder } from "@/components/global/Button";
+import { TbCirclePlus, TbFileTypeDoc, TbFileTypePdf, TbPencil, TbPrinter } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
 import { ModalMatrix, ModalEditMatrix } from "./ModalMatrix";
 import { ModalPaguAnggaran } from "./ModalPaguAnggaran";
@@ -123,7 +123,7 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
         fetchMatrix();
     }, [kode_opd, tahun_awal, tahun_akhir, token, FetchTrigger]);
 
-    const { cetakPdfMatrixRenstra } = useCetakMatrixRenstra(Matrix[0], nama_opd, kode_opd, tahun_awal, tahun_akhir, tahun_list);
+    const { cetakPdfMatrixRenstra, cetakWordMatrixRenstra } = useCetakMatrixRenstra(Matrix[0], nama_opd, kode_opd, tahun_awal, tahun_akhir, tahun_list);
     
     if (DataNull) {
         return (
@@ -142,13 +142,20 @@ export const TableRenstra: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, 
         <>
             {Matrix.map((item: matrix, index: number) => (
                 <React.Fragment key={index}>
-                    <div className="m-2">
-                        <ButtonSkyBorder 
+                    <div className="m-2 flex gap-2 flex-col sm:flex-row">
+                        <ButtonRedBorder 
                             className="w-full flex items-center gap-1"
                             onClick={cetakPdfMatrixRenstra}
                         >
-                            <TbPrinter />
-                            Cetak Penuh Matrix Renstra
+                            <TbFileTypePdf />
+                            Cetak Penuh Matrix Renstra (PDF)
+                        </ButtonRedBorder>
+                        <ButtonSkyBorder 
+                            className="w-full flex items-center gap-1"
+                            onClick={cetakWordMatrixRenstra}
+                        >
+                            <TbFileTypeDoc />
+                            Cetak Penuh Matrix Renstra (Word)
                         </ButtonSkyBorder>
                     </div>
                     <div className="overflow-auto m-2 rounded-xl border">

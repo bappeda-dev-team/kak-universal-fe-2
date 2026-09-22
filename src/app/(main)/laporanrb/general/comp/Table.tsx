@@ -141,9 +141,12 @@ export const Table = () => {
                             <tr className="bg-yellow-600 text-white">
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 text-center">No</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Jenis RB</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Tema RB</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Kegiatan Utama</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
                                 <th colSpan={4} className="border-r border-b px-6 py-3 w-[400px]">BaseLine {tahunBaseline}</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Gambaran Umun</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Permasalahan</th>
                                 <th colSpan={2} className="border-r border-b px-6 py-3 w-[200px]">{branding?.tahun?.value}</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Keterangan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[900px]">Rencana Aksi</th>
@@ -172,7 +175,7 @@ export const Table = () => {
                                 <th className="border-r border-b px-6 py-1 w-[100px]">Realisasi</th>
                             </tr>
                             <tr className="bg-yellow-600 text-white">
-                                {Array.from({ length: 25 }, (_, index) => (
+                                {Array.from({ length: 28 }, (_, index) => (
                                     <th key={index} className="border-r border-b px-2 py-1 text-center">{index + 1}</th>
                                 ))}
                             </tr>
@@ -191,6 +194,7 @@ export const Table = () => {
                                                 {/* RB Info */}
                                                 <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{index + 1}</td>
                                                 <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.jenis_rb}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">Tema</td>
                                                 <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.kegiatan_utama}</td>
 
                                                 {/* Indikator pertama */}
@@ -206,6 +210,8 @@ export const Table = () => {
                                                             <td className="border px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{base ? "0" : "-"}</td>
+                                                            <td className="border px-6 py-4 text-center">Gambaran Umun</td>
+                                                            <td className="border px-6 py-4 text-center">Permasalahan</td>
                                                             <td className="border px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{next?.satuan_next ?? "-"}</td>
                                                         </>
@@ -283,6 +289,9 @@ export const Table = () => {
                                                         <td className="border px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
                                                         <td className="border px-6 py-4 text-center">{base ? "0" : "-"}</td>
 
+                                                        <td className="border px-6 py-4 text-center">Gambaran Umum</td>
+                                                        <td className="border px-6 py-4 text-center">Permasalahan</td>
+
                                                         {/* Next */}
                                                         <td className="border px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
                                                         <td className="border px-6 py-4 text-center">{next?.satuan_next ?? "-"}</td>
@@ -295,7 +304,7 @@ export const Table = () => {
                                             {renaksi.slice(1).map((ra: RencanaAksi, raIndex: number) => (
                                                 <tr key={`ra-${raIndex}`}>
                                                     {/* Kosongkan kolom indikator 1–11 */}
-                                                    <td colSpan={11} className="px-6 py-4"></td>
+                                                    <td colSpan={14} className="px-6 py-4"></td>
 
                                                     {/* Kolom Renaksi */}
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-left">{ra.rencana_aksi}</td>
