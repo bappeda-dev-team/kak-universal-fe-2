@@ -8,10 +8,22 @@ import { AlertNotification } from "@/components/global/Alert";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import Select from "react-select";
 
+export interface OptionType {
+  value: string;
+  label: string;
+}
+
 interface FormValue {
-  judul_inovasi: string;
-  jenis_inovasi: string;
-  gambaran_nilai_kebaruan: string;
+  kode_opd: string;
+  nama_inovasi: string;
+  jenis_inovasi_id: OptionType | null;
+  kebaruan: string;
+  asal_inovasi: OptionType | null;
+  waktu_implementasi: string;
+  instansi: string;
+  inovator: string;
+  level: OptionType | null;
+  nip_inovator: OptionType | null;
 }
 interface modal {
   isOpen: boolean;
@@ -34,21 +46,146 @@ export const ModalInovasi: React.FC<modal> = ({
   const token = getToken();
   const [user, setUser] = useState<any>(null);
 
-  const [JudulInovasi, setJudulInovasi] = useState<string>("");
-  const [JenisInovasi, setJenisInovasi] = useState<string>("");
-  const [Gambaran, setGambaran] = useState<string>("");
+  const [Loading, setLoading] = useState<boolean>(false);
+
+  const [OptionNspk, setOptionNspk] = useState<OptionType[]>([]);
+  const [NamaInovasi, setJudulInovasi] = useState<string>("");
+  const [Kebaruan, setKebaruan] = useState<string>("");
+  const [OptionAsal, setOptionAsal] = useState<OptionType[]>([]);
+  const [selectedAsal, setSelectedAsal] = useState<string | null>(null);
+  const [Instansi, setInstansi] = useState<string>("");
+  const [Inovator, setInovator] = useState<string>("");
+  const [optionLevel, setOptionLevel] = useState<OptionType[]>([]);
+  const [optionPegawai, setOptionPegawai] = useState<OptionType[]>([]);
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+
+  const fetchOptionNspk = async () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/jenis-inovasi/findall`, {
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const result = await response.json();
+      const data = result.data;
+      const hasil = data.map((item: any) => ({
+        value: item.id,
+        label: `${item.jenis}`,
+      }));
+      setOptionNspk(hasil);
+    } catch (err) {
+      console.error(err, "gagal fetch option Jenis Inovasi");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOptionAsal = async () => {
+    try {
+      setLoading(true);
+
+      const hasil = [
+        {
+          value: "Internal",
+          label: "Internal",
+        },
+        {
+          value: "Eksternal",
+          label: "Eksternal",
+        },
+      ];
+
+      setOptionAsal(hasil);
+    } catch (err) {
+      console.error(err, "gagal membuat option");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOptionLevel = async () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${API_URL}/role/findall`, {
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+      const data = result.data;
+
+      const hasil = data.map((item: any) => ({
+        value: item.id,
+        label: `${item.role}`,
+      }));
+
+      setOptionLevel(hasil);
+    } catch (err) {
+      console.error(err, "gagal fetch option level");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOptionLevel();
+  }, []);
+
+  const fetchOptionPegawai = async (level: string) => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `${API_URL}/pegawai_by_level/${user?.kode_opd}/${level}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const result = await response.json();
+      const data = result.data;
+
+      const hasil = data.map((item: any) => ({
+        value: item.nip,
+        label: `${item.nama_pegawai}`,
+      }));
+
+      setOptionPegawai(hasil);
+    } catch (err) {
+      console.error(err, "gagal fetch option pegawai");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLevelChange = (selected: OptionType | null) => {
+    if (!selected) {
+      setSelectedLevel(null);
+      setOptionPegawai([]);
+      return;
+    }
+
+    setSelectedLevel(selected.value);
+    fetchOptionPegawai(selected.value);
+  };
 
   type OptionType = {
     value: string;
     label: string;
   };
-
-  const dataDummy: OptionType[] = [
-    {
-      value: "1",
-      label: "Pengembang",
-    },
-  ];
 
   const [Proses, setProses] = useState<boolean>(false);
 
@@ -63,22 +200,60 @@ export const ModalInovasi: React.FC<modal> = ({
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const formData = {
       rencana_kinerja_id: id_rekin,
-      pegawai_id: user?.pegawai_id,
-      judul_inovasi: data.judul_inovasi,
-      jenis_inovasi: data.jenis_inovasi,
-      gambaran_nilai_kebaruan: data.gambaran_nilai_kebaruan,
+      kode_opd: user?.kode_opd,
+      nama_inovasi: data.nama_inovasi,
+      jenis_inovasi_id: data.jenis_inovasi_id?.value,
+      kebaruan: data.kebaruan,
+      asal_inovasi: data.asal_inovasi?.value,
+      waktu_implementasi: data.waktu_implementasi,
+      instansi: data.instansi,
+      inovator: data.inovator,
+      nip_inovator: data.nip_inovator?.value,
+      tahun: user?.tahun,
     };
     // console.log(formData);
+    const errors = [];
+
+    if (!formData.waktu_implementasi) {
+      errors.push("Waktu implementasi tidak boleh kosong");
+    }
+
+    if (!formData.asal_inovasi) {
+      errors.push("Asal Inovasi tidak boleh kosong");
+    }
+
+    if (!formData.kebaruan) {
+      errors.push("Kebaruan tidak boleh kosong");
+    }
+
+    if (!formData.jenis_inovasi_id) {
+      errors.push("Jenis inovasi tidak boleh kosong");
+    }
+
+    if (!formData.nama_inovasi) {
+      errors.push("Nama inovasi tidak boleh kosong");
+    }
+
+    if (errors.length > 0) {
+      errors.forEach((message) => {
+        AlertNotification("Gagal", message, "error", 3000);
+      });
+
+      return;
+    }
     try {
       setProses(true);
-      const response = await fetch(`${API_URL}/inovasi/create/${id_rekin}`, {
-        method: "POST",
-        headers: {
-          Authorization: `${token}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${API_URL}/inovasi_rekin/create/${id_rekin}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         },
-        body: JSON.stringify(formData),
-      });
+      );
       if (response.ok) {
         AlertNotification(
           "Berhasil",
@@ -112,19 +287,17 @@ export const ModalInovasi: React.FC<modal> = ({
     return null;
   } else {
     return (
-      <div className="fixed inset-0 flex items-center justify-center z-50">
+      <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
         <div
           className="fixed inset-0 bg-black opacity-30"
           onClick={() => {
             onClose();
             setJudulInovasi("");
-            setJenisInovasi("");
-            setGambaran("");
           }}
         ></div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className={`bg-white rounded-lg p-8 z-10 w-4/5`}
+          className={`bg-white rounded-lg p-8 z-10 w-4/5 max-h-[90vh] overflow-y-auto`}
         >
           <div className="w-max-[500px] py-2 border-b">
             <h1 className="text-xl uppercase">Tambah Inovasi</h1>
@@ -132,21 +305,21 @@ export const ModalInovasi: React.FC<modal> = ({
           <div className="flex flex-col py-3">
             <label
               className="uppercase text-xs font-bold text-gray-700 my-2"
-              htmlFor="judul_inovasi`"
+              htmlFor="nama_inovasi"
             >
               Nama Inovasi:
             </label>
             <Controller
-              name="judul_inovasi"
+              name="nama_inovasi"
               control={control}
               render={({ field }) => (
                 <input
                   {...field}
                   className="border px-4 py-2 rounded-lg"
-                  id="judul_inovasi`"
+                  id="nama_inovasi"
                   type="text"
                   placeholder="masukkan Nama Inovasi"
-                  value={field.value || JudulInovasi}
+                  value={field.value || NamaInovasi}
                   onChange={(e) => {
                     field.onChange(e);
                     setJudulInovasi(e.target.value);
@@ -158,27 +331,31 @@ export const ModalInovasi: React.FC<modal> = ({
           <div className="flex flex-col py-3">
             <label
               className="uppercase text-xs font-bold text-gray-700 my-2"
-              htmlFor="jenis_inovasi"
+              htmlFor="jenis_inovasi_id"
             >
               Jenis Inovasi:
             </label>
             <Controller
-              name="jenis_inovasi"
+              name="jenis_inovasi_id"
               control={control}
               render={({ field }) => (
                 <Select
                   {...field}
-                  placeholder="jenis inovasi"
-                  isSearchable
-                  isClearable
-                  onChange={(option) => {
-                    field.onChange(option);
+                  id="jenis_inovasi_id"
+                  placeholder="Pilih Jenis Inovasi"
+                  options={OptionNspk}
+                  isLoading={Loading}
+                  onMenuOpen={() => {
+                    fetchOptionNspk();
                   }}
                   styles={{
-                    control: (baseStyles) => ({
+                    control: (baseStyles, state) => ({
                       ...baseStyles,
                       borderRadius: "8px",
-                      textAlign: "start",
+                      borderColor: "black", // Warna default border menjadi merah
+                      "&:hover": {
+                        borderColor: "#3673CA", // Warna border tetap merah saat hover
+                      },
                     }),
                   }}
                 />
@@ -188,18 +365,44 @@ export const ModalInovasi: React.FC<modal> = ({
           <div className="flex flex-col py-3">
             <label
               className="uppercase text-xs font-bold text-gray-700 my-2"
-              htmlFor="jenis_inovasi"
+              htmlFor="kebaruan"
             >
-              Waktu Implementasi:
+              Kebaruan:
             </label>
             <Controller
-              name="jenis_inovasi"
+              name="kebaruan"
               control={control}
               render={({ field }) => (
                 <input
                   {...field}
                   className="border px-4 py-2 rounded-lg"
-                  id="jenis_inovasi"
+                  id="kebaruan"
+                  type="text"
+                  placeholder="masukkan Kebaruan"
+                  value={field.value || Kebaruan}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    setKebaruan(e.target.value);
+                  }}
+                />
+              )}
+            />
+          </div>
+          <div className="flex flex-col py-3">
+            <label
+              className="uppercase text-xs font-bold text-gray-700 my-2"
+              htmlFor="waktu_implementasi"
+            >
+              Waktu Implementasi:
+            </label>
+            <Controller
+              name="waktu_implementasi"
+              control={control}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  className="border px-4 py-2 rounded-lg"
+                  id="waktu_implementasi"
                   type="date"
                 />
               )}
@@ -208,33 +411,155 @@ export const ModalInovasi: React.FC<modal> = ({
           <div className="flex flex-col py-3">
             <label
               className="uppercase text-xs font-bold text-gray-700 my-2"
-              htmlFor="gambaran_nilai_kebaruan"
+              htmlFor="asal_inovasi"
             >
-              Inovator:
+              Asal Inovasi:
             </label>
             <Controller
-              name="gambaran_nilai_kebaruan"
+              name="asal_inovasi"
               control={control}
               render={({ field }) => (
                 <Select
                   {...field}
-                  placeholder="inovator"
-                  isSearchable
-                  isClearable
-                  onChange={(option) => {
-                    field.onChange(option);
+                  id="asal_inovasi"
+                  placeholder="Pilih Asal Inovasi"
+                  options={OptionAsal}
+                  isLoading={Loading}
+                  onMenuOpen={() => {
+                    fetchOptionAsal();
+                  }}
+                  onChange={(selected) => {
+                    field.onChange(selected);
+                    setSelectedAsal(selected?.value || null);
+
+                    // Reset pilihan level dan pegawai ketika ganti asal
+                    setSelectedLevel(null);
+                    setOptionPegawai([]);
                   }}
                   styles={{
-                    control: (baseStyles) => ({
+                    control: (baseStyles, state) => ({
                       ...baseStyles,
                       borderRadius: "8px",
-                      textAlign: "start",
+                      borderColor: "black", // Warna default border menjadi merah
+                      "&:hover": {
+                        borderColor: "#3673CA", // Warna border tetap merah saat hover
+                      },
                     }),
                   }}
                 />
               )}
             />
           </div>
+          {selectedAsal === "Eksternal" && (
+            <>
+              <div className="flex flex-col py-3">
+                <label
+                  className="uppercase text-xs font-bold text-gray-700 my-2"
+                  htmlFor="instansi"
+                >
+                  Instansi/Lembaga/Masyarakat:
+                </label>
+                <Controller
+                  name="instansi"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      {...field}
+                      className="border px-4 py-2 rounded-lg"
+                      id="instansi"
+                      type="text"
+                      placeholder="masukkan Instansi"
+                      value={field.value || Instansi}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setInstansi(e.target.value);
+                      }}
+                    />
+                  )}
+                />
+              </div>
+              <div className="flex flex-col py-3">
+                <label
+                  className="uppercase text-xs font-bold text-gray-700 my-2"
+                  htmlFor="inovator"
+                >
+                  Inovator:
+                </label>
+                <Controller
+                  name="inovator"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      {...field}
+                      className="border px-4 py-2 rounded-lg"
+                      id="inovator"
+                      type="text"
+                      placeholder="masukkan Inovator"
+                      value={field.value || Inovator}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setInovator(e.target.value);
+                      }}
+                    />
+                  )}
+                />
+              </div>
+            </>
+          )}
+          {selectedAsal === "Internal" && (
+            <>
+              <div className="flex flex-col py-3">
+                <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                  Level:
+                </label>
+
+                <Select
+                  options={optionLevel}
+                  placeholder="Pilih Level"
+                  isClearable
+                  onChange={handleLevelChange}
+                />
+              </div>
+
+              <div className="flex flex-col py-3">
+                <label
+                  className="uppercase text-xs font-bold text-gray-700 my-2"
+                  htmlFor="nip_inovator"
+                >
+                  Pegawai:
+                </label>
+
+                <Controller
+                  name="nip_inovator"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      id="nip_inovator"
+                      placeholder={
+                        selectedLevel
+                          ? "Pilih Pegawai"
+                          : "Pilih level terlebih dahulu"
+                      }
+                      options={optionPegawai}
+                      isDisabled={!selectedLevel}
+                      isClearable
+                      styles={{
+                        control: (baseStyles, state) => ({
+                          ...baseStyles,
+                          borderRadius: "8px",
+                          borderColor: "black",
+                          "&:hover": {
+                            borderColor: "#3673CA",
+                          },
+                        }),
+                      }}
+                    />
+                  )}
+                />
+              </div>
+            </>
+          )}
           <ButtonSky className="w-full my-3" type="submit" disabled={Proses}>
             Simpan
           </ButtonSky>
@@ -243,8 +568,6 @@ export const ModalInovasi: React.FC<modal> = ({
             onClick={() => {
               onClose();
               setJudulInovasi("");
-              setJenisInovasi("");
-              setGambaran("");
             }}
           >
             Batal
@@ -262,12 +585,146 @@ export const ModalInovasiEdit: React.FC<modal> = ({
 }) => {
   const {
     control,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValue>();
-  const [JudulInovasi, setJudulInovasi] = useState<string>("");
-  const [JenisInovasi, setJenisInovasi] = useState<string>("");
-  const [Gambaran, setGambaran] = useState<string>("");
+  const [NamaInovasi, setNamaInovasi] = useState<string>("");
+  const [Kebaruan, setKebaruan] = useState<string>("");
+  const [OptionAsal, setOptionAsal] = useState<OptionType[]>([]);
+  const [selectedAsal, setSelectedAsal] = useState<string | null>(null);
+  const [Instansi, setInstansi] = useState<string>("");
+  const [Inovator, setInovator] = useState<string>("");
+  const [optionLevel, setOptionLevel] = useState<OptionType[]>([]);
+  const [optionPegawai, setOptionPegawai] = useState<OptionType[]>([]);
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+
+  const [Loading, setLoading] = useState<boolean>(false);
+
+  const [OptionNspk, setOptionNspk] = useState<OptionType[]>([]);
+
+  const fetchOptionNspk = async () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/jenis-inovasi/findall`, {
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const result = await response.json();
+      const data = result.data;
+      const hasil = data.map((item: any) => ({
+        value: item.id,
+        label: `${item.jenis}`,
+      }));
+      setOptionNspk(hasil);
+    } catch (err) {
+      console.error(err, "gagal fetch option Jenis Inovasi");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOptionAsal = async () => {
+    try {
+      setLoading(true);
+
+      const hasil = [
+        {
+          value: "Internal",
+          label: "Internal",
+        },
+        {
+          value: "Eksternal",
+          label: "Eksternal",
+        },
+      ];
+
+      setOptionAsal(hasil);
+    } catch (err) {
+      console.error(err, "gagal membuat option");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOptionLevel = async () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${API_URL}/role/findall`, {
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+      const data = result.data;
+
+      const hasil = data.map((item: any) => ({
+        value: item.id,
+        label: `${item.role}`,
+      }));
+
+      setOptionLevel(hasil);
+    } catch (err) {
+      console.error(err, "gagal fetch option level");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOptionLevel();
+  }, []);
+
+  const fetchOptionPegawai = async (level: string) => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `${API_URL}/pegawai_by_level/${user?.kode_opd}/${level}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const result = await response.json();
+      const data = result.data;
+
+      const hasil = data.map((item: any) => ({
+        value: item.nip,
+        label: `${item.nama_pegawai}`,
+      }));
+
+      setOptionPegawai(hasil);
+    } catch (err) {
+      console.error(err, "gagal fetch option pegawai");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLevelChange = (selected: OptionType | null) => {
+    if (!selected) {
+      setSelectedLevel(null);
+      setOptionPegawai([]);
+      return;
+    }
+
+    setSelectedLevel(selected.value);
+    fetchOptionPegawai(selected.value);
+  };
 
   const [Proses, setProses] = useState<boolean>(false);
   const [user, setUser] = useState<any>(null);
@@ -284,21 +741,60 @@ export const ModalInovasiEdit: React.FC<modal> = ({
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const fetchId = async () => {
       try {
-        const response = await fetch(`${API_URL}/inovasi/detail/${id}`, {
+        const response = await fetch(`${API_URL}/inovasi_rekin/detail/${id}`, {
           headers: {
             Authorization: `${token}`,
           },
         });
         const result = await response.json();
-        const data = result.inovasi;
-        if (data.judul_inovasi) {
-          setJudulInovasi(data.judul_inovasi);
+        const data = result.inovasi_rekin;
+        if (data.nama_inovasi) {
+          setNamaInovasi(data.nama_inovasi || "");
+          // alert("TIDAK ADA BOSS");
         }
-        if (data.jenis_inovasi) {
-          setJenisInovasi(data.jenis_inovasi);
+        if (data.jenis_inovasi_id) {
+          setValue("jenis_inovasi_id", {
+            value: data.jenis_inovasi_id,
+            label: data.jenis_inovasi,
+          });
         }
-        if (data.gambaran_nilai_kebaruan) {
-          setGambaran(data.gambaran_nilai_kebaruan);
+        if (data.kebaruan) {
+          setKebaruan(data.kebaruan || "");
+        }
+        if (data.waktu_implementasi) {
+          setValue("waktu_implementasi", data.waktu_implementasi.split("T")[0]);
+        }
+        if (data.asal_inovasi) {
+          setValue("asal_inovasi", {
+            value: data.asal_inovasi,
+            label: data.asal_inovasi,
+          });
+          setSelectedAsal(data.asal_inovasi);
+        }
+
+        if (data.instansi) {
+          setInstansi(data.instansi || "");
+        }
+        if (data.inovator) {
+          setInovator(data.inovator || "");
+        }
+        if (data.level && optionLevel.length > 0) {
+          const levelOption = optionLevel.find(
+            (item) => item.label === data.level,
+          );
+
+          if (levelOption) {
+            setValue("level", levelOption);
+            setSelectedLevel(levelOption.value);
+
+            await fetchOptionPegawai(levelOption.value);
+          }
+        }
+        if (data.nip_inovator) {
+          setValue("nip_inovator", {
+            value: data.nip_inovator,
+            label: data.nama_nip_inovator,
+          });
         }
       } catch (err) {
         console.error(err);
@@ -307,22 +803,49 @@ export const ModalInovasiEdit: React.FC<modal> = ({
     if (isOpen) {
       fetchId();
     }
-  }, [id, token, isOpen]);
+  }, [id, token, isOpen, setValue, optionLevel]);
 
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const formData = {
       //key : value
       rencana_kinerja_id: id_rekin,
-      pegawai_id: user?.pegawai_id,
-      judul_inovasi: data.judul_inovasi,
-      jenis_inovasi: data.jenis_inovasi,
-      gambaran_nilai_kebaruan: data.gambaran_nilai_kebaruan,
+      kode_opd: user?.kode_opd,
+      nama_inovasi: NamaInovasi,
+      jenis_inovasi_id: data.jenis_inovasi_id?.value,
+      kebaruan: Kebaruan,
+      waktu_implementasi: data.waktu_implementasi,
+      asal_inovasi: data.asal_inovasi?.value,
+      instansi: Instansi,
+      inovator: Inovator,
+      level: data.level?.value,
+      nip_inovator: data.nip_inovator?.value,
     };
-    //   console.log(formData);
+    // console.log(formData);
+    const errors = [];
+
+    if (!formData.waktu_implementasi) {
+      errors.push("Waktu implementasi tidak boleh kosong");
+    }
+
+    if (!formData.jenis_inovasi_id) {
+      errors.push("Jenis inovasi tidak boleh kosong");
+    }
+
+    if (!formData.nama_inovasi) {
+      errors.push("Nama inovasi tidak boleh kosong");
+    }
+
+    if (errors.length > 0) {
+      errors.forEach((message) => {
+        AlertNotification("Gagal", message, "error", 3000);
+      });
+
+      return;
+    }
     try {
       setProses(true);
-      const response = await fetch(`${API_URL}/inovasi/update/${id}`, {
+      const response = await fetch(`${API_URL}/inovasi_rekin/update/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `${token}`,
@@ -362,7 +885,9 @@ export const ModalInovasiEdit: React.FC<modal> = ({
           className={`fixed inset-0 bg-black opacity-30`}
           onClick={onClose}
         ></div>
-        <div className={`bg-white rounded-lg p-8 z-10 w-4/5 text-start`}>
+        <div
+          className={`bg-white rounded-lg p-8 z-10 w-4/5 text-start max-h-[90vh] overflow-y-auto`}
+        >
           <div className="w-max-[500px] py-2 border-b text-center">
             <h1 className="text-xl uppercase">Edit Inovasi {id}</h1>
           </div>
@@ -373,24 +898,24 @@ export const ModalInovasiEdit: React.FC<modal> = ({
             <div className="flex flex-col py-3">
               <label
                 className="uppercase text-xs font-bold text-gray-700 my-2"
-                htmlFor="judul_inovasi"
+                htmlFor="nama_inovasi"
               >
-                Judul Inovasi:
+                Nama Inovasi:
               </label>
               <Controller
-                name="judul_inovasi"
+                name="nama_inovasi"
                 control={control}
                 render={({ field }) => (
                   <input
                     {...field}
                     className="border px-4 py-2 rounded-lg"
-                    id="judul_inovasi"
+                    id="nama_inovasi"
                     type="text"
-                    placeholder="masukkan judul inovasi"
-                    value={JudulInovasi}
+                    placeholder="masukkan nama inovasi"
+                    value={NamaInovasi}
                     onChange={(e) => {
                       field.onChange(e);
-                      setJudulInovasi(e.target.value);
+                      setNamaInovasi(e.target.value);
                     }}
                   />
                 )}
@@ -404,19 +929,27 @@ export const ModalInovasiEdit: React.FC<modal> = ({
                 Jenis Inovasi:
               </label>
               <Controller
-                name="jenis_inovasi"
+                name="jenis_inovasi_id"
                 control={control}
                 render={({ field }) => (
-                  <input
+                  <Select
                     {...field}
-                    type="text"
-                    className="border px-4 py-2 rounded-lg"
-                    id="jenis_inovasi"
-                    placeholder="masukkan jenis_inovasi"
-                    value={JenisInovasi}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      setJenisInovasi(e.target.value);
+                    id="jenis_inovasi_id"
+                    placeholder="Pilih Jenis Inovasi"
+                    options={OptionNspk}
+                    isLoading={Loading}
+                    onMenuOpen={() => {
+                      fetchOptionNspk();
+                    }}
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderRadius: "8px",
+                        borderColor: "black", // Warna default border menjadi merah
+                        "&:hover": {
+                          borderColor: "#3673CA", // Warna border tetap merah saat hover
+                        },
+                      }),
                     }}
                   />
                 )}
@@ -425,28 +958,222 @@ export const ModalInovasiEdit: React.FC<modal> = ({
             <div className="flex flex-col py-3">
               <label
                 className="uppercase text-xs font-bold text-gray-700 my-2"
-                htmlFor="gambaran_nilai_kebaruan"
+                htmlFor="kebaruan"
               >
-                Gambaran Nilai Kebaruan:
+                Kebaruan:
               </label>
               <Controller
-                name="gambaran_nilai_kebaruan"
+                name="kebaruan"
                 control={control}
                 render={({ field }) => (
-                  <textarea
+                  <input
                     {...field}
                     className="border px-4 py-2 rounded-lg"
-                    id="gambaran_nilai_kebaruan"
-                    placeholder="masukkan gambaran_nilai_kebaruan"
-                    value={Gambaran}
+                    id="kebaruan"
+                    type="text"
+                    placeholder="masukkan Kebaruan"
+                    value={field.value || Kebaruan}
                     onChange={(e) => {
                       field.onChange(e);
-                      setGambaran(e.target.value);
+                      setKebaruan(e.target.value);
                     }}
                   />
                 )}
               />
             </div>
+            <div className="flex flex-col py-3">
+              <label
+                className="uppercase text-xs font-bold text-gray-700 my-2"
+                htmlFor="waktu_implementasi"
+              >
+                Waktu Implementasi:
+              </label>
+              <Controller
+                name="waktu_implementasi"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    className="border px-4 py-2 rounded-lg"
+                    id="waktu_implementasi"
+                    type="date"
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-col py-3">
+              <label
+                className="uppercase text-xs font-bold text-gray-700 my-2"
+                htmlFor="asal_inovasi"
+              >
+                Asal Inovasi:
+              </label>
+              <Controller
+                name="asal_inovasi"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    id="asal_inovasi"
+                    placeholder="Pilih Asal Inovasi"
+                    options={OptionAsal}
+                    isLoading={Loading}
+                    onMenuOpen={() => {
+                      fetchOptionAsal();
+                    }}
+                    onChange={(selected) => {
+                      field.onChange(selected);
+                      setSelectedAsal(selected?.value || null);
+
+                      // Reset pilihan level dan pegawai ketika ganti asal
+                      setSelectedLevel(null);
+                      setOptionPegawai([]);
+                    }}
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderRadius: "8px",
+                        borderColor: "black", // Warna default border menjadi merah
+                        "&:hover": {
+                          borderColor: "#3673CA", // Warna border tetap merah saat hover
+                        },
+                      }),
+                    }}
+                  />
+                )}
+              />
+            </div>
+            {selectedAsal === "Eksternal" && (
+              <>
+                <div className="flex flex-col py-3">
+                  <label
+                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                    htmlFor="instansi"
+                  >
+                    Instansi:
+                  </label>
+                  <Controller
+                    name="instansi"
+                    control={control}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        className="border px-4 py-2 rounded-lg"
+                        id="instansi"
+                        type="text"
+                        placeholder="masukkan Instansi"
+                        value={field.value || Instansi}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setInstansi(e.target.value);
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col py-3">
+                  <label
+                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                    htmlFor="inovator"
+                  >
+                    Inovator:
+                  </label>
+                  <Controller
+                    name="inovator"
+                    control={control}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        className="border px-4 py-2 rounded-lg"
+                        id="inovator"
+                        type="text"
+                        placeholder="masukkan Inovator"
+                        value={field.value || Inovator}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setInovator(e.target.value);
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+              </>
+            )}
+            {selectedAsal === "Internal" && (
+              <>
+                <div className="flex flex-col py-3">
+                  <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                    Level:
+                  </label>
+
+                  <Controller
+                    name="level"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        id="level"
+                        options={optionLevel}
+                        placeholder="Pilih Level"
+                        isClearable
+                        onChange={(selected) => {
+                          field.onChange(selected);
+                          handleLevelChange(selected);
+                        }}
+                        styles={{
+                          control: (baseStyles, state) => ({
+                            ...baseStyles,
+                            borderRadius: "8px",
+                            borderColor: "black",
+                            "&:hover": {
+                              borderColor: "#3673CA",
+                            },
+                          }),
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="flex flex-col py-3">
+                  <label
+                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                    htmlFor="nip_inovator"
+                  >
+                    Pegawai:
+                  </label>
+
+                  <Controller
+                    name="nip_inovator"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        id="nip_inovator"
+                        placeholder={
+                          selectedLevel
+                            ? "Pilih Pegawai"
+                            : "Pilih level terlebih dahulu"
+                        }
+                        options={optionPegawai}
+                        isDisabled={!selectedLevel}
+                        isClearable
+                        styles={{
+                          control: (baseStyles, state) => ({
+                            ...baseStyles,
+                            borderRadius: "8px",
+                            borderColor: "black",
+                            "&:hover": {
+                              borderColor: "#3673CA",
+                            },
+                          }),
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+              </>
+            )}
             <ButtonSky className="w-full my-3" type="submit" disabled={Proses}>
               {Proses ? (
                 <span className="flex">
