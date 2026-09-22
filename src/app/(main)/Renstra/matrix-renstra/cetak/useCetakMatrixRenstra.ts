@@ -73,7 +73,7 @@ export function useCetakMatrixRenstra(
         const doc = new jsPDF({
             orientation: "landscape",
             unit: "mm",
-            format: "a3",
+            format: [330, 215],
         });
 
         const pageWidth = doc.internal.pageSize.getWidth();
@@ -143,14 +143,14 @@ export function useCetakMatrixRenstra(
             });
         });
 
-        doc.save(`Matrix Renstra ${nama_opd || "unknown"} Periode ${tahun_awal || "-"}-${tahun_akhir || "-"}.docx`);
+        doc.save(`Matrix Renstra ${nama_opd || "unknown"} Periode ${tahun_awal || "-"}-${tahun_akhir || "-"}.pdf`);
     };
 
     const cetakWordMatrixRenstra = async () => {
         // if (!data) return;
 
-        const pageWidth = convertMillimetersToTwip(420);
-        const pageHeight = convertMillimetersToTwip(297);
+        const pageWidth = convertMillimetersToTwip(330);
+        const pageHeight = convertMillimetersToTwip(215);
         const margin = convertMillimetersToTwip(5);
 
         const children: (Paragraph | any)[] = [];

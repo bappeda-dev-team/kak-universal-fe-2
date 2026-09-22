@@ -1,14 +1,14 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import { useForm, Controller, SubmitHandler, useFieldArray } from "react-hook-form";
-import { ButtonSky, ButtonRed, ButtonSkyBorder, ButtonRedBorder, ButtonGreen } from "@/components/global/Button";
+import { ButtonRed, ButtonSkyBorder, ButtonRedBorder, ButtonGreen } from "@/components/global/Button";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import { TbCirclePlus, TbCircleX, TbDeviceFloppy, TbX } from "react-icons/tb";
 import { AlertNotification } from "@/components/global/Alert";
 import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
-import { RB, IndikatorRB, TargetRB } from "../type";
+import { RB, IndikatorRB } from "../type";
 import Select from 'react-select';
 
 interface OptionTypeString {
@@ -204,6 +204,22 @@ export const ModalMasterRb: React.FC<ModalProps> = ({ Data, isOpen, onClose, onS
                                         <h1 className="text-slate-300 text-xs">*Jenis RB Harus Dipilih</h1>
                                     }
                                 </>
+                            )}
+                        />
+                        <Controller
+                            name={`kegiatan_utama`}
+                            control={control}
+                            render={({ field }) => (
+                                <div className="flex flex-col py-3">
+                                    <label className="uppercase text-xs font-bold text-gray-700 mb-2">
+                                        Tema RB :
+                                    </label>
+                                    <input
+                                        {...field}
+                                        className="border px-4 py-2 rounded-lg"
+                                        placeholder={`Masukkan Tema RB`}
+                                    />
+                                </div>
                             )}
                         />
                         <Controller
