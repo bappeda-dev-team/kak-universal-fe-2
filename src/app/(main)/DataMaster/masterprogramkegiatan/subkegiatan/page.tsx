@@ -194,6 +194,7 @@ const SubKegiatan = () => {
 
                     <ButtonSky
                         className="flex items-center gap-1 m-2"
+                        halaman_url="/DataMaster/masterprogramkegiatan/subkegiatan/tambah"
                     >
                         <TbCirclePlus />
                         Tambah Sub Kegiatan
