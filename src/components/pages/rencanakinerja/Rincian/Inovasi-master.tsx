@@ -13,6 +13,7 @@ import { AlertQuestion, AlertNotification } from "@/components/global/Alert";
 
 interface id {
   id: string;
+  tahun: number;
 }
 interface type_inovasi {
   id: string;
@@ -24,7 +25,7 @@ interface type_inovasi {
   level: string;
 }
 
-const Inovasi: React.FC<id> = ({ id }) => {
+const Inovasi: React.FC<id> = ({ id, tahun }) => {
   const [isOpenNewInovasi, setIsOpenNewInovasi] = useState<boolean>(false);
   const [IsOpenEditInovasi, setIsOpenEditInovasi] = useState<boolean>(false);
   const [inovasi_rekin, setInovasi] = useState<type_inovasi[]>([]);
@@ -150,6 +151,7 @@ const Inovasi: React.FC<id> = ({ id }) => {
           onClose={handleModalNewInovasi}
           isOpen={isOpenNewInovasi}
           id_rekin={id}
+          tahun={tahun}
         />
       </div>
       <div className="rounded-b-xl shadow-lg border-x border-b px-5 py-3">
@@ -225,6 +227,7 @@ const Inovasi: React.FC<id> = ({ id }) => {
                         onClose={() => handleModalEditInovasi("")}
                         isOpen={IsOpenEditInovasi}
                         id_rekin={id}
+                        tahun={tahun}
                         id={IdEdit}
                       />
                       <ButtonRedBorder

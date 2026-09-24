@@ -30,6 +30,7 @@ interface modal {
   onClose: () => void;
   className?: string;
   id_rekin: string;
+  tahun: number;
   id?: string;
 }
 
@@ -37,6 +38,7 @@ export const ModalInovasi: React.FC<modal> = ({
   isOpen,
   onClose,
   id_rekin,
+  tahun,
 }) => {
   const {
     control,
@@ -209,7 +211,7 @@ export const ModalInovasi: React.FC<modal> = ({
       instansi: data.instansi,
       inovator: data.inovator,
       nip_inovator: data.nip_inovator?.value,
-      tahun: user?.tahun,
+      tahun: tahun,
     };
     // console.log(formData);
     const errors = [];
