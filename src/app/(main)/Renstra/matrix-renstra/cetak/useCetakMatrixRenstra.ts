@@ -39,8 +39,8 @@ interface Indikator {
     kode_opd: string;
     indikator: string;
     tahun: string;
-    target: string;
-    satuan: string;
+    target: TargetBase[] | string;
+    satuan?: string;
     target_baseline?: TargetBase[];
 }
 interface TargetBase {

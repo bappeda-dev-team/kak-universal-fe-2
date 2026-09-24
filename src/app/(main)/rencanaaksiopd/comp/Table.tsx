@@ -6,9 +6,11 @@ import {
   ButtonSkyBorder,
   ButtonBlackBorder,
 } from "@/components/global/Button";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   TbCirclePlus,
+  TbLock,
+  TbLockOpen,
   TbPencil,
   TbPrinter,
   TbRefresh,
@@ -208,6 +210,12 @@ export const RekinAsn: React.FC<RekinAsn> = ({
   const [DataNull, setDataNull] = useState<boolean>(false);
   const [Error, setError] = useState<boolean>(false);
   const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+  const [LockStatusByRenaksiId, setLockStatusByRenaksiId] = useState<
+    Record<number, boolean>
+  >({});
+  const [LoadingLockByRenaksiId, setLoadingLockByRenaksiId] = useState<
+    Record<number, boolean>
+  >({});
 
   const handleModalTambah = (
     id_sasaran: number,
@@ -250,6 +258,138 @@ export const RekinAsn: React.FC<RekinAsn> = ({
     } else {
       setCetak(true);
       setDataCetak(data);
+    }
+  };
+
+  const fetchStatusLock = useCallback(
+    async (idRenaksi: number) => {
+      if (!idRenaksi) {
+        return;
+      }
+
+      const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL;
+      setLoadingLockByRenaksiId((prev) => ({ ...prev, [idRenaksi]: true }));
+      try {
+        const response = await fetch(
+          `${API_URL_RENAKSI_OPD}/lock-renaksi-opd/lock/${kode_opd}/${tahun}/${idRenaksi}`,
+          {
+            headers: {
+              Authorization: `${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        const result = await response.json();
+        if (result.code === 200) {
+          setLockStatusByRenaksiId((prev) => ({
+            ...prev,
+            [idRenaksi]: Boolean(result.data?.locked),
+          }));
+        } else {
+          setLockStatusByRenaksiId((prev) => ({
+            ...prev,
+            [idRenaksi]: false,
+          }));
+        }
+      } catch (err) {
+        setLockStatusByRenaksiId((prev) => ({
+          ...prev,
+          [idRenaksi]: false,
+        }));
+        console.error(err);
+      } finally {
+        setLoadingLockByRenaksiId((prev) => ({
+          ...prev,
+          [idRenaksi]: false,
+        }));
+      }
+    },
+    [kode_opd, tahun, token],
+  );
+
+  const getSubKegiatanText = (subkegiatan: SubKegiatan[] | null | undefined) => {
+    if (!subkegiatan || subkegiatan.length === 0) {
+      return "";
+    }
+
+    return subkegiatan
+      .map((sk) =>
+        [sk.kode_subkegiatan, sk.nama_subkegiatan].filter(Boolean).join(" - "),
+      )
+      .filter(Boolean)
+      .join(", ");
+  };
+
+  const handleLockRenaksiOpd = async (
+    renaksi: RencanaKinerja,
+    sasaranId: number,
+    method: "POST" | "DELETE",
+  ) => {
+    const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL;
+    const idRenaksi = renaksi.id_renaksiopd;
+    const bodyLock = {
+      aksi_kegiatan: renaksi.nama_rencana_kinerja,
+      anggaran: renaksi.total_anggaran || 0,
+      nama_pemilik: renaksi.nip_pegawai,
+      rekin_id: renaksi.rekin_id,
+      sasaran_id: sasaranId,
+      sub_kegiatan: getSubKegiatanText(renaksi.subkegiatan),
+      tw1: renaksi.tw1 || 0,
+      tw2: renaksi.tw2 || 0,
+      tw3: renaksi.tw3 || 0,
+      tw4: renaksi.tw4 || 0,
+    };
+    const url =
+      method === "POST"
+        ? `${API_URL_RENAKSI_OPD}/lock-renaksi-opd/lock/${kode_opd}/${tahun}`
+        : `${API_URL_RENAKSI_OPD}/lock-renaksi-opd/lock/${kode_opd}/${tahun}/${idRenaksi}`;
+
+    setLoadingLockByRenaksiId((prev) => ({ ...prev, [idRenaksi]: true }));
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+        ...(method === "POST" ? { body: JSON.stringify(bodyLock) } : {}),
+      });
+      const result = await response.json();
+      if (result.code === 200) {
+        const nextLocked = method === "POST";
+        setLockStatusByRenaksiId((prev) => ({
+          ...prev,
+          [idRenaksi]: nextLocked,
+        }));
+        AlertNotification(
+          "Berhasil",
+          `Renaksi OPD berhasil ${method === "POST" ? "dikunci" : "dibuka"}`,
+          "success",
+          1000,
+        );
+      } else {
+        AlertNotification(
+          "Gagal",
+          `${result.data || "gagal mengubah status lock Renaksi OPD"}`,
+          "error",
+          2000,
+        );
+        fetchStatusLock(idRenaksi);
+      }
+    } catch (err) {
+      AlertNotification(
+        "Gagal",
+        "cek koneksi internet atau database server",
+        "error",
+        2000,
+      );
+      console.error(err);
+      fetchStatusLock(idRenaksi);
+    } finally {
+      setLoadingLockByRenaksiId((prev) => ({
+        ...prev,
+        [idRenaksi]: false,
+      }));
     }
   };
 
@@ -340,13 +480,20 @@ export const RekinAsn: React.FC<RekinAsn> = ({
           if (data == null || data == undefined) {
             setDataNull(true);
             setData([]);
+            setLockStatusByRenaksiId({});
           } else {
             setDataNull(false);
             setData(data);
+            const ids = data
+              .flatMap((item: Rekin) => item.rencana_kinerja)
+              .map((rk: RencanaKinerja) => rk.id_renaksiopd)
+              .filter((idRenaksi: number) => Boolean(idRenaksi));
+            ids.forEach((idRenaksi: number) => fetchStatusLock(idRenaksi));
           }
         } else {
           setError(true);
           setData([]);
+          setLockStatusByRenaksiId({});
         }
       } catch (err) {
         console.error(err);
@@ -356,7 +503,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
       }
     };
     fetchRekinById();
-  }, [token, id, tahun, FetchTrigger]);
+  }, [token, id, tahun, FetchTrigger, fetchStatusLock]);
 
   function formatRupiah(angka: number) {
     if (typeof angka !== "number") {
@@ -494,14 +641,26 @@ export const RekinAsn: React.FC<RekinAsn> = ({
                   {data.rencana_kinerja.map(
                     (rk: RencanaKinerja, sub_index: number) => (
                       <tr key={rk.id_renaksiopd || index}>
-                        <td className="border-r border-b px-6 py-4">
+                        {(() => {
+                          const isLocked = Boolean(
+                            LockStatusByRenaksiId[rk.id_renaksiopd],
+                          );
+                          const isLockLoading = Boolean(
+                            LoadingLockByRenaksiId[rk.id_renaksiopd],
+                          );
+                          const isActionDisabled = isLocked || isLockLoading;
+                          const lockedBackground = isLocked ? "bg-sky-100" : "";
+
+                          return (
+                            <>
+                        <td className={`border-r border-b px-6 py-4 ${lockedBackground}`}>
                           {sub_index + 1}
                         </td>
-                        <td className="border-r border-b px-6 py-4">
+                        <td className={`border-r border-b px-6 py-4 ${lockedBackground}`}>
                           {rk.nama_rencana_kinerja || "-"}
                         </td>
                         {rk.subkegiatan ? (
-                          <td className="border-r border-b px-6 py-4">
+                          <td className={`border-r border-b px-6 py-4 ${lockedBackground}`}>
                             {rk.subkegiatan.map(
                               (sk: SubKegiatan, sk_index: number) => (
                                 <React.Fragment key={sk_index}>
@@ -518,42 +677,85 @@ export const RekinAsn: React.FC<RekinAsn> = ({
                             )}
                           </td>
                         ) : (
-                          <td className="border-r border-b px-6 py-4 italic text-slate-500">
+                          <td className={`border-r border-b px-6 py-4 italic text-slate-500 ${lockedBackground}`}>
                             tidak ada Sub Kegiatan
                           </td>
                         )}
-                        <td className="border-r border-b px-6 py-4">
+                        <td className={`border-r border-b px-6 py-4 ${lockedBackground}`}>
                           Rp.{formatRupiah(rk.total_anggaran || 0)}
                         </td>
-                        <td className="border-r border-b px-6 py-4">
+                        <td className={`border-r border-b px-6 py-4 ${lockedBackground}`}>
                           {rk.nama_pegawai}
                         </td>
-                        <td className="border-r border-b px-6 py-4 text-center">
+                        <td className={`border-r border-b px-6 py-4 text-center ${lockedBackground}`}>
                           {rk.tw1}
                         </td>
-                        <td className="border-r border-b px-6 py-4 text-center">
+                        <td className={`border-r border-b px-6 py-4 text-center ${lockedBackground}`}>
                           {rk.tw2}
                         </td>
-                        <td className="border-r border-b px-6 py-4 text-center">
+                        <td className={`border-r border-b px-6 py-4 text-center ${lockedBackground}`}>
                           {rk.tw3}
                         </td>
-                        <td className="border-r border-b px-6 py-4 text-center">
+                        <td className={`border-r border-b px-6 py-4 text-center ${lockedBackground}`}>
                           {rk.tw4}
                         </td>
-                        <td className="border-r border-b px-6 py-4">
+                        <td className={`border-r border-b px-6 py-4 ${lockedBackground}`}>
                           {rk.keterangan || "-"}
                         </td>
-                        <td className="border-r border-b px-6 py-4">
+                        <td className={`border-r border-b px-6 py-4 ${lockedBackground}`}>
                           <div className="flex flex-col justify-center items-center gap-2">
+                            {rk.id_renaksiopd ? (
+                              <button
+                                type="button"
+                                disabled={isLockLoading}
+                                className={`w-full flex items-center justify-center gap-1 rounded border px-4 py-2 text-black disabled:cursor-not-allowed disabled:opacity-60 ${
+                                  isLocked
+                                    ? "border-red-600 bg-red-300 hover:bg-red-400"
+                                    : "border-yellow-600 bg-yellow-300 hover:bg-yellow-400"
+                                }`}
+                                onClick={() =>
+                                  AlertQuestion(
+                                    isLocked
+                                      ? "Buka Kunci / Unlock?"
+                                      : "Kunci / Lock?",
+                                    "",
+                                    "question",
+                                    isLocked ? "Unlock" : "Lock",
+                                    "Batal",
+                                  ).then((result) => {
+                                    if (result.isConfirmed) {
+                                      handleLockRenaksiOpd(
+                                        rk,
+                                        data.sasaran_opd_id,
+                                        isLocked ? "DELETE" : "POST",
+                                      );
+                                    }
+                                  })
+                                }
+                              >
+                                {isLocked ? (
+                                  <TbLockOpen className="mr-1" />
+                                ) : (
+                                  <TbLock className="mr-1" />
+                                )}
+                                {isLockLoading
+                                  ? "Loading..."
+                                  : isLocked
+                                    ? "Unlock"
+                                    : "Kunci"}
+                              </button>
+                            ) : null}
                             <ButtonSkyBorder
-                              className="w-full"
+                              className={`w-full ${isActionDisabled && "cursor-not-allowed opacity-60"}`}
+                              disabled={isActionDisabled}
                               onClick={() => syncRenaksiOpd(rk.rekin_id)}
                             >
                               <TbRefresh className="mr-1" />
                               Sync
                             </ButtonSkyBorder>
                             <ButtonGreen
-                              className="w-full"
+                              className={`w-full ${isActionDisabled && "cursor-not-allowed opacity-60"}`}
+                              disabled={isActionDisabled}
                               onClick={() =>
                                 handleModalEdit(
                                   rk.id_renaksiopd,
@@ -566,7 +768,8 @@ export const RekinAsn: React.FC<RekinAsn> = ({
                               Edit
                             </ButtonGreen>
                             <ButtonRed
-                              className="w-full"
+                              className={`w-full ${isActionDisabled && "cursor-not-allowed opacity-60"}`}
+                              disabled={isActionDisabled}
                               onClick={() => {
                                 AlertQuestion(
                                   "Hapus?",
@@ -586,6 +789,9 @@ export const RekinAsn: React.FC<RekinAsn> = ({
                             </ButtonRed>
                           </div>
                         </td>
+                            </>
+                          );
+                        })()}
                       </tr>
                     ),
                   )}

@@ -5,8 +5,8 @@ import { TbCirclePlus, TbTrash } from "react-icons/tb";
 import { Controller, SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 import { ButtonSky, ButtonRed, ButtonSkyBorder } from '@/components/global/Button';
 import { getToken } from "@/components/lib/Cookie";
-import { LoadingButtonClip, LoadingClip } from "@/components/global/Loading";
-import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
+import { LoadingButtonClip } from "@/components/global/Loading";
+import { AlertNotification } from "@/components/global/Alert";
 import { useBrandingContext } from "@/context/BrandingContext";
 
 interface FormValue {
@@ -54,7 +54,7 @@ export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_i
                 rumus_perhitungan: "",
                 sumber_data: "",
                 target: [{
-                    target: "",
+                    target: '',
                     satuan: "",
                     tahun: tahun,
                 }]
@@ -78,7 +78,7 @@ export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_i
             rumus_perhitungan: item.rumus_perhitungan,
             sumber_data: item.sumber_data,
             target: item.target.map((t: Target) => ({
-                target: t.target,
+                target: Number(t.target),
                 satuan: t.satuan,
                 tahun: t.tahun,
             }))
@@ -248,7 +248,7 @@ export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_i
                                                     </label>
                                                     <input
                                                         {...field}
-                                                        type="text"
+                                                        type="number"
                                                         className="border px-4 py-2 rounded-lg"
                                                         placeholder="Masukkan target"
                                                     />

@@ -20,11 +20,11 @@ interface pagu {
 }
 
 const pageUsable = 320;
-const colKode = 30;
-const colJenis = 46;
-const colIndikator = 48;
-const targetPerTahun = 24;
-const paguPerTahun = 14;
+const colKode = 34;
+const colJenis = 58;
+const colIndikator = 60;
+const targetPerTahun = 30;
+const paguPerTahun = 20;
 
 const cellBorders = {
     top: { style: BorderStyle.SINGLE, size: 4, color: "000000" },
