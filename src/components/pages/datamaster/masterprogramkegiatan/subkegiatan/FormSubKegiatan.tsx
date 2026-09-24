@@ -15,6 +15,7 @@ interface OptionTypeString {
 }
 interface FormValue {
     id: string;
+    kode_subkegiatan: string;
     nama_subkegiatan: string;
     tahun: OptionTypeString;
     kode_opd: OptionTypeString;
@@ -37,6 +38,7 @@ export const FormSubKegiatan = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<FormValue>();
+    const [KodeSubKegiatan, setKodeSubKegiatan] = useState<string>('');
     const [NamaSubKegiatan, setNamaSubKegiatan] = useState<string>('');
     const [Tahun, setTahun] = useState<OptionTypeString | null>(null);
     const [KodeOpd, setKodeOpd] = useState<OptionTypeString | null>(null);
@@ -96,6 +98,7 @@ export const FormSubKegiatan = () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const formData = {
             //key : value
+            kode_subkegiatan: data.kode_subkegiatan,
             nama_subkegiatan: data.nama_subkegiatan,
             tahun: data.tahun?.value,
             kode_opd: data.kode_opd?.value,
@@ -140,6 +143,42 @@ export const FormSubKegiatan = () => {
                     onSubmit={handleSubmit(onSubmit)}
                     className="flex flex-col mx-5 py-5"
                 >
+                    <div className="flex flex-col py-3">
+                        <label
+                            className="uppercase text-xs font-bold text-gray-700 my-2"
+                            htmlFor="kode_subkegiatan"
+                        >
+                            Kode Sub Kegiatan :
+                        </label>
+                        <Controller
+                            name="kode_subkegiatan"
+                            control={control}
+                            rules={{ required: "Kode Sub Kegiatan harus terisi" }}
+                            render={({ field }) => (
+                                <>
+                                    <input
+                                        {...field}
+                                        className="border px-4 py-2 rounded-lg"
+                                        id="kode_subkegiatan"
+                                        type="text"
+                                        placeholder="masukkan Kode Sub Kegiatan"
+                                        value={field.value || KodeSubKegiatan}
+                                        onChange={(e) => {
+                                            field.onChange(e);
+                                            setKodeSubKegiatan(e.target.value);
+                                        }}
+                                    />
+                                    {errors.kode_subkegiatan ?
+                                        <h1 className="text-red-500">
+                                            {errors.kode_subkegiatan.message}
+                                        </h1>
+                                        :
+                                        <h1 className="text-slate-300 text-xs">*Kode Sub Kegiatan Harus Terisi</h1>
+                                    }
+                                </>
+                            )}
+                        />
+                    </div>
                     <div className="flex flex-col py-3">
                         <label
                             className="uppercase text-xs font-bold text-gray-700 my-2"
