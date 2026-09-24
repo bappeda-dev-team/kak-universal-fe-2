@@ -22,6 +22,13 @@ interface Indikator {
     kode_opd: string;
     indikator: string;
     tahun: string;
+    target: Target[] | string;
+    satuan?: string;
+}
+interface Target {
+    id: string;
+    indikator_id: string;
+    tahun: string;
     target: string;
     satuan: string;
 }
@@ -45,85 +52,134 @@ export function TableUrusanCetak(
 
     const text: [number, number, number] = jenis === "Urusan" ? [0, 0, 0] : [255, 255, 255];
 
-    const combinedData = anggaran.map((itemAnggaran) => {
-        // Ambil SEMUA indikator yang tahunnya sama
-        const matchingIndikators = indikator.filter(
-            (itemIndikator) => itemIndikator.tahun === itemAnggaran.tahun
-        );
-
-        return {
-            ...itemAnggaran,
-            // Simpan sebagai array di dalam objek anggaran
-            list_indikator: matchingIndikators.length > 0 ? matchingIndikators : [{
-                kode_indikator: "",
-                indikator: "-",
-                target: "",
-                satuan: "",
-                kode: data.kode,
-                kode_opd: kode_opd,
-                tahun: "",
-            }]
-        };
-    });
+    const isUrusanLevel = jenis === "Urusan" || jenis === "Bidang Urusan";
 
     const numYears = Math.max(tahun_list.length, 1);
-    const usableWidth = 320;
-    const colKode = 30;
-    const colJenis = 46;
-    const sisaWidth = usableWidth - colKode - colJenis;
-    const targetWidth = (sisaWidth / numYears) * 0.62;
-    const paguWidth = (sisaWidth / numYears) * 0.38;
+
+    // Lebar kolom mengikuti tampilan table V2 (Indikator 1 kolom utk semua tahun),
+    // diperlebar agar mengisi penuh lebar halaman (sejajar dengan table recap di atas)
+    const margin = 5;
+    const usable = doc.internal.pageSize.getWidth() - (margin + margin);
+    const baseWidths = [34, 58, 60];
+    tahun_list.forEach(() => baseWidths.push(30, 20));
+    const totalWidth = baseWidths.reduce((a, b) => a + b, 0);
+    const scale = Math.min(1, usable / totalWidth);
+    const widths = baseWidths.map((w) => w * scale);
+    const widthSum = widths.reduce((a, b) => a + b, 0);
+    widths[widths.length - 1] += usable - widthSum;
+
+    const columnStyles: Record<number, { cellWidth: number }> = {};
+    widths.forEach((w, i) => {
+        columnStyles[i] = { cellWidth: w };
+    });
+
+    const paguFor = (tahun: string): number =>
+        anggaran.find((a) => a.tahun === tahun)?.pagu_indikatif || 0;
+
+    const isV2 = indikator.some((i) => Array.isArray(i.target));
+
+    // Layout baris per indikator: nama indikator + target/satuan per tahun
+    const indicatorRows: { indikator: string; targets: Record<string, { target: string; satuan: string }> }[] = indikator.map((i) => {
+        const targets: Record<string, { target: string; satuan: string }> = {};
+        tahun_list.forEach((tahun) => {
+            if (Array.isArray(i.target)) {
+                const trg = i.target.find((t) => t.tahun === tahun);
+                const hasTarget = trg && trg.target && trg.target !== "-";
+                targets[tahun] = {
+                    target: hasTarget ? trg.target : "-",
+                    satuan: hasTarget ? (trg.satuan || "-") : "-",
+                };
+            } else if (i.tahun === tahun) {
+                const hasTarget = i.target && i.target !== "-";
+                targets[tahun] = {
+                    target: hasTarget ? i.target : "-",
+                    satuan: hasTarget ? (i.satuan || "-") : "-",
+                };
+            } else {
+                targets[tahun] = { target: "-", satuan: "-" };
+            }
+        });
+        return { indikator: i.indikator || "-", targets };
+    });
 
     const headerRow1 = [
         { content: "Kode", rowSpan: 2, styles: { halign: "center" } },
         { content: jenis, rowSpan: 2, styles: { halign: "center" } },
+        { content: "Indikator", rowSpan: 2, styles: { halign: "center" } },
         ...tahun_list.map((tahun) => ({
             content: tahun.toString(),
             colSpan: 2,
             styles: { halign: "center" },
         })),
-
     ];
-    const headerRow2 = tahun_list.flatMap(() => [
-        { content: "Indikator/Target/Satuan", styles: { halign: "center", fontSize: 6 } },
-        { content: "Pagu", styles: { halign: "center" } },
-    ])
+
+    const headerRow2 = isUrusanLevel
+        ? tahun_list.flatMap(() => [
+            { content: "Pagu", colSpan: 2, styles: { halign: "center" } },
+        ])
+        : tahun_list.flatMap(() => [
+            { content: "target/satuan", styles: { halign: "center" } },
+            { content: "Pagu", styles: { halign: "center" } },
+        ]);
 
     const body: any[] = [];
-    const showIndikator = jenis !== "Urusan" && jenis !== "Bidang Urusan";
 
-    body.push([
-        { content: `${data.kode || "-"}`, styles: { halign: "center" } },
-        { content: `${data.nama || "-"}` },
-        ...combinedData.flatMap((t) => [
-            {
-                content: showIndikator
-                    ? t.list_indikator
-                        ?.map((i) =>
-                            `${i.indikator || "-"}\n\n${i.target || "-"} / ${i.satuan || "-"}`
-                        )
-                        .join("\n\n") || "-"
-                    : "",
-                styles: {
-                    fontSize: 6,
-                    overflow: "linebreak",
+    if (isUrusanLevel) {
+        body.push([
+            { content: `${data.kode || "-"}`, styles: { halign: "center", valign: "middle" } },
+            { content: `${data.nama || "-"}`, styles: { valign: "middle" } },
+            { content: "", styles: { valign: "middle" } },
+            ...tahun_list.flatMap((tahun) => [
+                { content: "", styles: { valign: "middle" } },
+                {
+                    content: `Rp.${formatRupiah(paguFor(tahun))}`,
+                    styles: { halign: "center", fontSize: 5, valign: "middle" },
                 },
+            ]),
+        ]);
+    } else {
+        const totalRows = indicatorRows.length + 1;
+
+        body.push([
+            {
+                content: `${data.kode || "-"}`,
+                rowSpan: totalRows,
+                styles: { halign: "center", valign: "middle" },
             },
             {
-                content: `Rp.${formatRupiah(t.pagu_indikatif || 0)}`,
-                styles: { halign: "center", fontSize: 5 }
+                content: `${data.nama || "-"}`,
+                rowSpan: totalRows,
+                styles: { valign: "middle" },
             },
-        ])
-    ]);
+        ]);
 
-    const columnStyles: any = {
-        0: { cellWidth: colKode },
-        1: { cellWidth: colJenis },
-    };
-    tahun_list.forEach((_, i) => {
-        columnStyles[2 + i * 2] = { cellWidth: targetWidth };
-        columnStyles[3 + i * 2] = { cellWidth: paguWidth };
-    });
+        indicatorRows.forEach((d, index) => {
+            const cells: any[] = [
+                {
+                    content: d.indikator,
+                    styles: { fontSize: 6, overflow: "linebreak", valign: "middle" },
+                },
+            ];
+            tahun_list.forEach((tahun) => {
+                const tt = d.targets[tahun] || { target: "-", satuan: "-" };
+                const textTarget = tt.target !== "-"
+                    ? `${tt.target} ${tt.satuan !== "-" ? tt.satuan : ""}`.trim()
+                    : "";
+                cells.push({
+                    content: textTarget,
+                    styles: { halign: "center", fontSize: 6, valign: "middle" },
+                });
+                if (index === 0) {
+                    cells.push({
+                        content: `Rp.${formatRupiah(paguFor(tahun))}`,
+                        rowSpan: indicatorRows.length,
+                        styles: { halign: "center", fontSize: 5, valign: "middle" },
+                    });
+                }
+            });
+            body.push(cells);
+        });
+    }
 
     autoTable(doc, {
         startY: startY,
@@ -134,7 +190,7 @@ export function TableUrusanCetak(
         styles: {
             fontSize: 9,
             valign: "middle",
-            cellPadding: 2,
+            cellPadding: 3,
             lineWidth: 0.2,
             lineColor: [0, 0, 0],
         },
@@ -146,7 +202,7 @@ export function TableUrusanCetak(
             overflow: "linebreak",
             halign: "center",
             lineWidth: 0.2,
-            lineColor: [0, 0, 0], // hitam
+            lineColor: [0, 0, 0],
         },
     });
 
