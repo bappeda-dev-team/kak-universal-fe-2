@@ -30,7 +30,7 @@ interface Target {
     indikator_id?: string;
     satuan: string;
     tahun: string;
-    target: number;
+    target: string;
 }
 
 interface modal {
@@ -54,7 +54,7 @@ export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_i
                 rumus_perhitungan: "",
                 sumber_data: "",
                 target: [{
-                    target: 0,
+                    target: '',
                     satuan: "",
                     tahun: tahun,
                 }]
@@ -279,7 +279,7 @@ export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_i
                         <ButtonSkyBorder
                             type="button"
                             className="flex items-center gap-1"
-                            onClick={() => append({ indikator: "", definisi_operasional: "", rumus_perhitungan: "", sumber_data: "", target: [{ target: 0, satuan: "", tahun: tahun }] })}
+                            onClick={() => append({ indikator: "", definisi_operasional: "", rumus_perhitungan: "", sumber_data: "", target: [{ target: "", satuan: "", tahun: tahun }] })}
                         >
                             <TbCirclePlus />
                             Tambah Indikator
