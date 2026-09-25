@@ -144,7 +144,7 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Kegiatan Utama</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
                                 <th colSpan={4} className="border-r border-b px-6 py-3 w-[400px]">BaseLine {tahunBaseline}</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Gambaran Umun</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Gambaran Umum</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Permasalahan</th>
                                 <th colSpan={2} className="border-r border-b px-6 py-3 w-[200px]">{branding?.tahun?.value}</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Keterangan</th>
@@ -194,7 +194,7 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                                 <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{index + 1}</td>
                                                 <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.jenis_rb}</td>
                                                 <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">Tema</td>
-                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.kegiatan_utama}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4">{item.kegiatan_utama}</td>
 
                                                 {/* Indikator pertama */}
                                                 {(() => {
@@ -210,14 +210,14 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                                             <td className="border px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{capaian} %</td>
-                                                            <td className="border px-6 py-4 text-center">Gambaran Umun</td>
+                                                            <td className="border px-6 py-4 text-center">Gambaran Umum</td>
                                                             <td className="border px-6 py-4 text-center">Permasalahan</td>
                                                             <td className="border px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{next?.satuan_next ?? "-"}</td>
                                                         </>
                                                     );
                                                 })()}
-                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.keterangan}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4">{item.keterangan}</td>
 
                                                 {/* 🟩 Rencana Aksi + Output + Target + dst. */}
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-left">
@@ -245,9 +245,9 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                     {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.capaian ?? "-"}
                                                 </td>
-                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4">
                                                     {renaksi[0]?.subkegiatan ?
-                                                        `${renaksi[0]?.subkegiatan?.kode_subkegiatan || ""} - ${renaksi[0]?.subkegiatan?.nama_subkegiatan || ""}`
+                                                        `(${renaksi[0]?.subkegiatan?.kode_subkegiatan || ""}) - ${renaksi[0]?.subkegiatan?.nama_subkegiatan || ""}`
                                                         :
                                                         <>-</>
                                                     }
@@ -326,9 +326,9 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                         {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.capaian ?? "-"}
                                                     </td>
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4">
                                                         {ra.subkegiatan ?
-                                                            `${ra.subkegiatan.kode_subkegiatan || ""} - ${ra.subkegiatan.nama_subkegiatan || ""}`
+                                                            `(${ra.subkegiatan.kode_subkegiatan || ""}) - ${ra.subkegiatan.nama_subkegiatan || ""}`
                                                             :
                                                             <>-</>
                                                         }

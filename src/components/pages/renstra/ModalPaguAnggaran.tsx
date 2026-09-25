@@ -44,7 +44,7 @@ export const ModalPaguAnggaran: React.FC<modal> = ({ isOpen, onClose, kode, nama
 
     const [IsLoading, setIsLoading] = useState<boolean>(false);
     const [Proses, setProses] = useState<boolean>(false);
-
+    
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const payload = {
@@ -149,7 +149,7 @@ export const ModalPaguAnggaran: React.FC<modal> = ({ isOpen, onClose, kode, nama
                                                 field.onChange(numericValue);
                                                 setPagu(unformatNumber(inputValue));
                                             };
-                                            const displayValue = formatNumberWithDots(Pagu);
+                                            const displayValue = formatNumberWithDots(pagu);
                                             return (
                                                 <input
                                                     {...field}
