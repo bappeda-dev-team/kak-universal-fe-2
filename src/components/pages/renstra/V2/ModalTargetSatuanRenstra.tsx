@@ -47,7 +47,7 @@ export const ModalTargetSatuanRenstra: React.FC<modal> = ({ isOpen, indikator, t
             id: data.id ?? "",
             kode_indikator: data.kode_indikator ?? "",
             satuan: data.satuan ?? "",
-            target: Number(data.target) ?? 0,
+            target: String(data.target) ?? 0,
             tahun: data.tahun ?? ""
         }
         // console.log(payload);
