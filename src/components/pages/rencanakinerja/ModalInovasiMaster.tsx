@@ -24,6 +24,7 @@ interface FormValue {
   inovator: string;
   level: OptionType | null;
   nip_inovator: OptionType | null;
+  pegawai_id: string;
 }
 interface modal {
   isOpen: boolean;
@@ -212,6 +213,7 @@ export const ModalInovasi: React.FC<modal> = ({
       inovator: data.inovator,
       nip_inovator: data.nip_inovator?.value,
       tahun: tahun,
+      pegawai_id: user?.pegawai_id,
     };
     // console.log(formData);
     const errors = [];

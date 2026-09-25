@@ -1,62 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  ArahKebijakan,
-  SasaranOpd,
-  StrategiOpd,
-  TacticalOpd,
-  OperasionalOpd,
-  ArahKebijakanOpd,
-} from "../type";
-import {
-  ButtonRedBorder,
-  ButtonGreenBorder,
-  ButtonSkyBorder,
-} from "@/components/global/Button";
-import { TbEye, TbEyeClosed, TbPencil, TbCirclePlus } from "react-icons/tb";
+import { InovasiLaporan } from "../type";
 
 interface Table {
-  // Data: ArahKebijakan[];
-  // kode_opd: string;
-  // tahun: number;
-  // onSuccess: () => void;
+  Data: InovasiLaporan[] | null;
+  kode_opd: string;
+  tahun: number;
+  onSuccess: () => void;
 }
 
-const Table: React.FC<Table> = ({}) => {
-  const [hiddenItems, setHiddenItems] = useState<string[]>([]);
-
-  const [DataModal, setDataModal] = useState<ArahKebijakanOpd | null>(null);
-  const [ModalOpen, setModalOpen] = useState<boolean>(false);
-  const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
-  const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
-  const [PokinId, setPokinId] = useState<number | null>(null);
-
-  const toggleHide = (key: string) => {
-    setHiddenItems((prev) =>
-      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key],
-    );
-  };
-  const handleClose = () => {
-    setModalOpen(false);
-  };
-  const refresh = () => {
-    window.location.reload();
-  };
-  const handleModalOpen = (
-    jenis: "tambah" | "edit",
-    data: ArahKebijakanOpd | null,
-  ) => {
-    if (ModalOpen) {
-      setModalOpen(false);
-      setJenisModal(jenis);
-      setDataModal(null);
-    } else {
-      setModalOpen(true);
-      setJenisModal(jenis);
-      setDataModal(data);
-    }
-  };
+const Table: React.FC<Table> = ({ Data, kode_opd, tahun, onSuccess }) => {
   return (
     <>
       <div className="overflow-auto m-2 rounded-t-xl border">
@@ -126,11 +80,83 @@ const Table: React.FC<Table> = ({}) => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className="px-6 py-3" colSpan={30}>
-                Data Kosong / Belum Ditambahkan
-              </td>
-            </tr>
+            {Data && Data.length > 0 ? (
+              Data.map((item, index) => (
+                <tr key={index}>
+                  <td className="border-r border-b px-6 py-3 text-center">
+                    {index + 1}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {item.nama_inovasi}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {item.jenis_inovasi}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {item.kebaruan}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {item.asal_inovasi}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {item.waktu_implementasi
+                      ? item.waktu_implementasi.split("T")[0]
+                      : "-"}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {item.asal_inovasi === "Internal"
+                      ? item.nama_opd
+                      : item.instansi}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {item.asal_inovasi === "Internal"
+                      ? `${item.nama_nip_inovator} (${item.level})`
+                      : item.inovator}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {item.nama_pegawai || "-"}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {item.nama_rencana_kinerja || "-"}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {/* {item.indikator || "-"} */}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {/* {item.target || "-"} */}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {/* {item.satuan || "-"} */}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {/* {item.sub_kegiatan || "-"} */}
+                  </td>
+
+                  <td className="border-r border-b px-6 py-3">
+                    {/* {item.pagu_anggaran || "-"} */}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td className="px-6 py-3" colSpan={30}>
+                  Data Kosong / Belum Ditambahkan
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

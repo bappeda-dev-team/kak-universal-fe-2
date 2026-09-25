@@ -7,12 +7,11 @@ import Table from "./comp/Table";
 
 import { LoadingClip } from "@/components/global/Loading";
 import { getToken } from "@/components/lib/Cookie";
-import { StrategicArahKebijakan } from "./type";
-import { ButtonGreen } from "@/components/global/Button";
+import { InovasiLaporan } from "./type";
 import { AlertNotification } from "@/components/global/Alert";
 import { useRouter } from "next/navigation";
 
-const StrategiArahKebijakanPage = () => {
+const LaporanInovasiPage = () => {
   const { branding } = useBrandingContext();
   const kode_opd =
     branding?.user?.roles == "super_admin" ||
@@ -29,84 +28,49 @@ const StrategiArahKebijakanPage = () => {
 
   const token = getToken();
 
-  // const [Data, setData] = useState<StrategicArahKebijakan | null>(null);
+  const [Data, setData] = useState<InovasiLaporan[] | null>(null);
   const [Loading, setLoading] = useState<boolean>(false);
   const [Error, setError] = useState<boolean>(false);
   const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   const FetchData = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await fetch(
-  //         `${branding?.api_perencanaan}/strategi_arah_kebijakan_opd/${kode_opd}/${tahun}`,
-  //         {
-  //           headers: {
-  //             Authorization: `${token}`,
-  //             "Content-Type": "application/json",
-  //           },
-  //         },
-  //       );
-  //       const result = await response.json();
-  //       if (result.code === 200) {
-  //         setData(result.data);
-  //       } else if (result.code === 401) {
-  //         AlertNotification("Login Kembali", "", "warning", 2000);
-  //         router.push("/login");
-  //       } else {
-  //         AlertNotification("Error", `${result.data || ""}`, "error", 2000);
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //       setError(true);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   FetchData();
-  // }, [token, tahun, branding, kode_opd, router]);
+  useEffect(() => {
+    if (!branding || !kode_opd || !tahun) return;
 
-  const ExportExcel = async () => {
-    try {
-      const response = await fetch(
-        `${branding?.api_perencanaan}/export/strategi_arah_kebijakan_opd/${kode_opd}/${tahun}`,
-        {
-          headers: {
-            Authorization: `${token}`,
+    const FetchData = async () => {
+      try {
+        setLoading(true);
+        setError(false);
+
+        const response = await fetch(
+          `${branding.api_perencanaan}/laporan-inovasi/findall/${kode_opd}/${tahun}`,
+          {
+            headers: {
+              Authorization: `${token}`,
+              "Content-Type": "application/json",
+            },
           },
-        },
-      );
+        );
 
-      if (!response.ok) {
-        throw setError(true);
-      }
+        const result = await response.json();
 
-      const blob = await response.blob();
-
-      const disposition = response.headers.get("Content-Disposition");
-
-      let filename = "Strategi_Arah_Kebijakan_OPD.xlsx";
-
-      if (disposition) {
-        const match = disposition.match(/filename="?([^"]+)"?/);
-        if (match) {
-          filename = match[1];
+        if (result.code === 200) {
+          setData(result.data || []);
+        } else if (result.code === 401) {
+          AlertNotification("Login Kembali", "", "warning", 2000);
+          router.push("/login");
+        } else {
+          AlertNotification("Error", `${result.data || ""}`, "error", 2000);
         }
+      } catch (err) {
+        console.log(err);
+        setError(true);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename;
-      link.click();
-
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-      AlertNotification("Error", "Gagal mengunduh file Excel", "error", 2000);
-    }
-  };
+    FetchData();
+  }, [branding, kode_opd, tahun, token, router, FetchTrigger]);
 
   if (Loading) {
     return (
@@ -145,10 +109,10 @@ const StrategiArahKebijakanPage = () => {
         </div>
         <div className="mx-3 mb-3">
           <Table
-          // Data={Data?.strategi_arah_kebijakan_opds || []}
-          // kode_opd={kode_opd}
-          // tahun={tahun}
-          // onSuccess={() => setFetchTrigger((prev) => !prev)}
+            Data={Data}
+            kode_opd={kode_opd}
+            tahun={tahun}
+            onSuccess={() => setFetchTrigger((prev) => !prev)}
           />
         </div>
       </div>
@@ -156,4 +120,4 @@ const StrategiArahKebijakanPage = () => {
   );
 };
 
-export default StrategiArahKebijakanPage;
+export default LaporanInovasiPage;
