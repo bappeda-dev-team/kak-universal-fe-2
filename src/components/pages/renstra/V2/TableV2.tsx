@@ -2,7 +2,7 @@
 
 import { getToken } from "@/components/lib/Cookie";
 import React, { useEffect, useState } from "react";
-import { ButtonSkyBorder, ButtonRedBorder } from "@/components/global/Button";
+import { ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder } from "@/components/global/Button";
 import { TbCirclePlus, TbFileTypeDoc, TbFileTypePdf, TbPencil, TbTrash } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
 import { ModalPaguAnggaran } from "../ModalPaguAnggaran";
@@ -346,6 +346,7 @@ export const TheadMatrix: React.FC<Thead> = ({ jenis, tahun_list }) => {
                 <td rowSpan={2} className="border-r border-b px-6 py-4 w-[200px]">Kode</td>
                 <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[200px]">{jenis}</td>
                 <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[300px]">Indikator</td>
+                <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[150px] text-center">Aksi</td>
                 {tahun_list.map((item: any) => (
                     <td key={item} colSpan={2} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{item}</td>
                 ))}
@@ -531,16 +532,17 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     </tr>
                     {combinedData.length === 0 ?
                         <tr>
+                            <td className={`border-r border-b px-6 py-4 w-full text-red-300 italic`}>indikator kosong</td>
                             <td className={`border-r border-b px-6 py-4 w-full`}>
                                 <div className="flex flex-col items-center gap-1">
-                                    <button
+                                    <ButtonGreenBorder
                                         type="button"
+                                        className="flex items-center gap-1"
                                         onClick={() => setModalTambahIndikator(true)}
-                                        className="text-green-500 border border-green-300 hover:text-green-700 p-1 rounded-full hover:bg-green-100 transition-colors shrink-0"
-                                        title="Tambah Indikator"
                                     >
-                                        <TbCirclePlus size={14} />
-                                    </button>
+                                        <TbCirclePlus />
+                                        Indikator
+                                    </ButtonGreenBorder>
                                 </div>
                             </td>
                             {tahun_list.map((tahun: string) => (
@@ -557,14 +559,6 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                     <div className="flex items-center justify-between gap-2">
                                         <span>{d.indikator || ""}</span>
                                         <div className="flex flex-col items-center gap-1">
-                                            <button
-                                                type="button"
-                                                onClick={() => setModalTambahIndikator(true)}
-                                                className="text-green-500 border border-green-300 hover:text-green-700 p-1 rounded-full hover:bg-green-100 transition-colors shrink-0"
-                                                title="Tambah Indikator"
-                                            >
-                                                <TbCirclePlus size={14} />
-                                            </button>
                                             <button
                                                 type="button"
                                                 onClick={() => handleModalEditIndikator(d)}
@@ -588,36 +582,50 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                         </div>
                                     </div>
                                 </td>
+                                {/* Aksi dilebur menjadi satu kotak menutupi semua baris indikator */}
+                                {index === 0 &&
+                                    <td rowSpan={combinedData.length} className={`border-r border-b px-6 py-4 w-full`}>
+                                        <div className="flex flex-col items-center gap-1">
+                                            <ButtonGreenBorder
+                                                type="button"
+                                                className="flex items-center gap-1"
+                                                onClick={() => setModalTambahIndikator(true)}
+                                            >
+                                                <TbCirclePlus />
+                                                Indikator
+                                            </ButtonGreenBorder>
+                                        </div>
+                                    </td>
+                                }
                                 {/* indikator untuk semua tahun, target & satuan per tahun dari combinedData */}
-                                {
-                                    tahun_list.map((tahun: string) => {
-                                        const target = d.target.find((t: TargetData) => t.tahun === tahun);
-                                        return (
-                                            <React.Fragment key={tahun}>
-                                                <td className={`border-r border-b px-6 py-4 w-full text-center`}>
-                                                    <div className="flex flex-col items-center gap-1">
-                                                        {target && target.target !== "-"
-                                                            ? `${target.target} ${target.satuan || ""}`
-                                                            : ""
-                                                        }
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleModalTarget(d, target || null)}
-                                                            className="text-sky-500 border border-sky-300 hover:text-sky-700 p-1 rounded-full hover:bg-sky-100 transition-colors shrink-0"
-                                                            title="Edit Target Satuan"
-                                                        >
-                                                            <TbPencil size={14} />
-                                                        </button>
+                                {tahun_list.map((tahun: string) => {
+                                    const target = d.target.find((t: TargetData) => t.tahun === tahun);
+                                    return (
+                                        <React.Fragment key={tahun}>
+                                            <td className={`border-r border-b px-6 py-4 w-full text-center`}>
+                                                <div className="flex flex-col items-center gap-1">
+                                                    {target && target.target !== "-"
+                                                        ? `${target.target} ${target.satuan || ""}`
+                                                        : ""
+                                                    }
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleModalTarget(d, target || null)}
+                                                        className="text-sky-500 border border-sky-300 hover:text-sky-700 p-1 rounded-full hover:bg-sky-100 transition-colors shrink-0"
+                                                        title="Edit Target Satuan"
+                                                    >
+                                                        <TbPencil size={14} />
+                                                    </button>
 
-                                                    </div>
-                                                </td>
-                                                {/* Pagu dilebur menjadi satu kotak menutupi semua baris indikator */}
-                                                {index === 0
-                                                    ? renderPagu(tahun, combinedData.length)
-                                                    : null}
-                                            </React.Fragment>
-                                        );
-                                    })
+                                                </div>
+                                            </td>
+                                            {/* Pagu dilebur menjadi satu kotak menutupi semua baris indikator */}
+                                            {index === 0
+                                                ? renderPagu(tahun, combinedData.length)
+                                                : null}
+                                        </React.Fragment>
+                                    );
+                                })
                                 }
                             </tr>
                         ))
