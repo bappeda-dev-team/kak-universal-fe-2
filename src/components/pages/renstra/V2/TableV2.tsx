@@ -517,6 +517,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode || ""}</td>
                     <td className={`border-r border-b px-6 py-4 w-full`}>{nama || ""}</td>
                     <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
+                    <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
                     {anggaran.map((d: Anggaran, index: number) => (
                         <React.Fragment key={index}>
                             <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
