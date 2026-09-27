@@ -149,7 +149,7 @@ export const ModalPaguAnggaran: React.FC<modal> = ({ isOpen, onClose, kode, nama
                                                 field.onChange(numericValue);
                                                 setPagu(unformatNumber(inputValue));
                                             };
-                                            const displayValue = formatNumberWithDots(pagu);
+                                            const displayValue = formatNumberWithDots(Pagu);
                                             return (
                                                 <input
                                                     {...field}
