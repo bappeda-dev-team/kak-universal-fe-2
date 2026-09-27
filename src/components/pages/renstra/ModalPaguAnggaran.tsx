@@ -30,7 +30,7 @@ interface modal {
 
 export const ModalPaguAnggaran: React.FC<modal> = ({ isOpen, onClose, kode, nama, jenis, kode_opd, pagu, tahun, onSuccess }) => {
 
-    const { control, handleSubmit, reset } = useForm<FormValue>({
+    const { control, handleSubmit, reset, watch } = useForm<FormValue>({
         defaultValues: {
             kode_subkegiatan: kode,
             kode_opd: kode_opd,
@@ -40,7 +40,7 @@ export const ModalPaguAnggaran: React.FC<modal> = ({ isOpen, onClose, kode, nama
     });
 
     const token = getToken();
-    const [Pagu, setPagu] = useState<number | null>(null);
+    const paguValue = watch('pagu_indikatif');
 
     const [IsLoading, setIsLoading] = useState<boolean>(false);
     const [Proses, setProses] = useState<boolean>(false);
@@ -52,7 +52,7 @@ export const ModalPaguAnggaran: React.FC<modal> = ({ isOpen, onClose, kode, nama
             kode_opd: kode_opd,
             tahun: tahun,
             jenis: "renstra",
-            pagu_indikatif: Pagu,
+            pagu_indikatif: data.pagu_indikatif,
         }
         // console.log(payload);
         try {
@@ -144,12 +144,9 @@ export const ModalPaguAnggaran: React.FC<modal> = ({ isOpen, onClose, kode, nama
                                         control={control}
                                         render={({ field }) => {
                                             const handleInputChange = (e: any) => {
-                                                const inputValue = e.target.value;
-                                                const numericValue = unformatNumber(inputValue);
-                                                field.onChange(numericValue);
-                                                setPagu(unformatNumber(inputValue));
+                                                field.onChange(unformatNumber(e.target.value));
                                             };
-                                            const displayValue = formatNumberWithDots(Pagu);
+                                            const displayValue = formatNumberWithDots(paguValue);
                                             return (
                                                 <input
                                                     {...field}
