@@ -28,16 +28,16 @@ const Table: React.FC<Table> = ({ Data, kode_opd, tahun, onSuccess }) => {
               <th className="border-r border-b px-6 py-3 min-w-[300px]">
                 Nama Inovasi
               </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              <th className="border-r border-b px-6 py-3 min-w-[100px]">
                 Jenis Inovasi
               </th>
               <th className="border-r border-b px-6 py-3 min-w-[300px]">
                 Kebaruan
               </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              <th className="border-r border-b px-6 py-3 min-w-[100px]">
                 Asal Inovasi
               </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              <th className="border-r border-b px-6 py-3 min-w-[100px]">
                 Waktu Implementasi
               </th>
               <th className="border-r border-b px-6 py-3 min-w-[300px]">
@@ -55,16 +55,16 @@ const Table: React.FC<Table> = ({ Data, kode_opd, tahun, onSuccess }) => {
               <th className="border-r border-b px-6 py-3 min-w-[300px]">
                 Indikator
               </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              <th className="border-r border-b px-6 py-3 min-w-[100px]">
                 Target
               </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              <th className="border-r border-b px-6 py-3 min-w-[100px]">
                 Satuan
               </th>
               <th className="border-r border-b px-6 py-3 min-w-[300px]">
                 Sub Kegiatan
               </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
+              <th className="border-r border-b px-6 py-3 min-w-[180px]">
                 Pagu Anggaran
               </th>
             </tr>
@@ -389,7 +389,7 @@ const Table: React.FC<Table> = ({ Data, kode_opd, tahun, onSuccess }) => {
                                         : 1)
                                     );
                                   }, 0)}
-                                  className="border border-emerald-500 px-6 py-3"
+                                  className="border border-emerald-500 px-6 py-3 text-center"
                                 >
                                   {target.target || "-"}
                                 </td>
