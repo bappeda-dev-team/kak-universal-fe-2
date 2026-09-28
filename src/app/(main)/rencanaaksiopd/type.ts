@@ -43,6 +43,7 @@ export interface RencanaKinerja {
     tw2: number;
     tw3: number;
     tw4: number;
+    urutan: number;
     keterangan: string;
     total_anggaran: number;
     indikator_rencana_kinerja: IndikatorRencanaKinerja[]; 

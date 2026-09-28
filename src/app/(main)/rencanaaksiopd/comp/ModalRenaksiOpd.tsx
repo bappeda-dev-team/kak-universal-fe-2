@@ -10,7 +10,7 @@ import { LoadingButtonClip } from "@/components/global/Loading";
 import Select from 'react-select';
 
 interface OptionType {
-    value: number;
+    value: number | string;
     label: string;
 }
 interface modal {
@@ -24,10 +24,13 @@ interface modal {
     kode_opd: string;
     indikator: indikator[];
     tahun: string;
+    rekin_terpakai: string[];
+    rekin_id_terpakai?: string;
     onSuccess: () => void;
 }
 interface FormValue {
     id_renaksi: OptionType;
+    urutan: number;
     catatan: string;
 }
 interface indikator {
@@ -65,16 +68,20 @@ interface rekin {
     };
 }
 
-export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, metode, id, id_sasaran, id_rekin, rekin, kode_opd, indikator, tahun }) => {
+export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, metode, id, id_sasaran, id_rekin, rekin, kode_opd, indikator, tahun, rekin_terpakai, rekin_id_terpakai }) => {
 
     const {
         control,
         handleSubmit,
+        formState: { errors },
     } = useForm<FormValue>();
 
     const [Catatan, setCatatan] = useState<string>('');
+    const [Urutan, setUrutan] = useState<number | null>(null);
     const [Renaksi, setRenaksi] = useState<OptionType | null>(null);
     const [RenaksiOption, setRenaksiOption] = useState<OptionType[]>([]);
+    const [SudahAmbilOption, setSudahAmbilOption] = useState<boolean>(false);
+    const [JumlahDisembunyikan, setJumlahDisembunyikan] = useState<number>(0);
 
     const [Proses, setProses] = useState<boolean>(false);
     const [IsLoading, setIsLoading] = useState<boolean>(false);
@@ -85,6 +92,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
         onClose();
         setRenaksi(null);
         setCatatan('');
+        setUrutan(null);
     }
 
     useEffect(() => {
@@ -111,6 +119,9 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
                     }
                     setRenaksi(rekin);
                 }
+                if (hasil.urutan) {
+                    setUrutan(hasil.urutan);
+                }
             } catch (err) {
                 console.log(err);
             } finally {
@@ -135,18 +146,29 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
             const result = await response.json();
             const data = result.rencana_kinerja;
             if (result.code === 200) {
-                const rekin = data.map((s: rekin) => ({
+                // rekin yang sudah dipakai pada sasaran ini disembunyikan,
+                // kecuali rekin milik record yang sedang diedit (metode 'lama')
+                const sudahDipakai = new Set(
+                    (rekin_terpakai ?? []).filter((v) => v !== rekin_id_terpakai)
+                );
+                const tersedia = (data as rekin[]).filter(
+                    (s) => !sudahDipakai.has(s.id_rencana_kinerja)
+                );
+                const rekin = tersedia.map((s: rekin) => ({
                     value: s.id_rencana_kinerja,
                     label: `${s.nama_pegawai} - ${s.nama_rencana_kinerja}`,
                 }));
+                setJumlahDisembunyikan((data as rekin[]).length - tersedia.length);
                 setRenaksiOption(rekin);
             } else {
                 console.log("code: ", result.code, "data: ", result.data);
+                setJumlahDisembunyikan(0);
                 setRenaksiOption([]);
             }
         } catch (err) {
             console.log("error saat fetch option rekin level 3", err);
         } finally {
+            setSudahAmbilOption(true);
             setIsLoading(false);
         }
     }
@@ -164,6 +186,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
             //key : value
             id: id,
             rekin_id: Renaksi?.value,
+            urutan: Urutan,
             keterangan: Catatan
         };
         const getBody = () => {
@@ -281,6 +304,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
                                             isLoading={IsLoading}
                                             isSearchable
                                             isClearable
+                                            noOptionsMessage={() => "Rencana Aksi OPD tidak tersedia"}
                                             // menuShouldBlockScroll={true}
                                             // menuPlacement="top"
                                             menuPortalTarget={document.body} // Render menu ke document.body
@@ -289,7 +313,7 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
                                                 setRenaksi(option);
                                             }}
                                             onMenuOpen={() => {
-                                                if (RenaksiOption.length === 0) {
+                                                if (!SudahAmbilOption) {
                                                     fetchOptionRekin();
                                                 }
                                             }}
@@ -307,6 +331,12 @@ export const ModalRenaksiOpd: React.FC<modal> = ({ isOpen, onClose, onSuccess, m
                                     </React.Fragment>
                                 )}
                             />
+                            {SudahAmbilOption && JumlahDisembunyikan > 0 ? (
+                                <p className="mt-2 text-xs italic text-slate-500">
+                                    {JumlahDisembunyikan} Rencana Kinerja sudah digunakan pada
+                                    sasaran ini dan tidak ditampilkan.
+                                </p>
+                            ) : null}
                         </div>
                         <div className="flex flex-col justify-center">
                             <label
