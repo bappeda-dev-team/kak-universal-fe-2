@@ -20,11 +20,9 @@ interface pagu {
 }
 
 const pageUsable = 320;
-const colKode = 34;
-const colJenis = 58;
-const colIndikator = 60;
-const targetPerTahun = 30;
-const paguPerTahun = 20;
+const colKode = 22;
+const colJenis = 33;
+const colIndikator = 36;
 
 const cellBorders = {
     top: { style: BorderStyle.SINGLE, size: 4, color: "000000" },
@@ -55,14 +53,21 @@ const cell = (
 
 export function TablePaguTotalMatrixRenstraWord(tahun_list: string[], pagu: pagu[]): Table {
     const numYears = Math.max(tahun_list.length, 1);
-    const exactTotal = colKode + colJenis + colIndikator + numYears * (targetPerTahun + paguPerTahun);
-    const tableWidth = Math.min(exactTotal, pageUsable);
-    const scale = tableWidth / exactTotal;
-    const kodeWidth = colKode * scale;
-    const jenisWidth = colJenis * scale;
-    const indikatorWidth = colIndikator * scale;
-    const targetWidth = targetPerTahun * scale;
-    const paguWidth = paguPerTahun * scale;
+    const fixedTotal = colKode + colJenis + colIndikator;
+    const yearTotal = Math.max(pageUsable - fixedTotal, 0);
+    const yearWidth = yearTotal / numYears;
+    const targetWidth = yearWidth * 0.4;
+    const paguWidth = yearWidth - targetWidth;
+
+    const widths: number[] = [colKode, colJenis, colIndikator];
+    tahun_list.forEach(() => widths.push(targetWidth, paguWidth));
+    const widthSum = widths.reduce((a, b) => a + b, 0);
+    widths[widths.length - 1] += pageUsable - widthSum;
+    const tableWidth = widths.reduce((a, b) => a + b, 0);
+
+    const kodeWidth = widths[0];
+    const jenisWidth = widths[1];
+    const indikatorWidth = widths[2];
 
     const row: TableRow = new TableRow({
         children: [
@@ -73,28 +78,28 @@ export function TablePaguTotalMatrixRenstraWord(tahun_list: string[], pagu: pagu
                         new TextRun({
                             text: "Total Pagu OPD",
                             bold: true,
-                            size: 18,
+                            size: 12,
                             color: "000000",
                         }),
                     ],
                 }),
             ], kodeWidth + jenisWidth + indikatorWidth, { columnSpan: 3 }),
-            ...tahun_list.flatMap((tahun) => {
+            ...tahun_list.flatMap((tahun, i) => {
                 const item = pagu.find((p) => p.tahun === tahun);
                 return [
-                    cell([new Paragraph({ children: [] })], targetWidth, {}),
+                    cell([new Paragraph({ children: [] })], widths[3 + 2 * i], {}),
                     cell([
                         new Paragraph({
                             alignment: AlignmentType.CENTER,
                             children: [
                                 new TextRun({
                                     text: `Rp.${formatRupiah(item?.pagu_indikatif || 0)}`,
-                                    size: 8,
+                                    size: 12,
                                     color: "000000",
                                 }),
                             ],
                         }),
-                    ], paguWidth, {}),
+                    ], widths[4 + 2 * i], {}),
                 ];
             }),
         ],
@@ -105,20 +110,12 @@ export function TablePaguTotalMatrixRenstraWord(tahun_list: string[], pagu: pagu
         layout: TableLayoutType.FIXED,
         margins: {
             marginUnitType: WidthType.DXA,
-            top: convertMillimetersToTwip(3),
-            bottom: convertMillimetersToTwip(3),
-            left: convertMillimetersToTwip(3),
-            right: convertMillimetersToTwip(3),
+            top: convertMillimetersToTwip(1),
+            bottom: convertMillimetersToTwip(1),
+            left: convertMillimetersToTwip(1),
+            right: convertMillimetersToTwip(1),
         },
-        columnWidths: [
-            convertMillimetersToTwip(kodeWidth),
-            convertMillimetersToTwip(jenisWidth),
-            convertMillimetersToTwip(indikatorWidth),
-            ...tahun_list.flatMap(() => [
-                convertMillimetersToTwip(targetWidth),
-                convertMillimetersToTwip(paguWidth),
-            ]),
-        ],
+        columnWidths: widths.map(convertMillimetersToTwip),
         rows: [row],
     });
 }

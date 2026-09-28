@@ -559,7 +559,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                 <td className={`border-r border-b px-6 py-4 w-full`}>
                                     <div className="flex items-center justify-between gap-2">
                                         <span>{d.indikator || ""}</span>
-                                        <div className="flex flex-col items-center gap-1">
+                                        {/* <div className="flex flex-col items-center gap-1">
                                             <button
                                                 type="button"
                                                 onClick={() => handleModalEditIndikator(d)}
@@ -580,7 +580,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                             >
                                                 <TbTrash size={14} />
                                             </button>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </td>
                                 {/* Aksi dilebur menjadi satu kotak menutupi semua baris indikator */}

@@ -15,6 +15,14 @@ import {
     convertMillimetersToTwip,
 } from "docx";
 
+interface TableCellMarginOptions {
+    marginUnitType?: (typeof WidthType)[keyof typeof WidthType];
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+}
+
 interface renstra {
     nama: string;
     kode: string;
@@ -49,11 +57,9 @@ interface TargetBase {
 }
 
 const pageUsable = 320;
-const colKode = 34;
-const colJenis = 58;
-const colIndikator = 60;
-const targetPerTahun = 30;
-const paguPerTahun = 20;
+const colKode = 22;
+const colJenis = 33;
+const colIndikator = 36;
 
 const cellBorders = {
     top: { style: BorderStyle.SINGLE, size: 4, color: "000000" },
@@ -73,12 +79,14 @@ const cell = (
         alignment = AlignmentType.LEFT,
         verticalMerge,
         columnSpan,
+        margins,
     }: {
         fill?: string;
         color?: string;
         alignment?: (typeof AlignmentType)[keyof typeof AlignmentType];
         verticalMerge?: (typeof VerticalMergeType)[keyof typeof VerticalMergeType];
         columnSpan?: number;
+        margins?: TableCellMarginOptions;
     } = {},
 ): TableCell =>
     new TableCell({
@@ -89,9 +97,18 @@ const cell = (
         borders: cellBorders,
         verticalMerge,
         columnSpan,
+        margins,
     });
 
 const emptyParagraph = () => new Paragraph({ children: [] });
+
+const bodyPadding = {
+    marginUnitType: WidthType.DXA,
+    top: convertMillimetersToTwip(3),
+    bottom: convertMillimetersToTwip(3),
+    left: convertMillimetersToTwip(1),
+    right: convertMillimetersToTwip(1),
+};
 
 const textParagraph = (text: string, size: number, bold = false, color = "000000"): Paragraph =>
     new Paragraph({
@@ -116,18 +133,7 @@ export function TableUrusanWord(
 
     const isUrusanLevel = jenis === "Urusan" || jenis === "Bidang Urusan";
 
-    const indicatorItems: Indikator[] = indikator.length > 0
-        ? indikator
-        : [{
-            kode_indikator: "",
-            kode: data.kode,
-            kode_opd: kode_opd,
-            indikator: "-",
-            tahun: "",
-            target: "",
-            satuan: "",
-            target_baseline: [],
-        }];
+    const indicatorItems: Indikator[] = indikator;
 
     const targetFor = (item: Indikator, tahun: string): string => {
         if (item.target_baseline && item.target_baseline.length > 0) {
@@ -154,27 +160,35 @@ export function TableUrusanWord(
         anggaran.find((a) => a.tahun === tahun)?.pagu_indikatif || 0;
 
     const numYears = Math.max(tahun_list.length, 1);
-    const exactTotal = colKode + colJenis + colIndikator + numYears * (targetPerTahun + paguPerTahun);
-    const tableWidth = Math.min(exactTotal, pageUsable);
-    const scale = tableWidth / exactTotal;
-    const kodeWidth = colKode * scale;
-    const jenisWidth = colJenis * scale;
-    const indikatorWidth = colIndikator * scale;
-    const targetWidth = targetPerTahun * scale;
-    const paguWidth = paguPerTahun * scale;
+    const fixedTotal = colKode + colJenis + colIndikator;
+    const yearTotal = Math.max(pageUsable - fixedTotal, 0);
+    const yearWidth = yearTotal / numYears;
+    const targetWidth = yearWidth * 0.4;
+    const paguWidth = yearWidth - targetWidth;
+
+    const widths: number[] = [colKode, colJenis, colIndikator];
+    tahun_list.forEach(() => widths.push(targetWidth, paguWidth));
+    const widthSum = widths.reduce((a, b) => a + b, 0);
+    widths[widths.length - 1] += pageUsable - widthSum;
+    const tableWidth = widths.reduce((a, b) => a + b, 0);
+
+    const kodeWidth = widths[0];
+    const jenisWidth = widths[1];
+    const indikatorWidth = widths[2];
+    const yearCellWidth = (i: number) => widths[3 + 2 * i] + widths[4 + 2 * i];
 
     const headerRow1: TableRow = new TableRow({
         children: [
-            cell([textParagraph("Kode", 18, true, color)], kodeWidth, {
+            cell([textParagraph("Kode", 12, true, color)], kodeWidth, {
                 fill, color, alignment: AlignmentType.CENTER, verticalMerge: VerticalMergeType.RESTART,
             }),
-            cell([textParagraph(jenis, 18, true, color)], jenisWidth, {
+            cell([textParagraph(jenis, 12, true, color)], jenisWidth, {
                 fill, color, alignment: AlignmentType.CENTER, verticalMerge: VerticalMergeType.RESTART,
             }),
-            cell([textParagraph("Indikator", 18, true, color)], indikatorWidth, {
+            cell([textParagraph("Indikator", 12, true, color)], indikatorWidth, {
                 fill, color, alignment: AlignmentType.CENTER, verticalMerge: VerticalMergeType.RESTART,
             }),
-            ...tahun_list.map((tahun) => cell([textParagraph(tahun.toString(), 18, true, color)], targetWidth + paguWidth, {
+            ...tahun_list.map((tahun, i) => cell([textParagraph(tahun.toString(), 12, true, color)], yearCellWidth(i), {
                 fill, color, alignment: AlignmentType.CENTER, columnSpan: 2,
             })),
         ],
@@ -187,17 +201,17 @@ export function TableUrusanWord(
     ];
 
     if (isUrusanLevel) {
-        headerRow2Cells.push(...tahun_list.flatMap(() =>
-            cell([textParagraph("Pagu", 18, true, color)], targetWidth + paguWidth, {
+        headerRow2Cells.push(...tahun_list.map((tahun, i) =>
+            cell([textParagraph("Pagu", 12, true, color)], yearCellWidth(i), {
                 fill, color, alignment: AlignmentType.CENTER, columnSpan: 2,
             }),
         ));
     } else {
-        headerRow2Cells.push(...tahun_list.flatMap((tahun, index) => [
-            cell([textParagraph(index === 0 ? "Realisasi/Satuan" : "Target/Satuan", 12, true, color)], targetWidth, {
+        headerRow2Cells.push(...tahun_list.flatMap((tahun, i) => [
+            cell([textParagraph("Target/\nSatuan", 12, true, color)], widths[3 + 2 * i], {
                 fill, color, alignment: AlignmentType.CENTER,
             }),
-            cell([textParagraph("Pagu", 18, true, color)], paguWidth, {
+            cell([textParagraph("Pagu", 12, true, color)], widths[4 + 2 * i], {
                 fill, color, alignment: AlignmentType.CENTER,
             }),
         ]));
@@ -210,39 +224,47 @@ export function TableUrusanWord(
     if (isUrusanLevel) {
         rows.push(new TableRow({
             children: [
-                cell([textParagraph(`${data.kode || "-"}`, 18)], kodeWidth, { alignment: AlignmentType.CENTER }),
-                cell([new Paragraph({ children: [new TextRun({ text: `${data.nama || "-"}`, size: 18 })] })], jenisWidth, {}),
-                cell([emptyParagraph()], indikatorWidth, {}),
-                ...tahun_list.flatMap((tahun) => [
-                    cell([emptyParagraph()], targetWidth, {}),
-                    cell([textParagraph(`Rp.${formatRupiah(paguFor(tahun))}`, 10)], paguWidth, { alignment: AlignmentType.CENTER }),
+                cell([textParagraph(`${data.kode || "-"}`, 12)], kodeWidth, { alignment: AlignmentType.CENTER, margins: bodyPadding }),
+                cell([new Paragraph({ children: [new TextRun({ text: `${data.nama || "-"}`, size: 12 })] })], jenisWidth, { margins: bodyPadding }),
+                cell([emptyParagraph()], indikatorWidth, { margins: bodyPadding }),
+                ...tahun_list.flatMap((tahun, i) => [
+                    cell([emptyParagraph()], widths[3 + 2 * i], { margins: bodyPadding }),
+                    cell([textParagraph(`Rp.${formatRupiah(paguFor(tahun))}`, 12)], widths[4 + 2 * i], { alignment: AlignmentType.CENTER, margins: bodyPadding }),
+                ]),
+            ],
+        }));
+    } else if (!indikator.length) {
+        rows.push(new TableRow({
+            children: [
+                cell([textParagraph(`${data.kode || "-"}`, 12)], kodeWidth, { alignment: AlignmentType.CENTER, margins: bodyPadding }),
+                cell([new Paragraph({ children: [new TextRun({ text: `${data.nama || "-"}`, size: 12 })] })], jenisWidth, { margins: bodyPadding }),
+                cell([emptyParagraph()], indikatorWidth, { margins: bodyPadding }),
+                ...tahun_list.flatMap((tahun, i) => [
+                    cell([emptyParagraph()], widths[3 + 2 * i], { margins: bodyPadding }),
+                    cell([textParagraph(`Rp.${formatRupiah(paguFor(tahun))}`, 12)], widths[4 + 2 * i], { alignment: AlignmentType.CENTER, margins: bodyPadding }),
                 ]),
             ],
         }));
     } else {
-        rows.push(new TableRow({
-            children: [
-                cell([textParagraph(`${data.kode || "-"}`, 18)], kodeWidth, { alignment: AlignmentType.CENTER, verticalMerge: VerticalMergeType.RESTART }),
-                cell([new Paragraph({ children: [new TextRun({ text: `${data.nama || "-"}`, size: 18 })] })], jenisWidth, { verticalMerge: VerticalMergeType.RESTART }),
-                cell([emptyParagraph()], indikatorWidth, {}),
-                ...tahun_list.flatMap(() => [
-                    cell([emptyParagraph()], targetWidth, {}),
-                    cell([emptyParagraph()], paguWidth, {}),
-                ]),
-            ],
-        }));
-
         indicatorItems.forEach((item, index) => {
+            const isFirst = index === 0;
             rows.push(new TableRow({
                 children: [
-                    cell([emptyParagraph()], kodeWidth, { verticalMerge: VerticalMergeType.CONTINUE }),
-                    cell([emptyParagraph()], jenisWidth, { verticalMerge: VerticalMergeType.CONTINUE }),
-                    cell([new Paragraph({ children: [new TextRun({ text: item.indikator || "-", size: 12 })] })], indikatorWidth, {}),
-                    ...tahun_list.flatMap((tahun) => [
-                        cell([textParagraph(targetFor(item, tahun), 12)], targetWidth, { alignment: AlignmentType.CENTER }),
-                        index === 0
-                            ? cell([textParagraph(`Rp.${formatRupiah(paguFor(tahun))}`, 10)], paguWidth, { alignment: AlignmentType.CENTER, verticalMerge: VerticalMergeType.RESTART })
-                            : cell([emptyParagraph()], paguWidth, { verticalMerge: VerticalMergeType.CONTINUE }),
+                    ...(isFirst
+                        ? [
+                            cell([textParagraph(`${data.kode || "-"}`, 12)], kodeWidth, { alignment: AlignmentType.CENTER, margins: bodyPadding, verticalMerge: VerticalMergeType.RESTART }),
+                            cell([new Paragraph({ children: [new TextRun({ text: `${data.nama || "-"}`, size: 12 })] })], jenisWidth, { margins: bodyPadding, verticalMerge: VerticalMergeType.RESTART }),
+                        ]
+                        : [
+                            cell([emptyParagraph()], kodeWidth, { margins: bodyPadding, verticalMerge: VerticalMergeType.CONTINUE }),
+                            cell([emptyParagraph()], jenisWidth, { margins: bodyPadding, verticalMerge: VerticalMergeType.CONTINUE }),
+                        ]),
+                    cell([new Paragraph({ children: [new TextRun({ text: item.indikator || "-", size: 12 })] })], indikatorWidth, { margins: bodyPadding }),
+                    ...tahun_list.flatMap((tahun, i) => [
+                        cell([textParagraph(targetFor(item, tahun), 12)], widths[3 + 2 * i], { alignment: AlignmentType.CENTER, margins: bodyPadding }),
+                        isFirst
+                            ? cell([textParagraph(`Rp.${formatRupiah(paguFor(tahun))}`, 12)], widths[4 + 2 * i], { alignment: AlignmentType.CENTER, margins: bodyPadding, verticalMerge: VerticalMergeType.RESTART })
+                            : cell([emptyParagraph()], widths[4 + 2 * i], { margins: bodyPadding, verticalMerge: VerticalMergeType.CONTINUE }),
                     ]),
                 ],
             }));
@@ -254,20 +276,12 @@ export function TableUrusanWord(
         layout: TableLayoutType.FIXED,
         margins: {
             marginUnitType: WidthType.DXA,
-            top: convertMillimetersToTwip(3),
-            bottom: convertMillimetersToTwip(3),
-            left: convertMillimetersToTwip(3),
-            right: convertMillimetersToTwip(3),
+            top: convertMillimetersToTwip(1),
+            bottom: convertMillimetersToTwip(1),
+            left: convertMillimetersToTwip(1),
+            right: convertMillimetersToTwip(1),
         },
-        columnWidths: [
-            convertMillimetersToTwip(kodeWidth),
-            convertMillimetersToTwip(jenisWidth),
-            convertMillimetersToTwip(indikatorWidth),
-            ...tahun_list.flatMap(() => [
-                convertMillimetersToTwip(targetWidth),
-                convertMillimetersToTwip(paguWidth),
-            ]),
-        ],
+        columnWidths: widths.map(convertMillimetersToTwip),
         rows: [headerRow1, headerRow2, ...rows],
     });
 }

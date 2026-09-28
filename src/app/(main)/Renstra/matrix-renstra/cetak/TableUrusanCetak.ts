@@ -54,17 +54,24 @@ export function TableUrusanCetak(
 
     const isUrusanLevel = jenis === "Urusan" || jenis === "Bidang Urusan";
 
-    const numYears = Math.max(tahun_list.length, 1);
-
-    // Lebar kolom mengikuti tampilan table V2 (Indikator 1 kolom utk semua tahun),
-    // diperlebar agar mengisi penuh lebar halaman (sejajar dengan table recap di atas)
+    // Lebar kolom mengikuti tampilan table V2 (Indikator 1 kolom utk semua tahun).
+    // Kolom Kode/jenis/Indikator dibuat fix, sisa lebar halaman habis utk kolom per-tahun.
     const margin = 5;
     const usable = doc.internal.pageSize.getWidth() - (margin + margin);
-    const baseWidths = [34, 58, 60];
-    tahun_list.forEach(() => baseWidths.push(30, 20));
-    const totalWidth = baseWidths.reduce((a, b) => a + b, 0);
-    const scale = Math.min(1, usable / totalWidth);
-    const widths = baseWidths.map((w) => w * scale);
+    const numYears = Math.max(tahun_list.length, 1);
+
+    const colKode = 22;
+    const colJenis = 33;
+    const colIndikator = 36;
+    const fixedTotal = colKode + colJenis + colIndikator;
+
+    const yearTotal = Math.max(usable - fixedTotal, 0);
+    const yearWidth = yearTotal / numYears;
+    const targetWidth = yearWidth * 0.4;
+    const paguWidth = yearWidth - targetWidth;
+
+    const widths: number[] = [colKode, colJenis, colIndikator];
+    tahun_list.forEach(() => widths.push(targetWidth, paguWidth));
     const widthSum = widths.reduce((a, b) => a + b, 0);
     widths[widths.length - 1] += usable - widthSum;
 
@@ -75,8 +82,6 @@ export function TableUrusanCetak(
 
     const paguFor = (tahun: string): number =>
         anggaran.find((a) => a.tahun === tahun)?.pagu_indikatif || 0;
-
-    const isV2 = indikator.some((i) => Array.isArray(i.target));
 
     // Layout baris per indikator: nama indikator + target/satuan per tahun
     const indicatorRows: { indikator: string; targets: Record<string, { target: string; satuan: string }> }[] = indikator.map((i) => {
@@ -118,7 +123,7 @@ export function TableUrusanCetak(
             { content: "Pagu", colSpan: 2, styles: { halign: "center" } },
         ])
         : tahun_list.flatMap(() => [
-            { content: "target/satuan", styles: { halign: "center" } },
+            { content: "Target/\nSatuan", styles: { halign: "center" } },
             { content: "Pagu", styles: { halign: "center" } },
         ]);
 
@@ -133,47 +138,63 @@ export function TableUrusanCetak(
                 { content: "", styles: { valign: "middle" } },
                 {
                     content: `Rp.${formatRupiah(paguFor(tahun))}`,
-                    styles: { halign: "center", fontSize: 5, valign: "middle" },
+                    styles: { halign: "center", valign: "middle" },
+                },
+            ]),
+        ]);
+    } else if (!indicatorRows.length) {
+        body.push([
+            { content: `${data.kode || "-"}`, styles: { halign: "center", valign: "middle" } },
+            { content: `${data.nama || "-"}`, styles: { valign: "middle" } },
+            { content: "", styles: { valign: "middle" } },
+            ...tahun_list.flatMap((tahun) => [
+                { content: "", styles: { valign: "middle" } },
+                {
+                    content: `Rp.${formatRupiah(paguFor(tahun))}`,
+                    styles: { halign: "center", valign: "middle" },
                 },
             ]),
         ]);
     } else {
-        const totalRows = indicatorRows.length + 1;
-
-        body.push([
-            {
-                content: `${data.kode || "-"}`,
-                rowSpan: totalRows,
-                styles: { halign: "center", valign: "middle" },
-            },
-            {
-                content: `${data.nama || "-"}`,
-                rowSpan: totalRows,
-                styles: { valign: "middle" },
-            },
-        ]);
+        const rowSpan = indicatorRows.length;
 
         indicatorRows.forEach((d, index) => {
-            const cells: any[] = [
-                {
-                    content: d.indikator,
-                    styles: { fontSize: 6, overflow: "linebreak", valign: "middle" },
-                },
-            ];
+            const cells: any[] = [];
+
+            if (index === 0) {
+                cells.push(
+                    {
+                        content: `${data.kode || "-"}`,
+                        rowSpan,
+                        styles: { halign: "center", valign: "middle" },
+                    },
+                    {
+                        content: `${data.nama || "-"}`,
+                        rowSpan,
+                        styles: { valign: "middle" },
+                    }
+                );
+            }
+
+            cells.push({
+                content: d.indikator,
+                styles: { overflow: "linebreak", valign: "middle" },
+            });
+
             tahun_list.forEach((tahun) => {
                 const tt = d.targets[tahun] || { target: "-", satuan: "-" };
                 const textTarget = tt.target !== "-"
-                    ? `${tt.target} ${tt.satuan !== "-" ? tt.satuan : ""}`.trim()
+                    ? `${tt.target} \n ${tt.satuan !== "-" ? tt.satuan : ""}`.trim()
                     : "";
                 cells.push({
                     content: textTarget,
-                    styles: { halign: "center", fontSize: 6, valign: "middle" },
+                    styles: { halign: "center", valign: "middle" },
                 });
                 if (index === 0) {
                     cells.push({
                         content: `Rp.${formatRupiah(paguFor(tahun))}`,
-                        rowSpan: indicatorRows.length,
-                        styles: { halign: "center", fontSize: 5, valign: "middle" },
+                        rowSpan,
+                        styles: { halign: "center", valign: "middle" },
                     });
                 }
             });
@@ -188,11 +209,15 @@ export function TableUrusanCetak(
         theme: "grid",
         margin: { left: 5, right: 5, top: 20, bottom: 20 },
         styles: {
-            fontSize: 9,
+            fontSize: 6,
             valign: "middle",
-            cellPadding: 3,
+            cellPadding: 1,
             lineWidth: 0.2,
             lineColor: [0, 0, 0],
+        },
+        bodyStyles: {
+            fontSize: 6,
+            cellPadding: { left: 1, right: 1, top: 3, bottom: 3 },
         },
         columnStyles,
         headStyles: {
