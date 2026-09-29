@@ -19,7 +19,7 @@ interface modal {
     onClose: () => void;
     id?: number;
     id_rekin: string;
-    id_sasaran?: number;
+    id_sasaran?: string | number;
     rekin: string;
     kode_opd: string;
     indikator: indikator[];

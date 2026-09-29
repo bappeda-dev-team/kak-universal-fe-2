@@ -178,7 +178,7 @@ interface RekinAsn {
   nama_opd: string;
   tahun: number;
   token: string;
-  id: number;
+  id: string;
   sasaran: string;
   indikator: IndikatorSasaranOpd[];
 }
@@ -200,7 +200,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
 
   const [IdRenaksi, setIdRenaksi] = useState<number>(0);
   const [IdRekin, setIdRekin] = useState<string>("");
-  const [IdSasaran, setIdSasaran] = useState<number>(0);
+  const [IdSasaran, setIdSasaran] = useState<string | number>(0);
   const [RekinIdEdit, setRekinIdEdit] = useState<string>("");
   const [IndikatorSasaran, setIndikatorSasaran] = useState<
     IndikatorSasaranOpd[]
@@ -243,7 +243,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
   );
 
   const handleModalTambah = (
-    id_sasaran: number,
+    id_sasaran: string | number,
     rekin: string,
     indikator: IndikatorSasaranOpd[],
   ) => {
@@ -350,7 +350,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
 
   const handleLockRenaksiOpd = async (
     renaksi: RencanaKinerja,
-    sasaranId: number,
+    sasaranId: string | number,
     method: "POST" | "DELETE",
   ) => {
     const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL;
@@ -360,7 +360,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
       anggaran: renaksi.total_anggaran || 0,
       nama_pemilik: renaksi.nip_pegawai,
       rekin_id: renaksi.rekin_id,
-      sasaran_id: sasaranId,
+      sasaran_id: String(sasaranId ?? ""),
       sub_kegiatan: getSubKegiatanText(renaksi.subkegiatan),
       tw1: renaksi.tw1 || 0,
       tw2: renaksi.tw2 || 0,
