@@ -6,7 +6,7 @@ import {
   ButtonSkyBorder,
   ButtonBlackBorder,
 } from "@/components/global/Button";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   TbCirclePlus,
   TbLock,
@@ -178,7 +178,7 @@ interface RekinAsn {
   nama_opd: string;
   tahun: number;
   token: string;
-  id: number;
+  id: string;
   sasaran: string;
   indikator: IndikatorSasaranOpd[];
 }
@@ -200,7 +200,8 @@ export const RekinAsn: React.FC<RekinAsn> = ({
 
   const [IdRenaksi, setIdRenaksi] = useState<number>(0);
   const [IdRekin, setIdRekin] = useState<string>("");
-  const [IdSasaran, setIdSasaran] = useState<number>(0);
+  const [IdSasaran, setIdSasaran] = useState<string | number>(0);
+  const [RekinIdEdit, setRekinIdEdit] = useState<string>("");
   const [IndikatorSasaran, setIndikatorSasaran] = useState<
     IndikatorSasaranOpd[]
   >([]);
@@ -217,8 +218,32 @@ export const RekinAsn: React.FC<RekinAsn> = ({
     Record<number, boolean>
   >({});
 
+  const rekinTerpakai = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          Data.flatMap((d: Rekin) => d.rencana_kinerja ?? [])
+            .map((rk: RencanaKinerja) => rk.rekin_id)
+            .filter((v): v is string => Boolean(v)),
+        ),
+      ),
+    [Data],
+  );
+  
+  const DataUrut = useMemo(
+    () =>
+      (Data ?? []).map((item: Rekin) => ({
+        ...item,
+        rencana_kinerja: [...(item.rencana_kinerja ?? [])].sort(
+          (a: RencanaKinerja, b: RencanaKinerja) =>
+            (a.urutan ?? 0) - (b.urutan ?? 0),
+        ),
+      })),
+    [Data],
+  );
+
   const handleModalTambah = (
-    id_sasaran: number,
+    id_sasaran: string | number,
     rekin: string,
     indikator: IndikatorSasaranOpd[],
   ) => {
@@ -238,16 +263,19 @@ export const RekinAsn: React.FC<RekinAsn> = ({
     id: number,
     rekin: string,
     indikator: IndikatorSasaranOpd[],
+    rekin_id: string,
   ) => {
     if (ModalEdit) {
       setModalEdit(false);
       setRekin("");
       setIdRenaksi(0);
+      setRekinIdEdit("");
       setIndikatorSasaran([]);
     } else {
       setModalEdit(true);
       setRekin(rekin);
       setIdRenaksi(id);
+      setRekinIdEdit(rekin_id);
       setIndikatorSasaran(indikator);
     }
   };
@@ -322,7 +350,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
 
   const handleLockRenaksiOpd = async (
     renaksi: RencanaKinerja,
-    sasaranId: number,
+    sasaranId: string | number,
     method: "POST" | "DELETE",
   ) => {
     const API_URL_RENAKSI_OPD = process.env.NEXT_PUBLIC_API_URL;
@@ -332,7 +360,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
       anggaran: renaksi.total_anggaran || 0,
       nama_pemilik: renaksi.nip_pegawai,
       rekin_id: renaksi.rekin_id,
-      sasaran_id: sasaranId,
+      sasaran_id: String(sasaranId ?? ""),
       sub_kegiatan: getSubKegiatanText(renaksi.subkegiatan),
       tw1: renaksi.tw1 || 0,
       tw2: renaksi.tw2 || 0,
@@ -548,7 +576,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
         </ButtonSkyBorder>
         <ButtonBlackBorder
           className="flex items-center gap-1 w-full"
-          onClick={() => handleCetak(Data[0].rencana_kinerja)}
+          onClick={() => handleCetak(DataUrut[0]?.rencana_kinerja ?? [])}
         >
           <TbPrinter />
           Cetak
@@ -635,8 +663,8 @@ export const RekinAsn: React.FC<RekinAsn> = ({
             </tr>
           </thead>
           <tbody>
-            {Data.length != 0 ? (
-              Data.map((data: Rekin, index: number) => (
+            {DataUrut.length != 0 ? (
+              DataUrut.map((data: Rekin, index: number) => (
                 <React.Fragment key={index}>
                   {data.rencana_kinerja.map(
                     (rk: RencanaKinerja, sub_index: number) => (
@@ -761,6 +789,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
                                   rk.id_renaksiopd,
                                   rk.nama_rencana_kinerja,
                                   indikator,
+                                  rk.rekin_id,
                                 )
                               }
                             >
@@ -817,6 +846,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
             id_sasaran={IdSasaran}
             rekin={Rekin}
             indikator={IndikatorSasaran ? IndikatorSasaran : []}
+            rekin_terpakai={rekinTerpakai}
             onSuccess={() => setFetchTrigger((prev) => !prev)}
           />
         )}
@@ -824,13 +854,15 @@ export const RekinAsn: React.FC<RekinAsn> = ({
           <ModalRenaksiOpd
             metode="lama"
             isOpen={ModalEdit}
-            onClose={() => handleModalEdit(0, "", [])}
+            onClose={() => handleModalEdit(0, "", [], "")}
             id={IdRenaksi}
             kode_opd={kode_opd}
             tahun={String(tahun)}
             id_rekin={IdRekin}
             rekin={Rekin}
             indikator={IndikatorSasaran ? IndikatorSasaran : []}
+            rekin_terpakai={rekinTerpakai}
+            rekin_id_terpakai={RekinIdEdit}
             onSuccess={() => setFetchTrigger((prev) => !prev)}
           />
         )}

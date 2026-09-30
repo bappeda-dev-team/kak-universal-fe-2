@@ -4,34 +4,36 @@ import { useBrandingContext } from "@/context/BrandingContext";
 import { FiHome } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import Table from "./comp/Table";
-
 import { LoadingClip } from "@/components/global/Loading";
-import { getToken } from "@/components/lib/Cookie";
+import { getUser, getToken } from "@/components/lib/Cookie";
 import { InovasiLaporan } from "./type";
 import { AlertNotification } from "@/components/global/Alert";
 import { useRouter } from "next/navigation";
 
 const LaporanInovasiPage = () => {
   const { branding } = useBrandingContext();
-  const kode_opd =
-    branding?.user?.roles == "super_admin" ||
-    branding?.user?.roles == "reviewer"
-      ? branding?.opd?.value
-      : branding?.user?.kode_opd;
-  const nama_opd =
-    branding?.user?.roles == "super_admin" ||
-    branding?.user?.roles == "reviewer"
-      ? branding?.opd?.label
-      : branding?.user?.nama_opd;
+
   const tahun = branding?.tahun?.value || 0;
   const router = useRouter();
-
   const token = getToken();
 
   const [Data, setData] = useState<InovasiLaporan[] | null>(null);
   const [Loading, setLoading] = useState<boolean>(false);
   const [Error, setError] = useState<boolean>(false);
   const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+
+  const [User, setUser] = useState<any>(null);
+  const kode_opd =
+    User?.roles == "super_admin" ? branding?.opd?.value : User?.kode_opd;
+  const nama_opd =
+    User?.roles == "super_admin" ? branding?.opd?.label : User?.nama_opd;
+
+  useEffect(() => {
+    const fetchUser = getUser();
+    if (fetchUser) {
+      setUser(fetchUser.user);
+    }
+  }, []);
 
   useEffect(() => {
     if (!branding || !kode_opd || !tahun) return;
