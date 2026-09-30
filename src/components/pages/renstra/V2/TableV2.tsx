@@ -12,11 +12,14 @@ import { formatRupiah } from "@/components/utils/format-rupiah";
 import { ModalTargetSatuanRenstra } from "./ModalTargetSatuanRenstra";
 import { ModalCreateIndikatorRenstraV2, ModalEditIndikatorV2 } from "./ModalCreateIndikatorRenstraV2";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
+import { ModalOutcomeMatrix } from "./ModalOutcomeMatrix";
+import { getDummyOutcome } from "./dummyOutcome";
 
 interface renstra {
     nama: string;
     kode: string;
     jenis: string;
+    outcome?: string;
     indikator: Indikator[];
     anggaran: Anggaran[];
     bidang_urusan?: renstra[];
@@ -116,8 +119,14 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
     const [Loading, setLoading] = useState<boolean>(false);
     const [DataNull, setDataNull] = useState<boolean>(false);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+    // Data dummy outcome per kode nomenklatur, akan ditimpa oleh hasil simpan modal outcome
+    const [OutcomeMap, setOutcomeMap] = useState<Record<string, string>>({});
     const { branding } = useBrandingContext();
     const token = getToken();
+
+    const simpanOutcome = (kode: string, outcome: string) => {
+        setOutcomeMap((prev) => ({ ...prev, [kode]: outcome }));
+    }
 
     useEffect(() => {
         const fetchMatrix = async () => {
@@ -212,6 +221,9 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                 kode={u.kode}
                                                 nama={u.nama}
                                                 kode_opd={item.kode_opd}
+                                                outcome={u.outcome}
+                                                outcomeMap={OutcomeMap}
+                                                onUpdateOutcome={simpanOutcome}
                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                             />
                                         </tbody>
@@ -235,6 +247,9 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                 kode={br.kode}
                                                                 nama={br.nama}
                                                                 kode_opd={kode_opd}
+                                                                outcome={br.outcome}
+                                                                outcomeMap={OutcomeMap}
+                                                                onUpdateOutcome={simpanOutcome}
                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                                             />
                                                         </tbody>
@@ -258,6 +273,9 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                                 kode={p.kode}
                                                                                 nama={p.nama}
                                                                                 kode_opd={kode_opd}
+                                                                                outcome={p.outcome}
+                                                                                outcomeMap={OutcomeMap}
+                                                                                onUpdateOutcome={simpanOutcome}
                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                                                             />
                                                                         </tbody>
@@ -281,6 +299,9 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                                                 kode={k.kode}
                                                                                                 nama={k.nama}
                                                                                                 kode_opd={kode_opd}
+                                                                                                outcome={k.outcome}
+                                                                                                outcomeMap={OutcomeMap}
+                                                                                                onUpdateOutcome={simpanOutcome}
                                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                                                                             />
                                                                                         </tbody>
@@ -304,6 +325,9 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                                                                 kode={sk.kode}
                                                                                                                 nama={sk.nama}
                                                                                                                 kode_opd={kode_opd}
+                                                                                                                outcome={sk.outcome}
+                                                                                                                outcomeMap={OutcomeMap}
+                                                                                                                onUpdateOutcome={simpanOutcome}
                                                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                                                                                             />
                                                                                                         </tbody>
@@ -336,19 +360,20 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
 export const TheadMatrix: React.FC<Thead> = ({ jenis, tahun_list }) => {
     return (
         <thead>
-            <tr className={`
+            <tr className={`font-semibold
                 ${jenis === "Urusan" && "bg-white text-black"}
                 ${jenis === "Bidang Urusan" && "bg-red-500 text-white"}
                 ${jenis === "Program" && "bg-blue-500 text-white"}
                 ${jenis === "Kegiatan" && "bg-green-700 text-white"}
                 ${jenis === "Sub Kegiatan" && "bg-emerald-500 text-white"}
             `}>
-                <td rowSpan={2} className="border-r border-b px-6 py-4 w-[200px]">Kode</td>
-                <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[200px]">{jenis}</td>
-                <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[300px]">Indikator</td>
-                <td rowSpan={2} className="border-r border-b px-6 py-4 min-w-[150px] text-center">Aksi</td>
+                <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 w-[200px]">Kode</td>
+                <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 min-w-[200px]">{jenis}</td>
+                <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 min-w-[200px]">Outcome</td>
+                <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 min-w-[300px]">Indikator</td>
+                <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 min-w-[150px] text-center">Aksi</td>
                 {tahun_list.map((item: any) => (
-                    <td key={item} colSpan={2} className="border-r border-b px-6 py-3 min-w-[100px] text-center">{item}</td>
+                    <td key={item} colSpan={2} className="font-bold border-r border-b border-slate-400 px-6 py-3 min-w-[100px] text-center">{item}</td>
                 ))}
             </tr>
             <tr className={`
@@ -361,17 +386,17 @@ export const TheadMatrix: React.FC<Thead> = ({ jenis, tahun_list }) => {
                 {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
                     tahun_list.map((item: string) => (
                         <React.Fragment key={item}>
-                            <td colSpan={2} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
+                            <td colSpan={2} className="border-l border-b border-slate-400 px-6 py-3 min-w-[200px] text-center">Pagu</td>
                         </React.Fragment>
                     ))
                     :
                     tahun_list.map((item: string) => (
                         <React.Fragment key={item}>
-                            <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">target/satuan</td>
+                            <td className="border-l border-b border-slate-400 px-6 py-3 min-w-[200px] text-center">target/satuan</td>
                             {/* {type === "opd" &&
-                                <td className="border-l border-b px-6 py-3 min-w-[50px] text-center">Aksi</td>
+                                <td className="border-l border-b border-slate-400 px-6 py-3 min-w-[50px] text-center">Aksi</td>
                             } */}
-                            <td className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
+                            <td className="border-l border-b border-slate-400 px-6 py-3 min-w-[200px] text-center">Pagu</td>
                         </React.Fragment>
                     ))
                 }
@@ -389,9 +414,12 @@ interface Tr {
     kode_opd: string;
     jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
     type: "laporan" | "opd";
+    outcome?: string;
+    outcomeMap: Record<string, string>;
+    onUpdateOutcome: (kode: string, outcome: string) => void;
     fetchTrigger: () => void;
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, indikator, anggaran, tahun_list, fetchTrigger }) => {
+export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, indikator, anggaran, tahun_list, outcome, outcomeMap, onUpdateOutcome, fetchTrigger }) => {
 
     // Modal Indikator
     const [ModalTambahIndikator, setModalTambahIndikator] = useState<boolean>(false);
@@ -401,6 +429,13 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
     const [ModalTarget, setModalTarget] = useState<boolean>(false);
     const [IndikatorModal, setIndikatorModal] = useState<Indikator | null>(null);
     const [TargetModal, setTargetModal] = useState<Target | null>(null);
+
+    // Modal Outcome
+    const [ModalOutcome, setModalOutcome] = useState<boolean>(false);
+
+    // Outcome nomenklatur ini: pakai data dari server, jika belum ada pakai dummy
+    // jika user sudah pernah menyimpan lewat modal, nilai yang disimpan yang dipakai
+    const NilaiOutcome = outcomeMap[kode] ?? outcome ?? getDummyOutcome(jenis);
 
     const [Pagu, setPagu] = useState<number | null>(null);
     const [ModalPagu, setModalPagu] = useState<boolean>(false);
@@ -493,7 +528,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
 
     // Sel Pagu satu kotak penuh menutupi semua baris indikator (rowSpan)
     const renderPagu = (tahun: string, rowSpan?: number) => (
-        <td rowSpan={rowSpan} className="border-r border-b px-6 py-4 w-full">
+        <td rowSpan={rowSpan} className="border-r border-b border-slate-400 px-6 py-4 w-full">
             <div className="flex flex-col items-center gap-2">
                 Rp.{formatRupiah(getPaguByTahun(tahun))}
                 {jenis === "Sub Kegiatan" &&
@@ -514,27 +549,81 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
         <>
             {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
                 <tr>
-                    <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode || ""}</td>
-                    <td className={`border-r border-b px-6 py-4 w-full`}>{nama || ""}</td>
-                    <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
-                    <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
+                    <td className={`border-r border-b border-slate-400 px-6 py-4 font-semibold`}>{kode || ""}</td>
+                    <td className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>{nama || ""}</td>
+                    <td className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
+                        <div className="flex items-center justify-between gap-1">
+                            {NilaiOutcome &&
+                                <span>{NilaiOutcome || "-"}</span>
+                            }
+                            <div className="flex flex-col items-center gap-1">
+                                <button
+                                    type="button"
+                                    className="p-1 border border-green-500 text-green-700 rounded-full hover:bg-green-500 hover:text-white cursor-pointer shrink-0"
+                                    title="Edit Outcome"
+                                    onClick={() => setModalOutcome(true)}
+                                >
+                                    <TbPencil size={14} />
+                                </button>
+                                {NilaiOutcome &&
+                                    <button
+                                        type="button"
+                                        className="p-1 border border-red-500 text-red-700 rounded-full hover:bg-red-500 hover:text-white cursor-pointer shrink-0"
+                                        title="Hapus Outcome"
+                                        // onClick={() => setModalOutcome(true)}
+                                    >
+                                        <TbTrash size={14} />
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                    <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}></td>
+                    <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}></td>
                     {anggaran.map((d: Anggaran, index: number) => (
                         <React.Fragment key={index}>
-                            <td className={`border-r border-b px-6 py-4 w-full text-center`}></td>
-                            <td className={`border-r border-b px-6 py-4 w-full text-center`}>Rp.{formatRupiah(d.pagu_indikatif || 0)}</td>
+                            <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}></td>
+                            <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}>Rp.{formatRupiah(d.pagu_indikatif || 0)}</td>
                         </React.Fragment>
                     ))}
                 </tr>
                 :
                 <>
                     <tr>
-                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b px-6 py-4 font-semibold`}>{kode || ""}</td>
-                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b px-6 py-4 w-full`}>{nama || ""}</td>
+                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 font-semibold`}>{kode || ""}</td>
+                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>{nama || ""}</td>
+                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
+                            <div className="flex items-center justify-between gap-1">
+                                {NilaiOutcome &&
+                                    <span>{NilaiOutcome || "-"}</span>
+                                }
+                                <div className="flex flex-col items-center gap-1">
+                                    <button
+                                        type="button"
+                                        className="p-1 border border-green-500 text-green-700 rounded-full hover:bg-green-500 hover:text-white cursor-pointer shrink-0"
+                                        title="Edit Outcome"
+                                        onClick={() => setModalOutcome(true)}
+                                    >
+                                        <TbPencil size={14} />
+                                    </button>
+                                    {NilaiOutcome &&
+                                        <button
+                                            type="button"
+                                            className="p-1 border border-red-500 text-red-700 rounded-full hover:bg-red-500 hover:text-white cursor-pointer shrink-0"
+                                            title="Hapus Outcome"
+                                            // onClick={() => setModalOutcome(true)}
+                                        >
+                                            <TbTrash size={14} />
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                     {combinedData.length === 0 ?
                         <tr>
-                            <td className={`border-r border-b px-6 py-4 w-full text-red-300 italic`}>indikator kosong</td>
-                            <td className={`border-r border-b px-6 py-4 w-full`}>
+                            <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-red-300 italic`}>indikator kosong</td>
+                            <td className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
                                 <div className="flex flex-col items-center gap-1">
                                     <ButtonGreenBorder
                                         type="button"
@@ -548,7 +637,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                             </td>
                             {tahun_list.map((tahun: string) => (
                                 <React.Fragment key={tahun}>
-                                    <td className={`border-r border-b px-6 py-4 w-full text-center`}>-</td>
+                                    <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}>-</td>
                                     {renderPagu(tahun, 1)}
                                 </React.Fragment>
                             ))}
@@ -556,7 +645,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                         :
                         combinedData.map((d: CombinedData, index: number) => (
                             <tr key={index}>
-                                <td className={`border-r border-b px-6 py-4 w-full`}>
+                                <td className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
                                     <div className="flex items-center justify-between gap-2">
                                         <span>{d.indikator || ""}</span>
                                         {/* <div className="flex flex-col items-center gap-1">
@@ -585,7 +674,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                 </td>
                                 {/* Aksi dilebur menjadi satu kotak menutupi semua baris indikator */}
                                 {index === 0 &&
-                                    <td rowSpan={combinedData.length} className={`border-r border-b px-6 py-4 w-full`}>
+                                    <td rowSpan={combinedData.length} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
                                         <div className="flex flex-col items-center gap-1">
                                             <ButtonGreenBorder
                                                 type="button"
@@ -603,7 +692,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                     const target = d.target.find((t: TargetData) => t.tahun === tahun);
                                     return (
                                         <React.Fragment key={tahun}>
-                                            <td className={`border-r border-b px-6 py-4 w-full text-center`}>
+                                            <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}>
                                                 <div className="flex flex-col items-center gap-1">
                                                     {target && target.target !== "-"
                                                         ? `${target.target} ${target.satuan || ""}`
@@ -634,8 +723,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                 </>
             }
             {/* MODAL TAMBAH */}
-            {
-                ModalTambahIndikator &&
+            {ModalTambahIndikator &&
                 <ModalCreateIndikatorRenstraV2
                     isOpen={ModalTambahIndikator}
                     onClose={() => setModalTambahIndikator(false)}
@@ -649,8 +737,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                 />
             }
             {/* MODAL EDIT */}
-            {
-                ModalEditIndikator &&
+            {ModalEditIndikator &&
                 <ModalEditIndikatorV2
                     isOpen={ModalEditIndikator}
                     onClose={() => handleModalEditIndikator(null)}
@@ -662,8 +749,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                 />
             }
             {/* MODAL PAGU */}
-            {
-                ModalPagu &&
+            {ModalPagu &&
                 <ModalPaguAnggaran
                     isOpen={ModalPagu}
                     onClose={() => handleModalPagu(0, '')}
@@ -676,14 +762,28 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     onSuccess={fetchTrigger}
                 />
             }
-            {
-                ModalTarget &&
+            {ModalTarget &&
                 <ModalTargetSatuanRenstra
                     indikator={IndikatorModal}
                     target={TargetModal}
                     isOpen={ModalTarget}
                     onClose={() => handleModalTarget(null, null)}
                     onSuccess={fetchTrigger}
+                />
+            }
+            {ModalOutcome &&
+                <ModalOutcomeMatrix
+                    isOpen={ModalOutcome}
+                    onClose={() => setModalOutcome(false)}
+                    nama={nama}
+                    kode={kode}
+                    jenis={jenis}
+                    onSuccess={(value: string) => onUpdateOutcome(kode, value)}
+                    Data={{
+                        id: 0,
+                        kode: kode,
+                        outcome: NilaiOutcome,
+                    }}
                 />
             }
         </>
