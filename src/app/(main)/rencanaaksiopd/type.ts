@@ -13,7 +13,7 @@ export interface IndikatorSasaranOpd {
 }
 
 export interface Sasaran {
-    id: number;
+    id: string;
     nama_sasaran_opd: string;
     tahun_awal: string;
     tahun_akhir: string;
@@ -43,6 +43,7 @@ export interface RencanaKinerja {
     tw2: number;
     tw3: number;
     tw4: number;
+    urutan: number;
     keterangan: string;
     total_anggaran: number;
     indikator_rencana_kinerja: IndikatorRencanaKinerja[]; 
@@ -50,7 +51,7 @@ export interface RencanaKinerja {
 }
 
 export interface Rekin {
-    sasaran_opd_id: number;
+    sasaran_opd_id: string;
     nama_sasaran_opd: string;
     tahun_renaksi: string;
     rencana_kinerja: RencanaKinerja[];

@@ -103,9 +103,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
   const [Perencanaan, setPerencanaan] = useState<boolean | null>(null);
   const [Laporan, setLaporan] = useState<boolean | null>(null);
   // SUB MENU
-  const [MasterProgramKegiatan, setMasterProgramKegiatan] = useState<
-    boolean | null
-  >(null);
+  const [MasterProgramKegiatan, setMasterProgramKegiatan] = useState<boolean | null>(null);
   const [_TematikKota, setTematikKota] = useState<boolean | null>(null);
   const [RPJMD, setRPJMD] = useState<boolean | null>(null);
   const [RKPD, setRKPD] = useState<boolean | null>(null);
@@ -2163,7 +2161,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             {/* LABEL LAPORAN RB */}
             <li
               className="flex justify-between items-center gap-x-2 cursor-pointer p-2 hover:bg-slate-500 rounded-xl transition-all duration-300 ease-in-out"
-              onClick={() => setLaporanRB(Review ? false : true)}
+              onClick={() => setLaporanRB(LaporanRB ? false : true)}
             >
               <div className="flex items-center gap-2">
                 <TbDice4Filled className="text-xl" />
