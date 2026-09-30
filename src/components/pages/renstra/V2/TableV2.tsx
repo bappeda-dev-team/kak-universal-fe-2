@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder } from "@/components/global/Button";
 import { TbCirclePlus, TbFileTypeDoc, TbFileTypePdf, TbPencil, TbTrash } from "react-icons/tb";
 import { LoadingClip } from "@/components/global/Loading";
-import { ModalPaguAnggaran } from "../ModalPaguAnggaran";
+import { ModalPaguAnggaran, PaguAnggaranResponse } from "../ModalPaguAnggaran";
 import { useCetakMatrixRenstra } from "@/app/(main)/Renstra/matrix-renstra/cetak/useCetakMatrixRenstra";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { formatRupiah } from "@/components/utils/format-rupiah";
@@ -69,6 +69,15 @@ interface TargetData {
     target: string;
     satuan: string;
 }
+// response 200 dari matrix_renstra/target/upsert
+export interface TargetUpsertResponse {
+    id: string;
+    indikator_id: string;
+    tahun: string;
+    target: string | number;
+    satuan: string;
+    jenis?: string;
+}
 interface IndikatorForm {
     kode: string;
     kode_indikator?: string;
@@ -121,11 +130,23 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     // Data dummy outcome per kode nomenklatur, akan ditimpa oleh hasil simpan modal outcome
     const [OutcomeMap, setOutcomeMap] = useState<Record<string, string>>({});
+    // Target/satuan terbaru hasil response simpan target, dikey indikator_id + tahun
+    const [TargetMap, setTargetMap] = useState<Record<string, TargetData>>({});
+    // Pagu terbaru hasil response simpan anggaran, dikey kode subkegiatan + tahun
+    const [PaguMap, setPaguMap] = useState<Record<string, number>>({});
     const { branding } = useBrandingContext();
     const token = getToken();
 
     const simpanOutcome = (kode: string, outcome: string) => {
         setOutcomeMap((prev) => ({ ...prev, [kode]: outcome }));
+    }
+
+    const simpanTarget = (kode_indikator: string, tahun: string, data: TargetData) => {
+        setTargetMap((prev) => ({ ...prev, [`${kode_indikator}_${tahun}`]: data }));
+    }
+
+    const simpanPagu = (kode: string, tahun: string, pagu_indikatif: number) => {
+        setPaguMap((prev) => ({ ...prev, [`${kode}_${tahun}`]: pagu_indikatif }));
     }
 
     useEffect(() => {
@@ -224,6 +245,10 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                 outcome={u.outcome}
                                                 outcomeMap={OutcomeMap}
                                                 onUpdateOutcome={simpanOutcome}
+                                                targetMap={TargetMap}
+                                                onUpdateTarget={simpanTarget}
+                                                paguMap={PaguMap}
+                                                onUpdatePagu={simpanPagu}
                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                             />
                                         </tbody>
@@ -250,6 +275,10 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                 outcome={br.outcome}
                                                                 outcomeMap={OutcomeMap}
                                                                 onUpdateOutcome={simpanOutcome}
+                                                                targetMap={TargetMap}
+                                                                onUpdateTarget={simpanTarget}
+                                                                paguMap={PaguMap}
+                                                                onUpdatePagu={simpanPagu}
                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                                             />
                                                         </tbody>
@@ -276,6 +305,10 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                                 outcome={p.outcome}
                                                                                 outcomeMap={OutcomeMap}
                                                                                 onUpdateOutcome={simpanOutcome}
+                                                                                targetMap={TargetMap}
+                                                                                onUpdateTarget={simpanTarget}
+                                                                                paguMap={PaguMap}
+                                                                                onUpdatePagu={simpanPagu}
                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                                                             />
                                                                         </tbody>
@@ -302,6 +335,10 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                                                 outcome={k.outcome}
                                                                                                 outcomeMap={OutcomeMap}
                                                                                                 onUpdateOutcome={simpanOutcome}
+                                                                                                targetMap={TargetMap}
+                                                                                                onUpdateTarget={simpanTarget}
+                                                                                                paguMap={PaguMap}
+                                                                                                onUpdatePagu={simpanPagu}
                                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                                                                             />
                                                                                         </tbody>
@@ -328,6 +365,10 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                                                                 outcome={sk.outcome}
                                                                                                                 outcomeMap={OutcomeMap}
                                                                                                                 onUpdateOutcome={simpanOutcome}
+                                                                                                                targetMap={TargetMap}
+                                                                                                                onUpdateTarget={simpanTarget}
+                                                                                                                paguMap={PaguMap}
+                                                                                                                onUpdatePagu={simpanPagu}
                                                                                                                 fetchTrigger={() => setFetchTrigger((prev) => !prev)}
                                                                                                             />
                                                                                                         </tbody>
@@ -417,9 +458,13 @@ interface Tr {
     outcome?: string;
     outcomeMap: Record<string, string>;
     onUpdateOutcome: (kode: string, outcome: string) => void;
+    targetMap: Record<string, TargetData>;
+    onUpdateTarget: (kode_indikator: string, tahun: string, data: TargetData) => void;
+    paguMap: Record<string, number>;
+    onUpdatePagu: (kode: string, tahun: string, pagu_indikatif: number) => void;
     fetchTrigger: () => void;
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, indikator, anggaran, tahun_list, outcome, outcomeMap, onUpdateOutcome, fetchTrigger }) => {
+export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, indikator, anggaran, tahun_list, outcome, outcomeMap, onUpdateOutcome, targetMap, onUpdateTarget, paguMap, onUpdatePagu, fetchTrigger }) => {
 
     // Modal Indikator
     const [ModalTambahIndikator, setModalTambahIndikator] = useState<boolean>(false);
@@ -456,6 +501,17 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
             indikator: i.indikator ?? "",
             tahun: i.tahun,
             target: tahun_list.map((tahun: string) => {
+                // hasil simpan target terbaru (response 200) dipakai langsung, tanpa reload
+                const terbaru = targetMap[`${i.kode_indikator ?? ""}_${tahun}`];
+                if (terbaru) {
+                    return {
+                        id: terbaru.id ?? "",
+                        indikator_id: terbaru.indikator_id ?? "",
+                        tahun: tahun,
+                        target: terbaru.target || "-",
+                        satuan: terbaru.satuan || "-",
+                    };
+                }
                 const trg = i.target?.find((t: Target) => t.tahun === tahun);
                 const hasTarget = trg && trg.target && trg.target !== "-";
                 return {
@@ -524,7 +580,8 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
     }
 
     const getPaguByTahun = (tahun: string): number =>
-        anggaran.find((a: Anggaran) => a.tahun === tahun)?.pagu_indikatif ?? 0;
+        // hasil simpan pagu terbaru (response 200) dipakai langsung, tanpa reload
+        paguMap[`${kode}_${tahun}`] ?? anggaran.find((a: Anggaran) => a.tahun === tahun)?.pagu_indikatif ?? 0;
 
     // Sel Pagu satu kotak penuh menutupi semua baris indikator (rowSpan)
     const renderPagu = (tahun: string, rowSpan?: number) => (
@@ -759,7 +816,11 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     kode={kode}
                     kode_opd={kode_opd}
                     tahun={TahunN}
-                    onSuccess={fetchTrigger}
+                    onSuccess={(data: PaguAnggaranResponse) => {
+                        // data response: kode_subkegiatan, kode_opd, tahun, pagu_indikatif
+                        // langsung dipakai update tampilan, tanpa fetch ulang
+                        onUpdatePagu(data.kode_subkegiatan || kode, data.tahun || TahunN, data.pagu_indikatif);
+                    }}
                 />
             }
             {ModalTarget &&
@@ -768,7 +829,15 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     target={TargetModal}
                     isOpen={ModalTarget}
                     onClose={() => handleModalTarget(null, null)}
-                    onSuccess={fetchTrigger}
+                    onSuccess={(data: TargetUpsertResponse) => {
+                        onUpdateTarget(data.indikator_id || IndikatorModal?.kode_indikator || "", data.tahun, {
+                            id: data.id ?? "",
+                            indikator_id: data.indikator_id ?? "",
+                            tahun: data.tahun ?? "",
+                            target: String(data.target ?? "-"),
+                            satuan: data.satuan ?? "-",
+                        });
+                    }}
                 />
             }
             {ModalOutcome &&

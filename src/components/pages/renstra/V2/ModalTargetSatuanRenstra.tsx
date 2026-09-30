@@ -7,7 +7,7 @@ import { ButtonSky, ButtonRed } from '@/components/global/Button';
 import { getToken } from "@/components/lib/Cookie";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import { AlertNotification } from "@/components/global/Alert";
-import { Indikator, Target } from "./TableV2";
+import { Indikator, Target, TargetUpsertResponse } from "./TableV2";
 import { useBrandingContext } from "@/context/BrandingContext";
 
 interface FormValue {
@@ -23,7 +23,7 @@ interface modal {
     onClose: () => void;
     indikator: Indikator | null;
     target: Target | null;
-    onSuccess: () => void;
+    onSuccess: (data: TargetUpsertResponse) => void;
 }
 
 export const ModalTargetSatuanRenstra: React.FC<modal> = ({ isOpen, indikator, target, onClose, onSuccess }) => {
@@ -66,7 +66,8 @@ export const ModalTargetSatuanRenstra: React.FC<modal> = ({ isOpen, indikator, t
             if (result.code === 201 || result.code === 200) {
                 AlertNotification("Berhasil", `Mengubah Target di indikator ${indikator?.indikator || "unknown"} tahun ${target?.tahun || "unknown"}`, "success", 2000);
                 onClose();
-                onSuccess();
+                // kirim data terbaru dari response supaya tampilan langsung terupdate
+                onSuccess(result.data);
                 reset();
             } else if (result.code === 500) {
                 AlertNotification("Gagal", `${result.data}`, "error", 2000);

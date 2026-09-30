@@ -16,6 +16,15 @@ interface FormValue {
     jenis: "renstra"
 }
 
+// data pagu yang dikirim balik ke tabel setelah simpan berhasil
+export interface PaguAnggaranResponse {
+    kode_subkegiatan: string;
+    kode_opd?: string;
+    tahun: string;
+    pagu_indikatif: number;
+    jenis?: string;
+}
+
 interface modal {
     isOpen: boolean;
     onClose: () => void;
@@ -25,7 +34,7 @@ interface modal {
     kode: string;
     tahun?: string;
     kode_opd?: string;
-    onSuccess: () => void;
+    onSuccess: (data: PaguAnggaranResponse) => void;
 }
 
 export const ModalPaguAnggaran: React.FC<modal> = ({ isOpen, onClose, kode, nama, jenis, kode_opd, pagu, tahun, onSuccess }) => {
@@ -70,7 +79,14 @@ export const ModalPaguAnggaran: React.FC<modal> = ({ isOpen, onClose, kode, nama
             if (result.code === 201 || result.code === 200) {
                 AlertNotification("Berhasil", `Mengubah Pagu Anggaran`, "success", 1000);
                 onClose();
-                onSuccess();
+                // kirim data terbaru dari response supaya tampilan langsung terupdate
+                onSuccess({
+                    kode_subkegiatan: result.data?.kode_subkegiatan ?? payload.kode_subkegiatan,
+                    kode_opd: result.data?.kode_opd ?? payload.kode_opd,
+                    tahun: result.data?.tahun ?? payload.tahun,
+                    pagu_indikatif: Number(result.data?.pagu_indikatif ?? payload.pagu_indikatif ?? 0),
+                    jenis: result.data?.jenis ?? payload.jenis,
+                });
                 reset();
             } else if (result.code === 500) {
                 AlertNotification("Gagal", `${result.data}`, "error", 2000);
