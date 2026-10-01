@@ -30,6 +30,25 @@ interface Target {
     target: number
 }
 
+// response 200 dari matrix_renstra/indikator/create
+export interface IndikatorResponse {
+    kode_indikator: string;
+    kode: string;
+    kode_opd: string;
+    indikator: string;
+    tahun?: string;
+    jenis?: string;
+    target?: TargetResponse[];
+}
+export interface TargetResponse {
+    id: string;
+    indikator_id: string;
+    tahun: string;
+    target: string | number;
+    satuan: string;
+    jenis?: string;
+}
+
 interface modal {
     isOpen: boolean;
     onClose: () => void;
@@ -39,7 +58,7 @@ interface modal {
     kode_opd: string;
     tahun: number;
     tahun_list: string[];
-    onSuccess: () => void;
+    onSuccess: (data: IndikatorResponse[]) => void;
 }
 
 export const ModalCreateIndikatorRenstraV2: React.FC<modal> = ({ isOpen, onClose, jenis, nama, kode, kode_opd, tahun, tahun_list, onSuccess }) => {
@@ -105,7 +124,8 @@ export const ModalCreateIndikatorRenstraV2: React.FC<modal> = ({ isOpen, onClose
             if (result.code === 201 || result.code === 200) {
                 AlertNotification("Berhasil", `Berhasil Menambahkan Indikator`, "success", 1000);
                 onClose();
-                onSuccess();
+                // kirim indikator hasil create supaya tampilan langsung terupdate
+                onSuccess(result.data);
                 reset();
             } else if (result.code === 500) {
                 AlertNotification("Gagal", `${result.data}`, "error", 2000);

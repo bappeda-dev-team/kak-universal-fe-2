@@ -10,7 +10,7 @@ import { useCetakMatrixRenstra } from "@/app/(main)/Renstra/matrix-renstra/cetak
 import { useBrandingContext } from "@/context/BrandingContext";
 import { formatRupiah } from "@/components/utils/format-rupiah";
 import { ModalTargetSatuanRenstra } from "./ModalTargetSatuanRenstra";
-import { ModalCreateIndikatorRenstraV2, ModalEditIndikatorV2 } from "./ModalCreateIndikatorRenstraV2";
+import { ModalCreateIndikatorRenstraV2, ModalEditIndikatorV2, IndikatorResponse } from "./ModalCreateIndikatorRenstraV2";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { ModalOutcomeMatrix } from "./ModalOutcomeMatrix";
 import { getDummyOutcome } from "./dummyOutcome";
@@ -469,6 +469,10 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
     // Modal Indikator
     const [ModalTambahIndikator, setModalTambahIndikator] = useState<boolean>(false);
     const [ModalEditIndikator, setModalEditIndikator] = useState<boolean>(false);
+    // Indikator hasil simpan lokal, dipakai bila belum ada di response server
+    const [IndikatorTambahan, setIndikatorTambahan] = useState<Indikator[]>([]);
+    // indikator yang dihapus lokal, agar tidak muncul lagi walau data server masih ada
+    const [IndikatorTerhapus, setIndikatorTerhapus] = useState<string[]>([]);
 
     // Modal Target
     const [ModalTarget, setModalTarget] = useState<boolean>(false);
@@ -491,7 +495,13 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
 
     // Gabungkan indikator (untuk semua tahun) dengan anggaran (pagu per tahun)
     // target & satuan diambil per tahun sesuai tahun_list, jika tidak ada jadikan "-"
-    const combinedData: CombinedData[] = indikator.map((i: Indikator) => {
+    // daftar indikator = data server + hasil simpan lokal (tanpa reload), dikurangi yang dihapus
+    const daftarIndikator: Indikator[] = [
+        ...indikator.filter((i: Indikator) => !IndikatorTerhapus.includes(i.kode_indikator)),
+        ...IndikatorTambahan.filter((t: Indikator) => !indikator.some((i: Indikator) => i.kode_indikator === t.kode_indikator)),
+    ];
+
+    const combinedData: CombinedData[] = daftarIndikator.map((i: Indikator) => {
         const anggaranTahun = anggaran.find((a: Anggaran) => a.tahun === i.tahun);
         return {
             pagu_indikatif: anggaranTahun?.pagu_indikatif ?? 0,
@@ -557,6 +567,29 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
         }
     }
 
+    // indikator hasil response create, langsung dipakai update tampilan (rowSpan ikut menyesuaikan)
+    const tambahIndikatorLokal = (data: IndikatorResponse[]) => {
+        const baru: Indikator[] = (data ?? []).map((item: IndikatorResponse) => ({
+            kode_indikator: item.kode_indikator,
+            kode: item.kode,
+            kode_opd: item.kode_opd,
+            indikator: item.indikator,
+            tahun: item.tahun ?? "",
+            target: (item.target ?? []).map((t) => ({
+                id: t.id,
+                indikator_id: t.indikator_id,
+                tahun: t.tahun,
+                target: String(t.target ?? "-"),
+                satuan: t.satuan ?? "-",
+            })),
+        }));
+        if (baru.length === 0) {
+            return;
+        }
+        setIndikatorTambahan((prev) => [...prev, ...baru]);
+        setIndikatorTerhapus((prev) => prev.filter((k: string) => !baru.some((b: Indikator) => b.kode_indikator === k)));
+    }
+
     const hapusIndikator = async (kode: string) => {
         try {
             const response = await fetch(`${branding?.api_perencanaan}/matrix_renstra/indikator/delete/${kode}`, {
@@ -569,7 +602,9 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
             const result = await response.json();
             if (result.code === 200 || result.code === 201) {
                 AlertNotification("Berhasil", "Indikator Berhasil Di Hapus", "success", 2000);
-                fetchTrigger();
+                // hilangkan langsung dari tampilan, tanpa reload
+                setIndikatorTerhapus((prev) => [...prev, kode]);
+                setIndikatorTambahan((prev) => prev.filter((i: Indikator) => i.kode_indikator !== kode));
             } else {
                 AlertNotification("Gagal", `${result.data}`, "success", 2000);
             }
@@ -790,7 +825,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     kode_opd={kode_opd}
                     tahun_list={tahun_list}
                     tahun={Number(tahun)}
-                    onSuccess={fetchTrigger}
+                    onSuccess={(data: IndikatorResponse[]) => tambahIndikatorLokal(data)}
                 />
             }
             {/* MODAL EDIT */}
