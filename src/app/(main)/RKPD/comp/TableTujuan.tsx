@@ -53,7 +53,7 @@ const TableTujuan: React.FC<table> = ({ tahun, menu }) => {
         const fetchTujuanPemda = async () => {
             setLoading(true)
             try {
-                const response = await fetch(`${API_URL}/tujuan_pemda/${menu}/${tahun}`, {
+                const response = await fetch(`${API_URL}/tujuan_pemda/v2/${menu}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
