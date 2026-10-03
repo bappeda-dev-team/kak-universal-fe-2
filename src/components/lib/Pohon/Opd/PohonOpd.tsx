@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     TbPrinter, TbLayersLinked, TbBookmarkPlus, TbCheck, TbCircleLetterXFilled,
     TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbEye, TbEyeClosed, TbArrowAutofitWidth,
@@ -95,6 +95,8 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
     const [Deleted, setDeleted] = useState<boolean>(false);
     const [User, setUser] = useState<any>(null);
     const [IsCetak, setIsCetak] = useState<boolean>(false);
+    const newFormRef = useRef<HTMLLIElement | null>(null);
+    const [LastFormId, setLastFormId] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchUser = getUser();
@@ -112,12 +114,28 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
         }
     }, [show_all, Show, set_show_all]);
 
+    // setiap ada tombol yang membuka form pohon baru (tambah maupun ambil clone),
+    // viewport otomatis digeser ke form tersebut supaya user tidak perlu scroll jauh ke kanan untuk mengisinya
+    useEffect(() => {
+        if (LastFormId === null) return;
+
+        const rafId = requestAnimationFrame(() => {
+            newFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        });
+
+        return () => cancelAnimationFrame(rafId);
+    }, [LastFormId, formList, PutList]);
+
     // Adds a new form entry
     const newChild = () => {
-        setFormList([...formList, Date.now()]); // Using unique IDs
+        const formId = Date.now(); // Using unique IDs
+        setFormList((prev) => [...prev, formId]);
+        setLastFormId(formId);
     };
     const newPutChild = () => {
-        setPutList([...PutList, Date.now()]); // Using unique IDs
+        const formId = Date.now(); // Using unique IDs
+        setPutList((prev) => [...prev, formId]);
+        setLastFormId(formId);
     };
     const handleCross = () => {
         setCross((prev) => !prev);
@@ -770,6 +788,7 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                     id={tema.id}
                                     key={formId}
                                     formId={formId}
+                                    formRef={LastFormId === formId ? newFormRef : undefined}
                                     onCancel={() => setFormList(formList.filter((id) => id !== formId))}
                                     deleteTrigger={deleteTrigger}
                                     fetchTrigger={fetchTrigger}
@@ -780,6 +799,7 @@ export const PohonOpd: React.FC<pohon> = ({ tema, deleteTrigger, fetchTrigger, s
                                     <FormAmbilPohonOpd
                                         level={tema.level_pohon}
                                         parent={tema.id}
+                                        formRef={LastFormId === formId ? newFormRef : undefined}
                                         fetchTrigger={fetchTrigger}
                                         tahun={branding?.tahun?.value || 0}
                                         onCancel={() => setPutList(PutList.filter((id) => id !== formId))}

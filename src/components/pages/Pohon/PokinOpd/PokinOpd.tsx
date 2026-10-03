@@ -105,6 +105,10 @@ const PokinOpd = () => {
     const [scrollStart, setScrollStart] = useState({ x: 0, y: 0 });
     const [cursorMode, setCursorMode] = useState<"normal" | "hand">("normal");
     const containerRef = useRef<HTMLDivElement | null>(null);
+    const rootNodeRef = useRef<HTMLDivElement | null>(null);
+    const hasCenteredRef = useRef<boolean>(false);
+    const newFormRef = useRef<HTMLLIElement | null>(null);
+    const [LastFormId, setLastFormId] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchUser = getUser();
@@ -154,6 +158,41 @@ const PokinOpd = () => {
 
     const handleMouseUp = () => setIsDragging(false);
 
+    // saat halaman pertama dimuat, kotak pertama (Pohon Kinerja OPD) langsung di tengah viewport,
+    // jadi user tidak perlu scroll jauh-jauh ke kanan berapaapun jumlah childs nya
+    useEffect(() => {
+        if (hasCenteredRef.current) return;
+        if (Loading !== false || !Pokin) return;
+
+        const container = containerRef.current;
+        const node = rootNodeRef.current;
+        if (!container || !node) return;
+
+        hasCenteredRef.current = true;
+        const rafId = requestAnimationFrame(() => {
+            const offset =
+                node.getBoundingClientRect().left
+                - container.getBoundingClientRect().left
+                + container.scrollLeft
+                - (container.clientWidth - node.offsetWidth) / 2;
+            container.scrollLeft = Math.max(offset, 0);
+        });
+
+        return () => cancelAnimationFrame(rafId);
+    }, [Loading, Pokin]);
+
+    // ketika form pohon baru dibuka, viewport digeser ke form tersebut
+    // supaya user tidak perlu scroll jauh ke kanan untuk melihat/mengisi form
+    useEffect(() => {
+        if (LastFormId === null) return;
+
+        const rafId = requestAnimationFrame(() => {
+            newFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        });
+
+        return () => cancelAnimationFrame(rafId);
+    }, [LastFormId, formList]);
+
     const handleModalPohonPemda = (level: number) => {
         setPohonPemda((prev) => !prev);
         setLevelPemda(level);
@@ -167,7 +206,9 @@ const PokinOpd = () => {
 
     // Adds a new form entry
     const newChild = () => {
-        setFormList([...formList, Date.now()]); // Using unique IDs
+        const formId = Date.now(); // Using unique IDs
+        setFormList((prev) => [...prev, formId]);
+        setLastFormId(formId);
     };
 
     const handleModalNewTujuan = () => {
@@ -595,7 +636,7 @@ const PokinOpd = () => {
                 >
                     <ul>
                         <li>
-                            <div className="tf-nc tf flex flex-col w-[600px] rounded-lg">
+                            <div className="tf-nc tf flex flex-col w-[600px] rounded-lg" ref={rootNodeRef}>
                                 <div className="header flex pt-3 justify-center font-bold text-lg uppercase border my-3 py-3 border-black">
                                     <h1>Pohon Kinerja OPD</h1>
                                 </div>
@@ -617,6 +658,10 @@ const PokinOpd = () => {
                                                             <td className="min-w-[100px] border px-2 py-3 border-black text-start bg-gray-100">Tujuan OPD</td>
                                                             <td className="min-w-[300px] border px-2 py-3 border-black text-start bg-gray-100">{item.tujuan}</td>
                                                         </tr>
+                                                        {/* <tr>
+                                                            <td className="min-w-[100px] border px-2 py-3 border-black text-start bg-yellow-200">Catatan</td>
+                                                            <td className="min-w-[300px] border px-2 py-3 border-black text-start bg-yellow-200">-</td>
+                                                        </tr> */}
                                                         {item.indikator ?
                                                             <React.Fragment>
                                                                 {item.indikator.map((i: any) => (
@@ -642,6 +687,7 @@ const PokinOpd = () => {
                                                                 ))}
                                                             </React.Fragment>
                                                             :
+                                                            // JIKA TIDAK ADA INDIKATOR
                                                             <tr key={item.id}>
                                                                 <td className="min-w-[100px] border px-2 py-3 border-black text-start">Indikator</td>
                                                                 <td className="min-w-[300px] border px-2 py-3 border-black text-start">-</td>
@@ -650,6 +696,7 @@ const PokinOpd = () => {
                                                     </React.Fragment>
                                                 ))
                                                 :
+                                                // JIKA TIDAK ADA TUJUAN OPD
                                                 <tr>
                                                     <td className="min-w-[100px] border px-2 py-3 border-black text-start">Tujuan OPD</td>
                                                     <td className="min-w-[300px] border px-2 py-3 border-black text-start">-</td>
@@ -733,6 +780,7 @@ const PokinOpd = () => {
                                                 id={null}
                                                 key={formId}
                                                 formId={formId}
+                                                formRef={LastFormId === formId ? newFormRef : undefined}
                                                 onCancel={() => setFormList(formList.filter((id) => id !== formId))}
                                                 deleteTrigger={() => setDeleted((prev) => !prev)}
                                                 fetchTrigger={() => setTriggerAfterPokinOutside((prev) => !prev)}
@@ -749,6 +797,7 @@ const PokinOpd = () => {
                                                 id={null}
                                                 key={formId}
                                                 formId={formId}
+                                                formRef={LastFormId === formId ? newFormRef : undefined}
                                                 onCancel={() => setFormList(formList.filter((id) => id !== formId))}
                                                 deleteTrigger={() => setDeleted((prev) => !prev)}
                                                 fetchTrigger={() => setTriggerAfterPokinOutside((prev) => !prev)}
