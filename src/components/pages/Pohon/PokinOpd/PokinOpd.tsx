@@ -107,6 +107,8 @@ const PokinOpd = () => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const rootNodeRef = useRef<HTMLDivElement | null>(null);
     const hasCenteredRef = useRef<boolean>(false);
+    const newFormRef = useRef<HTMLLIElement | null>(null);
+    const [LastFormId, setLastFormId] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchUser = getUser();
@@ -179,6 +181,18 @@ const PokinOpd = () => {
         return () => cancelAnimationFrame(rafId);
     }, [Loading, Pokin]);
 
+    // ketika form pohon baru dibuka, viewport digeser ke form tersebut
+    // supaya user tidak perlu scroll jauh ke kanan untuk melihat/mengisi form
+    useEffect(() => {
+        if (LastFormId === null) return;
+
+        const rafId = requestAnimationFrame(() => {
+            newFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        });
+
+        return () => cancelAnimationFrame(rafId);
+    }, [LastFormId, formList]);
+
     const handleModalPohonPemda = (level: number) => {
         setPohonPemda((prev) => !prev);
         setLevelPemda(level);
@@ -192,7 +206,9 @@ const PokinOpd = () => {
 
     // Adds a new form entry
     const newChild = () => {
-        setFormList([...formList, Date.now()]); // Using unique IDs
+        const formId = Date.now(); // Using unique IDs
+        setFormList((prev) => [...prev, formId]);
+        setLastFormId(formId);
     };
 
     const handleModalNewTujuan = () => {
@@ -764,6 +780,7 @@ const PokinOpd = () => {
                                                 id={null}
                                                 key={formId}
                                                 formId={formId}
+                                                formRef={LastFormId === formId ? newFormRef : undefined}
                                                 onCancel={() => setFormList(formList.filter((id) => id !== formId))}
                                                 deleteTrigger={() => setDeleted((prev) => !prev)}
                                                 fetchTrigger={() => setTriggerAfterPokinOutside((prev) => !prev)}
@@ -780,6 +797,7 @@ const PokinOpd = () => {
                                                 id={null}
                                                 key={formId}
                                                 formId={formId}
+                                                formRef={LastFormId === formId ? newFormRef : undefined}
                                                 onCancel={() => setFormList(formList.filter((id) => id !== formId))}
                                                 deleteTrigger={() => setDeleted((prev) => !prev)}
                                                 fetchTrigger={() => setTriggerAfterPokinOutside((prev) => !prev)}

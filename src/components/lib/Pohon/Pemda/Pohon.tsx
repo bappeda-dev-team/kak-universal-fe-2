@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TbCircleCheckFilled, TbEye, TbArrowGuide, TbCheck, TbX, TbCircleLetterXFilled, TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbBookmarkPlus, TbZoom, TbCopy, TbPrinter } from 'react-icons/tb';
 import { ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder, ButtonBlackBorder, ButtonBlack, ButtonSky } from '@/components/global/Button';
 import { AlertNotification, AlertQuestion } from '@/components/global/Alert';
@@ -72,16 +72,24 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
 
     //CLONE
     const [IsClone, setIsClone] = useState<boolean>(false);
+    const newFormRef = useRef<HTMLLIElement | null>(null);
+    const [LastFormId, setLastFormId] = useState<number | null>(null);
 
     // Adds a new form entry
     const newChild = () => {
-        setFormList([...formList, Date.now()]); // Using unique IDs
+        const formId = Date.now(); // Using unique IDs
+        setFormList((prev) => [...prev, formId]);
+        setLastFormId(formId);
     };
     const newPutChild = () => {
-        setPutList([...PutList, Date.now()]); // Using unique IDs
+        const formId = Date.now(); // Using unique IDs
+        setPutList((prev) => [...prev, formId]);
+        setLastFormId(formId);
     };
     const newStrategic = () => {
-        setFormStrategic([...FormStrategic, Date.now()]); // Using unique IDs
+        const formId = Date.now(); // Using unique IDs
+        setFormStrategic((prev) => [...prev, formId]);
+        setLastFormId(formId);
     };
     const handleEditSuccess = (data: any) => {
         setEdited(data);
@@ -102,6 +110,18 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
             setShow(false);
         }
     }, [show_all, set_show_all]);
+
+    // setiap ada tombol yang membuka form pohon baru (tambah, strategic, atau ambil),
+    // viewport otomatis digeser ke form tersebut supaya user tidak perlu scroll jauh ke kanan untuk mengisinya
+    useEffect(() => {
+        if (LastFormId === null) return;
+
+        const rafId = requestAnimationFrame(() => {
+            newFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        });
+
+        return () => cancelAnimationFrame(rafId);
+    }, [LastFormId, formList, PutList, FormStrategic]);
 
     const handleNewReview = () => {
         if (IsNewReview) {
@@ -672,6 +692,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                         id={tema.id}
                                         key={formId}
                                         formId={formId}
+                                        formRef={LastFormId === formId ? newFormRef : undefined}
                                         pokin={'pemda'}
                                         onCancel={() => setFormList(formList.filter((id) => id !== formId))}
                                     />
@@ -685,6 +706,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                         id={tema.id}
                                         key={formIdStrategic}
                                         formId={formIdStrategic}
+                                        formRef={LastFormId === formIdStrategic ? newFormRef : undefined}
                                         pokin={'pemda'}
                                         onCancel={() => setFormStrategic(FormStrategic.filter((id) => id !== formIdStrategic))}
                                     />
@@ -697,6 +719,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                         id={tema.id}
                                         key={formId}
                                         formId={formId}
+                                        formRef={LastFormId === formId ? newFormRef : undefined}
                                         onCancel={() => setPutList(PutList.filter((id) => id !== formId))}
                                     />
                                 </React.Fragment>

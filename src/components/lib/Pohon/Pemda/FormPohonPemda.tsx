@@ -63,7 +63,8 @@ export const FormPohonPemda: React.FC<{
     onSave?: (data: any, id: number) => void;
     onCancel?: () => void
     pokin: 'pemda' | 'opd';
-}> = ({ id, level, formId, onSave, onCancel, pokin }) => {
+    formRef?: React.Ref<HTMLLIElement>
+}> = ({ id, level, formId, onSave, onCancel, pokin, formRef }) => {
 
     const {
         control,
@@ -278,7 +279,7 @@ export const FormPohonPemda: React.FC<{
                     idForm={formId}
                 />
                 :
-                <li>
+                <li ref={formRef}>
                     <div className="tf-nc tf flex flex-col w-[600px] rounded-lg shadow-lg shadow-slate-500 form-pohon">
                         <div className="flex pt-3 justify-center font-bold text-lg uppercase border my-3 py-3 border-black rounded-lg">
                             {level == 0 &&
@@ -737,7 +738,8 @@ export const FormAmbilPohon: React.FC<{
     id: number;
     level: number;
     onCancel: () => void
-}> = ({ id, level, formId, onCancel }) => {
+    formRef?: React.Ref<HTMLLIElement>
+}> = ({ id, level, formId, onCancel, formRef }) => {
 
     const {
         control,
@@ -900,7 +902,7 @@ export const FormAmbilPohon: React.FC<{
                     set_show_all={() => null}
                 />
                 :
-                <li>
+                <li ref={formRef}>
                     <div className="tf-nc tf flex flex-col w-[600px] rounded-lg shadow-lg shadow-slate-500 form-ambil">
                         <div className="flex pt-3 justify-center font-bold text-lg uppercase border my-3 py-3 border-black rounded-lg">
                             {(level === 0 || level === 1 || level === 2 || level === 3) &&
