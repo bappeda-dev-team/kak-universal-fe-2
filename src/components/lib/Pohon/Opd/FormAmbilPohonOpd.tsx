@@ -22,7 +22,8 @@ export const FormAmbilPohonOpd: React.FC<{
     level: number;
     fetchTrigger: () => void;
     onCancel: () => void
-}> = ({ parent, tahun, level, fetchTrigger, onCancel }) => {
+    formRef?: React.Ref<HTMLLIElement>
+}> = ({ parent, tahun, level, fetchTrigger, onCancel, formRef }) => {
 
     const { control, handleSubmit, formState: { errors }, reset } = useForm<FormValue>();
 
@@ -110,7 +111,7 @@ export const FormAmbilPohonOpd: React.FC<{
                     set_show_all={() => null}
                 />
                 :
-                <li>
+                <li ref={formRef}>
                     <div className="tf-nc tf flex flex-col w-[600px] rounded-lg shadow-lg shadow-slate-500 form-ambil">
                         <div className="flex pt-3 justify-center font-bold text-lg uppercase border my-3 py-3 border-black rounded-lg">
                             {level === 4 && <h1>Ambil Tactical </h1>}
