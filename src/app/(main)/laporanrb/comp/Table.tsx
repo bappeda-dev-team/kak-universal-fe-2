@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { useBrandingContext } from "@/context/BrandingContext"
 import { getToken } from "@/components/lib/Cookie"
 import { LoadingClip } from "@/components/global/Loading"
+import { formatRupiah } from "@/components/utils/format-rupiah"
 
 interface RencanaAksi {
     rencana_aksi: string;
@@ -72,19 +73,17 @@ interface RencanaReformasiBirokrasi {
     indikator: IndikatorRB[];
     rencana_aksis: RencanaAksi[];
 }
+interface Table {
+    jenis: "GENERAL" | "TEMATIK";
+}
 
-export const Table = () => {
+export const Table: React.FC<Table> = ({ jenis }) => {
 
     const [Data, setData] = useState<RencanaReformasiBirokrasi[]>([]);
-
-    const [ModalOpen, setModalOpen] = useState<boolean>(false);
-    const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
-    // const [DataModal, setDataModal] = useState<RB | null>(null);
 
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
 
-    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const { branding } = useBrandingContext();
     const tahunBaseline = Number(branding?.tahun?.value) - 1;
     const token = getToken();
@@ -94,7 +93,7 @@ export const Table = () => {
             setLoading(true);
             setError(false);
             try {
-                const response = await fetch(`${branding?.api_perencanaan}/datamaster/rb/laporanByTahun/${branding?.tahun?.value}/GENERAL`, {
+                const response = await fetch(`${branding?.api_perencanaan}/datamaster/rb/laporanByTahun/${branding?.tahun?.value}/${jenis}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -118,7 +117,7 @@ export const Table = () => {
             }
         }
         fetchOpd();
-    }, [token, branding, FetchTrigger]);
+    }, [token, branding, jenis]);
 
     if (Loading) {
         return (
@@ -141,18 +140,21 @@ export const Table = () => {
                             <tr className="bg-yellow-600 text-white">
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 text-center">No</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Jenis RB</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Tema RB</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Kegiatan Utama</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
                                 <th colSpan={4} className="border-r border-b px-6 py-3 w-[400px]">BaseLine {tahunBaseline}</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Gambaran Umum</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Permasalahan</th>
                                 <th colSpan={2} className="border-r border-b px-6 py-3 w-[200px]">{branding?.tahun?.value}</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Keterangan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[900px]">Rencana Aksi</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator Output</th>
-                                <th colSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Periode Pelaksanaan</th>
+                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Periode Pelaksanaan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Satuan Output</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 w-[200px]">Capaian (%)</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 w-[200px]">Sub Kegiatan</th>
-                                <th colSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Biaya</th>
+                                <th className="border-r border-b px-6 py-3 min-w-[200px]">Biaya</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">OPD Koordinator</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Pelaksana</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">OPD Crosscutting</th>
@@ -167,12 +169,12 @@ export const Table = () => {
                                 <th className="border-r border-b px-6 py-1 w-[100px]">Target</th>
                                 <th className="border-r border-b px-6 py-1 w-[100px]">Satuan</th>
                                 <th className="border-r border-b px-6 py-1 w-[100px]">Target</th>
-                                <th className="border-r border-b px-6 py-1 w-[100px]">Realisasi</th>
+                                {/* <th className="border-r border-b px-6 py-1 w-[100px]">Realisasi</th> */}
                                 <th className="border-r border-b px-6 py-1 w-[100px]">Anggaran</th>
-                                <th className="border-r border-b px-6 py-1 w-[100px]">Realisasi</th>
+                                {/* <th className="border-r border-b px-6 py-1 w-[100px]">Realisasi</th> */}
                             </tr>
                             <tr className="bg-yellow-600 text-white">
-                                {Array.from({ length: 25 }, (_, index) => (
+                                {Array.from({ length: 26 }, (_, index) => (
                                     <th key={index} className="border-r border-b px-2 py-1 text-center">{index + 1}</th>
                                 ))}
                             </tr>
@@ -191,13 +193,15 @@ export const Table = () => {
                                                 {/* RB Info */}
                                                 <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{index + 1}</td>
                                                 <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.jenis_rb}</td>
-                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.kegiatan_utama}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">Tema</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4">{item.kegiatan_utama}</td>
 
                                                 {/* Indikator pertama */}
                                                 {(() => {
                                                     const ind = indikator[0];
                                                     const base = ind?.target?.find(t => t.tahun_baseline !== 0);
                                                     const next = ind?.target?.find(t => t.tahun_next !== 0);
+                                                    const capaian = Number(base?.realisasi_baseline ?? 0) / Number(base?.target_baseline ?? 0);
 
                                                     return (
                                                         <>
@@ -205,13 +209,15 @@ export const Table = () => {
                                                             <td className="border px-6 py-4 text-center">{base?.target_baseline ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
-                                                            <td className="border px-6 py-4 text-center">{base ? "0" : "-"}</td>
+                                                            <td className="border px-6 py-4 text-center">{capaian} %</td>
+                                                            <td className="border px-6 py-4 text-center">Gambaran Umum</td>
+                                                            <td className="border px-6 py-4 text-center">Permasalahan</td>
                                                             <td className="border px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{next?.satuan_next ?? "-"}</td>
                                                         </>
                                                     );
                                                 })()}
-                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.keterangan}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4">{item.keterangan}</td>
 
                                                 {/* 🟩 Rencana Aksi + Output + Target + dst. */}
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-left">
@@ -228,9 +234,9 @@ export const Table = () => {
                                                     {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.target ?? "-"}
                                                 </td>
 
-                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                {/* <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                     {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.realisasi ?? "-"}
-                                                </td>
+                                                </td> */}
 
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                     {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.satuan ?? "-"}
@@ -239,16 +245,16 @@ export const Table = () => {
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                     {renaksi[0]?.indikator_rencana_aksis?.[0]?.targets?.[0]?.capaian ?? "-"}
                                                 </td>
-                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
-                                                    {renaksi[0]?.subkegiatan ? 
-                                                        `${renaksi[0]?.subkegiatan?.kode_subkegiatan || ""} - ${renaksi[0]?.subkegiatan?.nama_subkegiatan || ""}`
-                                                    :
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4">
+                                                    {renaksi[0]?.subkegiatan ?
+                                                        `(${renaksi[0]?.subkegiatan?.kode_subkegiatan || ""}) - ${renaksi[0]?.subkegiatan?.nama_subkegiatan || ""}`
+                                                        :
                                                         <>-</>
                                                     }
                                                 </td>
 
-                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">{renaksi[0]?.anggaran ?? "-"}</td>
-                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">{renaksi[0]?.realisasi_anggaran ?? "-"}</td>
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">Rp.{formatRupiah(Number(renaksi[0]?.anggaran ?? 0))}</td>
+                                                {/* <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">{renaksi[0]?.realisasi_anggaran ?? "-"}</td> */}
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">{renaksi[0]?.opd_koordinator ?? "-"}</td>
 
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-left">
@@ -272,6 +278,7 @@ export const Table = () => {
                                             {indikator.slice(1).map((ind, indIndex) => {
                                                 const base = ind.target?.find(t => t.tahun_baseline !== 0);
                                                 const next = ind.target?.find(t => t.tahun_next !== 0);
+                                                const capaian = Number(base?.realisasi_baseline ?? 0) / Number(base?.target_baseline ?? 0);
 
                                                 return (
                                                     <tr key={ind.id ?? indIndex}>
@@ -281,7 +288,10 @@ export const Table = () => {
                                                         <td className="border px-6 py-4 text-center">{base?.target_baseline ?? "-"}</td>
                                                         <td className="border px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
                                                         <td className="border px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
-                                                        <td className="border px-6 py-4 text-center">{base ? "0" : "-"}</td>
+                                                        <td className="border px-6 py-4 text-center">{capaian} %</td>
+
+                                                        <td className="border px-6 py-4 text-center">Gambaran Umum</td>
+                                                        <td className="border px-6 py-4 text-center">Permasalahan</td>
 
                                                         {/* Next */}
                                                         <td className="border px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
@@ -295,7 +305,7 @@ export const Table = () => {
                                             {renaksi.slice(1).map((ra: RencanaAksi, raIndex: number) => (
                                                 <tr key={`ra-${raIndex}`}>
                                                     {/* Kosongkan kolom indikator 1–11 */}
-                                                    <td colSpan={11} className="px-6 py-4"></td>
+                                                    <td colSpan={14} className="px-6 py-4"></td>
 
                                                     {/* Kolom Renaksi */}
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-left">{ra.rencana_aksi}</td>
@@ -307,25 +317,25 @@ export const Table = () => {
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                         {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.target ?? "-"}
                                                     </td>
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                    {/* <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                         {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.realisasi ?? "-"}
-                                                    </td>
+                                                    </td> */}
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                         {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.satuan ?? "-"}
                                                     </td>
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                         {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.capaian ?? "-"}
                                                     </td>
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4">
                                                         {ra.subkegiatan ?
-                                                            `${ra.subkegiatan.kode_subkegiatan || ""} - ${ra.subkegiatan.nama_subkegiatan || ""}`
+                                                            `(${ra.subkegiatan.kode_subkegiatan || ""}) - ${ra.subkegiatan.nama_subkegiatan || ""}`
                                                             :
                                                             <>-</>
                                                         }
                                                     </td>
 
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.anggaran}</td>
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.realisasi_anggaran}</td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">Rp.{formatRupiah(Number(ra.anggaran) ?? 0)}</td>
+                                                    {/* <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.realisasi_anggaran}</td> */}
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.opd_koordinator}</td>
 
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-left">

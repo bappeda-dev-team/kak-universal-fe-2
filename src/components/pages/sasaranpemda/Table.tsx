@@ -171,12 +171,15 @@ const Table: React.FC<table> = ({id_periode, tahun_awal, tahun_akhir, jenis, tah
                     Authorization: `${token}`,
                     'Content-Type': 'application/json',
                 },
-            })
-            if (!response.ok) {
-                alert("response !ok saat hapus data sasaran pemda")
+            });
+            const result = await response.json();
+            if(result.code === 200){
+                AlertNotification("Berhasil", "Data Sasaran Pemda Berhasil Dihapus", "success", 1000);
+                setFetchTrigger((prev) => !prev);
+            } else {
+                AlertNotification("Berhasil", `${result.data}`, "success", 1000);
+                console.log(result);
             }
-            AlertNotification("Berhasil", "Data Sasaran Pemda Berhasil Dihapus", "success", 1000);
-            setFetchTrigger((prev) => !prev);
         } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
             console.error(err);

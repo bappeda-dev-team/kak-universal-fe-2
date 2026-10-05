@@ -1,7 +1,7 @@
 'use client'
 
 import { FiHome } from "react-icons/fi";
-import { Table } from "./comp/Table";
+import { Table } from "../comp/Table";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { IsLoadingBranding } from "@/components/global/Loading";
 
@@ -27,7 +27,7 @@ const IkuPemda = () => {
                         </div>
                     </div>
                     <div className="m-2">
-                        <Table />
+                        <Table jenis="GENERAL"/>
                     </div>
                 </div>
             </>

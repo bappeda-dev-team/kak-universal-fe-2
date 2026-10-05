@@ -62,7 +62,8 @@ export const FormPohonOpd: React.FC<{
     deleteTrigger: () => void;
     fetchTrigger: () => void;
     onCancel?: () => void
-}> = ({ id, level, onCancel, deleteTrigger, fetchTrigger }) => {
+    formRef?: React.Ref<HTMLLIElement>
+}> = ({ id, level, onCancel, deleteTrigger, fetchTrigger, formRef }) => {
 
     const {
         control,
@@ -351,7 +352,7 @@ export const FormPohonOpd: React.FC<{
                     set_show_all={() => null}
                 />
                 :
-                <li className='form-pohon-opd'>
+                <li className='form-pohon-opd' ref={formRef}>
                     <div className="tf-nc tf flex flex-col w-[600px] rounded-lg shadow-lg shadow-slate-500">
                         <div className="flex pt-3 justify-center font-bold text-lg uppercase border my-3 py-3 border-black rounded-lg">
                             {

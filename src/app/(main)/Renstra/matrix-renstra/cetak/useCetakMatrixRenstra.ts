@@ -26,6 +26,7 @@ interface renstra {
     kode: string;
     jenis: string;
     indikator: Indikator[];
+    indikator_baseline?: Indikator[];
     anggaran: Anggaran[];
     bidang_urusan?: renstra[];
     program?: renstra[]
@@ -37,6 +38,14 @@ interface Indikator {
     kode: string;
     kode_opd: string;
     indikator: string;
+    tahun: string;
+    target: TargetBase[] | string;
+    satuan?: string;
+    target_baseline?: TargetBase[];
+}
+interface TargetBase {
+    id: string;
+    indikator_id: string;
     tahun: string;
     target: string;
     satuan: string;
@@ -64,7 +73,7 @@ export function useCetakMatrixRenstra(
         const doc = new jsPDF({
             orientation: "landscape",
             unit: "mm",
-            format: "a3",
+            format: [330, 215],
         });
 
         const pageWidth = doc.internal.pageSize.getWidth();
@@ -112,36 +121,36 @@ export function useCetakMatrixRenstra(
                 x = TableUrusanCetak(doc, tahun_list, kode_opd, "Bidang Urusan", bu, bu.indikator, bu.anggaran, {
                     startY: x,
                 });
-                        
+
                 bu.program?.forEach((p, buIndex) => {
                     x = TableUrusanCetak(doc, tahun_list, kode_opd, "Program", p, p.indikator, p.anggaran, {
                         startY: x,
                     });
-                            
+
                     p.kegiatan?.forEach((k, buIndex) => {
                         x = TableUrusanCetak(doc, tahun_list, kode_opd, "Kegiatan", k, k.indikator, k.anggaran, {
                             startY: x,
                         });
-                                
+
                         k.subkegiatan?.forEach((sk, buIndex) => {
                             x = TableUrusanCetak(doc, tahun_list, kode_opd, "Sub Kegiatan", sk, sk.indikator, sk.anggaran, {
                                 startY: x,
                             });
-        
+
                         });
                     });
                 });
             });
         });
 
-        doc.save(`Matrix Renstra ${nama_opd || "unknown"} Periode ${tahun_awal || "-"}-${tahun_akhir || "-"}.docx`);
+        doc.save(`Matrix Renstra ${nama_opd || "unknown"} Periode ${tahun_awal || "-"}-${tahun_akhir || "-"}.pdf`);
     };
 
     const cetakWordMatrixRenstra = async () => {
         // if (!data) return;
 
-        const pageWidth = convertMillimetersToTwip(420);
-        const pageHeight = convertMillimetersToTwip(297);
+        const pageWidth = convertMillimetersToTwip(330);
+        const pageHeight = convertMillimetersToTwip(215);
         const margin = convertMillimetersToTwip(5);
 
         const children: (Paragraph | any)[] = [];
@@ -166,19 +175,19 @@ export function useCetakMatrixRenstra(
         children.push(new Paragraph({ spacing: { after: convertMillimetersToTwip(6) } }));
 
         data.urusan?.forEach((item) => {
-            children.push(TableUrusanWord(tahun_list, kode_opd, "Urusan", item, item.indikator, item.anggaran));
+            children.push(TableUrusanWord(tahun_list, kode_opd, "Urusan", item, (item.indikator_baseline ?? item.indikator), item.anggaran));
 
             item.bidang_urusan?.forEach((bu) => {
-                children.push(TableUrusanWord(tahun_list, kode_opd, "Bidang Urusan", bu, bu.indikator, bu.anggaran));
+                children.push(TableUrusanWord(tahun_list, kode_opd, "Bidang Urusan", bu, (bu.indikator_baseline ?? bu.indikator), bu.anggaran));
 
                 bu.program?.forEach((p) => {
-                    children.push(TableUrusanWord(tahun_list, kode_opd, "Program", p, p.indikator, p.anggaran));
+                    children.push(TableUrusanWord(tahun_list, kode_opd, "Program", p, (p.indikator_baseline ?? p.indikator), p.anggaran));
 
                     p.kegiatan?.forEach((k) => {
-                        children.push(TableUrusanWord(tahun_list, kode_opd, "Kegiatan", k, k.indikator, k.anggaran));
+                        children.push(TableUrusanWord(tahun_list, kode_opd, "Kegiatan", k, (k.indikator_baseline ?? k.indikator), k.anggaran));
 
                         k.subkegiatan?.forEach((sk) => {
-                            children.push(TableUrusanWord(tahun_list, kode_opd, "Sub Kegiatan", sk, sk.indikator, sk.anggaran));
+                            children.push(TableUrusanWord(tahun_list, kode_opd, "Sub Kegiatan", sk, (sk.indikator_baseline ?? sk.indikator), sk.anggaran));
                         });
                     });
                 });

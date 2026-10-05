@@ -8,7 +8,7 @@ import { ModalMasterRb } from "./ModalMasterRb"
 import { AlertQuestion, AlertNotification } from "@/components/global/Alert"
 import { getToken } from "@/components/lib/Cookie"
 import { LoadingClip } from "@/components/global/Loading"
-import { RB, IndikatorRB, TargetRB } from "../type"
+import { RB, IndikatorRB } from "../type"
 
 export const Table = () => {
 
@@ -120,6 +120,7 @@ export const Table = () => {
                                 <tr className="bg-yellow-600 text-white">
                                     <th rowSpan={2} className="border-r border-b px-6 py-3 text-center">No</th>
                                     <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[150px]">Jenis RB</th>
+                                    <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Tema RB</th>
                                     {branding?.user?.roles == "super_admin" &&
                                         <th rowSpan={2} className="border-r border-b px-6 py-3 w-[100px]">Aksi</th>
                                     }
@@ -152,6 +153,7 @@ export const Table = () => {
                                     <th className="border-r border-b px-2 py-1 text-center">9</th>
                                     <th className="border-r border-b px-2 py-1 text-center">10</th>
                                     <th className="border-l border-b px-2 py-1 text-center">11</th>
+                                    <th className="border-l border-b px-2 py-1 text-center">12</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -163,17 +165,18 @@ export const Table = () => {
                                                 <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">
                                                     <div className="flex flex-wrap items-center gap-1">
                                                         <p>{item.jenis_rb || "-"}</p>
-                                                        {item?.sudah_diambil ? 
+                                                        {item?.sudah_diambil ?
                                                             <div className="flex items-center gap-1 px-2 bg-green-500 rounded-lg text-white">
                                                                 <TbCircleCheck /> Digunakan
                                                             </div>
-                                                        :
+                                                            :
                                                             <div className="flex items-center gap-1 px-2 bg-gray-500 rounded-lg text-white">
                                                                 <TbHourglassFilled /> Pending
                                                             </div>
                                                         }
                                                     </div>
                                                 </td>
+                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">tema</td>
                                                 {branding?.user?.roles == "super_admin" &&
                                                     <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">
                                                         <div className="flex flex-col items-center gap-1">
