@@ -678,6 +678,11 @@ export const RekinAsn: React.FC<RekinAsn> = ({
                           );
                           const isActionDisabled = isLocked || isLockLoading;
                           const lockedBackground = isLocked ? "bg-sky-100" : "";
+                          const hasTwValues =
+                            (rk.tw1 !== null && rk.tw1 !== undefined && Number(rk.tw1) !== 0) ||
+                            (rk.tw2 !== null && rk.tw2 !== undefined && Number(rk.tw2) !== 0) ||
+                            (rk.tw3 !== null && rk.tw3 !== undefined && Number(rk.tw3) !== 0) ||
+                            (rk.tw4 !== null && rk.tw4 !== undefined && Number(rk.tw4) !== 0);
 
                           return (
                             <>
@@ -732,7 +737,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({
                         </td>
                         <td className={`border-r border-b px-6 py-4 ${lockedBackground}`}>
                           <div className="flex flex-col justify-center items-center gap-2">
-                            {rk.id_renaksiopd ? (
+                            {rk.id_renaksiopd && hasTwValues ? (
                               <button
                                 type="button"
                                 disabled={isLockLoading}
