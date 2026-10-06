@@ -3,9 +3,9 @@
 // @ts-ignore: allow side-effect CSS import without type declarations
 import '@/components/pages/Pohon/treeflex.css'
 import React, { useState, useEffect, useRef } from 'react';
-import { TbPencil, TbCheck, TbCircleLetterXFilled, TbCirclePlus, TbHandStop, TbPointer, TbSettings, TbHourglass, TbCopy, TbEye, TbPrinter } from 'react-icons/tb';
-import { ButtonGreenBorder, ButtonSkyBorder, ButtonRedBorder, ButtonBlackBorder, ButtonBlack, ButtonSky, ButtonCetak } from '@/components/global/Button';
-import { LoadingBeat, LoadingButtonClip, LoadingButtonClip2, LoadingClip, LoadingSync } from '@/components/global/Loading';
+import { TbPencil, TbCheck, TbCirclePlus, TbHandStop, TbPointer, TbSettings, TbHourglass, TbCopy, TbEye, TbPrinter, TbTrash } from 'react-icons/tb';
+import { ButtonSkyBorder, ButtonRedBorder, ButtonBlackBorder, ButtonBlack, ButtonSky, ButtonCetak } from '@/components/global/Button';
+import { LoadingBeat, LoadingButtonClip2 } from '@/components/global/Loading';
 import { OpdTahunNull, TahunNull } from '@/components/global/OpdTahunNull';
 import { PohonOpd } from '@/components/lib/Pohon/Opd/PohonOpd';
 import { FormPohonOpd } from '@/components/lib/Pohon/Opd/FormPohonOpd';
@@ -15,11 +15,8 @@ import { ModalTujuanOpd } from '../../tujuanopd/ModalTujuanOpd';
 import { ModalClone } from '../ModalClone';
 import Link from 'next/link';
 import { useBrandingContext } from '@/context/BrandingContext';
+import { AlertNotification, AlertQuestion } from '@/components/global/Alert';
 
-interface OptionType {
-    value: number;
-    label: string;
-}
 interface PokinPemda {
     value: number;
     label: string;
@@ -35,6 +32,7 @@ interface pokin {
 interface tujuan {
     id: number;
     tujuan: string;
+    catatan?: string;
 }
 interface childs {
     id: number;
@@ -45,10 +43,6 @@ interface childs {
     keterangan: string;
     indikators: string;
     childs: childs[];
-}
-interface TujuanOpd {
-    id_tujuan_opd: number;
-    tujuan: string;
 }
 
 const PokinOpd = () => {
@@ -218,6 +212,23 @@ const PokinOpd = () => {
             setOpenModalTujuanOpd(true);
         }
     }
+
+    // CRUD Catatan untuk Tujuan OPD
+    const [ModalCatatan, setModalCatatan] = useState<boolean>(false);
+    const [CatatanMode, setCatatanMode] = useState<'add' | 'edit' | 'delete'>('add');
+    const [CatatanText, setCatatanText] = useState<string>('');
+
+    const handleCatatan = (mode: 'add' | 'edit' | 'delete', tujuan: any) => {
+        AlertNotification('Gagal', 'Terjadi kesalahan saat menyimpan catatan', 'error', 2000);
+    };
+
+    const simpanCatatan = async () => {
+        AlertNotification('Gagal', 'Terjadi kesalahan saat menyimpan catatan', 'error', 2000);
+    };
+
+    const hapusCatatan = async (id: number) => {
+        AlertNotification('Gagal', 'Gagal menghapus catatan', 'error', 2000);
+    };
 
     // FETCH SEMUA POHON OPD
     useEffect(() => {
@@ -423,9 +434,7 @@ const PokinOpd = () => {
                     <div className={`flex flex-wrap justify-between gap-2 transition-all duration-300 ease-in-out ${Kendali ? "max-h-screen opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
                         {/* PEMDA */}
                         <div className="flex flex-col justify-between border-2 max-w-[400px] min-w-[300px] px-3 py-2 rounded-xl">
-                            <h1 className="font-semibold border-b-2 py-1 text-center">
-                                Pohon Pemda
-                            </h1>
+                            <h1 className="font-semibold border-b-2 py-1 text-center">Pohon Pemda</h1>
                             <div className="flex flex-col py-2 mt-1 justify-between">
                                 <table>
                                     <tbody className='flex flex-col gap-2'>
@@ -433,14 +442,10 @@ const PokinOpd = () => {
                                             onClick={() => handleModalPohonPemda(4)}
                                         >
                                             <td className="px-2 py-1 text-start min-w-[130px]">
-                                                <button type="button" className="font-semibold">
-                                                    Strategic
-                                                </button>
+                                                <button type="button" className="font-semibold">Strategic</button>
                                             </td>
                                             <td className="py-1">
-                                                <h1 className="font-semibold">
-                                                    :
-                                                </h1>
+                                                <h1 className="font-semibold">:</h1>
                                             </td>
                                             <td className='flex justify-center px-2 py-1 text-center w-full'>
                                                 <h1 className="flex items-center gap-1 font-semibold">
@@ -453,9 +458,7 @@ const PokinOpd = () => {
                                                 </h1>
                                             </td>
                                             <td className="py-1">
-                                                <h1 className="font-semibold">
-                                                    /
-                                                </h1>
+                                                <h1 className="font-semibold">/</h1>
                                             </td>
                                             <td className='flex justify-center px-2 py-1 text-center w-full'>
                                                 <h1 className="flex items-center gap-1 font-semibold">
@@ -472,14 +475,10 @@ const PokinOpd = () => {
                                             onClick={() => handleModalPohonPemda(5)}
                                         >
                                             <td className="px-2 py-1 text-start min-w-[130px]">
-                                                <h1 className="font-semibold">
-                                                    Tactical
-                                                </h1>
+                                                <h1 className="font-semibold">Tactical</h1>
                                             </td>
                                             <td className="py-1">
-                                                <h1 className="font-semibold">
-                                                    :
-                                                </h1>
+                                                <h1 className="font-semibold">:</h1>
                                             </td>
                                             <td className='flex justify-center px-2 py-1 text-center w-full'>
                                                 <h1 className="flex items-center gap-1 font-semibold">
@@ -492,9 +491,7 @@ const PokinOpd = () => {
                                                 </h1>
                                             </td>
                                             <td className="py-1">
-                                                <h1 className="font-semibold">
-                                                    /
-                                                </h1>
+                                                <h1 className="font-semibold">/</h1>
                                             </td>
                                             <td className='flex justify-center px-2 py-1 text-center w-full'>
                                                 <h1 className="flex items-center gap-1 font-semibold">
@@ -511,14 +508,10 @@ const PokinOpd = () => {
                                             onClick={() => handleModalPohonPemda(6)}
                                         >
                                             <td className="px-2 py-1 text-start min-w-[130px]">
-                                                <h1 className="font-semibold">
-                                                    Operational
-                                                </h1>
+                                                <h1 className="font-semibold">Operational</h1>
                                             </td>
                                             <td className="py-1">
-                                                <h1 className="font-semibold">
-                                                    :
-                                                </h1>
+                                                <h1 className="font-semibold">:</h1>
                                             </td>
                                             <td className='flex justify-center px-2 py-1 text-center w-full'>
                                                 <h1 className="flex gap-1 items-center font-semibold">
@@ -531,9 +524,7 @@ const PokinOpd = () => {
                                                 </h1>
                                             </td>
                                             <td className="py-1">
-                                                <h1 className="font-semibold">
-                                                    /
-                                                </h1>
+                                                <h1 className="font-semibold">/</h1>
                                             </td>
                                             <td className='flex justify-center px-2 py-1 text-center w-full'>
                                                 <h1 className="flex gap-1 items-center font-semibold">
@@ -658,10 +649,38 @@ const PokinOpd = () => {
                                                             <td className="min-w-[100px] border px-2 py-3 border-black text-start bg-gray-100">Tujuan OPD</td>
                                                             <td className="min-w-[300px] border px-2 py-3 border-black text-start bg-gray-100">{item.tujuan}</td>
                                                         </tr>
-                                                        {/* <tr>
+                                                        <tr>
                                                             <td className="min-w-[100px] border px-2 py-3 border-black text-start bg-yellow-200">Catatan</td>
-                                                            <td className="min-w-[300px] border px-2 py-3 border-black text-start bg-yellow-200">-</td>
-                                                        </tr> */}
+                                                            <td className="min-w-[300px] border px-2 py-3 border-black text-start bg-yellow-200">
+                                                                <div className="flex flex-col gap-2">
+                                                                    <div className="whitespace-pre-wrap">
+                                                                        {item.catatan || "-"}
+                                                                    </div>
+                                                                    {(User?.roles == 'super_admin' || User?.roles == 'admin_opd') && (
+                                                                        <div className="flex flex-wrap gap-1 hide-on-capture">
+                                                                            <ButtonSkyBorder
+                                                                                className="text-xs py-1 px-2"
+                                                                                onClick={() => handleCatatan('add', item)}
+                                                                            >
+                                                                                <TbCirclePlus className="mr-1" /> Tambah
+                                                                            </ButtonSkyBorder>
+                                                                            <ButtonBlackBorder
+                                                                                className="text-xs py-1 px-2"
+                                                                                onClick={() => handleCatatan('edit', item)}
+                                                                            >
+                                                                                <TbPencil className="mr-1" /> Edit
+                                                                            </ButtonBlackBorder>
+                                                                            <ButtonRedBorder
+                                                                                className="text-xs py-1 px-2"
+                                                                                onClick={() => handleCatatan('delete', item)}
+                                                                            >
+                                                                                <TbTrash className="mr-1" /> Hapus
+                                                                            </ButtonRedBorder>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
                                                         {item.indikator ?
                                                             <React.Fragment>
                                                                 {item.indikator.map((i: any) => (
@@ -728,7 +747,7 @@ const PokinOpd = () => {
                                                 Cetak Tujuan OPD
                                             </ButtonSky>
                                         </Link>
-                                        {Clone &&
+                                        {Clone && (
                                             <ModalClone
                                                 isOpen={Clone}
                                                 onClose={() => setClone(false)}
@@ -738,7 +757,31 @@ const PokinOpd = () => {
                                                 kode_opd={kode_opd}
                                                 onSuccess={() => setTriggerAfterPokinOutside((prev) => !prev)}
                                             />
-                                        }
+                                        )}
+                                        {ModalCatatan && (
+                                            <div className="fixed inset-0 flex items-center justify-center z-50">
+                                                <div className="fixed inset-0 bg-black opacity-30" onClick={() => setModalCatatan(false)}></div>
+                                                <div className="bg-white rounded-lg p-6 z-10 w-11/12 md:w-1/2">
+                                                    <h2 className="text-lg font-bold mb-4">
+                                                        {CatatanMode === 'add' ? 'Tambah Catatan' : 'Edit Catatan'}
+                                                    </h2>
+                                                    <textarea
+                                                        className="w-full border border-gray-300 rounded-lg p-3 min-h-[120px]"
+                                                        value={CatatanText}
+                                                        onChange={(e) => setCatatanText(e.target.value)}
+                                                        placeholder="Masukkan catatan..."
+                                                    />
+                                                    <div className="flex justify-end gap-2 mt-4">
+                                                        <ButtonRedBorder onClick={() => setModalCatatan(false)}>
+                                                            Batal
+                                                        </ButtonRedBorder>
+                                                        <ButtonSky onClick={simpanCatatan}>
+                                                            Simpan
+                                                        </ButtonSky>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 }
                                 {/* BUTTON HEADER POKIN */}
