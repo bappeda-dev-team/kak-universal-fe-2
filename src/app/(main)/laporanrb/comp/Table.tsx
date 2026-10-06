@@ -20,6 +20,18 @@ interface RencanaAksi {
         nama_subkegiatan: string;
     }
     opd_crosscuttings: [];
+    gambaran_umums: GambaranUmum[];
+    permasalahans: Permasalahan[];
+}
+interface GambaranUmum {
+    id: string;
+    id_rencana_aksi: string;
+    gambaran_umum: string;
+}
+interface Permasalahan {
+    id: string;
+    id_rencana_aksi: string;
+    permasalahan: string;
 }
 
 interface Crosscutting {
@@ -66,6 +78,7 @@ interface IndikatorRenaksi {
 interface RencanaReformasiBirokrasi {
     id: number;
     jenis_rb: string;
+    tema_rb: string;
     kegiatan_utama: string;
     keterangan: string;
     tahun_baseline: number;
@@ -144,12 +157,12 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Kegiatan Utama</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
                                 <th colSpan={4} className="border-r border-b px-6 py-3 w-[400px]">BaseLine {tahunBaseline}</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Gambaran Umum</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Permasalahan</th>
                                 <th colSpan={2} className="border-r border-b px-6 py-3 w-[200px]">{branding?.tahun?.value}</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Keterangan</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[900px]">Rencana Aksi</th>
-                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator Output</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rencana Aksi</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator Output</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[500px]">Gambaran Umum</th>
+                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Permasalahan</th>
                                 <th className="border-r border-b px-6 py-3 min-w-[200px]">Periode Pelaksanaan</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Satuan Output</th>
                                 <th rowSpan={2} className="border-r border-b px-6 py-3 w-[200px]">Capaian (%)</th>
@@ -192,9 +205,9 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                             <tr>
                                                 {/* RB Info */}
                                                 <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{index + 1}</td>
-                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.jenis_rb}</td>
-                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">Tema</td>
-                                                <td rowSpan={indikatorCount} className="border px-6 py-4">{item.kegiatan_utama}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.jenis_rb || ""}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4 text-center">{item.tema_rb || ""}</td>
+                                                <td rowSpan={indikatorCount} className="border px-6 py-4">{item.kegiatan_utama || ""}</td>
 
                                                 {/* Indikator pertama */}
                                                 {(() => {
@@ -210,8 +223,6 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                                             <td className="border px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{capaian} %</td>
-                                                            <td className="border px-6 py-4 text-center">Gambaran Umum</td>
-                                                            <td className="border px-6 py-4 text-center">Permasalahan</td>
                                                             <td className="border px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
                                                             <td className="border px-6 py-4 text-center">{next?.satuan_next ?? "-"}</td>
                                                         </>
@@ -224,10 +235,31 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                                     {renaksi.length > 0 ? renaksi[0].rencana_aksi : "-"}
                                                 </td>
 
-                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-left">
-                                                    {renaksi[0]?.indikator_rencana_aksis?.map((i: IndikatorRenaksi, idx) => (
-                                                        <div key={idx}>{i.indikator}</div>
-                                                    )) ?? "-"}
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100">
+                                                    <div className="flex flex-col gap-1">
+                                                        {renaksi[0]?.indikator_rencana_aksis?.map((i: IndikatorRenaksi, idx: number) => (
+                                                            <div className={`p-3 ${idx != 0 && "border-t border-white"}`} key={idx}>{i.indikator || "-"}</div>
+                                                        )) ?? "-"}
+                                                    </div>
+                                                </td>
+
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100">
+                                                    <div className="flex flex-col gap-1">
+                                                        {renaksi[0]?.gambaran_umums &&
+                                                            renaksi[0].gambaran_umums?.map((i: GambaranUmum, idx: number) => (
+                                                                <div key={idx} className={`p-3 ${idx != 0 && "border-t border-white"}`}>{i.gambaran_umum || "-"}</div>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td rowSpan={indikatorCount} className="border border-white bg-yellow-100">
+                                                    <div className="flex flex-col gap-1">
+                                                        {renaksi[0]?.permasalahans &&
+                                                            renaksi[0].permasalahans?.map((i: Permasalahan, idx: number) => (
+                                                                <div key={idx} className={`p-3 ${idx != 0 && "border-t border-white"}`}>{i.permasalahan || "-"}</div>
+                                                            ))
+                                                        }
+                                                    </div>
                                                 </td>
 
                                                 <td rowSpan={indikatorCount} className="border border-white bg-yellow-100 px-6 py-4 text-center">
@@ -282,16 +314,13 @@ export const Table: React.FC<Table> = ({ jenis }) => {
 
                                                 return (
                                                     <tr key={ind.id ?? indIndex}>
-                                                        <td className="border px-6 py-4 text-left">{ind.indikator}</td>
+                                                        <td className="border px-6 py-4 text-left">{ind.indikator || "-"}</td>
 
                                                         {/* Baseline */}
                                                         <td className="border px-6 py-4 text-center">{base?.target_baseline ?? "-"}</td>
                                                         <td className="border px-6 py-4 text-center">{base?.realisasi_baseline ?? "-"}</td>
                                                         <td className="border px-6 py-4 text-center">{base?.satuan_baseline ?? "-"}</td>
                                                         <td className="border px-6 py-4 text-center">{capaian} %</td>
-
-                                                        <td className="border px-6 py-4 text-center">Gambaran Umum</td>
-                                                        <td className="border px-6 py-4 text-center">Permasalahan</td>
 
                                                         {/* Next */}
                                                         <td className="border px-6 py-4 text-center">{next?.target_next ?? "-"}</td>
@@ -305,15 +334,36 @@ export const Table: React.FC<Table> = ({ jenis }) => {
                                             {renaksi.slice(1).map((ra: RencanaAksi, raIndex: number) => (
                                                 <tr key={`ra-${raIndex}`}>
                                                     {/* Kosongkan kolom indikator 1–11 */}
-                                                    <td colSpan={14} className="px-6 py-4"></td>
+                                                    <td colSpan={12} className="px-6 py-4"></td>
 
                                                     {/* Kolom Renaksi */}
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-left">{ra.rencana_aksi}</td>
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-left">
-                                                        {ra.indikator_rencana_aksis?.map((i: IndikatorRenaksi, idx) => (
-                                                            <div key={idx}>{i.indikator}</div>
-                                                        ))}
+                                                    <td className="border border-white bg-yellow-100">
+                                                        <div className="flex flex-col gap-1">
+                                                            {ra.indikator_rencana_aksis?.map((i: IndikatorRenaksi, idx: number) => (
+                                                                <div key={idx} className={`p-3 ${idx != 0 && "border-t border-white"}`}>{i.indikator || "-"}</div>
+                                                            ))}
+                                                        </div>
                                                     </td>
+                                                    <td className="border border-white bg-yellow-100">
+                                                        <div className="flex flex-col gap-1">
+                                                            {ra.gambaran_umums &&
+                                                                ra.gambaran_umums?.map((i: GambaranUmum, idx: number) => (
+                                                                    <div key={idx} className={`p-3 ${idx != 0 && "border-t border-white"}`}>{i.gambaran_umum || "-"}</div>
+                                                                ))
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                    <td className="border border-white bg-yellow-100">
+                                                        <div className="flex flex-col gap-1">
+                                                            {ra.permasalahans &&
+                                                                ra.permasalahans?.map((i: Permasalahan, idx: number) => (
+                                                                    <div key={idx} className={`p-3 ${idx != 0 && "border-t border-white"}`}>{i.permasalahan || "-"}</div>
+                                                                ))
+                                                            }
+                                                        </div>
+                                                    </td>
+
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">
                                                         {ra.indikator_rencana_aksis?.[0]?.targets?.[0]?.target ?? "-"}
                                                     </td>
@@ -336,10 +386,10 @@ export const Table: React.FC<Table> = ({ jenis }) => {
 
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-center">Rp.{formatRupiah(Number(ra.anggaran) ?? 0)}</td>
                                                     {/* <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.realisasi_anggaran}</td> */}
-                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.opd_koordinator}</td>
+                                                    <td className="border border-white bg-yellow-100 px-6 py-4 text-center">{ra.opd_koordinator || ""}</td>
 
                                                     <td className="border border-white bg-yellow-100 px-6 py-4 text-left">
-                                                        {ra.nama_pelaksana}<br />{ra.nip_pelaksana}
+                                                        {ra.nama_pelaksana || "-"}<br />{ra.nip_pelaksana || "-"}
                                                     </td>
                                                     {ra.opd_crosscuttings ?
                                                         ra.opd_crosscuttings?.map((cr: Crosscutting, sr_index: number) => (

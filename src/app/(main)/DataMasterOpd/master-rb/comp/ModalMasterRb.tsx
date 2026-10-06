@@ -26,6 +26,7 @@ interface ModalProps {
 
 interface FormValue {
     jenis_rb: OptionTypeString | null,
+    tema_rb: string;
     kegiatan_utama: string,
     keterangan: string,
     tahun_baseline: number,
@@ -59,6 +60,7 @@ export const ModalMasterRb: React.FC<ModalProps> = ({ Data, isOpen, onClose, onS
                 value: Data?.jenis_rb,
                 label: Data?.jenis_rb
             } : null,
+            tema_rb: Data?.tema_rb || "",
             kegiatan_utama: Data?.kegiatan_utama,
             keterangan: Data?.keterangan,
             tahun_baseline: Data?.tahun_baseline,
@@ -207,7 +209,7 @@ export const ModalMasterRb: React.FC<ModalProps> = ({ Data, isOpen, onClose, onS
                             )}
                         />
                         <Controller
-                            name={`kegiatan_utama`}
+                            name={`tema_rb`}
                             control={control}
                             render={({ field }) => (
                                 <div className="flex flex-col py-3">

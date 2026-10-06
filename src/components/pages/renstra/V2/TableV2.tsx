@@ -177,7 +177,7 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
             }
         }
         fetchMatrix();
-    }, [kode_opd, tahun_awal, tahun_akhir, token, FetchTrigger]);
+    }, [branding, kode_opd, tahun_awal, tahun_akhir, token, FetchTrigger]);
 
     const { cetakPdfMatrixRenstra, cetakWordMatrixRenstra } = useCetakMatrixRenstra(Matrix[0], nama_opd, kode_opd, tahun_awal, tahun_akhir, tahun_list);
 

@@ -176,7 +176,7 @@ export const Table = () => {
                                                         }
                                                     </div>
                                                 </td>
-                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">tema</td>
+                                                <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">{item.tema_rb || ""}</td>
                                                 {branding?.user?.roles == "super_admin" &&
                                                     <td rowSpan={item.indikator.length > 1 ? item.indikator.length + 1 : 2} className="border-r border-b border-yellow-600 px-6 py-4 text-center">
                                                         <div className="flex flex-col items-center gap-1">
