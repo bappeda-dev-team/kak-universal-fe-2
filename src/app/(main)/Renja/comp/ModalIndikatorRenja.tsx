@@ -81,7 +81,7 @@ export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_i
             rumus_perhitungan: item.rumus_perhitungan,
             sumber_data: item.sumber_data,
             target: item.target.map((t: Target) => ({
-                target: Number(t.target),
+                target: t.target,
                 satuan: t.satuan,
                 tahun: t.tahun,
             }))
