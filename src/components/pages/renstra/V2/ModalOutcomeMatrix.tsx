@@ -7,19 +7,21 @@ import { ButtonSky, ButtonRed } from '@/components/global/Button';
 import { getToken } from "@/components/lib/Cookie";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import { AlertNotification } from "@/components/global/Alert";
-import { Indikator, Target } from "./TableV2";
 import { useBrandingContext } from "@/context/BrandingContext";
 
 interface FormValue {
-    id: number;
-    outcome: string;
+    id?: number;
+    jenis: string;
     kode: string;
+    kode_opd: string;
+    outcome: string;
 }
 
 interface OutcomeData {
-    id?: number;
-    kode?: string;
-    outcome?: string;
+    id: number;
+    nama: string;
+    kode: string;
+    outcome: string;
 }
 
 interface modal {
@@ -29,15 +31,19 @@ interface modal {
     jenis: string;
     nama: string;
     kode: string;
-    onSuccess: (outcome: string) => void;
+    kode_opd: string;
+    metode: "tambah" | "edit";
+    onSuccess: () => void;
 }
 
-export const ModalOutcomeMatrix: React.FC<modal> = ({ isOpen, Data, nama, jenis, kode, onClose, onSuccess }) => {
+export const ModalOutcomeMatrix: React.FC<modal> = ({ isOpen, Data, nama, metode, jenis, kode, kode_opd, onClose, onSuccess }) => {
 
     const { control, handleSubmit, reset } = useForm<FormValue>({
         defaultValues: {
             id: Data?.id ?? 0,
-            kode: Data?.kode ?? "",
+            jenis: jenis ?? "Program",
+            kode: kode ?? "",
+            kode_opd: kode_opd,
             outcome: Data?.outcome ?? ""
         }
     });
@@ -49,38 +55,43 @@ export const ModalOutcomeMatrix: React.FC<modal> = ({ isOpen, Data, nama, jenis,
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const payload = {
             id: data.id ?? 0,
+            jenis: jenis,
             kode: data.kode ?? "",
+            kode_opd: kode_opd,
             outcome: data.outcome ?? ""
         }
-        console.log(payload);
-        AlertNotification("Berhasil", `Mengubah outcome di kode nomenklatur ${nama || "unknown"}`, "success", 2000);
-        onClose();
-        onSuccess(payload.outcome);
-        reset();
-        // try {
-        //     let url = "matrix_renstra/target/upsert";
-        //     setProses(true);
-        //     const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
-        //         method: "POST",
-        //         headers: {
-        //             Authorization: `${token}`,
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(payload),
-        //     });
-        //     const result = await response.json();
-        //     if (result.code === 201 || result.code === 200) {
-        //     } else if (result.code === 500) {
-        //         AlertNotification("Gagal", `${result.data}`, "error", 2000);
-        //     } else {
-        //         AlertNotification("Gagal", "terdapat kesalahan pada backend / database server dengan response !ok", "error", 2000);
-        //         console.error(result);
-        //     }
-        // } catch (err) {
-        //     AlertNotification("Gagal", `${err}`, "error", 2000);
-        // } finally {
-        //     setProses(false);
-        // }
+        // console.log(payload);
+        try {
+            let url = "";
+            if (metode === "tambah") {
+                url = `outcome_matrix/create`
+            } else {
+                url = `outcome_matrix/update/${Data?.id}`
+            }
+            setProses(true);
+            const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
+                method: metode === "tambah" ? "POST" : "PUT",
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+            const result = await response.json();
+            if (result.code === 201 || result.code === 200) {
+                AlertNotification("Berhasil", `Mengubah outcome di kode nomenklatur ${nama || "unknown"}`, "success", 2000);
+                onClose();
+                onSuccess();
+                reset();
+            } else {
+                AlertNotification("Gagal", `${result.data}`, "error", 2000);
+                console.error(result);
+            }
+        } catch (err) {
+            AlertNotification("Gagal", `${err}`, "error", 2000);
+        } finally {
+            setProses(false);
+        }
     };
 
     const handleClose = () => {

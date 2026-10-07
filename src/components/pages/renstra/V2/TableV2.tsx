@@ -13,19 +13,24 @@ import { ModalTargetSatuanRenstra } from "./ModalTargetSatuanRenstra";
 import { ModalCreateIndikatorRenstraV2, ModalEditIndikatorV2, IndikatorResponse } from "./ModalCreateIndikatorRenstraV2";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { ModalOutcomeMatrix } from "./ModalOutcomeMatrix";
-import { getDummyOutcome } from "./dummyOutcome";
 
 interface renstra {
     nama: string;
     kode: string;
     jenis: string;
-    outcome?: any[];
+    outcome: OutcomeData[];
     indikator: Indikator[];
     anggaran: Anggaran[];
     bidang_urusan?: renstra[];
     program?: renstra[]
     kegiatan?: renstra[]
     subkegiatan?: renstra[]
+}
+interface OutcomeData {
+    id: number;
+    nama: string;
+    kode: string;
+    outcome: string;
 }
 interface matrix {
     kode_opd: string
@@ -77,15 +82,6 @@ export interface TargetUpsertResponse {
     target: string | number;
     satuan: string;
     jenis?: string;
-}
-interface IndikatorForm {
-    kode: string;
-    kode_indikator?: string;
-    kode_opd: string;
-    indikator: string;
-    tahun: string;
-    target: string;
-    satuan: string;
 }
 
 interface pagu {
@@ -243,8 +239,6 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                 nama={u.nama}
                                                 kode_opd={item.kode_opd}
                                                 outcome={u.outcome}
-                                                outcomeMap={OutcomeMap}
-                                                onUpdateOutcome={simpanOutcome}
                                                 targetMap={TargetMap}
                                                 onUpdateTarget={simpanTarget}
                                                 paguMap={PaguMap}
@@ -273,8 +267,6 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                 nama={br.nama}
                                                                 kode_opd={kode_opd}
                                                                 outcome={br.outcome}
-                                                                outcomeMap={OutcomeMap}
-                                                                onUpdateOutcome={simpanOutcome}
                                                                 targetMap={TargetMap}
                                                                 onUpdateTarget={simpanTarget}
                                                                 paguMap={PaguMap}
@@ -303,8 +295,6 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                                 nama={p.nama}
                                                                                 kode_opd={kode_opd}
                                                                                 outcome={p.outcome}
-                                                                                outcomeMap={OutcomeMap}
-                                                                                onUpdateOutcome={simpanOutcome}
                                                                                 targetMap={TargetMap}
                                                                                 onUpdateTarget={simpanTarget}
                                                                                 paguMap={PaguMap}
@@ -333,8 +323,6 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                                                 nama={k.nama}
                                                                                                 kode_opd={kode_opd}
                                                                                                 outcome={k.outcome}
-                                                                                                outcomeMap={OutcomeMap}
-                                                                                                onUpdateOutcome={simpanOutcome}
                                                                                                 targetMap={TargetMap}
                                                                                                 onUpdateTarget={simpanTarget}
                                                                                                 paguMap={PaguMap}
@@ -363,8 +351,6 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                                                                                                                 nama={sk.nama}
                                                                                                                 kode_opd={kode_opd}
                                                                                                                 outcome={sk.outcome}
-                                                                                                                outcomeMap={OutcomeMap}
-                                                                                                                onUpdateOutcome={simpanOutcome}
                                                                                                                 targetMap={TargetMap}
                                                                                                                 onUpdateTarget={simpanTarget}
                                                                                                                 paguMap={PaguMap}
@@ -455,16 +441,14 @@ interface Tr {
     kode_opd: string;
     jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
     type: "laporan" | "opd";
-    outcome?: any[];
-    outcomeMap: Record<string, string>;
-    onUpdateOutcome: (kode: string, outcome: string) => void;
+    outcome: OutcomeData[];
     targetMap: Record<string, TargetData>;
     onUpdateTarget: (kode_indikator: string, tahun: string, data: TargetData) => void;
     paguMap: Record<string, number>;
     onUpdatePagu: (kode: string, tahun: string, pagu_indikatif: number) => void;
     fetchTrigger: () => void;
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, indikator, anggaran, tahun_list, outcome, outcomeMap, onUpdateOutcome, targetMap, onUpdateTarget, paguMap, onUpdatePagu, fetchTrigger }) => {
+export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, indikator, anggaran, tahun_list, outcome, targetMap, onUpdateTarget, paguMap, onUpdatePagu, fetchTrigger }) => {
 
     // Modal Indikator
     const [ModalTambahIndikator, setModalTambahIndikator] = useState<boolean>(false);
@@ -481,10 +465,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
 
     // Modal Outcome
     const [ModalOutcome, setModalOutcome] = useState<boolean>(false);
-
-    // Outcome nomenklatur ini: pakai data dari server, jika belum ada pakai dummy
-    // jika user sudah pernah menyimpan lewat modal, nilai yang disimpan yang dipakai
-    const NilaiOutcome = outcomeMap[kode] ?? outcome ?? getDummyOutcome(jenis);
+    const [JenisModalOutcome, setJenisModalOutcome] = useState<"tambah" | "edit">("tambah");
 
     const [Pagu, setPagu] = useState<number | null>(null);
     const [ModalPagu, setModalPagu] = useState<boolean>(false);
@@ -566,6 +547,15 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
             setIndikatorModal(indikator);
         }
     }
+    const handleModalOutcome = (metode: "tambah" | "edit") => {
+        if (ModalOutcome) {
+            setModalOutcome(false);
+            setJenisModalOutcome(metode);
+        } else {
+            setModalOutcome(true);
+            setJenisModalOutcome(metode);
+        }
+    }
 
     // indikator hasil response create, langsung dipakai update tampilan (rowSpan ikut menyesuaikan)
     const tambahIndikatorLokal = (data: IndikatorResponse[]) => {
@@ -590,6 +580,27 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
         setIndikatorTerhapus((prev) => prev.filter((k: string) => !baru.some((b: Indikator) => b.kode_indikator === k)));
     }
 
+    const hapusOutcome = async (id: number) => {
+        try {
+            const response = await fetch(`${branding?.api_perencanaan}/outcome_matrix/delete/${id}`, {
+                headers: {
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
+                },
+                method: "DELETE"
+            });
+            const result = await response.json();
+            if (result.code === 200 || result.code === 201) {
+                AlertNotification("Berhasil", "Outcome Berhasil Di Hapus", "success", 2000);
+                fetchTrigger();
+            } else {
+                AlertNotification("Gagal", `${result.data}`, "success", 2000);
+            }
+        } catch (err) {
+            console.log(err);
+            AlertNotification("Gagal", `${err}`, "success", 2000);
+        }
+    }
     const hapusIndikator = async (kode: string) => {
         try {
             const response = await fetch(`${branding?.api_perencanaan}/matrix_renstra/indikator/delete/${kode}`, {
@@ -645,24 +656,34 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     <td className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>{nama || ""}</td>
                     <td className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
                         <div className="flex items-center justify-between gap-1">
-                            {NilaiOutcome &&
-                                <span>{NilaiOutcome || "-"}</span>
+                            {outcome?.length > 0 &&
+                                <span>{outcome[0]?.outcome || "-"}</span>
                             }
                             <div className="flex flex-col items-center gap-1">
                                 <button
                                     type="button"
                                     className="p-1 border border-green-500 text-green-700 rounded-full hover:bg-green-500 hover:text-white cursor-pointer shrink-0"
                                     title="Edit Outcome"
-                                    onClick={() => setModalOutcome(true)}
+                                    onClick={() => {
+                                        if (outcome[0]?.id) {
+                                            handleModalOutcome("edit")
+                                        } else {
+                                            handleModalOutcome("tambah")
+                                        }
+                                    }}
                                 >
                                     <TbPencil size={14} />
                                 </button>
-                                {NilaiOutcome &&
+                                {outcome.length > 0 &&
                                     <button
                                         type="button"
                                         className="p-1 border border-red-500 text-red-700 rounded-full hover:bg-red-500 hover:text-white cursor-pointer shrink-0"
                                         title="Hapus Outcome"
-                                        // onClick={() => setModalOutcome(true)}
+                                        onClick={() => AlertQuestion("Hapus?", `${outcome[0].outcome || ""}`, "question", "Hapus", "Batal").then((resp) => {
+                                            if (resp.isConfirmed) {
+                                                hapusOutcome(outcome[0].id)
+                                            }
+                                        })}
                                     >
                                         <TbTrash size={14} />
                                     </button>
@@ -686,8 +707,8 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                         <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>{nama || ""}</td>
                         <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
                             <div className="flex items-center justify-between gap-1">
-                                {NilaiOutcome &&
-                                    <span>{NilaiOutcome || "-"}</span>
+                                {outcome.length > 0 &&
+                                    <span>{outcome[0].outcome || "-"}</span>
                                 }
                                 <div className="flex flex-col items-center gap-1">
                                     <button
@@ -698,12 +719,11 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                     >
                                         <TbPencil size={14} />
                                     </button>
-                                    {NilaiOutcome &&
+                                    {outcome.length > 0 &&
                                         <button
                                             type="button"
                                             className="p-1 border border-red-500 text-red-700 rounded-full hover:bg-red-500 hover:text-white cursor-pointer shrink-0"
                                             title="Hapus Outcome"
-                                            // onClick={() => setModalOutcome(true)}
                                         >
                                             <TbTrash size={14} />
                                         </button>
@@ -880,14 +900,12 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     isOpen={ModalOutcome}
                     onClose={() => setModalOutcome(false)}
                     nama={nama}
+                    kode_opd={kode_opd}
                     kode={kode}
                     jenis={jenis}
-                    onSuccess={(value: string) => onUpdateOutcome(kode, value)}
-                    Data={{
-                        id: 0,
-                        kode: kode,
-                        outcome: NilaiOutcome,
-                    }}
+                    metode={JenisModalOutcome}
+                    onSuccess={fetchTrigger}
+                    Data={outcome[0]}
                 />
             }
         </>
