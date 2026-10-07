@@ -184,7 +184,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
         } else if (metode === "baru" && isOpen) {
             fetchPokinBaru();
         }
-    }, [id, token, isOpen, metode, reset, replace, tahun, tema_id, jenis_periode]);
+    }, [id, token, isOpen, metode, reset, replace, tahun, tahun_list, tema_id, jenis_periode]);
 
     const fetchVisiOption = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;

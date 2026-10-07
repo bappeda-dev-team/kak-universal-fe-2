@@ -59,7 +59,7 @@ export const Childs: React.FC<Childs> = ({ id_tematik, onTableShown }) => {
 
         fetchTematik();
 
-    }, [branding, id_tematik]);
+    }, [branding, id_tematik, token]);
 
     const checkHasOpd = (nodes: any) => {
         if (!nodes) return false;

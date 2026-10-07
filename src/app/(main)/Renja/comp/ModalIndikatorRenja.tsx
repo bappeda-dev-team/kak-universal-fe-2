@@ -23,6 +23,9 @@ interface IndikatorForm {
     rumus_perhitungan: string;
     sumber_data: string;
     target: Target[];
+    target_ranwal?: Target[];
+    target_rankhir?: Target[];
+    target_penetapan?: Target[]
 }
 
 interface Target {
@@ -309,38 +312,55 @@ interface modalEdit {
     onClose: () => void;
     onSuccess: () => void;
     Data: IndikatorForm | null;
+    target_awal: Target[];
+    target_edit: Target[];
     jenis: 'tujuan_opd' | 'sasaran_opd'
     menu: 'ranwal' | 'rankhir' | 'penetapan'
 }
 
-export const ModalEditIndikatorRenja: React.FC<modalEdit> = ({ isOpen, onClose, Data, jenis, menu, onSuccess }) => {
+export const ModalEditIndikatorRenja: React.FC<modalEdit> = ({ isOpen, onClose, Data, target_awal, target_edit, jenis, menu, onSuccess }) => {
 
     const { branding } = useBrandingContext();
     const { control, handleSubmit, reset } = useForm<IndikatorForm>({
         defaultValues: {
+            kode_indikator: Data?.kode_indikator || "",
             indikator: Data?.indikator || "",
             definisi_operasional: Data?.definisi_operasional || "",
             rumus_perhitungan: Data?.rumus_perhitungan || "",
             sumber_data: Data?.sumber_data || "",
-            target: Data?.target.map((t: Target) => ({
-                id: t.id,
-                indikator_id: t.indikator_id,
-                target: t.target,
-                satuan: t.satuan,
-                tahun: t.tahun,
-            }))
+            target: (target_edit && target_edit.length > 0
+                ? target_edit.map((t: Target) => ({
+                    id: t.id || "",
+                    target: t.target || "",
+                    satuan: t.satuan || "",
+                    tahun: t.tahun || ""
+                }))
+                : [
+                    {
+                        id: "",
+                        indikator_id: Data?.id || '',
+                        tahun: String(branding?.tahun?.value) || "",
+                        target: "",
+                        satuan: "",
+                    }
+                ]
+            )
         }
     });
 
-    const token = getToken();
+    const { fields } = useFieldArray({
+        name: "target",
+        control,
+    });
 
-    const [IsLoading, setIsLoading] = useState<boolean>(false);
+    const token = getToken();
     const [Proses, setProses] = useState<boolean>(false);
 
     const onSubmit: SubmitHandler<IndikatorForm> = async (data) => {
         const payload = {
             id: Data?.id,
             id_tujuan_opd: String(Data?.id_tujuan_opd),
+            kode_indikator: Data?.kode_indikator || "",
             indikator: data.indikator,
             definisi_operasional: data.definisi_operasional,
             rumus_perhitungan: data.rumus_perhitungan,
@@ -355,7 +375,7 @@ export const ModalEditIndikatorRenja: React.FC<modalEdit> = ({ isOpen, onClose, 
         }
         // console.log(payload);
         try {
-        let url = `${jenis}/renja/${menu}/indikator/update/${Data?.kode_indikator}`;
+            let url = `${jenis}/renja/${menu}/indikator/update/${Data?.kode_indikator}`;
             setProses(true);
             const response = await fetch(`${branding?.api_perencanaan}/${url}`, {
                 method: "PUT",
@@ -397,7 +417,7 @@ export const ModalEditIndikatorRenja: React.FC<modalEdit> = ({ isOpen, onClose, 
                 <div className="fixed inset-0 bg-black opacity-30" onClick={handleClose}></div>
                 <div className={`bg-white rounded-lg p-8 z-10 w-5/6 max-h-[80%] overflow-auto`}>
                     <div className="w-max-[500px] py-2 border-b">
-                        <h1 className="text-xl uppercase text-center">Edit Indikator</h1>
+                        <h1 className="text-xl uppercase text-center">Edit Indikator {jenis || ""}</h1>
                     </div>
                     <form
                         onSubmit={handleSubmit(onSubmit)}
@@ -492,41 +512,67 @@ export const ModalEditIndikatorRenja: React.FC<modalEdit> = ({ isOpen, onClose, 
                                 )
                             }}
                         />
-                        {Data?.target.map((field, subindex) => (
-                            <div key={`${field.id}-${subindex}`} className="flex gap-2 justify-between my-2 p-3 border border-gray-200 rounded-lg">
-                                <Controller
-                                    name={`target.${subindex}.target`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <div className="flex flex-col py-1 w-full">
-                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                Target :
-                                            </label>
-                                            <input
-                                                {...field}
-                                                type="text"
-                                                className="border px-4 py-2 rounded-lg"
-                                                placeholder="Masukkan target"
-                                            />
-                                        </div>
-                                    )}
-                                />
-                                <Controller
-                                    name={`target.${subindex}.satuan`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <div className="flex flex-col py-1 w-full">
-                                            <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                Satuan :
-                                            </label>
-                                            <input
-                                                {...field}
-                                                className="border px-4 py-2 rounded-lg"
-                                                placeholder="Masukkan satuan"
-                                            />
-                                        </div>
-                                    )}
-                                />
+                        {target_awal.map((ta: Target, index: number) => (
+                            <div key={index} className="flex flex-col gap-1 my-1 border border-emerald-500 p-2 rounded-lg">
+                                <h1 className={`font-bold text-xl uppercase ${menu === "rankhir" ? "text-red-600" : "text-yellow-600"}`}>
+                                    {menu === "rankhir" ? "Target Ranwal" : "Target Rankir"}
+                                </h1>
+                                <div className="flex items-center gap-1">
+                                    <div className="flex flex-col py-3 w-full">
+                                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                            Target:
+                                        </label>
+                                        <h1 className="border border-gray-700 rounded-lg p-2">{ta.target || "-"}</h1>
+                                    </div>
+                                    <div className="flex flex-col py-3 w-full">
+                                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                            Satuan:
+                                        </label>
+                                        <h1 className="border border-gray-700 rounded-lg p-2">{ta.satuan || "-"}</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        {fields.map((field, index: number) => (
+                            <div key={field.id} className="flex flex-col gap-1 my-1 border border-emerald-500 p-2 rounded-lg">
+                                <h1 className={`font-bold text-xl uppercase ${menu === "rankhir" ? "text-yellow-600" : "text-blue-600"}`}>
+                                    Target {menu}
+                                </h1>
+                                <div className="flex items-center gap-1">
+                                    <div className="flex flex-col py-3 w-full">
+                                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                            Target:
+                                        </label>
+                                        <Controller
+                                            name={`target.${index}.target`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <input
+                                                    {...field}
+                                                    type="number"
+                                                    className="border px-4 py-2 rounded-lg"
+                                                    placeholder="Masukkan Target"
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col py-3 w-full">
+                                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                            Satuan:
+                                        </label>
+                                        <Controller
+                                            name={`target.${index}.satuan`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <input
+                                                    {...field}
+                                                    className="border px-4 py-2 rounded-lg"
+                                                    placeholder="Masukkan Satuan"
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         ))}
                         <ButtonSky className="w-full mt-3" type="submit" disabled={Proses}>

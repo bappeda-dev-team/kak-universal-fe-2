@@ -25,6 +25,9 @@ interface Indikator {
   rumus_perhitungan: string;
   sumber_data: string;
   target: Target[];
+  target_ranwal: Target[];
+  target_rankhir: Target[];
+  target_penetapan: Target[];
 }
 
 interface Pelaksana {
@@ -73,9 +76,11 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
   const [LoadingStatus, setLoadingStatus] = useState<boolean | null>(null);
   const [Proses, setProses] = useState<boolean | null>(null);
 
-  const [ModalTambahIndikator, setModalTambahIndikator] =
-    useState<boolean>(false);
+  const [ModalTambahIndikator, setModalTambahIndikator] = useState<boolean>(false);
   const [ModalEditIndikator, setModalEditIndikator] = useState<boolean>(false);
+
+  const [TargetAwal, setTargetAwal] = useState<Target[]>([]);
+  const [TargetEdit, setTargetEdit] = useState<Target[]>([]);
   const [DataEdit, setDataEdit] = useState<Indikator | null>(null);
   const [IdSasaran, setIdSasaran] = useState<string>("");
 
@@ -190,13 +195,17 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
       setIdSasaran(tujuan_id);
     }
   };
-  const handleEditIndikator = (Data: Indikator | null) => {
+  const handleEditIndikator = (Data: Indikator | null, target_awal: Target[], target_edit: Target[]) => {
     if (ModalEditIndikator) {
       setModalEditIndikator(false);
       setDataEdit(Data);
+      setTargetAwal(target_awal);
+      setTargetEdit(target_edit);
     } else {
       setModalEditIndikator(true);
       setDataEdit(Data);
+      setTargetAwal(target_awal);
+      setTargetEdit(target_edit);
     }
   };
   const hapusIndikator = async (kode_indikator: string) => {
@@ -212,7 +221,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
           },
         },
       );
-      AlertNotification( "Berhasil", "Indikator Berhasil Dihapus", "success", 1000);
+      AlertNotification("Berhasil", "Indikator Berhasil Dihapus", "success", 1000);
       handleFetchTrigger();
     } catch (err) {
       AlertNotification("Gagal", `${err}`, "error", 2000);
@@ -300,85 +309,34 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
         <div className="overflow-auto m-2 rounded-t-xl border">
           <table className="w-full">
             <thead>
-              <tr
-                className={`${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}
-              >
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[50px] text-center"
-                >
-                  No
-                </th>
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[300px]"
-                >
-                  Strategic OPD
-                </th>
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[300px]"
-                >
-                  Pemilik
-                </th>
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[300px]"
-                >
-                  Sasaran OPD
-                </th>
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[300px]"
-                >
-                  Tujuan OPD
-                </th>
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[200px] text-center"
-                >
-                  Aksi
-                </th>
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[200px]"
-                >
-                  Indikator
-                </th>
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[200px]"
-                >
-                  Definisi Operasional
-                </th>
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[200px]"
-                >
-                  Rumus Perhitungan
-                </th>
-                <th
-                  rowSpan={2}
-                  className="border-r border-b px-6 py-3 min-w-[200px]"
-                >
-                  Sumber Data
-                </th>
-                <th
-                  colSpan={2}
-                  className="border-l border-b px-6 py-3 min-w-[100px]"
-                >
-                  {tahun || ""}
-                </th>
+              <tr className={`${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Strategic OPD</th>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Pemilik</th>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Sasaran OPD</th>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Tujuan OPD</th>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Aksi</th>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</th>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[200px]">Definisi Operasional</th>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[200px]">Rumus Perhitungan</th>
+                <th rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[200px]">Sumber Data</th>
+                <th colSpan={menu === "ranwal" ? 2 : 4} className="border-l border-b px-6 py-3 min-w-[100px]">{tahun || ""}</th>
               </tr>
-              <tr
-                className={`${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}
-              >
-                <th className="border-l border-b px-6 py-3 min-w-[50px]">
-                  Target
-                </th>
-                <th className="border-l border-b px-6 py-3 min-w-[50px]">
-                  Satuan
-                </th>
+              {menu != "ranwal" &&
+                <tr className="text-white">
+                  <th colSpan={2} className={`${menu === "rankhir" ? "bg-red-600" : "bg-yellow-600"} border-l border-b px-6 py-1 min-w-[50px]`}>{menu === "rankhir" ? "Ranwal" : "Rankir"}</th>
+                  <th colSpan={2} className={`${menu === "rankhir" ? "bg-yellow-600" : "bg-blue-600"} border-l border-b px-6 py-1 min-w-[50px]`}>{menu === "rankhir" ? "Rankir" : "Penetapan"}</th>
+                </tr>
+              }
+              <tr className="bg-emerald-700 text-white">
+                {menu != "ranwal" &&
+                  <>
+                    <th className="border-l border-b px-6 py-1 min-w-[50px]">Target</th>
+                    <th className="border-l border-b px-6 py-1 min-w-[50px]">Satuan</th>
+                  </>
+                }
+                <th className="border-l border-b px-6 py-1 min-w-[50px]">Target</th>
+                <th className="border-l border-b px-6 py-1 min-w-[50px]">Satuan</th>
               </tr>
             </thead>
             <tbody>
@@ -392,19 +350,15 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                 Sasaran.filter((data: Sasaran) => data.is_hide === false).map(
                   (data: Sasaran, index: number) => {
                     // Cek apakah data.tujuan_pemda ada
-                    const hasPelaksana = data.pelaksana.length != 0;
+
                     const hasSasaran = data.sasaran_opd.length != 0;
                     const TotalRow =
                       data.sasaran_opd.reduce(
                         (total, item) =>
-                          total +
-                          (item.indikator.length == 0
-                            ? 1
-                            : item.indikator.length),
+                          total + (item.indikator.length == 0 ? 1 : item.indikator.length),
                         0,
                       ) +
-                      data.sasaran_opd.length +
-                      1;
+                      data.sasaran_opd.length + 1;
 
                     return (
                       <React.Fragment key={index}>
@@ -420,9 +374,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                             className={`border-r border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-4`}
                             rowSpan={data.sasaran_opd.length === 0 ? 2 : TotalRow}
                           >
-                            <div className="flex flex-col gap-2">
-                              {data.nama_pohon || "-"}
-                            </div>
+                            <div className="flex flex-col gap-2">{data.nama_pohon || "-"}</div>
                           </td>
                           <td
                             className={`border-r border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-4`}
@@ -434,10 +386,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                               </p>
                             ) : (
                               data.pelaksana.map((p: Pelaksana) => (
-                                <p
-                                  key={p.id}
-                                  className="flex flex-col justify-center gap-1"
-                                >
+                                <p key={p.id} className="flex flex-col justify-center gap-1">
                                   {p.nama_pegawai} ({p.nip})
                                 </p>
                               ))
@@ -450,37 +399,24 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                               <tr>
                                 <td
                                   className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-[150px]`}
-                                  rowSpan={
-                                    item.indikator.length !== 0
-                                      ? item.indikator.length + 1
-                                      : 2
-                                  }
+                                  rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}
                                 >
                                   {item.nama_sasaran_opd || "-"}
                                 </td>
                                 <td
                                   className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-[150px]`}
-                                  rowSpan={
-                                    item.indikator.length !== 0
-                                      ? item.indikator.length + 1
-                                      : 2
-                                  }
+                                  rowSpan={item.indikator.length !== 0 ? item.indikator.length + 1 : 2}
                                 >
                                   {item.nama_tujuan_opd ? (
                                     <p>{item.nama_tujuan_opd || "-"}</p>
                                   ) : (
-                                    <p className="italic text-red-300 font-thin">
-                                      tujuan opd belum di pilih
-                                    </p>
+                                    <p className="italic text-red-300 font-thin">tujuan opd belum di pilih</p>
                                   )}
                                 </td>
                                 <td
                                   className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 h-full`}
                                   rowSpan={
-                                    item.indikator.length !== 0
-                                      ? item.indikator.length + 1
-                                      : 2
-                                  }
+                                    item.indikator.length !== 0 ? item.indikator.length + 1 : 2}
                                 >
                                   {Lock ? (
                                     <div className="text-red-500 flex items-center justify-center">
@@ -490,9 +426,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                                     <div className="flex justify-center">
                                       <ButtonSkyBorder
                                         className="flex items-center gap-1"
-                                        onClick={() =>
-                                          handleTambahIndikator(item.id)
-                                        }
+                                        onClick={() => handleTambahIndikator(item.id)}
                                       >
                                         <TbCirclePlus />
                                         Indikator
@@ -516,9 +450,7 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                               ) : (
                                 item.indikator.map((i: Indikator) => (
                                   <tr key={i.id}>
-                                    <td
-                                      className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}
-                                    >
+                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>
                                       <div className="flex flex-col gap-2">
                                         <p>{i.indikator || "-"}</p>
                                         <div className="flex items-center justify-center gap-1 pt-2 border-t border-gray-300">
@@ -529,26 +461,30 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                                           ) : (
                                             <>
                                               <ButtonGreenBorder
-                                                onClick={() =>
-                                                  handleEditIndikator(i)
-                                                }
+                                                onClick={() => {
+                                                  if (menu === "rankhir") {
+                                                    if (i.target_rankhir[0].id) {
+                                                      handleEditIndikator(i, i.target_ranwal, [])
+                                                    } else {
+                                                      handleEditIndikator(i, i.target_ranwal, i.target_rankhir)
+                                                    }
+                                                  } else {
+                                                    if (i.target_penetapan[0].id) {
+                                                      handleEditIndikator(i, i.target_rankhir, [])
+                                                    } else {
+                                                      handleEditIndikator(i, i.target_rankhir, i.target_penetapan)
+                                                    }
+                                                  }
+                                                }}
                                                 className="rounded-full"
                                               >
                                                 <TbPencil />
                                               </ButtonGreenBorder>
                                               <ButtonRedBorder
                                                 onClick={() =>
-                                                  AlertQuestion(
-                                                    "Hapus",
-                                                    "Hapus Indikator ini?",
-                                                    "question",
-                                                    "Hapus",
-                                                    "Batal",
-                                                  ).then((resp) => {
+                                                  AlertQuestion("Hapus", "Hapus Indikator ini?", "question", "Hapus", "Batal",).then((resp) => {
                                                     if (resp.isConfirmed) {
-                                                      hapusIndikator(
-                                                        i.kode_indikator,
-                                                      );
+                                                      hapusIndikator(i.kode_indikator,);
                                                     }
                                                   })
                                                 }
@@ -560,35 +496,47 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
                                         </div>
                                       </div>
                                     </td>
-                                    <td
-                                      className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}
-                                    >
+                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>
                                       {i.definisi_operasional || "-"}
                                     </td>
-                                    <td
-                                      className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}
-                                    >
+                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>
                                       {i.rumus_perhitungan || "-"}
                                     </td>
-                                    <td
-                                      className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}
-                                    >
+                                    <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>
                                       {i.sumber_data || "-"}
                                     </td>
-                                    {i.target.map((t: Target) => (
-                                      <React.Fragment key={t.id}>
-                                        <td
-                                          className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}
-                                        >
-                                          {t.target || "-"}
-                                        </td>
-                                        <td
-                                          className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}
-                                        >
-                                          {t.satuan || "-"}
-                                        </td>
-                                      </React.Fragment>
-                                    ))}
+                                    {i.target &&
+                                      i.target.map((t: Target, t_index: number) => (
+                                        <React.Fragment key={t_index}>
+                                          <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
+                                          <td className="border-r border-b border-emerald-500 px-6 py-4">{t.satuan || "-"}</td>
+                                        </React.Fragment>
+                                      ))
+                                    }
+                                    {i.target_ranwal &&
+                                      i.target_ranwal.map((t: Target, t_index: number) => (
+                                        <React.Fragment key={t_index}>
+                                          <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
+                                          <td className="border-r border-b border-emerald-500 px-6 py-4">{t.satuan || "-"}</td>
+                                        </React.Fragment>
+                                      ))
+                                    }
+                                    {i.target_rankhir &&
+                                      i.target_rankhir.map((t: Target, t_index: number) => (
+                                        <React.Fragment key={t_index}>
+                                          <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
+                                          <td className="border-r border-b border-emerald-500 px-6 py-4">{t.satuan || "-"}</td>
+                                        </React.Fragment>
+                                      ))
+                                    }
+                                    {i.target_penetapan &&
+                                      i.target_penetapan.map((t: Target, t_index: number) => (
+                                        <React.Fragment key={t_index}>
+                                          <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{t.target || "-"}</td>
+                                          <td className="border-r border-b border-emerald-500 px-6 py-4">{t.satuan || "-"}</td>
+                                        </React.Fragment>
+                                      ))
+                                    }
                                   </tr>
                                 ))
                               )}
@@ -625,9 +573,11 @@ const TableSasaran: React.FC<table> = ({ kode_opd, tahun, menu }) => {
           {ModalEditIndikator && (
             <ModalEditIndikatorRenja
               isOpen={ModalEditIndikator}
-              onClose={() => handleEditIndikator(null)}
+              onClose={() => handleEditIndikator(null, [], [])}
               onSuccess={() => handleFetchTrigger()}
               Data={DataEdit}
+              target_awal={TargetAwal}
+              target_edit={TargetEdit}
               jenis="sasaran_opd"
               menu={menu}
             />
