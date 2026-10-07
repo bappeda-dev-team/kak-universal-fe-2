@@ -19,7 +19,7 @@ interface renstra {
     nama: string;
     kode: string;
     jenis: string;
-    outcome?: string;
+    outcome?: any[];
     indikator: Indikator[];
     anggaran: Anggaran[];
     bidang_urusan?: renstra[];
@@ -455,7 +455,7 @@ interface Tr {
     kode_opd: string;
     jenis: "Urusan" | "Bidang Urusan" | "Program" | "Kegiatan" | "Sub Kegiatan";
     type: "laporan" | "opd";
-    outcome?: string;
+    outcome?: any[];
     outcomeMap: Record<string, string>;
     onUpdateOutcome: (kode: string, outcome: string) => void;
     targetMap: Record<string, TargetData>;
