@@ -92,7 +92,7 @@ export const TableLaporan: React.FC<TableLaporan> = ({
         } else {
             setError(true);
         }
-    }, [role, kode_opd, nip, tahun, token, FetchTrigger]);
+    }, [role, kode_opd, nip, tahun, token, FetchTrigger, branding]);
 
     if (Loading) {
         return (

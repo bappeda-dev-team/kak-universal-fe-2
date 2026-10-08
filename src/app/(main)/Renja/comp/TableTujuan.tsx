@@ -27,6 +27,9 @@ interface Indikator {
     rumus_perhitungan: string;
     sumber_data: string;
     target: Target[];
+    target_ranwal: Target[];
+    target_rankhir: Target[];
+    target_penetapan: Target[];
 }
 
 interface TujuanOpd {
@@ -62,6 +65,9 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
 
     const [ModalTambahIndikator, setModalTambahIndikator] = useState<boolean>(false);
     const [ModalEditIndikator, setModalEditIndikator] = useState<boolean>(false);
+
+    const [TargetAwal, setTargetAwal] = useState<Target[]>([]);
+    const [TargetEdit, setTargetEdit] = useState<Target[]>([]);
     const [DataEdit, setDataEdit] = useState<Indikator | null>(null);
     const [IdTujuan, setIdTujuan] = useState<number>(0);
 
@@ -122,7 +128,7 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                 setLoadingStatus(false);
             }
         }
-        if(menu === "penetapan"){
+        if (menu === "penetapan") {
             fetchStatusLock();
         }
         fetchTujuan();
@@ -166,13 +172,17 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
             setIdTujuan(tujuan_id);
         }
     }
-    const handleEditIndikator = (Data: Indikator | null) => {
+    const handleEditIndikator = (Data: Indikator | null, target_awal: Target[], target_edit: Target[]) => {
         if (ModalEditIndikator) {
             setModalEditIndikator(false);
             setDataEdit(Data);
+            setTargetEdit(target_edit);
+            setTargetAwal(target_awal);
         } else {
             setModalEditIndikator(true);
             setDataEdit(Data);
+            setTargetEdit(target_edit);
+            setTargetAwal(target_awal);
         }
     }
     const hapusIndikator = async (kode_indikator: string) => {
@@ -271,19 +281,31 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                     <table className="w-full">
                         <thead>
                             <tr className={`text-xm ${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
-                                <td rowSpan={2} className="border-r border-b px-6 py-3 max-w-[100px] text-center">No</td>
-                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Urusan & Bidang Urusan</td>
-                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Tujuan OPD</td>
-                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Aksi</td>
-                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</td>
-                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi Operasional</td>
-                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</td>
-                                <td rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
-                                <th colSpan={2} className="border-l border-b px-6 py-3 min-w-[100px]">{branding?.tahun?.value || 0}</th>
+                                <td rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 max-w-[100px] text-center">No</td>
+                                <td rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Urusan & Bidang Urusan</td>
+                                <td rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[400px] text-center">Tujuan OPD</td>
+                                <td rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Aksi</td>
+                                <td rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</td>
+                                <td rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Definisi Operasional</td>
+                                <td rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Rumus Perhitungan</td>
+                                <td rowSpan={menu === "ranwal" ? 2 : 3} className="border-r border-b px-6 py-3 min-w-[300px]">Sumber Data</td>
+                                <th colSpan={menu === "ranwal" ? 2 : 4} className="border-l border-b px-6 py-3 min-w-[100px]">{branding?.tahun?.value || 0}</th>
                             </tr>
-                            <tr className={`${Lock ? "bg-red-500" : "bg-emerald-500"} text-white`}>
-                                <th className="border-l border-b px-6 py-3 min-w-[50px]">Target</th>
-                                <th className="border-l border-b px-6 py-3 min-w-[50px]">Satuan</th>
+                            {menu != "ranwal" &&
+                                <tr className="text-white">
+                                    <th colSpan={2} className={`${menu === "rankhir" ? "bg-red-600" : "bg-yellow-600"} border-l border-b px-6 py-1 min-w-[50px]`}>{menu === "rankhir" ? "Ranwal" : "Rankir"}</th>
+                                    <th colSpan={2} className={`${menu === "rankhir" ? "bg-yellow-600" : "bg-blue-600"} border-l border-b px-6 py-1 min-w-[50px]`}>{menu === "rankhir" ? "Rankir" : "Penetapan"}</th>
+                                </tr>
+                            }
+                            <tr className="bg-emerald-700 text-white">
+                                {menu != "ranwal" &&
+                                    <>
+                                        <th className="border-l border-b px-6 py-1 min-w-[50px]">Target</th>
+                                        <th className="border-l border-b px-6 py-1 min-w-[50px]">Satuan</th>
+                                    </>
+                                }
+                                <th className="border-l border-b px-6 py-1 min-w-[50px]">Target</th>
+                                <th className="border-l border-b px-6 py-1 min-w-[50px]">Satuan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -344,8 +366,25 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                                                                         <p>{i.indikator || "-"}</p>
                                                                         <div className="flex items-center justify-center gap-1 pt-2 border-t border-gray-300">
                                                                             <ButtonGreenBorder
-                                                                                onClick={() => handleEditIndikator(i)}
+                                                                                // onClick={() => handleEditIndikator(i, )}
+                                                                                onClick={() => {
+                                                                                    if (menu === "rankhir") {
+                                                                                        if (i.target_rankhir[0].id) {
+                                                                                            handleEditIndikator(i, i.target_ranwal, [])
+                                                                                        } else {
+                                                                                            handleEditIndikator(i, i.target_ranwal, i.target_rankhir)
+                                                                                        }
+                                                                                    } else {
+                                                                                        if (i.target_penetapan[0].id) {
+                                                                                            handleEditIndikator(i, i.target_rankhir, [])
+                                                                                        } else {
+                                                                                            handleEditIndikator(i, i.target_rankhir, i.target_penetapan)
+                                                                                        }
+                                                                                    }
+
+                                                                                }}
                                                                                 className="rounded-full"
+                                                                                disabled={menu === "ranwal"}
                                                                             >
                                                                                 <TbPencil />
                                                                             </ButtonGreenBorder>
@@ -364,18 +403,37 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                                                                 <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.definisi_operasional || "-"}</td>
                                                                 <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.rumus_perhitungan || "-"}</td>
                                                                 <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6`}>{i.sumber_data || "-"}</td>
-                                                                {i.target ?
+                                                                {i.target &&
                                                                     i.target.map((t: Target) => (
                                                                         <React.Fragment key={t.id}>
                                                                             <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
                                                                             <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
                                                                         </React.Fragment>
                                                                     ))
-                                                                    :
-                                                                    <>
-                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>-</td>
-                                                                        <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>-</td>
-                                                                    </>
+                                                                }
+                                                                {i.target_ranwal &&
+                                                                    i.target_ranwal.map((t: Target) => (
+                                                                        <React.Fragment key={t.id}>
+                                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
+                                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
+                                                                        </React.Fragment>
+                                                                    ))
+                                                                }
+                                                                {i.target_rankhir &&
+                                                                    i.target_rankhir.map((t: Target) => (
+                                                                        <React.Fragment key={t.id}>
+                                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
+                                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
+                                                                        </React.Fragment>
+                                                                    ))
+                                                                }
+                                                                {i.target_penetapan &&
+                                                                    i.target_penetapan.map((t: Target) => (
+                                                                        <React.Fragment key={t.id}>
+                                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.target || "-"}</td>
+                                                                            <td className={`border-x border-b ${Lock ? "border-red-500" : "border-emerald-500"} px-6 py-6 text-center`}>{t.satuan || "-"}</td>
+                                                                        </React.Fragment>
+                                                                    ))
                                                                 }
                                                             </tr>
                                                         ))
@@ -402,9 +460,11 @@ const TableTujuan: React.FC<Table> = ({ kode_opd, tahun, menu }) => {
                     {ModalEditIndikator &&
                         <ModalEditIndikatorRenja
                             isOpen={ModalEditIndikator}
-                            onClose={() => handleEditIndikator(null)}
+                            onClose={() => handleEditIndikator(null, [], [])}
                             onSuccess={() => handleFetchTrigger()}
                             Data={DataEdit}
+                            target_awal={TargetAwal}
+                            target_edit={TargetEdit}
                             jenis="tujuan_opd"
                             menu={menu}
                         />

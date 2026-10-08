@@ -154,7 +154,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
         } else if (isOpen && metode === 'baru') {
             sasaranPemdaBaru();
         }
-    }, [id, token, isOpen, metode, tahun, replace, reset]);
+    }, [id, token, isOpen, metode, tahun, tahun_list, replace, reset]);
 
     const fetchOptionTujuanPemda = async () => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
