@@ -278,6 +278,7 @@ export const FormUser = () => {
                                 <>
                                     <input
                                         {...field}
+                                        autoComplete="off"
                                         className="border px-4 py-2 rounded-lg"
                                         id="tahun"
                                         type="text"
@@ -288,13 +289,16 @@ export const FormUser = () => {
                                             setEmail(e.target.value);
                                         }}
                                     />
-                                    {errors.email ?
+
+                                    {errors.email ? (
                                         <h1 className="text-red-500">
                                             {errors.email.message}
                                         </h1>
-                                        :
-                                        <h1 className="text-slate-300 text-xs">*Email Harus Terisi</h1>
-                                    }
+                                    ) : (
+                                        <h1 className="text-slate-300 text-xs">
+                                            *Email Harus Terisi
+                                        </h1>
+                                    )}
                                 </>
                             )}
                         />
@@ -316,6 +320,7 @@ export const FormUser = () => {
                                         <div className="flex items-center">
                                             <input
                                                 {...field}
+                                                autoComplete="off"
                                                 className="border px-4 py-2 rounded-lg flex-1"
                                                 // minLength={8}
                                                 id="password"
