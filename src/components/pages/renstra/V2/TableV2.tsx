@@ -466,6 +466,8 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
     // Modal Outcome
     const [ModalOutcome, setModalOutcome] = useState<boolean>(false);
     const [JenisModalOutcome, setJenisModalOutcome] = useState<"tambah" | "edit">("tambah");
+    // Outcome lokal (update tanpa reload)
+    const [outcomeLokal, setOutcomeLokal] = useState<OutcomeData[]>(outcome ?? []);
 
     const [Pagu, setPagu] = useState<number | null>(null);
     const [ModalPagu, setModalPagu] = useState<boolean>(false);
@@ -473,6 +475,10 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
     const [TahunN, setTahunN] = useState<string>('');
     const token = getToken();
     const { branding } = useBrandingContext();
+
+    useEffect(() => {
+        setOutcomeLokal(outcome ?? []);
+    }, [outcome]);
 
     // Gabungkan indikator (untuk semua tahun) dengan anggaran (pagu per tahun)
     // target & satuan diambil per tahun sesuai tahun_list, jika tidak ada jadikan "-"
@@ -592,13 +598,13 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
             const result = await response.json();
             if (result.code === 200 || result.code === 201) {
                 AlertNotification("Berhasil", "Outcome Berhasil Di Hapus", "success", 2000);
-                fetchTrigger();
+                setOutcomeLokal([]); // update UI langsung
             } else {
-                AlertNotification("Gagal", `${result.data}`, "success", 2000);
+                AlertNotification("Gagal", `${result.data}`, "error", 2000);
             }
         } catch (err) {
             console.log(err);
-            AlertNotification("Gagal", `${err}`, "success", 2000);
+            AlertNotification("Gagal", `${err}`, "error", 2000);
         }
     }
     const hapusIndikator = async (kode: string) => {
@@ -656,8 +662,8 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     <td className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>{nama || ""}</td>
                     <td className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
                         <div className="flex items-center justify-between gap-1">
-                            {outcome?.length > 0 &&
-                                <span>{outcome[0]?.outcome || "-"}</span>
+                            {outcomeLokal?.length > 0 &&
+                                <span>{outcomeLokal[0]?.outcome || "-"}</span>
                             }
                             <div className="flex flex-col items-center gap-1">
                                 <button
@@ -665,7 +671,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                     className="p-1 border border-green-500 text-green-700 rounded-full hover:bg-green-500 hover:text-white cursor-pointer shrink-0"
                                     title="Edit Outcome"
                                     onClick={() => {
-                                        if (outcome[0]?.id) {
+                                        if (outcomeLokal[0]?.id) {
                                             handleModalOutcome("edit")
                                         } else {
                                             handleModalOutcome("tambah")
@@ -674,14 +680,14 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                 >
                                     <TbPencil size={14} />
                                 </button>
-                                {outcome.length > 0 &&
+                                {outcomeLokal.length > 0 &&
                                     <button
                                         type="button"
                                         className="p-1 border border-red-500 text-red-700 rounded-full hover:bg-red-500 hover:text-white cursor-pointer shrink-0"
                                         title="Hapus Outcome"
-                                        onClick={() => AlertQuestion("Hapus?", `${outcome[0].outcome || ""}`, "question", "Hapus", "Batal").then((resp) => {
+                                        onClick={() => AlertQuestion("Hapus?", `${outcomeLokal[0].outcome || ""}`, "question", "Hapus", "Batal").then((resp) => {
                                             if (resp.isConfirmed) {
-                                                hapusOutcome(outcome[0].id)
+                                                hapusOutcome(outcomeLokal[0].id)
                                             }
                                         })}
                                     >
@@ -707,23 +713,34 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                         <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>{nama || ""}</td>
                         <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
                             <div className="flex items-center justify-between gap-1">
-                                {outcome.length > 0 &&
-                                    <span>{outcome[0].outcome || "-"}</span>
+                                {outcomeLokal.length > 0 &&
+                                    <span>{outcomeLokal[0].outcome || "-"}</span>
                                 }
                                 <div className="flex flex-col items-center gap-1">
                                     <button
                                         type="button"
                                         className="p-1 border border-green-500 text-green-700 rounded-full hover:bg-green-500 hover:text-white cursor-pointer shrink-0"
                                         title="Edit Outcome"
-                                        onClick={() => setModalOutcome(true)}
+                                        onClick={() => {
+                                            if (outcomeLokal[0]?.id) {
+                                                handleModalOutcome("edit")
+                                            } else {
+                                                handleModalOutcome("tambah")
+                                            }
+                                        }}
                                     >
                                         <TbPencil size={14} />
                                     </button>
-                                    {outcome.length > 0 &&
+                                    {outcomeLokal.length > 0 &&
                                         <button
                                             type="button"
                                             className="p-1 border border-red-500 text-red-700 rounded-full hover:bg-red-500 hover:text-white cursor-pointer shrink-0"
                                             title="Hapus Outcome"
+                                            onClick={() => AlertQuestion("Hapus?", `${outcomeLokal[0].outcome || ""}`, "question", "Hapus", "Batal").then((resp) => {
+                                                if (resp.isConfirmed) {
+                                                    hapusOutcome(outcomeLokal[0].id)
+                                                }
+                                            })}
                                         >
                                             <TbTrash size={14} />
                                         </button>
@@ -904,8 +921,11 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     kode={kode}
                     jenis={jenis}
                     metode={JenisModalOutcome}
-                    onSuccess={fetchTrigger}
-                    Data={outcome[0]}
+                    onSuccess={(data: OutcomeData) => {
+                        // update UI langsung tanpa fetch ulang
+                        setOutcomeLokal([data]);
+                    }}
+                    Data={outcomeLokal[0] ?? null}
                 />
             }
         </>

@@ -4,7 +4,7 @@
 import '@/components/pages/Pohon/treeflex.css'
 import React, { useState, useEffect, useRef } from 'react';
 import { TbPencil, TbCheck, TbCirclePlus, TbHandStop, TbPointer, TbSettings, TbHourglass, TbCopy, TbEye, TbPrinter, TbTrash } from 'react-icons/tb';
-import { ButtonSkyBorder, ButtonRedBorder, ButtonBlackBorder, ButtonBlack, ButtonSky, ButtonCetak } from '@/components/global/Button';
+import { ButtonSkyBorder, ButtonGreen, ButtonRedBorder, ButtonBlackBorder, ButtonBlack, ButtonSky, ButtonCetak } from '@/components/global/Button';
 import { LoadingBeat, LoadingButtonClip2 } from '@/components/global/Loading';
 import { OpdTahunNull, TahunNull } from '@/components/global/OpdTahunNull';
 import { PohonOpd } from '@/components/lib/Pohon/Opd/PohonOpd';
@@ -43,6 +43,7 @@ interface ReviewTujuan {
     id_pohon_kinerja: number;
     review: string;
     keterangan: string;
+    catatan: string;
     created_by: string;
     nama_pegawai: string;
 }
@@ -83,6 +84,7 @@ const PokinOpd = () => {
     const [OpenModalCatatan, setOpenModalCatatan] = useState<boolean>(false);
     const [JenisModalCatatan, setJenisModalCatatan] = useState<"tambah" | "edit">("tambah");
     const [DataCatatanTujuan, setDataCatatanTujuan] = useState<any>(null);
+    const [NamaTujuan, setNamaTujuan] = useState<string>('');
     const [IdTujuan, setIdTujuan] = useState<number>(0);
 
     //rekapitulasi jumlah pohon dari pemda
@@ -238,17 +240,19 @@ const PokinOpd = () => {
             setOpenModalTujuanOpd(true);
         }
     }
-    const handleModalCatatanTujuan = (Data: any, metode: "tambah" | "edit", id_tujuan: number) => {
+    const handleModalCatatanTujuan = (Data: any, metode: "tambah" | "edit", id_tujuan: number, nama_tujuan: string) => {
         if (OpenModalCatatan) {
             setOpenModalCatatan(false);
             setDataCatatanTujuan(Data);
             setJenisModalCatatan(metode);
             setIdTujuan(id_tujuan);
+            setNamaTujuan(nama_tujuan);
         } else {
             setOpenModalCatatan(true);
             setDataCatatanTujuan(Data);
             setJenisModalCatatan(metode);
             setIdTujuan(id_tujuan);
+            setNamaTujuan(nama_tujuan);
         }
     }
     const hapusReviewTujuan = async (id: number) => {
@@ -457,7 +461,7 @@ const PokinOpd = () => {
 
     return (
         <>
-            <div className="flex justify-between items-center p-5 border-2 rounded-t-xl mt-2">
+            <div className="flex flex-wrap justify-between items-center p-5 border-2 rounded-t-xl mt-2">
                 {(User?.roles == 'super_admin' || User?.roles === 'reviewer') ?
                     <h1 className="font-bold">Pohon Kinerja {SelectedOpd?.label}</h1>
                     :
@@ -466,10 +470,12 @@ const PokinOpd = () => {
                         :
                         <h1 className="font-bold">Pohon Cascading {Pokin?.nama_opd}</h1>
                 }
-                <ButtonCetak text={"Cetak Pokin OPD PDF"} jenis={"opd"} tahun={Tahun.value} kode_opd={kode_opd} />
-                {(User?.roles == 'admin_opd' || User?.roles == 'super_admin') &&
-                    <ButtonBlackBorder onClick={() => setKendali((prev) => !prev)}>{Kendali ? <span className='flex gap-1 items-center'><TbSettings />Sembunyikan</span> : <span className='flex gap-1 items-center'><TbSettings />Tampilkan</span>}</ButtonBlackBorder>
-                }
+                <div className="flex items-center gap-1">
+                    <ButtonCetak text={"Cetak Pokin OPD PDF"} jenis={"opd"} tahun={Tahun.value} kode_opd={kode_opd} />
+                    {(User?.roles == 'admin_opd' || User?.roles == 'super_admin') &&
+                        <ButtonBlackBorder onClick={() => setKendali((prev) => !prev)}>{Kendali ? <span className='flex gap-1 items-center'><TbSettings />Sembunyikan</span> : <span className='flex gap-1 items-center'><TbSettings />Tampilkan</span>}</ButtonBlackBorder>
+                    }
+                </div>
             </div>
             <div className="flex flex-col py-3 px-3 border-b-2 border-x-2 rounded-b-xl relative w-full h-[calc(100vh-50px)] max-h-screen overflow-auto">
                 {(User?.roles == 'admin_opd' || User?.roles == 'super_admin') &&
@@ -685,50 +691,63 @@ const PokinOpd = () => {
                                                 <td className="min-w-[300px] border px-2 py-3 border-black text-start">{Pokin?.kode_opd}</td>
                                             </tr>
                                             {Pokin?.tujuan_opd ?
-                                                Pokin?.tujuan_opd.map((item: tujuan) => (
-                                                    <React.Fragment key={item.id}>
+                                                Pokin?.tujuan_opd.map((item: tujuan, t_index: number) => (
+                                                    <React.Fragment key={item.id || t_index}>
                                                         <tr>
-                                                            <td className="min-w-[100px] border px-2 py-3 border-black text-start bg-gray-100">Tujuan OPD</td>
+                                                            <td className="min-w-[100px] border px-2 py-3 border-black text-start bg-gray-100">
+                                                                Tujuan OPD
+                                                                <button
+                                                                    className="flex items-center gap-1 text-xs p-1 rounded-full border text-green-700 border-green-700 hover:bg-green-700 hover:text-white"
+                                                                    onClick={() => handleModalCatatanTujuan(null, "tambah", item.id, item.tujuan)}
+                                                                >
+                                                                    <TbCirclePlus />
+                                                                    Beri Review
+                                                                </button>
+                                                            </td>
                                                             <td className="min-w-[300px] border px-2 py-3 border-black text-start bg-gray-100">{item.tujuan}</td>
                                                         </tr>
-                                                        <tr>
-                                                            <td className="min-w-[100px] border px-2 py-3 border-black text-start bg-yellow-200">Catatan</td>
-                                                            <td className="min-w-[300px] border px-2 py-3 border-black text-start bg-yellow-200">
-                                                                {item.review.length > 0 ?
-                                                                    <div className="flex items-center justify-between gap-2">
-                                                                        <div className="whitespace-pre-wrap">{item.review[0].review || "-"}</div>
-                                                                        {(User?.roles == 'super_admin' || User?.roles == 'admin_opd') && (
-                                                                            <div className="flex flex-col items-center gap-1 hide-on-capture">
-                                                                                <button
-                                                                                    className="text-xs p-1 rounded-full border text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white"
-                                                                                    onClick={() => handleModalCatatanTujuan(item.review[0], "edit", item.id)}
-                                                                                >
-                                                                                    <TbPencil />
-                                                                                </button>
-                                                                                <button
-                                                                                    className="text-xs p-1 rounded-full border text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
-                                                                                    onClick={() => AlertQuestion("Hapus?", "Hapus catatan yang dipilih?", "question", "Hapus", "Batal").then((resp) => {
-                                                                                        if (resp.isConfirmed) {
-                                                                                            hapusReviewTujuan(item.review[0].id);
-                                                                                        }
-                                                                                    })}
-                                                                                >
-                                                                                    <TbTrash />
-                                                                                </button>
+                                                        {item.review.length > 0 &&
+                                                            item.review.map((r: ReviewTujuan, r_index: number) => (
+                                                                <React.Fragment key={r_index}>
+                                                                    <tr>
+                                                                        <td className="min-w-[100px] border px-2 py-3 border-black text-start bg-yellow-200">
+                                                                            {r.review || "unknown"}
+                                                                        </td>
+                                                                        <td className="min-w-[300px] border px-2 py-3 border-black text-start bg-yellow-200">
+                                                                            {/* REVIEW */}
+                                                                            <div className="flex items-center justify-between gap-2">
+                                                                                <div className="flex flex-col gap-1">
+                                                                                    <p className='text-slate-900'>{r.keterangan || "-"}</p>
+                                                                                    <p className='italic text-slate-700'>{r.catatan || ""}</p>
+                                                                                </div>
+                                                                                {(User?.roles == 'super_admin' || User?.roles == 'admin_opd') && (
+                                                                                    <div className="flex flex-col items-center gap-1 hide-on-capture">
+                                                                                        <button
+                                                                                            className="text-xs p-1 rounded-full border text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white"
+                                                                                            onClick={() => handleModalCatatanTujuan(r, "edit", item.id, item.tujuan)}
+                                                                                            title="Edit Review"
+                                                                                        >
+                                                                                            <TbPencil />
+                                                                                        </button>
+                                                                                        <button
+                                                                                            className="text-xs p-1 rounded-full border text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
+                                                                                            onClick={() => AlertQuestion("Hapus?", "Hapus catatan yang dipilih?", "question", "Hapus", "Batal").then((resp) => {
+                                                                                                if (resp.isConfirmed) {
+                                                                                                    hapusReviewTujuan(r.id);
+                                                                                                }
+                                                                                            })}
+                                                                                            title="Hapus Review"
+                                                                                        >
+                                                                                            <TbTrash />
+                                                                                        </button>
+                                                                                    </div>
+                                                                                )}
                                                                             </div>
-                                                                        )}
-                                                                    </div>
-                                                                    :
-                                                                    <button
-                                                                        className="flex items-center gap-1 text-xs p-1 rounded-full border text-green-500 border-green-500 hover:bg-green-500 hover:text-white"
-                                                                        onClick={() => handleModalCatatanTujuan(item, "tambah", item.id)}
-                                                                    >
-                                                                        <TbCirclePlus />
-                                                                        Tambah Catatan Tujuan OPD
-                                                                    </button>
-                                                                }
-                                                            </td>
-                                                        </tr>
+                                                                        </td>
+                                                                    </tr>
+                                                                </React.Fragment>
+                                                            ))
+                                                        }
                                                         {item.indikator ?
                                                             <React.Fragment>
                                                                 {item.indikator.map((i: IndikatorTujuan) => (
@@ -789,12 +808,22 @@ const PokinOpd = () => {
                                             <TbCopy className='mr-1' />
                                             Clone Pohon Kinerja
                                         </ButtonBlack>
-                                        <Link href="/cetak/pokin-tujuan-opd" target="_blank" rel="noopener noreferrer">
-                                            <ButtonSky className='w-full flex flex-wrap items-center justify-center gap-1'>
-                                                <TbPrinter className='mr-1' />
-                                                Cetak Tujuan OPD
-                                            </ButtonSky>
-                                        </Link>
+                                        <div className="flex items-center justify-between gap-1">
+                                            <Link className="w-full" href="/cetak/pokin-tujuan-opd" target="_blank" rel="noopener noreferrer">
+                                                <ButtonSky className='flex w-full items-center justify-center gap-1'>
+                                                    <TbPrinter className='mr-1' />
+                                                    Cetak Tujuan OPD
+                                                </ButtonSky>
+                                            </Link>
+                                            <div className="w-full">
+                                                <ButtonGreen
+                                                    className='flex w-full items-center justify-center gap-1'
+                                                >
+                                                    <TbPrinter className='mr-1' />
+                                                    Cetak Review Tujuan
+                                                </ButtonGreen>
+                                            </div>
+                                        </div>
                                         {Clone && (
                                             <ModalClone
                                                 isOpen={Clone}
@@ -899,8 +928,8 @@ const PokinOpd = () => {
                 {OpenModalCatatan &&
                     <ModalCatatanTujuanOpd
                         isOpen={OpenModalCatatan}
-                        onClose={() => handleModalCatatanTujuan(null, "tambah", 0)}
-                        nama_tujuan='contoh'
+                        onClose={() => handleModalCatatanTujuan(null, "tambah", 0, "")}
+                        nama_tujuan={NamaTujuan}
                         onSuccess={() => setTriggerAfterPokinOutside((prev) => !prev)}
                         id_tujuan={IdTujuan}
                         Data={DataCatatanTujuan}

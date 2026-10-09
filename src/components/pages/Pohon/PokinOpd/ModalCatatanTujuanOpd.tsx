@@ -1,18 +1,21 @@
 'use client'
 
-import { useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { ButtonSky, ButtonRed } from '@/components/global/Button';
 import { getToken } from "@/components/lib/Cookie";
 import { LoadingButtonClip } from "@/components/global/Loading";
 import { AlertNotification } from "@/components/global/Alert";
-import { TbDeviceFloppy, TbX } from "react-icons/tb";
+import { TbCheck, TbDeviceFloppy, TbX } from "react-icons/tb";
+import Select from 'react-select';
+import { OptionTypeString } from "@/types";
 
 interface FormValue {
     id: number;
     id_tujuan_opd: number;
+    review: OptionTypeString | null;
     keterangan: string;
-    review: string;
+    catatan: string;
 }
 interface ReviewTujuan {
     id: number;
@@ -20,6 +23,7 @@ interface ReviewTujuan {
     id_pohon_kinerja: number;
     review: string;
     keterangan: string;
+    catatan: string;
     created_by: string;
     nama_pegawai: string;
 }
@@ -34,13 +38,16 @@ interface modal {
     onSuccess: () => void;
 }
 
-
 export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tujuan, Data, nama_tujuan, onSuccess, metode }) => {
 
-    const { control, handleSubmit, formState: { errors } } = useForm<FormValue>({
+    const { reset, control, handleSubmit, formState: { errors } } = useForm<FormValue>({
         defaultValues: {
-            review: Data?.review,
-            keterangan: "-"
+            id: Data?.id,
+            review: Data?.review
+                ? { label: Data.review, value: Data.review }
+                : null,
+            keterangan: Data?.keterangan,
+            catatan: Data?.catatan,
         }
     });
 
@@ -52,14 +59,16 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
         const payload_post = {
             //key : value
             id_tujuan_opd: id_tujuan,
-            review: data.review,
-            keterangan: "-"
+            review: data.review?.value,
+            keterangan: data.keterangan,
+            catatan: data.catatan
         };
         const payload_put = {
             //key : value
             id: data.id,
-            review: data.review,
-            keterangan: "-"
+            review: data.review?.value,
+            keterangan: data.keterangan,
+            catatan: data.catatan
         };
         const getBody = () => {
             if (metode === "edit") return payload_put;
@@ -99,30 +108,38 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
         }
     };
 
+    const OptionReview = [
+        { value: "KELENGKAPAN", label: "KELENGKAPAN" },
+        { value: "KESESUAIAN", label: "KESESUAIAN" }
+    ]
     const handleClose = () => {
         onClose();
+        reset();
     }
+    const kondisiReview = useWatch({
+        control,
+        name: "review"
+    });
 
     if (!isOpen) {
         return null;
     } else {
-
         return (
             <div className="fixed inset-0 flex items-center justify-center z-50">
                 <div className="fixed inset-0 bg-black opacity-30" onClick={handleClose}></div>
                 <div className={`bg-white rounded-lg p-8 z-10 w-4/5`}>
                     <div className="w-max-[500px] py-2 border-b">
-                        <h1 className="text-xl uppercase text-center">Catatan / Review Tujuan OPD{Data?.id || "unknown id"}</h1>
+                        <h1 className="text-xl uppercase text-center">Review Tujuan OPD</h1>
                     </div>
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         className="flex flex-col mx-5 py-5"
                     >
-                        <div className="flex flex-col py-3">
+                        <div className="flex flex-col py-3 cursor-not-allowed">
                             <label className="uppercase text-xs font-bold text-gray-700 my-2">
                                 Tujuan :
                             </label>
-                            <div className="border px-4 py-2 rounded-lg">{nama_tujuan || "-"}</div>
+                            <div className="border border-black px-4 py-2 rounded-lg">{nama_tujuan || "-"}</div>
                         </div>
                         <div className="flex flex-col py-3">
                             <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="review">Review</label>
@@ -130,11 +147,87 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
                                 name="review"
                                 control={control}
                                 render={({ field }) => (
-                                    <textarea
+                                    <Select
                                         {...field}
-                                        className="border px-4 py-2 rounded-lg"
+                                        options={OptionReview}
                                         id="review"
                                         placeholder="Masukkan review untuk tujuan opd"
+                                    />
+                                )}
+                            />
+                        </div>
+                        {kondisiReview?.value &&
+                            <div className="flex flex-col py-3">
+                                <label className="uppercase text-xs font-medium flex items-center gap-1 my-2">
+                                    <p className="text-gray-700">Keterangan</p>
+                                    <p className="text-gray-300 italic">
+                                        *klik pada keterangan yang sesuai
+                                    </p>
+                                </label>
+
+                                <Controller
+                                    name="keterangan"
+                                    control={control}
+                                    render={({ field }) => {
+                                        const ya =
+                                            kondisiReview?.value === "KESESUAIAN"
+                                                ? "Sesuai"
+                                                : "Lengkap";
+
+                                        const tidak =
+                                            kondisiReview?.value === "KESESUAIAN"
+                                                ? "Tidak Sesuai"
+                                                : "Tidak Lengkap";
+
+                                        return (
+                                            <div className="flex items-center gap-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => field.onChange(ya)}
+                                                    className={`
+                                                        flex items-center gap-1 p-2 rounded-lg
+                                                        border-2 border-green-500
+                                                        ${field.value === ya ?
+                                                            "bg-green-500 text-white"
+                                                            : "text-green-500 hover:bg-green-100"}
+                                                    `}
+                                                >
+                                                    <TbCheck />
+                                                    {ya}
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => field.onChange(tidak)}
+                                                    className={`
+                                                        flex items-center gap-1 p-2 rounded-lg
+                                                        border-2 border-red-500
+                                                        ${field.value === tidak ?
+                                                            "bg-red-500 text-white"
+                                                            : "text-red-500 hover:bg-red-100"}
+                                                    `}
+                                                >
+                                                    <TbX />
+                                                    {tidak}
+                                                </button>
+                                            </div>
+                                        );
+                                    }}
+                                />
+                            </div>
+                        }
+                        <div className="flex flex-col py-3">
+                            <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="review">Catatan</label>
+                            <Controller
+                                name="catatan"
+                                control={control}
+                                render={({ field }) => (
+                                    <textarea
+                                        {...field}
+                                        id="review"
+                                        rows={4}
+                                        className="border px-4 py-2 rounded-lg w-full"
+                                        placeholder="Masukkan catatan"
                                     />
                                 )}
                             />

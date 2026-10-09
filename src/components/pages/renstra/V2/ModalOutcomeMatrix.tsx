@@ -33,7 +33,7 @@ interface modal {
     kode: string;
     kode_opd: string;
     metode: "tambah" | "edit";
-    onSuccess: () => void;
+    onSuccess: (data: OutcomeData) => void;
 }
 
 export const ModalOutcomeMatrix: React.FC<modal> = ({ isOpen, Data, nama, metode, jenis, kode, kode_opd, onClose, onSuccess }) => {
@@ -81,7 +81,13 @@ export const ModalOutcomeMatrix: React.FC<modal> = ({ isOpen, Data, nama, metode
             if (result.code === 201 || result.code === 200) {
                 AlertNotification("Berhasil", `Mengubah outcome di kode nomenklatur ${nama || "unknown"}`, "success", 2000);
                 onClose();
-                onSuccess();
+                const successData: OutcomeData = result.data ?? {
+                    id: data.id ?? 0,
+                    nama: nama,
+                    kode: data.kode ?? "",
+                    outcome: data.outcome ?? ""
+                };
+                onSuccess(successData);
                 reset();
             } else {
                 AlertNotification("Gagal", `${result.data}`, "error", 2000);
