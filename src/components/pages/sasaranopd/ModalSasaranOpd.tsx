@@ -531,8 +531,16 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
                                                             <input
                                                                 {...field}
                                                                 type="text"
+                                                                inputMode="decimal"
                                                                 className="border px-4 py-2 rounded-lg"
                                                                 placeholder="Masukkan target"
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value;
+
+                                                                    if (/^[0-9.,-]*$/.test(value)) {
+                                                                        field.onChange(value);
+                                                                    }
+                                                                }}
                                                             />
                                                         </div>
                                                     )}
