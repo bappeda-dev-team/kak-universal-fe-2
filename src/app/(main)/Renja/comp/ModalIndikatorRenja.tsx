@@ -251,9 +251,17 @@ export const ModalIndikatorRenja: React.FC<modal> = ({ isOpen, onClose, tujuan_i
                                                     </label>
                                                     <input
                                                         {...field}
-                                                        type="number"
+                                                        type="text"
+                                                        inputMode="decimal"
                                                         className="border px-4 py-2 rounded-lg"
                                                         placeholder="Masukkan target"
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+
+                                                            if (/^[0-9.,-]*$/.test(value)) {
+                                                                field.onChange(value);
+                                                            }
+                                                        }}
                                                     />
                                                 </div>
                                             )}
@@ -549,9 +557,17 @@ export const ModalEditIndikatorRenja: React.FC<modalEdit> = ({ isOpen, onClose, 
                                             render={({ field }) => (
                                                 <input
                                                     {...field}
-                                                    type="number"
+                                                    type="text"
+                                                    inputMode="decimal"
                                                     className="border px-4 py-2 rounded-lg"
                                                     placeholder="Masukkan Target"
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+
+                                                        if (/^[0-9.,-]*$/.test(value)) {
+                                                            field.onChange(value);
+                                                        }
+                                                    }}
                                                 />
                                             )}
                                         />
