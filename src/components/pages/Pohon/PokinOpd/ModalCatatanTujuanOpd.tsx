@@ -34,21 +34,33 @@ interface modal {
     id_tujuan: number;
     nama_tujuan: string;
     Data: ReviewTujuan;
+    validasi: boolean;
     metode: "tambah" | "edit"
     onSuccess: () => void;
 }
 
-export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tujuan, Data, nama_tujuan, onSuccess, metode }) => {
+export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tujuan, Data, validasi, nama_tujuan, onSuccess, metode }) => {
 
     const { reset, control, handleSubmit, formState: { errors } } = useForm<FormValue>({
-        defaultValues: {
-            id: Data?.id,
-            review: Data?.review
-                ? { label: Data.review, value: Data.review }
-                : null,
-            keterangan: Data?.keterangan,
-            catatan: Data?.catatan,
-        }
+        defaultValues: validasi ?
+            {
+                id: Data?.id,
+                review: {
+                    label: "VALIDASI",
+                    value: "VALIDASI"
+                },
+                keterangan: Data?.keterangan,
+                catatan: Data?.catatan,
+            }
+            :
+            {
+                id: Data?.id,
+                review: Data?.review
+                    ? { label: Data.review, value: Data.review }
+                    : null,
+                keterangan: Data?.keterangan,
+                catatan: Data?.catatan,
+            }
     });
 
     const token = getToken();
@@ -110,7 +122,7 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
 
     const OptionReview = [
         { value: "KELENGKAPAN", label: "KELENGKAPAN" },
-        { value: "KESESUAIAN", label: "KESESUAIAN" }
+        { value: "KESESUAIAN", label: "KESESUAIAN" },
     ]
     const handleClose = () => {
         onClose();
@@ -119,6 +131,10 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
     const kondisiReview = useWatch({
         control,
         name: "review"
+    });
+    const kondisiKeterangan = useWatch({
+        control,
+        name: "keterangan"
     });
 
     if (!isOpen) {
@@ -141,28 +157,28 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
                             </label>
                             <div className="border border-black px-4 py-2 rounded-lg">{nama_tujuan || "-"}</div>
                         </div>
-                        <div className="flex flex-col py-3">
-                            <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="review">Review</label>
-                            <Controller
-                                name="review"
-                                control={control}
-                                render={({ field }) => (
-                                    <Select
-                                        {...field}
-                                        options={OptionReview}
-                                        id="review"
-                                        placeholder="Masukkan review untuk tujuan opd"
-                                    />
-                                )}
-                            />
-                        </div>
+                        {!validasi &&
+                            <div className="flex flex-col py-3">
+                                <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="review">Review</label>
+                                <Controller
+                                    name="review"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select
+                                            {...field}
+                                            options={OptionReview}
+                                            id="review"
+                                            placeholder="Masukkan review untuk tujuan opd"
+                                        />
+                                    )}
+                                />
+                            </div>
+                        }
                         {kondisiReview?.value &&
                             <div className="flex flex-col py-3">
                                 <label className="uppercase text-xs font-medium flex items-center gap-1 my-2">
                                     <p className="text-gray-700">Keterangan</p>
-                                    <p className="text-gray-300 italic">
-                                        *klik pada keterangan yang sesuai
-                                    </p>
+                                    <p className="text-gray-300 italic">*klik pada keterangan yang sesuai</p>
                                 </label>
 
                                 <Controller
@@ -170,14 +186,14 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
                                     control={control}
                                     render={({ field }) => {
                                         const ya =
-                                            kondisiReview?.value === "KESESUAIAN"
-                                                ? "Sesuai"
-                                                : "Lengkap";
+                                            kondisiReview?.value === "KESESUAIAN" ? "Sesuai"
+                                                : kondisiReview?.value === "VALIDASI" ? "Ideal"
+                                                    : "Lengkap";
 
                                         const tidak =
-                                            kondisiReview?.value === "KESESUAIAN"
-                                                ? "Tidak Sesuai"
-                                                : "Tidak Lengkap";
+                                            kondisiReview?.value === "KESESUAIAN" ? "Tidak Sesuai"
+                                                : kondisiReview?.value === "VALIDASI" ? "Tidak Ideal"
+                                                    : "Tidak Lengkap";
 
                                         return (
                                             <div className="flex items-center gap-1">
@@ -216,22 +232,24 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
                                 />
                             </div>
                         }
-                        <div className="flex flex-col py-3">
-                            <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="review">Catatan</label>
-                            <Controller
-                                name="catatan"
-                                control={control}
-                                render={({ field }) => (
-                                    <textarea
-                                        {...field}
-                                        id="review"
-                                        rows={4}
-                                        className="border px-4 py-2 rounded-lg w-full"
-                                        placeholder="Masukkan catatan"
-                                    />
-                                )}
-                            />
-                        </div>
+                        {kondisiReview?.value != "VALIDASI" &&
+                            <div className="flex flex-col py-3">
+                                <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="review">Catatan</label>
+                                <Controller
+                                    name="catatan"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <textarea
+                                            {...field}
+                                            id="review"
+                                            rows={4}
+                                            className="border px-4 py-2 rounded-lg w-full"
+                                            placeholder="Masukkan catatan"
+                                        />
+                                    )}
+                                />
+                            </div>
+                        }
                         <ButtonSky className="w-full mt-3 mb-2" type="submit" disabled={Proses}>
                             {Proses ?
                                 <span className="flex items-center gap-1">
