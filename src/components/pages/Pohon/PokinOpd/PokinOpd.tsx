@@ -976,6 +976,7 @@ const PokinOpd = () => {
                         validasi={Validasi}
                         Data={DataCatatanTujuan}
                         metode={JenisModalCatatan}
+                        tahun={branding?.tahun?.value || 0}
                     />
                 }
             </div>
