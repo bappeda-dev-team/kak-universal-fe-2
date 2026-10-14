@@ -16,6 +16,7 @@ interface FormValue {
     review: OptionTypeString | null;
     keterangan: string;
     catatan: string;
+    tahun: number;
 }
 interface ReviewTujuan {
     id: number;
@@ -35,11 +36,12 @@ interface modal {
     nama_tujuan: string;
     Data: ReviewTujuan;
     validasi: boolean;
+    tahun: number;
     metode: "tambah" | "edit"
     onSuccess: () => void;
 }
 
-export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tujuan, Data, validasi, nama_tujuan, onSuccess, metode }) => {
+export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, tahun, id_tujuan, Data, validasi, nama_tujuan, onSuccess, metode }) => {
 
     const { reset, control, handleSubmit, formState: { errors } } = useForm<FormValue>({
         defaultValues: validasi ?
@@ -51,6 +53,7 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
                 },
                 keterangan: Data?.keterangan,
                 catatan: Data?.catatan,
+                tahun: tahun
             }
             :
             {
@@ -60,6 +63,7 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
                     : null,
                 keterangan: Data?.keterangan,
                 catatan: Data?.catatan,
+                tahun: tahun
             }
     });
 
@@ -73,14 +77,16 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id_tuj
             id_tujuan_opd: id_tujuan,
             review: data.review?.value,
             keterangan: data.keterangan,
-            catatan: data.catatan
+            catatan: data.catatan,
+            tahun: data.tahun
         };
         const payload_put = {
             //key : value
             id: data.id,
             review: data.review?.value,
             keterangan: data.keterangan,
-            catatan: data.catatan
+            catatan: data.catatan,
+            tahun: data.tahun
         };
         const getBody = () => {
             if (metode === "edit") return payload_put;
