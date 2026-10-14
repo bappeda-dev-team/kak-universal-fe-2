@@ -349,7 +349,11 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setPerencanaan(false);
       setLaporan(true);
     }
-    if (url === "/reviewpemda" || url === "/reviewopd") {
+    if (
+      url === "/reviewpemda" || 
+      url === "/review-catatan-tujuan" || 
+      url === "/reviewopd"
+    ) {
       setReview(true);
       setLaporanRB(false);
       setRenstraView(false);
@@ -2014,6 +2018,18 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                     className={`${!isOpen && "hidden"} origin-left duration-200`}
                   >
                     Review OPD
+                  </span>
+                </li>
+              </Link>
+              <Link href="/review-catatan-tujuan">
+                <li
+                  className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/review-catatan-tujuan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+                >
+                  <TbZoomExclamation className="text-xl" />
+                  <span
+                    className={`${!isOpen && "hidden"} text-sm origin-left duration-200`}
+                  >
+                    Review Tujuan OPD
                   </span>
                 </li>
               </Link>

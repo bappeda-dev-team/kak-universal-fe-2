@@ -77,7 +77,7 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, tahun,
             id_tujuan_opd: id_tujuan,
             review: data.review?.value,
             keterangan: data.keterangan,
-            catatan: data.catatan,
+            catatan: data.catatan || "",
             tahun: data.tahun
         };
         const payload_put = {
@@ -85,7 +85,7 @@ export const ModalCatatanTujuanOpd: React.FC<modal> = ({ isOpen, onClose, tahun,
             id: data.id,
             review: data.review?.value,
             keterangan: data.keterangan,
-            catatan: data.catatan,
+            catatan: data.catatan || "",
             tahun: data.tahun
         };
         const getBody = () => {
