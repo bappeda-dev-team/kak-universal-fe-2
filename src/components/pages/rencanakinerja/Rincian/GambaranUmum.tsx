@@ -4,7 +4,7 @@ import { ButtonSky, ButtonSkyBorder, ButtonRedBorder } from "@/components/global
 import { ModalAddGambaranUmum } from "../ModalGambaranUmum";
 import { useState, useEffect } from "react";
 import { LoadingSync } from "@/components/global/Loading";
-import { getToken, getUser } from "@/components/lib/Cookie";
+import { getToken } from "@/components/lib/Cookie";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { ModalEditGambaranUmum } from "../ModalGambaranUmum";
 import { TbCirclePlus, TbPencil, TbTrash } from "react-icons/tb";
