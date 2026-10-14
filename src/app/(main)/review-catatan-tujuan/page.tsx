@@ -10,6 +10,7 @@ import { getToken } from "@/components/lib/Cookie";
 import { ButtonBlackBorder } from "@/components/global/Button";
 import { TbPrinter } from "react-icons/tb";
 import { AlertNotification } from "@/components/global/Alert";
+import { LoadingButtonClip } from "@/components/global/Loading";
 
 const ReviewCatatanTujuan = () => {
 
@@ -38,13 +39,32 @@ const ReviewCatatanTujuan = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            const result = await response.json();
-            if (result.code === 200) {
-                return;
-            } else {
-                AlertNotification("Gagal", `${result.data}`, "error", 2000);
-                console.log(result);
+
+            if (!response.ok) {
+                throw new Error("Gagal mencetak");
             }
+
+            const blob = await response.blob();
+
+            const disposition = response.headers.get("Content-Disposition");
+
+            let filename = `Review_Tujuan_OPD_${nama_opd}.pdf`;
+
+            if (disposition) {
+                const match = disposition.match(/filename="?([^"]+)"?/);
+                if (match) {
+                    filename = match[1];
+                }
+            }
+
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            link.click();
+
+            window.URL.revokeObjectURL(url);
         } catch (err) {
             AlertNotification("Gagal", `terdapat kesalahan pada backend / server ketika mencetak`, "error", 2000);
         } finally {
@@ -74,8 +94,13 @@ const ReviewCatatanTujuan = () => {
                         <ButtonBlackBorder
                             className="flex items-center gap-1"
                             onClick={cetakReview}
+                            disabled={Loading}
                         >
-                            <TbPrinter />
+                            {Loading ? 
+                                <LoadingButtonClip />
+                            :
+                                <TbPrinter />
+                            }
                             Cetak
                         </ButtonBlackBorder>
                     </div>
