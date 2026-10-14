@@ -734,15 +734,17 @@ const PokinOpd = () => {
                                                                                                 }
                                                                                                 {keterangan || "-"}
                                                                                             </span>
-                                                                                            {((User?.roles == 'super_admin' || User?.roles == 'admin_opd') && keterangan != "Ideal") && (
+                                                                                            {((User?.roles == 'super_admin' || User?.roles == 'admin_opd')) && (
                                                                                                 <div className="flex items-center gap-1 hide-on-capture">
-                                                                                                    <button
-                                                                                                        className="flex items-center gap-1 rounded-lg border border-green-500 px-2 py-1 text-sm text-green-600 hover:bg-green-500 hover:text-white"
-                                                                                                        onClick={() => handleModalCatatanTujuan(null, "tambah", item.id, item.tujuan, false)}
-                                                                                                        title="Tambah alasan kenapa tidak ideal"
-                                                                                                    >
-                                                                                                        <TbCirclePlus /> Tambah Alasan
-                                                                                                    </button>
+                                                                                                    {keterangan != "Ideal" &&
+                                                                                                        <button
+                                                                                                            className="flex items-center gap-1 rounded-lg border border-green-500 px-2 py-1 text-sm text-green-600 hover:bg-green-500 hover:text-white"
+                                                                                                            onClick={() => handleModalCatatanTujuan(null, "tambah", item.id, item.tujuan, false)}
+                                                                                                            title="Tambah alasan kenapa tidak ideal"
+                                                                                                        >
+                                                                                                            <TbCirclePlus /> Tambah Alasan
+                                                                                                        </button>
+                                                                                                    }
                                                                                                     <button
                                                                                                         className="flex items-center gap-1 rounded-lg border border-blue-500 px-2 py-1 text-sm text-blue-600 hover:bg-blue-500 hover:text-white"
                                                                                                         onClick={() => handleModalCatatanTujuan(r, "edit", item.id, item.tujuan, true)}

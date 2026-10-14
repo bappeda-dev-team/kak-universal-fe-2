@@ -236,28 +236,28 @@ const Table: React.FC<Table> = ({ tahun, kode_opd, nama_opd }) => {
                                             </p>
                                         </td>
                                         <td className="border-r border-b border-emerald-200 px-4 py-4">
-                                            <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${keteranganStyle(item.review.validasi.keterangan)}`}>
-                                                {item.review.validasi.keterangan || "Belum Direview"}
+                                            <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${keteranganStyle(item.review.validasi?.keterangan ?? "")}`}>
+                                                {item.review?.validasi?.keterangan || "Belum Direview"}
                                             </span>
                                         </td>
                                         <td className="border-r border-b border-emerald-200 px-4 py-4">
-                                            <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${keteranganStyle(item.review.kesesuaian.keterangan)}`}>
-                                                {item.review.kesesuaian.keterangan || "Belum Direview"}
+                                            <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${keteranganStyle(item.review?.kesesuaian?.keterangan ?? "")}`}>
+                                                {item.review?.kesesuaian?.keterangan || "Belum Direview"}
                                             </span>
-                                            {item.review.kesesuaian.catatan && (
-                                                <p className="mt-2 text-xs text-gray-500">{item.review.kesesuaian.catatan}</p>
+                                            {item.review?.kesesuaian?.catatan && (
+                                                <p className="mt-2 text-xs text-gray-500">{item.review?.kesesuaian.catatan}</p>
                                             )}
                                         </td>
                                         <td className="border-r border-b border-emerald-200 px-4 py-4">
-                                            <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${keteranganStyle(item.review.kelengkapan.keterangan)}`}>
-                                                {item.review.kelengkapan.keterangan || "Belum Direview"}
+                                            <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${keteranganStyle(item.review?.kelengkapan?.keterangan ?? "")}`}>
+                                                {item.review?.kelengkapan?.keterangan || "Belum Direview"}
                                             </span>
-                                            {item.review.kelengkapan.catatan && (
-                                                <p className="mt-2 text-xs text-gray-500">{item.review.kelengkapan.catatan}</p>
+                                            {item.review?.kelengkapan.catatan && (
+                                                <p className="mt-2 text-xs text-gray-500">{item.review?.kelengkapan.catatan}</p>
                                             )}
                                         </td>
                                         <td className="border-b border-emerald-200 px-4 py-4 text-gray-600">
-                                            {item.review.catatan?.catatan || "-"}
+                                            {item.review?.catatan?.catatan || "-"}
                                         </td>
 
                                     </tr>
