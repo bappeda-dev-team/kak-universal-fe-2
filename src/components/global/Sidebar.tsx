@@ -324,6 +324,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       url === "/listopd" ||
       url === "/reviewpemda" ||
       url === "/reviewopd" ||
+      url === "/review-catatan-tujuan" ||
       url === "/permasalahan-opd-view" ||
       url === "/isu-strategis-opd-view" ||
       url === "/tujuanopdview" ||

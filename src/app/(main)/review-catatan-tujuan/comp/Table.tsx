@@ -215,14 +215,14 @@ const Table: React.FC<Table> = ({ tahun, kode_opd, nama_opd }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {Dummy.length === 0 ? (
+                        {Data.length === 0 ? (
                             <tr>
                                 <td className="px-6 py-4 text-center text-gray-500" colSpan={6}>
                                     Data Kosong / Belum Ditambahkan
                                 </td>
                             </tr>
                         ) : (
-                            Dummy.map((item, index) => {
+                            Data.map((item, index) => {
                                 const valid = item.review.validasi.keterangan === "Ideal"
                                 return (
                                     <tr key={item.id} className="align-top hover:bg-emerald-50 transition-colors">
