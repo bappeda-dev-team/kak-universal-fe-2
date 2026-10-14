@@ -158,7 +158,7 @@ export const FormUserOpd = () => {
             const data = await response.json();
             if (data.code === 201 || data.code === 200) {
                 AlertNotification("Berhasil", "Berhasil menambahkan data user", "success", 1000);
-                router.push("/useropd");
+                router.push("/DataMasterOpd/useropd");
             } else if (data.code === 400) {
                 AlertNotification("Gagal", `${data.data}`, "error", 3000, true);
             } else {
@@ -546,7 +546,7 @@ export const FormEditUserOpd = () => {
             const result = await response.json();
             if (result.code === 200 || result.code === 201) {
                 AlertNotification("Berhasil", "Berhasil mengubah data user", "success", 1000);
-                router.push("/useropd");
+                router.push("/DataMasterOpd/useropd");
             } else {
                 AlertNotification(`Gagal`, `${result.data}`, "error", 2000);
                 console.log(result);
