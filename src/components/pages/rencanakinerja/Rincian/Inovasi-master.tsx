@@ -56,11 +56,6 @@ const Inovasi: React.FC<id> = ({ id, tahun }) => {
         });
         const result = await response.json();
 
-        // TAMBAHKAN DI SINI
-        console.log("RESULT INOVASI:", result);
-        console.log("INOVASI_REKIN:", result.inovasi_rekin);
-        console.log("IS ARRAY:", Array.isArray(result.inovasi_rekin));
-
         const hasil = result.inovasi_rekin;
         if (hasil != null) {
           setDataNull(false);

@@ -8,7 +8,6 @@ import Sakip from "@/components/pages/rencanakinerja/Rincian/Sakip";
 import Renaksi from "@/components/pages/rencanakinerja/Rincian/Renaksi";
 import DasarHukum from "@/components/pages/rencanakinerja/Rincian/DasarHukum";
 import GambaranUmum from "@/components/pages/rencanakinerja/Rincian/GambaranUmum";
-import Inovasi from "@/components/pages/rencanakinerja/Rincian/Inovasi";
 import InovasiMaster from "@/components/pages/rencanakinerja/Rincian/Inovasi-master";
 import { AlertNotification } from "@/components/global/Alert";
 import Permasalahan from "@/components/pages/rencanakinerja/Rincian/Permasalahan";
