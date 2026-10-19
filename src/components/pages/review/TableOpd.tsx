@@ -22,7 +22,7 @@ type Review = {
 
 
 interface table {
-    tahun: string;
+    tahun: number;
     kode_opd: string;
 }
 
@@ -39,8 +39,8 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchTujuanPemda = async () => {
-            setLoading(true)
             try {
+                setLoading(true)
                 const response = await fetch(`${branding?.api_perencanaan}/review_pokin/opd/${kode_opd}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
@@ -66,7 +66,7 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
             }
         }
             fetchTujuanPemda();
-    }, [token, branding, tahun, kode_opd]);
+    }, [tahun, kode_opd, token, branding]);
 
     if (Loading) {
         return (
