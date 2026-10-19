@@ -5,11 +5,23 @@ import TableOpd from "@/components/pages/review/TableOpd";
 import { getOpdTahun } from "@/components/lib/Cookie";
 import { useState, useEffect } from "react";
 import Maintenance from "@/components/global/Maintenance";
+import { useBrandingContext } from "@/context/BrandingContext";
+import { getUser } from "@/components/lib/Cookie";
 
 const ReviewOpd = () => {
 
     const [Tahun, setTahun] = useState<any>(null);
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
+    const { branding } = useBrandingContext();
+    const [User, setUser] = useState<any>(null);
+    
+
+    useEffect(() => {
+            const data = getUser();
+            if (data) {
+                setUser(data.user);
+            }
+        }, []);
 
     useEffect(() => {
         const data = getOpdTahun();
@@ -29,6 +41,9 @@ const ReviewOpd = () => {
         }
     }, []);
 
+    const kode_opd = (User?.roles == "super_admin" || User?.roles == "reviewer") ? branding?.opd?.value : User?.kode_opd;
+    const nama_opd = (User?.roles == "super_admin" || User?.roles == "reviewer") ? branding?.opd?.label : User?.nama_opd;
+
     return (
         <>
             <div className="flex items-center">
@@ -40,7 +55,7 @@ const ReviewOpd = () => {
                 <div className="flex items-center justify-between border-b px-5 py-5">
                     <div className="flex flex-wrap items-end gap-1">
                         <h1 className="uppercase font-bold">Review Pohon Kinerja OPD || </h1>
-                        <h1 className="uppercase font-bold">{SelectedOpd?.label || "-"} ||</h1>
+                        <h1 className="uppercase font-bold">{nama_opd || "-"} ||</h1>
                         <h1 className="uppercase font-bold">{Tahun?.label || "-"}</h1>
                     </div>
                 </div>
@@ -48,7 +63,7 @@ const ReviewOpd = () => {
                     {/* <Maintenance /> */}
                     <TableOpd
                         tahun={Tahun?.value}
-                        kode_opd={SelectedOpd?.value}
+                        kode_opd={kode_opd}
                     />
                 </div>
             </div>

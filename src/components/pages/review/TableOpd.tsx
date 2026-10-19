@@ -5,6 +5,7 @@ import { LoadingClip } from "@/components/global/Loading";
 import { getOpdTahun } from "@/components/lib/Cookie";
 import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 import { getToken, getUser } from "@/components/lib/Cookie";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 type Review = {
     id_pohon: number;
@@ -33,13 +34,14 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
     const [DataNull, setDataNull] = useState<boolean | null>(null);
     const [Loading, setLoading] = useState<boolean | null>(null);
     const token = getToken();
+    const { branding } = useBrandingContext();
 
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchTujuanPemda = async () => {
             setLoading(true)
             try {
-                const response = await fetch(`${API_URL}/review_pokin/opd/${kode_opd}/${tahun}`, {
+                const response = await fetch(`${branding?.api_perencanaan}/review_pokin/opd/${kode_opd}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -64,7 +66,7 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
             }
         }
             fetchTujuanPemda();
-    }, [token, tahun, kode_opd]);
+    }, [token, branding, tahun, kode_opd]);
 
     if (Loading) {
         return (
