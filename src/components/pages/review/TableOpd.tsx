@@ -117,6 +117,17 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">User Pembuat</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Waktu Review</th>
                         </tr>
+                        <tr className="bg-emerald-700 text-white">
+                            <th className="border-r border-b px-2 py-1 text-center">1</th>
+                            <th className="border-r border-b px-2 py-1 text-center">2</th>
+                            <th className="border-r border-b px-2 py-1 text-center">3</th>
+                            <th className="border-r border-b px-2 py-1 text-center">4</th>
+                            <th className="border-r border-b px-2 py-1 text-center">5</th>
+                            <th className="border-r border-b px-2 py-1 text-center">6</th>
+                            <th className="border-r border-b px-2 py-1 text-center">7</th>
+                            <th className="border-r border-b px-2 py-1 text-center">8</th>
+                            <th className="border-r border-b px-2 py-1 text-center">9</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {DataNull ?
