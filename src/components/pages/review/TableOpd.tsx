@@ -80,7 +80,7 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                 setLoading(false);
             }
         }
-            fetchTujuanPemda();
+        fetchTujuanPemda();
     }, [tahun, kode_opd, token, branding]);
 
     if (Loading) {
@@ -107,26 +107,25 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                 <table className="w-full">
                     <thead>
                         <tr className="bg-emerald-500 text-white">
-                            <th className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pohon</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[120px] text-center">Target</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[120px] text-center">Satuan</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[400px]">Review</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">User Pembuat</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Waktu Review</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pohon</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[120px] text-center">Target</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[120px] text-center">Satuan</th>
+                            <th colSpan={3} className="border-r border-b px-6 py-3 min-w-[400px]">Review</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">User Pembuat</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Waktu Review</th>
                         </tr>
                         <tr className="bg-emerald-700 text-white">
-                            <th className="border-r border-b px-2 py-1 text-center">1</th>
-                            <th className="border-r border-b px-2 py-1 text-center">2</th>
-                            <th className="border-r border-b px-2 py-1 text-center">3</th>
-                            <th className="border-r border-b px-2 py-1 text-center">4</th>
-                            <th className="border-r border-b px-2 py-1 text-center">5</th>
-                            <th className="border-r border-b px-2 py-1 text-center">6</th>
-                            <th className="border-r border-b px-2 py-1 text-center">7</th>
-                            <th className="border-r border-b px-2 py-1 text-center">8</th>
-                            <th className="border-r border-b px-2 py-1 text-center">9</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[250px]">Kelengkapan</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[250px]">Kesesuaian Level</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[250px]">Substansi</th>
+                        </tr>
+                        <tr className="bg-emerald-900 text-white">
+                            {[...Array(1)].map((_, index) => (
+                                <td key={index} className="border-x border-b font-semibold py-1 text-center">{index + 1}</td>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
@@ -172,9 +171,7 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                                         )}
 
                                         {/* Indikator */}
-                                        <td className="border border-emerald-500 px-6 py-4 align-middle">
-                                            {indikator.nama_indikator || "-"}
-                                        </td>
+                                        <td className="border border-emerald-500 px-6 py-4 align-middle">{indikator.nama_indikator || "-"}</td>
 
                                         {/* Target */}
                                         <td className="border border-emerald-500 px-6 py-4 text-center align-middle">
@@ -203,6 +200,7 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                                             <>
                                                 <td
                                                     rowSpan={indikatorList.length}
+                                                    colSpan={3}
                                                     className="border border-emerald-500 px-6 py-4 align-middle"
                                                 >
                                                     {data.review || "-"}
@@ -269,7 +267,7 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                         }
                     </tbody>
                 </table>
-            </div>
+            </div >
         </>
     )
 }

@@ -135,26 +135,33 @@ const PokinOpd = () => {
     const [LastFormId, setLastFormId] = useState<number | null>(null);
 
     useEffect(() => {
-        const fetchUser = getUser();
-        if (fetchUser) {
-            setUser(fetchUser.user);
-        }
-        const data = getOpdTahun();
-        if (data.tahun) {
-            const tahun = {
-                value: data.tahun.value,
-                label: data.tahun.label,
+        try{
+            setLoading(true);
+            const fetchUser = getUser();
+            if (fetchUser) {
+                setUser(fetchUser.user);
             }
-            setTahun(tahun);
-        }
-        if (data.opd) {
-            const opd = {
-                value: data.opd.value,
-                label: data.opd.label,
+            const data = getOpdTahun();
+            if (data.tahun) {
+                const tahun = {
+                    value: data.tahun.value,
+                    label: data.tahun.label,
+                }
+                setTahun(tahun);
             }
-            setSelectedOpd(opd);
+            if (data.opd) {
+                const opd = {
+                    value: data.opd.value,
+                    label: data.opd.label,
+                }
+                setSelectedOpd(opd);
+            }
+        } catch(err){
+            console.log(err);
+        } finally{
+            setLoading(false);
         }
-    }, []);
+    }, [TriggerAfterPokinOutside]);
 
     const toggleCursorMode = () => {
         setCursorMode((prevMode) => (prevMode === "normal" ? "hand" : "normal"));
@@ -909,6 +916,7 @@ const PokinOpd = () => {
                                                 show_all={ShowAll}
                                                 set_show_all={() => setShowAll(false)}
                                                 show_detail={ShowAllDetail}
+                                                nip={User?.nip}
                                             />
                                         </React.Fragment>
                                     ))}
