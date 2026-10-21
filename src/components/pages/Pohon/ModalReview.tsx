@@ -16,9 +16,20 @@ interface ModalProps {
     onClose: () => void;
     id?: number | null;
     idPohon: number;
+    Data?: Review | null;
     jenis?: "baru" | "lama";
     pokin: "pemda" | "opd";
     onSuccess: () => void;
+}
+
+interface Review {
+    id: number;
+    id_pohon_kinerja: number;
+    review: string;
+    catatan: string;
+    keterangan: string;
+    nama_pegawai: string;
+    created_by: string;
 }
 
 interface FormValue {
@@ -29,52 +40,22 @@ interface FormValue {
     keterangan: string;
 }
 
-export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, idPohon, onSuccess, pokin }) => {
+export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, idPohon, onSuccess, pokin, Data }) => {
     const { branding } = useBrandingContext();
-    const { control, handleSubmit, reset } = useForm<FormValue>();
-
-    const [IsLoading, setIsLoading] = useState<boolean>(false);
+    const { control, handleSubmit, reset } = useForm<FormValue>({
+        defaultValues: {
+            id: id ?? Data?.id ?? 0,
+            id_pohon_kinerja: idPohon ?? Data?.id_pohon_kinerja ?? 0,
+            review: Data?.review ? {
+                value: Data?.review,
+                label: Data?.review,
+            } : null,
+            catatan: Data?.catatan,
+            keterangan: Data?.keterangan
+        }
+    });
     const [Proses, setProses] = useState<boolean>(false);
     const token = getToken();
-
-    useEffect(() => {
-        const fetchDetailReview = async () => {
-            if (!id) return;
-
-            try {
-                setIsLoading(true);
-                const response = await fetch(`${branding?.api_perencanaan}/review_pokin/detail/${id}`, {
-                    headers: {
-                        Authorization: `${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Terjadi kesalahan pada koneksi backend');
-                }
-
-                const result = await response.json();
-                const data = result.data;
-
-                reset({
-                    review: data.review || '',
-                    keterangan: data.keterangan || '',
-                });
-
-            } catch (err) {
-                console.error(err, 'Gagal mengambil data sesuai id pohon');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if ((jenis === 'lama') && isOpen) {
-            fetchDetailReview();
-        } else {
-            reset({ review: null, catatan: '', keterangan: '' });
-        }
-    }, [id, isOpen, jenis, reset, token]);
 
     const ValueReview = useWatch({
         name: "review",
@@ -82,7 +63,7 @@ export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, 
     })
 
     const handleClose = () => {
-        reset({ review: null, keterangan: '', catatan: "" });
+        reset();
         onClose();
     };
 
@@ -148,116 +129,108 @@ export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, 
                     <div className="w-max-[500px] py-2 border-b font-bold text-center uppercase">
                         {jenis === 'baru' ? "Tambah Review" : "Edit Review"} Pohon
                     </div>
-
-                    {IsLoading ?
-                        <LoadingClip />
-                        :
-                        <>
-                            <div className="flex flex-col py-3">
-                                <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="review">Review</label>
-                                <Controller
-                                    name="review"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Select
-                                            {...field}
-                                            options={optionReview}
-                                            id="review"
-                                            placeholder="Pilih jenis review"
-                                            isClearable
-                                        />
-                                    )}
+                    <div className="flex flex-col py-3">
+                        <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="review">Review</label>
+                        <Controller
+                            name="review"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    options={optionReview}
+                                    id="review"
+                                    placeholder="Pilih jenis review"
+                                    isClearable
                                 />
-                            </div>
+                            )}
+                        />
+                    </div>
 
-                            {(ValueReview?.value === "Kesesuaian" || ValueReview?.value === "Kelengkapan") ?
-                                <Controller
-                                    name="catatan"
-                                    control={control}
-                                    render={({ field }) => {
-                                        const ya = ValueReview?.value === "Kesesuaian" ? "Sesuai" : "Lengkap";
-                                        const tidak = ValueReview?.value === "Kesesuaian" ? "Tidak Sesuai" : "Tidak Lengkap";
-                                        return (
-                                            <div className="flex items-center gap-1">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => field.onChange(ya)}
-                                                    className={`flex items-center gap-1 p-2 rounded-lg border-2 border-green-500
+                    {(ValueReview?.value === "Kesesuaian" || ValueReview?.value === "Kelengkapan") ?
+                        <Controller
+                            name="catatan"
+                            control={control}
+                            render={({ field }) => {
+                                const ya = ValueReview?.value === "Kesesuaian" ? "Sesuai" : "Lengkap";
+                                const tidak = ValueReview?.value === "Kesesuaian" ? "Tidak Sesuai" : "Tidak Lengkap";
+                                return (
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            type="button"
+                                            onClick={() => field.onChange(ya)}
+                                            className={`flex items-center gap-1 p-2 rounded-lg border-2 border-green-500
                                                                 ${field.value === ya ? "bg-green-500 text-white"
-                                                            : "text-green-500 hover:bg-green-100"}
+                                                    : "text-green-500 hover:bg-green-100"}
                                                             `}
-                                                >
-                                                    <TbCheck />
-                                                    {ya}
-                                                </button>
+                                        >
+                                            <TbCheck />
+                                            {ya}
+                                        </button>
 
-                                                <button
-                                                    type="button"
-                                                    onClick={() => field.onChange(tidak)}
-                                                    className={`flex items-center gap-1 p-2 rounded-lg border-2 border-red-500
+                                        <button
+                                            type="button"
+                                            onClick={() => field.onChange(tidak)}
+                                            className={`flex items-center gap-1 p-2 rounded-lg border-2 border-red-500
                                                                 ${field.value === tidak ? "bg-red-500 text-white"
-                                                            : "text-red-500 hover:bg-red-100"}
+                                                    : "text-red-500 hover:bg-red-100"}
                                                             `}
-                                                >
-                                                    <TbX />
-                                                    {tidak}
-                                                </button>
-                                            </div>
-                                        );
-                                    }}
+                                        >
+                                            <TbX />
+                                            {tidak}
+                                        </button>
+                                    </div>
+                                );
+                            }}
+                        />
+                        :
+                        <Controller
+                            name="catatan"
+                            control={control}
+                            render={({ field }) => (
+                                <textarea
+                                    {...field}
+                                    className="w-full border px-4 py-2 rounded-lg"
+                                    id="catatan"
+                                    placeholder="Masukkan review mengenai substansi"
                                 />
-                                :
-                                <Controller
-                                    name="catatan"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <textarea
-                                            {...field}
-                                            className="w-full border px-4 py-2 rounded-lg"
-                                            id="catatan"
-                                            placeholder="Masukkan review mengenai substansi"
-                                        />
-                                    )}
-                                />
-                            }
-
-                            <div className="flex flex-col py-3">
-                                <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="keterangan">Keterangan</label>
-                                <Controller
-                                    name="keterangan"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <textarea
-                                            {...field}
-                                            className="border px-4 py-2 rounded-lg"
-                                            id="keterangan"
-                                            placeholder="Masukkan keterangan"
-                                        />
-                                    )}
-                                />
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <ButtonRed type="button" className="w-full my-3 flex items-center gap-1" onClick={handleClose}>
-                                    <TbX />
-                                    Batal
-                                </ButtonRed>
-                                <ButtonSky type="submit" className="w-full my-3">
-                                    {Proses ?
-                                        <span className="flex">
-                                            <LoadingButtonClip />
-                                            {jenis === 'baru' ? "Menambahkan" : "Menyimpan"}
-                                        </span>
-                                        :
-                                        <span className="flex items-center gap-1">
-                                            <TbDeviceFloppy />
-                                            {jenis === 'baru' ? "Tambah" : "Simpan"}
-                                        </span>
-                                    }
-                                </ButtonSky>
-                            </div>
-                        </>
+                            )}
+                        />
                     }
 
+                    <div className="flex flex-col py-3">
+                        <label className="uppercase text-xs font-medium text-gray-700 my-2" htmlFor="keterangan">Keterangan</label>
+                        <Controller
+                            name="keterangan"
+                            control={control}
+                            render={({ field }) => (
+                                <textarea
+                                    {...field}
+                                    className="border px-4 py-2 rounded-lg"
+                                    id="keterangan"
+                                    placeholder="Masukkan keterangan"
+                                />
+                            )}
+                        />
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <ButtonRed type="button" className="w-full my-3 flex items-center gap-1" onClick={handleClose}>
+                            <TbX />
+                            Batal
+                        </ButtonRed>
+                        <ButtonSky type="submit" className="w-full my-3">
+                            {Proses ?
+                                <span className="flex">
+                                    <LoadingButtonClip />
+                                    {jenis === 'baru' ? "Menambahkan" : "Menyimpan"}
+                                </span>
+                                :
+                                <span className="flex items-center gap-1">
+                                    <TbDeviceFloppy />
+                                    {jenis === 'baru' ? "Tambah" : "Simpan"}
+                                </span>
+                            }
+                        </ButtonSky>
+                    </div>
                 </form>
             </div>
         </div>

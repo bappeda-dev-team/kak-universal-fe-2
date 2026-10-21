@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
     TbPrinter, TbLayersLinked, TbBookmarkPlus, TbCheck, TbCircleLetterXFilled,
     TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbEye, TbEyeClosed, TbArrowAutofitWidth,
-    TbDeviceTabletSearch, TbZoom, TbCircleCheckFilled, TbArrowGuide, TbAB2
+    TbDeviceTabletSearch, TbZoom, TbCircleCheckFilled, TbArrowGuide, TbAB2, TbUser
 } from 'react-icons/tb';
 import { ButtonSky, ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder, ButtonBlackBorder } from '@/components/global/Button';
 import { AlertNotification, AlertQuestion } from '@/components/global/Alert';
@@ -57,6 +57,7 @@ interface Review {
     id: number;
     id_pohon_kinerja: number;
     review: string;
+    catatan: string;
     keterangan: string;
     nama_pegawai: string;
     created_by: string;
@@ -292,9 +293,9 @@ export const PohonOpd: React.FC<pohon> = ({ nip, tema, deleteTrigger, fetchTrigg
                                             user={User?.roles}
                                             nip_review={nip}
                                             ShowDetail={show_detail}
-                                            />
-                                            :
-                                            <TablePohon
+                                        />
+                                        :
+                                        <TablePohon
                                             item={tema}
                                             user={User?.roles}
                                             ShowDetail={show_detail}
@@ -842,7 +843,13 @@ export const TablePohon = (props: any) => {
     const ShowDetail = props.ShowDetail;
     const ikk = props.item.ikk;
 
+    const reviewAccent = jenis === "Strategic" ? "border-l-4 border-red-500"
+        : jenis === "Tactical" ? "border-l-4 border-blue-500"
+            : (jenis === "Operational" || jenis === "Operational N") ? "border-l-4 border-green-500"
+                : "border-l-4 border-slate-300";
+
     // REVIEW
+    const [DataReview, setDataReview] = useState<Review | null>(null);
     const [IsNewReview, setIsNewReview] = useState<boolean>(false);
     const [IsEditReview, setIsEditReview] = useState<boolean>(false);
     const [idReview, setIdReview] = useState<number | null>(null);
@@ -860,13 +867,15 @@ export const TablePohon = (props: any) => {
             setIsNewReview(true);
         }
     };
-    const handleEditReview = (id: number) => {
+    const handleEditReview = (id: number, data: Review | null) => {
         if (IsEditReview) {
             setIsEditReview(false);
             setIdReview(0);
+            setDataReview(data);
         } else {
             setIsEditReview(true);
             setIdReview(id);
+            setDataReview(data);
         }
     };
     const hapusReview = async (id_review: any) => {
@@ -1353,121 +1362,79 @@ export const TablePohon = (props: any) => {
                     </div>
                     :
                     Review.length == 0 ?
-                        <div className="flex mt-2 text-center">
-                            <h1 className='text-center bg-white w-full rounded-lg p-2'>tidak ada review</h1>
+                        <div className="mt-2 rounded-xl border border-dashed border-slate-300 bg-white px-4 py-6 text-center">
+                            <p className="text-sm text-slate-500">Belum ada review pada pohon ini</p>
                         </div>
                         :
-                        <div className="flex mt-2">
-                            <table className="w-full">
-                                {Review.map((item: Review, index: number) => {
+                        <div className="flex flex-col gap-3 mt-2">
+                            {Review.map((item: Review, index: number) => {
 
-                                    const pemilikCatatan = (nip_review === item.created_by) || (User == "super_admin");
+                                const pemilikCatatan = (nip_review === item.created_by) || (User == "super_admin");
 
-                                    return (
-                                        <tbody key={item.id || index}>                                            <tr>
-                                                <td
-                                                    className={`min-w-[100px] border-r border-b px-2 py-3 bg-yellow-100 text-start rounded-tl-lg
-                                                        ${jenis === "Strategic Pemda" && "border-black"}
-                                                        ${jenis === "Tactical Pemda" && "border-black"}
-                                                        ${jenis === "Operational Pemda" && "border-black"}
-                                                        ${jenis === "Strategic" && "border-red-700"}
-                                                        ${jenis === "Tactical" && "border-blue-500"}
-                                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
-                                                    `}
-                                                >
-                                                    review
-                                                </td>
-                                                <td
-                                                    className={`min-w-[300px] border-b px-2 py-3 bg-yellow-100 text-start
-                                                        ${jenis === "Strategic Pemda" && "border-black"}
-                                                        ${jenis === "Tactical Pemda" && "border-black"}
-                                                        ${jenis === "Operational Pemda" && "border-black"}
-                                                        ${jenis === "Strategic" && "border-red-700"}
-                                                        ${jenis === "Tactical" && "border-blue-500"}
-                                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
-                                                    `}
-                                                >
-                                                    <div className="flex items-start justify-between gap-1">
-                                                        {item.review}
-                                                    </div>
-                                                </td>
-                                                {pemilikCatatan &&
-                                                    <td
-                                                        className={`border-l bg-yellow-100 text-start rounded-tr-lg
-                                                            ${jenis === "Strategic Pemda" && "border-black"}
-                                                            ${jenis === "Tactical Pemda" && "border-black"}
-                                                            ${jenis === "Operational Pemda" && "border-black"}
-                                                            ${jenis === "Strategic" && "border-red-700"}
-                                                            ${jenis === "Tactical" && "border-blue-500"}
-                                                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
-                                                        `}
-                                                    >
-                                                        <div className="flex items-center justify-center gap-1">
-                                                            <ButtonSkyBorder onClick={() => handleEditReview(item.id)}>
-                                                                <TbPencil />
-                                                            </ButtonSkyBorder>
-                                                        </div>
-                                                    </td>
-                                                }
-                                            </tr>
-                                            <tr>
-                                                <td
-                                                    className={`min-w-[100px] border-r border-b border-black px-2 py-3 bg-yellow-100 text-start rounded-bl-lg
-                                                        ${jenis === "Strategic Pemda" && "border-black"}
-                                                        ${jenis === "Tactical Pemda" && "border-black"}
-                                                        ${jenis === "Operational Pemda" && "border-black"}
-                                                        ${jenis === "Strategic" && "border-red-700"}
-                                                        ${jenis === "Tactical" && "border-blue-500"}
-                                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
-                                                    `}
-                                                >
-                                                    Keterangan
-                                                </td>
-                                                <td
-                                                    className={`min-w-[300px] border-b px-2 py-3 bg-yellow-100 text-start flex flex-wrap gap-2
-                                                        ${jenis === "Strategic Pemda" && "border-black"}
-                                                        ${jenis === "Tactical Pemda" && "border-black"}
-                                                        ${jenis === "Operational Pemda" && "border-black"}
-                                                        ${jenis === "Strategic" && "border-red-700"}
-                                                        ${jenis === "Tactical" && "border-blue-500"}
-                                                        ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
-                                                    `}
-                                                >
-                                                    <p>
-                                                        {item.keterangan}
-                                                    </p>
-                                                    <p className="font-bold">
-                                                        {`( ${item.nama_pegawai} )`}
-                                                    </p>
-                                                </td>
-                                                {pemilikCatatan &&
-                                                    <td
-                                                        className={`border-l border-b bg-yellow-100 text-start rounded-br-lg
-                                                            ${jenis === "Strategic Pemda" && "border-black"}
-                                                            ${jenis === "Tactical Pemda" && "border-black"}
-                                                            ${jenis === "Operational Pemda" && "border-black"}
-                                                            ${jenis === "Strategic" && "border-red-700"}
-                                                            ${jenis === "Tactical" && "border-blue-500"}
-                                                            ${(jenis === "Operational" || jenis === "Operational N") && "border-green-500"}    
-                                                        `}
-                                                    >
-                                                        <div className="flex items-center justify-center gap-1"
-                                                            onClick={() => {
-                                                                AlertQuestion("Hapus?", "Hapus Review", "question", "Hapus", "Batal").then((result) => {
-                                                                    if (result.isConfirmed) {
-                                                                        hapusReview(item.id);
-                                                                    }
-                                                                });
-                                                            }}>
-                                                            <ButtonRedBorder><TbTrash /></ButtonRedBorder>
-                                                        </div>
-                                                    </td>
-                                                }
-                                            </tr>
-                                        </tbody>
-                                    )
-                                })}
-                            </table>
+                                const badgeReview = item.review === "Kesesuaian" ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
+                                    : item.review === "Kelengkapan" ? "border border-sky-200 bg-sky-50 text-sky-700"
+                                        : "border border-amber-200 bg-amber-50 text-amber-700";
+
+                                return (
+                                    <div
+                                        key={item.id || index}
+                                        className={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${reviewAccent}`}
+                                    >
+                                        {/* HEADER */}
+                                        <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-4 py-3">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview}`}>
+                                                    {item.review || "Review"}
+                                                </span>
+                                                {pemilikCatatan && (
+                                                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                                        Catatan Anda
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {pemilikCatatan && (
+                                                <div className="flex shrink-0 items-center gap-1">
+                                                    <ButtonSkyBorder className="px-2 py-1" onClick={() => handleEditReview(item.id, item)}>
+                                                        <TbPencil size={14} />
+                                                    </ButtonSkyBorder>
+                                                    <ButtonRedBorder className="px-2 py-1" onClick={() => {
+                                                        AlertQuestion("Hapus?", "Hapus Review", "question", "Hapus", "Batal").then((result) => {
+                                                            if (result.isConfirmed) {
+                                                                hapusReview(item.id);
+                                                            }
+                                                        });
+                                                    }}>
+                                                        <TbTrash size={14} />
+                                                    </ButtonRedBorder>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {/* BODY */}
+                                        <div className="px-4 py-3">
+                                            <p className="text-sm leading-relaxed text-slate-700 whitespace-pre-line font-semibold">
+                                                {item.catatan || "-"}
+                                            </p>
+                                            {item.keterangan && (
+                                                <div className="mt-3 rounded-lg border-l-2 border-slate-300 bg-slate-50 px-3 py-2">
+                                                    <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Keterangan</p>
+                                                    <p className="mt-0.5 text-sm text-slate-600 whitespace-pre-line">{item.keterangan}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {/* FOOTER */}
+                                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-slate-100 bg-slate-50/70 px-4 py-2 text-xs text-slate-500">
+                                            <TbUser size={14} />
+                                            <span className="font-medium text-slate-700">{item.nama_pegawai || "-"}</span>
+                                            {item.created_by && (
+                                                <>
+                                                    <span aria-hidden="true">&middot;</span>
+                                                    <span>NIP {item.created_by}</span>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
             )}
             {/* BUTTON REVIEW */}
@@ -1483,15 +1450,21 @@ export const TablePohon = (props: any) => {
                     </ButtonSkyBorder>
                 }
                 <button
-                    className={`px-3 flex justify-center items-center py-1 rounded-lg border border-red-400 text-red-400 hover:bg-red-400 hover:text-white ${review > 0 && "bg-yellow-200 animate-pulse"}`}
+                    className={`px-3 py-1 flex justify-center items-center gap-1 rounded-lg border transition-colors
+                        ${ShowReview
+                            ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                            : "border-slate-300 bg-white text-slate-600 hover:border-emerald-400 hover:text-emerald-700"}
+                        `}
                     onClick={() => {
                         setShowReview((prev) => (!prev));
                         fetchReview(id);
                     }}
                 >
                     <TbZoom className="mr-1" />
-                    <p>{ShowReview ? "sembunyikan review" : "tampilkan review :"} </p>
-                    <p className="text-bold ml-1">{review}</p>
+                    <span className="text-sm">{ShowReview ? "sembunyikan review" : "tampilkan review"}</span>
+                    <span className={`ml-1 rounded-full px-2 py-0.5 text-xs font-semibold ${review > 0 ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-500"}`}>
+                        {review || 0}
+                    </span>
                 </button>
             </div>
             {/* MODAL TAMBAH REVIEW POHON */}
@@ -1510,18 +1483,21 @@ export const TablePohon = (props: any) => {
                 }}
             />
             {/* MODAL EDIT REVIEW POHON */}
-            <ModalReview
-                jenis={'lama'}
-                pokin="opd"
-                id={idReview}
-                isOpen={IsEditReview}
-                onClose={() => setIsEditReview(false)}
-                idPohon={id}
-                onSuccess={() => {
-                    fetchReview(id);
-                    setShowReview(true);
-                }}
-            />
+            {IsEditReview &&
+                <ModalReview
+                    jenis={'lama'}
+                    pokin="opd"
+                    id={idReview}
+                    isOpen={IsEditReview}
+                    onClose={() => handleEditReview(0, null)}
+                    idPohon={id}
+                    Data={DataReview}
+                    onSuccess={() => {
+                        fetchReview(id);
+                        setShowReview(true);
+                    }}
+                />
+            }
         </div>
     )
 }

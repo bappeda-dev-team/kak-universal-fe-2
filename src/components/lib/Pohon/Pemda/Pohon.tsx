@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { TbCircleCheckFilled, TbEye, TbArrowGuide, TbCheck, TbX, TbCircleLetterXFilled, TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbBookmarkPlus, TbZoom, TbCopy, TbPrinter } from 'react-icons/tb';
+import { TbUser, TbCircleCheckFilled, TbEye, TbArrowGuide, TbCheck, TbX, TbCircleLetterXFilled, TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbBookmarkPlus, TbZoom, TbCopy, TbPrinter } from 'react-icons/tb';
 import { ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder, ButtonBlackBorder, ButtonBlack, ButtonSky } from '@/components/global/Button';
 import { AlertNotification, AlertQuestion } from '@/components/global/Alert';
 import { FormPohonPemda, FormAmbilPohon, FormEditPohon } from './FormPohonPemda';
@@ -15,6 +15,7 @@ interface pohon {
     tema: any;
     deleteTrigger: () => void;
     user?: string;
+    nip: string;
     show_all?: boolean;
     tahun?: string;
     idForm?: number;
@@ -25,8 +26,10 @@ interface Review {
     id: number;
     id_pohon_kinerja: number;
     review: string;
+    catatan: string;
     keterangan: string;
     nama_pegawai: string;
+    created_by: string;
 }
 
 interface Tagging {
@@ -43,7 +46,7 @@ interface KeteranganTagging {
     tahun: string;
 }
 
-export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_all, set_show_all, idForm }) => {
+export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, nip, show_all, set_show_all, idForm }) => {
 
     const [childPohons, setChildPohons] = useState(tema.childs || []);
     const [PutPohons, setPutPohons] = useState(tema.childs || []);
@@ -65,6 +68,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
     const [IsCetak, setIsCetak] = useState<boolean>(false);
 
     // REVIEW
+    const [DataReview, setDataReview] = useState<Review | null>(null);
     const [IsNewReview, setIsNewReview] = useState<boolean>(false);
     const [IsEditReview, setIsEditReview] = useState<boolean>(false);
     const [idReview, setIdReview] = useState<number | null>(null);
@@ -132,13 +136,15 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
             setIsNewReview(true);
         }
     };
-    const handleEditReview = (id: number) => {
+    const handleEditReview = (id: number, data: Review | null) => {
         if (IsEditReview) {
             setIsEditReview(false);
             setIdReview(0);
+            setDataReview(data);
         } else {
             setIsEditReview(true);
             setIdReview(id);
+            setDataReview(data);
         }
     };
     const hapusReview = async (id_review: any) => {
@@ -270,6 +276,11 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
         }
     };
 
+    const reviewAccent = tema.jenis_pohon === "Strategic" ? "border-l-4 border-red-500"
+        : tema.jenis_pohon === "Tactical" ? "border-l-4 border-blue-500"
+            : (tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") ? "border-l-4 border-green-500"
+                : "border-l-4 border-slate-300";
+
     return (
         <React.Fragment key={tema.id}>
             {Deleted ?
@@ -342,121 +353,79 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                             </div>
                                             :
                                             Review.length == 0 ?
-                                                <div className="flex mt-2 text-center">
-                                                    <h1 className='text-center bg-white w-full border border-black rounded-lg p-2'>tidak ada review</h1>
+                                                <div className="mt-2 rounded-xl border border-dashed border-slate-300 bg-white px-4 py-6 text-center">
+                                                    <p className="text-sm text-slate-500">Belum ada review pada pohon ini</p>
                                                 </div>
                                                 :
-                                                <div className="flex mt-2">
-                                                    <table className="w-full">
-                                                        {Review.map((item: Review) => (
-                                                            <tbody key={item.id}>
-                                                                <tr>
-                                                                    <td
-                                                                        className={`min-w-[100px] px-2 py-3 text-start rounded-tl-lg
-                                                                            ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Tematik") && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Tactical Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Operational Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic" && "border-r border-b bg-yellow-100 border-red-700"}
-                                                                            ${tema.jenis_pohon === "Tactical" && "border-r border-b bg-yellow-100 border-blue-500"}
-                                                                            ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && "border-r border-b bg-yellow-100 border-green-500"}    
-                                                                        `}
-                                                                    >
-                                                                        review
-                                                                    </td>
-                                                                    <td
-                                                                        className={`min-w-[300px] px-2 py-3 text-start
-                                                                            ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Tematik") && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Tactical Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Operational Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic" && "border-b bg-yellow-100 border-red-700"}
-                                                                            ${tema.jenis_pohon === "Tactical" && "border-b bg-yellow-100 border-blue-500"}
-                                                                            ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && "border-b bg-yellow-100 border-green-500"}    
-                                                                        `}
-                                                                    >
-                                                                        <div className="flex items-start justify-between gap-1">
-                                                                            {item.review}
-                                                                        </div>
-                                                                    </td>
-                                                                    {/* EDIT REVIEW */}
-                                                                    <td
-                                                                        className={` text-start rounded-tr-lg
-                                                                            ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Tematik") && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Tactical Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Operational Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic" && "border-l bg-yellow-100 border-red-700"}
-                                                                            ${tema.jenis_pohon === "Tactical" && "border-l bg-yellow-100 border-blue-500"}
-                                                                            ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && "border-l bg-yellow-100 border-green-500"}    
-                                                                        `}
-                                                                    >
-                                                                        <div className="flex items-center justify-center gap-1">
-                                                                            <ButtonSkyBorder onClick={() => handleEditReview(item.id)}>
-                                                                                <TbPencil />
+                                                <div className="flex flex-col gap-3 mt-2">
+                                                    {Review.map((item: Review, index: number) => {
+
+                                                        const pemilikCatatan = (nip === item.created_by) || (user == "super_admin");
+
+                                                        const badgeReview = item.review === "Kesesuaian" ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
+                                                            : item.review === "Kelengkapan" ? "border border-sky-200 bg-sky-50 text-sky-700"
+                                                                : "border border-amber-200 bg-amber-50 text-amber-700";
+
+                                                        return (
+                                                            <div
+                                                                key={item.id || index}
+                                                                className={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${reviewAccent}`}
+                                                            >
+                                                                {/* HEADER */}
+                                                                <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-4 py-3">
+                                                                    <div className="flex flex-wrap items-center gap-2">
+                                                                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview}`}>
+                                                                            {item.review || "Review"}
+                                                                        </span>
+                                                                        {pemilikCatatan && (
+                                                                            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                                                                Catatan Anda
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                    {pemilikCatatan && (
+                                                                        <div className="flex shrink-0 items-center gap-1">
+                                                                            <ButtonSkyBorder className="px-2 py-1" onClick={() => handleEditReview(item.id, item)}>
+                                                                                <TbPencil size={14} />
                                                                             </ButtonSkyBorder>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td
-                                                                        className={`min-w-[100px] border-black px-2 py-3 text-start rounded-bl-lg
-                                                                            ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Tematik") && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Tactical Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Operational Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic" && "border-r border-b bg-yellow-100 border-red-700"}
-                                                                            ${tema.jenis_pohon === "Tactical" && "border-r border-b bg-yellow-100 border-blue-500"}
-                                                                            ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && "border-r border-b bg-yellow-100 border-green-500"}    
-                                                                        `}
-                                                                    >
-                                                                        Keterangan
-                                                                    </td>
-                                                                    <td
-                                                                        className={`min-w-[300px] px-2 py-3 text-start flex flex-wrap gap-2
-                                                                            ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Tematik") && "border-b border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic Pemda" && "border-b border-black"}
-                                                                            ${tema.jenis_pohon === "Tactical Pemda" && "border-b border-black"}
-                                                                            ${tema.jenis_pohon === "Operational Pemda" && "border-b border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic" && "border-b bg-yellow-100 border-red-700"}
-                                                                            ${tema.jenis_pohon === "Tactical" && "border-b bg-yellow-100 border-blue-500"}
-                                                                            ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && "border-b bg-yellow-100 border-green-500"}    
-                                                                        `}
-                                                                    >
-                                                                        <p>
-                                                                            {item.keterangan}
-                                                                        </p>
-                                                                        <p className="font-bold">
-                                                                            {`( ${item.nama_pegawai} )`}
-                                                                        </p>
-                                                                    </td>
-                                                                    {/* HAPUS REVIEW */}
-                                                                    <td
-                                                                        className={`text-start rounded-br-lg
-                                                                            ${(tema.jenis_pohon === "Tematik" || tema.jenis_pohon === "Sub Tematik" || tema.jenis_pohon === "Sub Sub Tematik" || tema.jenis_pohon === "Super Tematik") && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Tactical Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Operational Pemda" && "border border-black"}
-                                                                            ${tema.jenis_pohon === "Strategic" && "border-b border-l bg-yellow-100 border-red-700"}
-                                                                            ${tema.jenis_pohon === "Tactical" && "border-b border-l bg-yellow-100 border-blue-500"}
-                                                                            ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && "border-b border-l bg-yellow-100 border-green-500"}    
-                                                                        `}
-                                                                    >
-                                                                        <div className="flex items-center justify-center gap-1"
-                                                                            onClick={() => {
+                                                                            <ButtonRedBorder className="px-2 py-1" onClick={() => {
                                                                                 AlertQuestion("Hapus?", "Hapus Review", "question", "Hapus", "Batal").then((result) => {
                                                                                     if (result.isConfirmed) {
                                                                                         hapusReview(item.id);
                                                                                     }
                                                                                 });
                                                                             }}>
-                                                                            <ButtonRedBorder><TbTrash /></ButtonRedBorder>
+                                                                                <TbTrash size={14} />
+                                                                            </ButtonRedBorder>
                                                                         </div>
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        ))}
-                                                    </table>
+                                                                    )}
+                                                                </div>
+                                                                {/* BODY */}
+                                                                <div className="px-4 py-3">
+                                                                    <p className="text-sm leading-relaxed text-slate-700 whitespace-pre-line font-semibold">
+                                                                        {item.catatan || "-"}
+                                                                    </p>
+                                                                    {item.keterangan && (
+                                                                        <div className="mt-3 rounded-lg border-l-2 border-slate-300 bg-slate-50 px-3 py-2">
+                                                                            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Keterangan</p>
+                                                                            <p className="mt-0.5 text-sm text-slate-600 whitespace-pre-line">{item.keterangan}</p>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                {/* FOOTER */}
+                                                                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-slate-100 bg-slate-50/70 px-4 py-2 text-xs text-slate-500">
+                                                                    <TbUser size={14} />
+                                                                    <span className="font-medium text-slate-700">{item.nama_pegawai || "-"}</span>
+                                                                    {item.created_by && (
+                                                                        <>
+                                                                            <span aria-hidden="true">&middot;</span>
+                                                                            <span>NIP {item.created_by}</span>
+                                                                        </>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                     )}
                                     {/* BUTTON REVIEW */}
@@ -497,18 +466,21 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                             }}
                                         />
                                         {/* MODAL EDIT REVIEW POHON */}
-                                        <ModalReview
-                                            jenis={'lama'}
-                                            pokin="pemda"
-                                            id={idReview}
-                                            isOpen={IsEditReview}
-                                            onClose={() => setIsEditReview(false)}
-                                            idPohon={tema.id}
-                                            onSuccess={() => {
-                                                fetchReview(tema.id);
-                                                setShowReview(true);
-                                            }}
-                                        />
+                                        {IsEditReview &&
+                                            <ModalReview
+                                                jenis={'lama'}
+                                                pokin="pemda"
+                                                id={idReview}
+                                                isOpen={IsEditReview}
+                                                onClose={() => setIsEditReview(false)}
+                                                idPohon={tema.id}
+                                                Data={DataReview}
+                                                onSuccess={() => {
+                                                    fetchReview(tema.id);
+                                                    setShowReview(true);
+                                                }}
+                                            />
+                                        }
                                     </div>
                                     {tema.level_pohon === 0 &&
                                         <Link href={`/cetak/pokin-tematik/${tema.id}`} target="_blank" rel="noopener noreferrer">
@@ -670,16 +642,18 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                         user={user}
                                         tema={dahan}
                                         key={index}
+                                        nip={nip}
                                         deleteTrigger={deleteTrigger}
                                         show_all={show_all}
                                         set_show_all={set_show_all}
-                                    />
+                                        />
                                 </React.Fragment>
                             ))}
                             {strategicPohons.map((dahan: any, index: any) => (
                                 <React.Fragment key={index}>
                                     <Pohon
                                         user={user}
+                                        nip={nip}
                                         tema={dahan}
                                         key={index}
                                         deleteTrigger={deleteTrigger}
@@ -729,12 +703,14 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                 </React.Fragment>
                             ))}
                         </ul>
-                        <ModalCetak
-                            jenis='non_cascading'
-                            onClose={() => setIsCetak(false)}
-                            isOpen={IsCetak}
-                            pohon={tema}
-                        />
+                        {IsCetak &&
+                            <ModalCetak
+                                jenis='non_cascading'
+                                onClose={() => setIsCetak(false)}
+                                isOpen={IsCetak}
+                                pohon={tema}
+                            />
+                        }
                     </li>
                 </React.Fragment>
             }
