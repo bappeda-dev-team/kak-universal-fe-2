@@ -347,6 +347,7 @@ export const FormPohonOpd: React.FC<{
             {IsAdded && DataAdd ?
                 <PohonOpd
                     tema={DataAdd}
+                    nip={user?.nip}
                     deleteTrigger={deleteTrigger}
                     fetchTrigger={fetchTrigger}
                     set_show_all={() => null}

@@ -106,6 +106,7 @@ export const FormAmbilPohonOpd: React.FC<{
             {IsAdded && DataAdd ?
                 <PohonOpd
                     tema={DataAdd}
+                    nip={branding?.user?.nip}
                     deleteTrigger={() => setDeleted((prev) => !prev)}
                     fetchTrigger={fetchTrigger}
                     set_show_all={() => null}

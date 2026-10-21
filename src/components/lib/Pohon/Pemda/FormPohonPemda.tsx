@@ -345,6 +345,7 @@ export const FormPohonPemda: React.FC<{
                     deleteTrigger={() => setDeleted((prev) => !prev)}
                     set_show_all={() => null}
                     idForm={formId}
+                    nip={branding?.user.nip}
                 />
                 :
                 <li ref={formRef}>
@@ -824,6 +825,7 @@ export const FormAmbilPohon: React.FC<{
     const [Proses, setProses] = useState<boolean>(false);
     const [Deleted, setDeleted] = useState<boolean>(false);
     const token = getToken();
+    const {branding} = useBrandingContext();
 
     useEffect(() => {
         const data = getOpdTahun();
@@ -963,6 +965,7 @@ export const FormAmbilPohon: React.FC<{
                     tema={DataAdd}
                     deleteTrigger={() => setDeleted((prev) => !prev)}
                     set_show_all={() => null}
+                    nip={branding?.user.nip}
                 />
                 :
                 <li ref={formRef}>
