@@ -121,6 +121,7 @@ const PohonTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
                 {jenis === "pemda" &&
                     <Pohon
                         user={User?.roles}
+                        nip={User?.nip}
                         tema={Pokin}
                         tahun={Tahun?.value}
                         deleteTrigger={() => setDeleted((prev) => !prev)}

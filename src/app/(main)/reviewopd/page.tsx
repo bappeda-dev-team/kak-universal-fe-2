@@ -9,6 +9,8 @@ import Maintenance from "@/components/global/Maintenance";
 import { useBrandingContext } from "@/context/BrandingContext";
 import { getUser } from "@/components/lib/Cookie";
 import { getToken } from "@/components/lib/Cookie";
+import { ButtonBlackBorder } from "@/components/global/Button";
+import { TbPrinter } from "react-icons/tb";
 
 
 const ReviewOpd = () => {
@@ -17,14 +19,14 @@ const ReviewOpd = () => {
     const [SelectedOpd, setSelectedOpd] = useState<any>(null);
     const { branding } = useBrandingContext();
     const [User, setUser] = useState<any>(null);
-    
+
 
     useEffect(() => {
-            const data = getUser();
-            if (data) {
-                setUser(data.user);
-            }
-        }, []);
+        const data = getUser();
+        if (data) {
+            setUser(data.user);
+        }
+    }, []);
 
     useEffect(() => {
         const data = getOpdTahun();
@@ -51,40 +53,40 @@ const ReviewOpd = () => {
 
     const handleCetakPDF = async () => {
         if (!kode_opd || !tahun) {
-        alert("OPD dan tahun belum tersedia");
-        return;
+            alert("OPD dan tahun belum tersedia");
+            return;
         }
 
         try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const token = getToken();
+            const API_URL = process.env.NEXT_PUBLIC_API_URL;
+            const token = getToken();
 
-        const response = await fetch(
-            `${API_URL}/review_pokin/opd/${kode_opd}/${tahun}/download-pdf`,
-            {
-            method: "GET",
-            headers: {
-                Authorization: `${token}`,
-            },
-            },
-        );
+            const response = await fetch(
+                `${API_URL}/review_pokin/opd/${kode_opd}/${tahun}/download-pdf`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                },
+            );
 
-        if (!response.ok) {
-            throw new Error(`Gagal mencetak PDF: ${response.status}`);
-        }
+            if (!response.ok) {
+                throw new Error(`Gagal mencetak PDF: ${response.status}`);
+            }
 
-        const blob = await response.blob();
+            const blob = await response.blob();
 
-        const url = window.URL.createObjectURL(blob);
+            const url = window.URL.createObjectURL(blob);
 
-        window.open(url, "_blank");
+            window.open(url, "_blank");
 
-        setTimeout(() => {
-            window.URL.revokeObjectURL(url);
-        }, 1000);
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+            }, 1000);
         } catch (error) {
-        console.error("Gagal mencetak PDF:", error);
-        alert("Gagal mencetak PDF");
+            console.error("Gagal mencetak PDF:", error);
+            alert("Gagal mencetak PDF");
         }
     };
 
@@ -104,17 +106,17 @@ const ReviewOpd = () => {
                 <div className="mt-3 rounded-xl shadow-lg border">
                     <div className="flex items-center justify-between border-b px-5 py-5">
                         <div className="flex flex-wrap items-end gap-1">
-                            <h1 className="uppercase font-bold">Review Pohon Kinerja OPD || </h1>
-                            <h1 className="uppercase font-bold">{nama_opd || "-"} ||</h1>
+                            <h1 className="uppercase font-bold">Review Pohon Kinerja OPD</h1>
+                            <h1 className="uppercase font-bold text-emerald-600">{nama_opd || "-"}</h1>
                             <h1 className="uppercase font-bold">{tahun || "-"}</h1>
                         </div>
-                        <button
-                            type="button"
+                        <ButtonBlackBorder
                             onClick={handleCetakPDF}
-                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium"
+                            className="flex items-center gap-1"
                         >
+                            <TbPrinter />
                             Cetak PDF
-                        </button>
+                        </ButtonBlackBorder>
                     </div>
                     <div className="mx-3 mb-3">
                         {/* <Maintenance /> */}
