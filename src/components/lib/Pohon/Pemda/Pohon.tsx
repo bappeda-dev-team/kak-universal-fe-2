@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { TbUser, TbCircleCheckFilled, TbEye, TbArrowGuide, TbCheck, TbX, TbCircleLetterXFilled, TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbBookmarkPlus, TbZoom, TbCopy, TbPrinter } from 'react-icons/tb';
+import { TbUser, TbCircleCheckFilled, TbEye, TbArrowGuide, TbCheck, TbX, TbCircleLetterXFilled, TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbBookmarkPlus, TbZoom, TbCopy, TbPrinter, TbAlertCircle } from 'react-icons/tb';
 import { ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder, ButtonBlackBorder, ButtonBlack, ButtonSky } from '@/components/global/Button';
 import { AlertNotification, AlertQuestion } from '@/components/global/Alert';
 import { FormPohonPemda, FormAmbilPohon, FormEditPohon } from './FormPohonPemda';
@@ -27,6 +27,7 @@ interface Review {
     id_pohon_kinerja: number;
     review: string;
     catatan: string;
+    substansi: string;
     keterangan: string;
     nama_pegawai: string;
     created_by: string;
@@ -352,7 +353,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, nip, 
                                                 <LoadingClip />
                                             </div>
                                             :
-                                            Review.length == 0 ?
+                                            !Review ?
                                                 <div className="mt-2 rounded-xl border border-dashed border-slate-300 bg-white px-4 py-6 text-center">
                                                     <p className="text-sm text-slate-500">Belum ada review pada pohon ini</p>
                                                 </div>
@@ -362,9 +363,10 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, nip, 
 
                                                         const pemilikCatatan = (nip === item.created_by) || (user == "super_admin");
 
-                                                        const badgeReview = item.review === "Kesesuaian" ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
-                                                            : item.review === "Kelengkapan" ? "border border-sky-200 bg-sky-50 text-sky-700"
-                                                                : "border border-amber-200 bg-amber-50 text-amber-700";
+                                                        const badgeReview = (item.review === "Sesuai" || item.catatan === "Lengkap") ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
+                                                            : "border border-red-200 bg-red-50 text-red-700";
+                                                        const Lengkap = item.review === "Lengkap";
+                                                        const Sesuai = item.catatan === "Sesuai";
 
                                                         return (
                                                             <div
@@ -374,8 +376,13 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, nip, 
                                                                 {/* HEADER */}
                                                                 <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-4 py-3">
                                                                     <div className="flex flex-wrap items-center gap-2">
-                                                                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview}`}>
-                                                                            {item.review || "Review"}
+                                                                        <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview}`}>
+                                                                            {Lengkap ? <TbCheck /> : <TbAlertCircle />}
+                                                                            {item.review || "Kelengkapan Kosong"}
+                                                                        </span>
+                                                                        <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview}`}>
+                                                                            {Sesuai ? <TbCheck /> : <TbAlertCircle />}
+                                                                            {item.catatan || "Kesesuaian Kosong"}
                                                                         </span>
                                                                         {pemilikCatatan && (
                                                                             <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
@@ -401,10 +408,13 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, nip, 
                                                                     )}
                                                                 </div>
                                                                 {/* BODY */}
-                                                                <div className="px-4 py-3">
-                                                                    <p className="text-sm leading-relaxed text-slate-700 whitespace-pre-line font-semibold">
-                                                                        {item.catatan || "-"}
-                                                                    </p>
+                                                                <div className="px-4 py-2">
+                                                                    {item.substansi && (
+                                                                        <div className="mt-3 rounded-lg border-l-2 border-slate-300 bg-slate-50 px-3 py-2">
+                                                                            <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-400">Substansi</p>
+                                                                            <p className="mt-0.5 text-sm text-slate-600 whitespace-pre-line">{item.substansi}</p>
+                                                                        </div>
+                                                                    )}
                                                                     {item.keterangan && (
                                                                         <div className="mt-3 rounded-lg border-l-2 border-slate-300 bg-slate-50 px-3 py-2">
                                                                             <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Keterangan</p>
@@ -646,7 +656,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, nip, 
                                         deleteTrigger={deleteTrigger}
                                         show_all={show_all}
                                         set_show_all={set_show_all}
-                                        />
+                                    />
                                 </React.Fragment>
                             ))}
                             {strategicPohons.map((dahan: any, index: any) => (

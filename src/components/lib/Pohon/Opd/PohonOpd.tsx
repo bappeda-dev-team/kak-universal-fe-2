@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
     TbPrinter, TbLayersLinked, TbBookmarkPlus, TbCheck, TbCircleLetterXFilled,
     TbCirclePlus, TbHourglass, TbPencil, TbTrash, TbEye, TbEyeClosed, TbArrowAutofitWidth,
-    TbDeviceTabletSearch, TbZoom, TbCircleCheckFilled, TbArrowGuide, TbAB2, TbUser
+    TbAlertCircle, TbZoom, TbCircleCheckFilled, TbArrowGuide, TbAB2, TbUser
 } from 'react-icons/tb';
 import { ButtonSky, ButtonSkyBorder, ButtonRedBorder, ButtonGreenBorder, ButtonBlackBorder } from '@/components/global/Button';
 import { AlertNotification, AlertQuestion } from '@/components/global/Alert';
@@ -57,6 +57,7 @@ interface Review {
     id: number;
     id_pohon_kinerja: number;
     review: string;
+    substansi: string;
     catatan: string;
     keterangan: string;
     nama_pegawai: string;
@@ -1361,7 +1362,7 @@ export const TablePohon = (props: any) => {
                         <LoadingClip />
                     </div>
                     :
-                    Review.length == 0 ?
+                    !Review ?
                         <div className="mt-2 rounded-xl border border-dashed border-slate-300 bg-white px-4 py-6 text-center">
                             <p className="text-sm text-slate-500">Belum ada review pada pohon ini</p>
                         </div>
@@ -1371,9 +1372,15 @@ export const TablePohon = (props: any) => {
 
                                 const pemilikCatatan = (nip_review === item.created_by) || (User == "super_admin");
 
-                                const badgeReview = item.review === "Kesesuaian" ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
-                                    : item.review === "Kelengkapan" ? "border border-sky-200 bg-sky-50 text-sky-700"
-                                        : "border border-amber-200 bg-amber-50 text-amber-700";
+                                const badgeReview = (name: string) => {
+                                    if (name === "Sesuai" || name === "Lengkap") {
+                                        return "border border-emerald-200 bg-emerald-50 text-emerald-700"
+                                    } else {
+                                        return "border border-red-200 bg-red-50 text-red-700";
+                                    }
+                                }
+                                const Lengkap = item.review === "Lengkap";
+                                const Sesuai = item.catatan === "Sesuai";
 
                                 return (
                                     <div
@@ -1383,11 +1390,16 @@ export const TablePohon = (props: any) => {
                                         {/* HEADER */}
                                         <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-4 py-3">
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview}`}>
-                                                    {item.review || "Review"}
+                                                <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview(item.review)}`}>
+                                                    {Lengkap ? <TbCheck /> : <TbAlertCircle />}
+                                                    {item.review || "Kelengkapan Kosong"}
+                                                </span>
+                                                <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview(item.catatan)}`}>
+                                                    {Sesuai ? <TbCheck /> : <TbAlertCircle />}
+                                                    {item.catatan || "Kesesuaian Kosong"}
                                                 </span>
                                                 {pemilikCatatan && (
-                                                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                                    <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
                                                         Catatan Anda
                                                     </span>
                                                 )}
@@ -1410,10 +1422,13 @@ export const TablePohon = (props: any) => {
                                             )}
                                         </div>
                                         {/* BODY */}
-                                        <div className="px-4 py-3">
-                                            <p className="text-sm leading-relaxed text-slate-700 whitespace-pre-line font-semibold">
-                                                {item.catatan || "-"}
-                                            </p>
+                                        <div className="px-4 py-2">
+                                            {item.substansi && (
+                                                <div className="mt-3 rounded-lg border-l-2 border-slate-300 bg-slate-50 px-3 py-2">
+                                                    <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-400">Substansi</p>
+                                                    <p className="mt-0.5 text-sm text-slate-600 whitespace-pre-line">{item.substansi}</p>
+                                                </div>
+                                            )}
                                             {item.keterangan && (
                                                 <div className="mt-3 rounded-lg border-l-2 border-slate-300 bg-slate-50 px-3 py-2">
                                                     <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Keterangan</p>

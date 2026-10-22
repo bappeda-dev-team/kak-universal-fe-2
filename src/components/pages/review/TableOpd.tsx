@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
-import { getOpdTahun } from "@/components/lib/Cookie";
 import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
-import { getToken, getUser } from "@/components/lib/Cookie";
+import { getToken } from "@/components/lib/Cookie";
 import { useBrandingContext } from "@/context/BrandingContext";
+import { TbCheck, TbAlertCircle } from "react-icons/tb";
 
 type Target = {
     id_target: string;
@@ -29,6 +29,8 @@ type Review = {
     jenis_pohon: string;
     indikator: Indikator[];
     review: string;
+    catatan: string;
+    substansi: string;
     keterangan: string;
     created_by: string;
     created_at: string;
@@ -52,7 +54,6 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
     const { branding } = useBrandingContext();
 
     useEffect(() => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchTujuanPemda = async () => {
             try {
                 setLoading(true)
@@ -123,7 +124,7 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                             <th className="border-r border-b px-6 py-3 min-w-[250px]">Substansi</th>
                         </tr>
                         <tr className="bg-emerald-900 text-white">
-                            {[...Array(1)].map((_, index) => (
+                            {[...Array(11)].map((_, index) => (
                                 <td key={index} className="border-x border-b font-semibold py-1 text-center">{index + 1}</td>
                             ))}
                         </tr>
@@ -145,6 +146,15 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                                         nama_indikator: "-",
                                         targets: [],
                                     }];
+                                const badgeReview = (name: string) => {
+                                    if (name === "Sesuai" || name === "Lengkap") {
+                                        return "border border-emerald-200 bg-emerald-50 text-emerald-700"
+                                    } else {
+                                        return "border border-red-200 bg-red-50 text-red-700";
+                                    }
+                                }
+                                const Lengkap = data.review === "Lengkap";
+                                const Sesuai = data.catatan === "Sesuai";
 
                                 return indikatorList.map((indikator, indikatorIndex) => (
                                     <tr key={`${data.id_pohon}-${index}-${indikator.id_indikator}`}>
@@ -200,10 +210,27 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                                             <>
                                                 <td
                                                     rowSpan={indikatorList.length}
-                                                    colSpan={3}
                                                     className="border border-emerald-500 px-6 py-4 align-middle"
                                                 >
-                                                    {data.review || "-"}
+                                                    <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview(data.review)}`}>
+                                                        {Lengkap ? <TbCheck /> : <TbAlertCircle />}
+                                                        {data.review || "Kelengkapan Kosong"}
+                                                    </span>
+                                                </td>
+                                                <td
+                                                    rowSpan={indikatorList.length}
+                                                    className="border border-emerald-500 px-6 py-4 align-middle"
+                                                >
+                                                    <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview(data.catatan)}`}>
+                                                        {Sesuai ? <TbCheck /> : <TbAlertCircle />}
+                                                        {data.catatan || "Kesesuaian Kosong"}
+                                                    </span>
+                                                </td>
+                                                <td
+                                                    rowSpan={indikatorList.length}
+                                                    className="border border-emerald-500 px-6 py-4 align-middle"
+                                                >
+                                                    {data.substansi || "-"}
                                                 </td>
 
                                                 <td
