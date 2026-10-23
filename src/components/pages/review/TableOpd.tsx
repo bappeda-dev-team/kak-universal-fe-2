@@ -21,13 +21,7 @@ type Indikator = {
     targets: Target[];
 };
 
-type Review = {
-    id_pohon: number;
-    parent: number;
-    nama_pohon: string;
-    level_pohon: number;
-    jenis_pohon: string;
-    indikator: Indikator[];
+type ReviewItem = {
     review: string;
     catatan: string;
     substansi: string;
@@ -35,6 +29,16 @@ type Review = {
     created_by: string;
     created_at: string;
     updated_at: string;
+};
+
+type Review = {
+    id_pohon: number;
+    parent: number;
+    nama_pohon: string;
+    level_pohon: number;
+    jenis_pohon: string;
+    indikator: Indikator[];
+    review: ReviewItem[];
 };
 
 
@@ -114,7 +118,7 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[120px] text-center">Target</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[120px] text-center">Satuan</th>
                             <th colSpan={3} className="border-r border-b px-6 py-3 min-w-[400px]">Review</th>
-                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan Lainnya</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">User Pembuat</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Waktu Review</th>
                         </tr>
@@ -130,168 +134,221 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {DataNull ?
+                        {DataNull ? (
                             <tr>
                                 <td className="px-6 py-3" colSpan={30}>
                                     Data Kosong / Belum Ditambahkan
                                 </td>
                             </tr>
-                            :
+                        ) : (
                             ReviewOpd.map((data: Review, index: number) => {
                                 const indikatorList = data.indikator?.length
                                     ? data.indikator
-                                    : [{
-                                        id_indikator: `kosong-${data.id_pohon}`,
-                                        id_pokin: String(data.id_pohon),
-                                        nama_indikator: "-",
-                                        targets: [],
-                                    }];
+                                    : [
+                                        {
+                                            id_indikator: `kosong-${data.id_pohon}`,
+                                            id_pokin: String(data.id_pohon),
+                                            nama_indikator: "-",
+                                            targets: [],
+                                        },
+                                    ];
+
+                                // Sesuaikan dengan struktur DTO review kamu.
+                                const reviewList: ReviewItem[] = data.review ?? [];
+
+                                const jumlahBaris = Math.max(
+                                    indikatorList.length,
+                                    reviewList.length,
+                                    1
+                                );
+
                                 const badgeReview = (name: string) => {
                                     if (name === "Sesuai" || name === "Lengkap") {
-                                        return "border border-emerald-200 bg-emerald-50 text-emerald-700"
-                                    } else {
-                                        return "border border-red-200 bg-red-50 text-red-700";
+                                        return "border border-emerald-200 bg-emerald-50 text-emerald-700";
                                     }
-                                }
-                                const Lengkap = data.review === "Lengkap";
-                                const Sesuai = data.catatan === "Sesuai";
 
-                                return indikatorList.map((indikator, indikatorIndex) => (
-                                    <tr key={`${data.id_pohon}-${index}-${indikator.id_indikator}`}>
-                                        {/* Kolom utama hanya ditampilkan pada baris indikator pertama */}
-                                        {indikatorIndex === 0 && (
-                                            <>
-                                                <td
-                                                    rowSpan={indikatorList.length}
-                                                    className="border border-emerald-500 px-6 py-4 text-center align-middle"
-                                                >
-                                                    {index + 1}
-                                                </td>
+                                    return "border border-red-200 bg-red-50 text-red-700";
+                                };
 
-                                                <td
-                                                    rowSpan={indikatorList.length}
-                                                    className="border border-emerald-500 px-6 py-4 align-middle"
-                                                >
-                                                    <p>{data.nama_pohon || "-"}</p>
-                                                    <p className="uppercase text-emerald-500 text-xs">
-                                                        {data.jenis_pohon}
-                                                    </p>
-                                                </td>
-                                            </>
-                                        )}
+                                const formatTanggal = (tanggal: string) =>
+                                    tanggal
+                                        ? new Date(tanggal).toLocaleString("id-ID", {
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })
+                                        : "-";
 
-                                        {/* Indikator */}
-                                        <td className="border border-emerald-500 px-6 py-4 align-middle">{indikator.nama_indikator || "-"}</td>
+                                return Array.from({ length: jumlahBaris }, (_, rowIndex) => {
+                                    const indikator = indikatorList[rowIndex];
+                                    const review = reviewList[rowIndex];
 
-                                        {/* Target */}
-                                        <td className="border border-emerald-500 px-6 py-4 text-center align-middle">
-                                            {indikator.targets?.length
-                                                ? indikator.targets.map((target) => (
-                                                    <p key={target.id_target}>
-                                                        {target.target || "-"}
-                                                    </p>
-                                                ))
-                                                : "-"}
-                                        </td>
+                                    // Hanya baris terakhir grup yang lebih pendek
+                                    // memanjang hingga akhir seluruh baris.
+                                    const indikatorRowSpan =
+                                        indikator && rowIndex === indikatorList.length - 1
+                                            ? jumlahBaris - rowIndex
+                                            : 1;
 
-                                        {/* Satuan */}
-                                        <td className="border border-emerald-500 px-6 py-4 text-center align-middle">
-                                            {indikator.targets?.length
-                                                ? indikator.targets.map((target) => (
-                                                    <p key={target.id_target}>
-                                                        {target.satuan || "-"}
-                                                    </p>
-                                                ))
-                                                : "-"}
-                                        </td>
+                                    const reviewRowSpan =
+                                        review && rowIndex === reviewList.length - 1
+                                            ? jumlahBaris - rowIndex
+                                            : 1;
 
-                                        {/* Kolom review hanya ditampilkan sekali per data review */}
-                                        {indikatorIndex === 0 && (
-                                            <>
-                                                <td
-                                                    rowSpan={indikatorList.length}
-                                                    className="border border-emerald-500 px-6 py-4 align-middle"
-                                                >
-                                                    <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview(data.review)}`}>
-                                                        {Lengkap ? <TbCheck /> : <TbAlertCircle />}
-                                                        {data.review || "Kelengkapan Kosong"}
-                                                    </span>
-                                                </td>
-                                                <td
-                                                    rowSpan={indikatorList.length}
-                                                    className="border border-emerald-500 px-6 py-4 align-middle"
-                                                >
-                                                    <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview(data.catatan)}`}>
-                                                        {Sesuai ? <TbCheck /> : <TbAlertCircle />}
-                                                        {data.catatan || "Kesesuaian Kosong"}
-                                                    </span>
-                                                </td>
-                                                <td
-                                                    rowSpan={indikatorList.length}
-                                                    className="border border-emerald-500 px-6 py-4 align-middle"
-                                                >
-                                                    {data.substansi || "-"}
-                                                </td>
+                                    const lengkap = review?.review === "Lengkap";
+                                    const sesuai = review?.catatan === "Sesuai";
 
-                                                <td
-                                                    rowSpan={indikatorList.length}
-                                                    className="border border-emerald-500 px-6 py-4 align-middle"
-                                                >
-                                                    {data.keterangan || "-"}
-                                                </td>
+                                    return (
+                                        <tr key={`${data.id_pohon}-${rowIndex}`}>
+                                            {/* Kolom utama */}
+                                            {rowIndex === 0 && (
+                                                <>
+                                                    <td
+                                                        rowSpan={jumlahBaris}
+                                                        className="border border-emerald-500 px-6 py-4 text-center align-middle"
+                                                    >
+                                                        {index + 1}
+                                                    </td>
 
-                                                <td
-                                                    rowSpan={indikatorList.length}
-                                                    className="border border-emerald-500 px-6 py-4 align-middle"
-                                                >
-                                                    {data.created_by || "-"}
-                                                </td>
+                                                    <td
+                                                        rowSpan={jumlahBaris}
+                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                    >
+                                                        <p>{data.nama_pohon || "-"}</p>
+                                                        <p className="uppercase text-emerald-500 text-xs">
+                                                            {data.jenis_pohon}
+                                                        </p>
+                                                    </td>
+                                                </>
+                                            )}
 
-                                                <td
-                                                    rowSpan={indikatorList.length}
-                                                    className="border border-emerald-500 px-6 py-4 align-middle"
-                                                >
-                                                    {data.created_at === data.updated_at ? (
-                                                        <>
-                                                            <p className="font-semibold">dibuat pada:</p>
-                                                            <p>
-                                                                {new Date(data.created_at).toLocaleString(
-                                                                    "id-ID",
-                                                                    {
-                                                                        year: "numeric",
-                                                                        month: "long",
-                                                                        day: "numeric",
-                                                                        hour: "2-digit",
-                                                                        minute: "2-digit",
-                                                                    }
-                                                                )}
-                                                            </p>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <p className="font-semibold">diedit pada:</p>
-                                                            <p>
-                                                                {new Date(data.updated_at).toLocaleString(
-                                                                    "id-ID",
-                                                                    {
-                                                                        year: "numeric",
-                                                                        month: "long",
-                                                                        day: "numeric",
-                                                                        hour: "2-digit",
-                                                                        minute: "2-digit",
-                                                                    }
-                                                                )}
-                                                            </p>
-                                                        </>
-                                                    )}
-                                                </td>
-                                            </>
-                                        )}
-                                    </tr>
-                                ));
+                                            {/* Kolom indikator: mengikuti jumlah indikator */}
+                                            {indikator && (
+                                                <>
+                                                    <td
+                                                        rowSpan={indikatorRowSpan}
+                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                    >
+                                                        {indikator.nama_indikator || "-"}
+                                                    </td>
+
+                                                    <td
+                                                        rowSpan={indikatorRowSpan}
+                                                        className="border border-emerald-500 px-6 py-4 text-center align-middle"
+                                                    >
+                                                        {indikator.targets?.length
+                                                            ? indikator.targets.map((target) => (
+                                                                <p key={target.id_target}>
+                                                                    {target.target || "-"}
+                                                                </p>
+                                                            ))
+                                                            : "-"}
+                                                    </td>
+
+                                                    <td
+                                                        rowSpan={indikatorRowSpan}
+                                                        className="border border-emerald-500 px-6 py-4 text-center align-middle"
+                                                    >
+                                                        {indikator.targets?.length
+                                                            ? indikator.targets.map((target) => (
+                                                                <p key={target.id_target}>
+                                                                    {target.satuan || "-"}
+                                                                </p>
+                                                            ))
+                                                            : "-"}
+                                                    </td>
+                                                </>
+                                            )}
+
+                                            {/* Kolom review: mengikuti jumlah review */}
+                                            {review && (
+                                                <>
+                                                    <td
+                                                        rowSpan={reviewRowSpan}
+                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                    >
+                                                        <span
+                                                            className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview(review.review || "")}`}
+                                                        >
+                                                            {lengkap ? (
+                                                                <TbCheck />
+                                                            ) : (
+                                                                <TbAlertCircle />
+                                                            )}
+                                                            {review.review || "Kelengkapan Kosong"}
+                                                        </span>
+                                                    </td>
+
+                                                    <td
+                                                        rowSpan={reviewRowSpan}
+                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                    >
+                                                        <span
+                                                            className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeReview(review.catatan || "")}`}
+                                                        >
+                                                            {sesuai ? (
+                                                                <TbCheck />
+                                                            ) : (
+                                                                <TbAlertCircle />
+                                                            )}
+                                                            {review.catatan || "Kesesuaian Kosong"}
+                                                        </span>
+                                                    </td>
+
+                                                    <td
+                                                        rowSpan={reviewRowSpan}
+                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                    >
+                                                        {review.substansi || "-"}
+                                                    </td>
+
+                                                    <td
+                                                        rowSpan={reviewRowSpan}
+                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                    >
+                                                        {review.keterangan || "-"}
+                                                    </td>
+
+                                                    <td
+                                                        rowSpan={reviewRowSpan}
+                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                    >
+                                                        {review.created_by || "-"}
+                                                    </td>
+
+                                                    <td
+                                                        rowSpan={reviewRowSpan}
+                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                    >
+                                                        {review.created_at === review.updated_at ? (
+                                                            <>
+                                                                <p className="font-semibold">
+                                                                    dibuat pada:
+                                                                </p>
+                                                                <p>
+                                                                    {formatTanggal(review.created_at)}
+                                                                </p>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <p className="font-semibold">
+                                                                    diedit pada:
+                                                                </p>
+                                                                <p>
+                                                                    {formatTanggal(review.updated_at)}
+                                                                </p>
+                                                            </>
+                                                        )}
+                                                    </td>
+                                                </>
+                                            )}
+                                        </tr>
+                                    );
+                                });
                             })
-
-                        }
+                        )}
                     </tbody>
                 </table>
             </div >
