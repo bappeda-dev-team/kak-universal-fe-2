@@ -118,7 +118,7 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[120px] text-center">Target</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[120px] text-center">Satuan</th>
                             <th colSpan={3} className="border-r border-b px-6 py-3 min-w-[400px]">Review</th>
-                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan Lainnya</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">User Pembuat</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Waktu Review</th>
                         </tr>
