@@ -92,7 +92,7 @@ export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, 
             });
             const result = await response.json();
             if (result.code === 200 || result.code === 201) {
-                AlertNotification("Berhasil", jenis === 'baru' ? "Berhasil menambahkan crosscutting" : "Berhasil mengupdate crosscutting", "success", 1000);
+                AlertNotification("Berhasil", jenis === 'baru' ? "Berhasil menambahkan review pohon" : "Berhasil mengupdate crosscutting", "success", 1000);
                 handleClose();
                 onSuccess();
             } else {
