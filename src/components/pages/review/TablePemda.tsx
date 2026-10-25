@@ -127,20 +127,20 @@ const TablePemda: React.FC<table> = ({ tahun }) => {
                                         <thead>
                                             <tr className="bg-emerald-500 text-white">
                                                 <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
-                                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pohon</th>
-                                                <th colSpan={3} className="border-r border-b px-6 py-3 min-w-[400px]">Review</th>
-                                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan</th>
-                                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">User Pembuat</th>
-                                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Waktu Review</th>
+                                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Nama Pohon</th>
+                                                <th colSpan={3} className="border-r border-b px-6 py-3 min-w-[750px] text-center">Review</th>
+                                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[350px] text-center">Keterangan Lainnya</th>
+                                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">User Pembuat</th>
+                                                <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Waktu Review</th>
                                             </tr>
                                             <tr className="bg-emerald-700 text-white">
-                                                <th className="border-r border-b px-6 py-3 min-w-[250px]">Kelengkapan</th>
-                                                <th className="border-r border-b px-6 py-3 min-w-[250px]">Kesesuaian Level</th>
-                                                <th className="border-r border-b px-6 py-3 min-w-[250px]">Substansi</th>
+                                                <th className="border-r border-b px-6 py-3 min-w-[250px] text-center">Kelengkapan</th>
+                                                <th className="border-r border-b px-6 py-3 min-w-[250px] text-center">Kesesuaian Level</th>
+                                                <th className="border-r border-b px-6 py-3 min-w-[350px] text-center">Substansi</th>
                                             </tr>
                                             <tr className="bg-emerald-900 text-white">
                                                 {[...Array(8)].map((_, index) => (
-                                                    <td key={index} className="border-x border-b font-semibold py-1 text-center">{index + 1}</td>
+                                                    <td key={index} className="border-x border-b font-semibold py-1 text-center italic">{index + 1}</td>
                                                 ))}
                                             </tr>
                                         </thead>
@@ -187,11 +187,11 @@ const TablePemda: React.FC<table> = ({ tahun }) => {
                                                                     {data.catatan || "Kesesuaian Kosong"}
                                                                 </span>
                                                             </td>
-                                                            <td className="border border-emerald-500 px-6 py-4 align-middle">
+                                                            <td className="border border-emerald-500 px-6 py-4 align-middle break-all">
                                                                 {data.substansi || "-"}
                                                             </td>
 
-                                                            <td className="border border-emerald-500 px-6 py-4 align-middle">
+                                                            <td className="border border-emerald-500 px-6 py-4 align-middle break-all">
                                                                 {data.keterangan || "-"}
                                                             </td>
 

@@ -113,23 +113,23 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
                     <thead>
                         <tr className="bg-emerald-500 text-white">
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[50px] text-center">No</th>
-                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Nama Pohon</th>
-                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Nama Pohon</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[300px] text-center">Indikator</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[120px] text-center">Target</th>
                             <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[120px] text-center">Satuan</th>
-                            <th colSpan={3} className="border-r border-b px-6 py-3 min-w-[400px]">Review</th>
-                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Keterangan Lainnya</th>
-                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">User Pembuat</th>
-                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px]">Waktu Review</th>
+                            <th colSpan={3} className="border-r border-b px-6 py-3 min-w-[750px] text-center">Review</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[350px] text-center">Keterangan Lainnya</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">User Pembuat</th>
+                            <th rowSpan={2} className="border-r border-b px-6 py-3 min-w-[200px] text-center">Waktu Review</th>
                         </tr>
                         <tr className="bg-emerald-700 text-white">
-                            <th className="border-r border-b px-6 py-3 min-w-[250px]">Kelengkapan</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[250px]">Kesesuaian Level</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[250px]">Substansi</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[250px] text-center">Kelengkapan</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[250px] text-center">Kesesuaian Level</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[350px] text-center">Substansi</th>
                         </tr>
                         <tr className="bg-emerald-900 text-white">
                             {[...Array(11)].map((_, index) => (
-                                <td key={index} className="border-x border-b font-semibold py-1 text-center">{index + 1}</td>
+                                <td key={index} className="border-x border-b font-semibold py-1 text-center italic">{index + 1}</td>
                             ))}
                         </tr>
                     </thead>
@@ -299,14 +299,14 @@ const Table: React.FC<table> = ({ tahun, kode_opd }) => {
 
                                                     <td
                                                         rowSpan={reviewRowSpan}
-                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                        className="border border-emerald-500 px-6 py-4 align-middle break-all"
                                                     >
                                                         {review.substansi || "-"}
                                                     </td>
 
                                                     <td
                                                         rowSpan={reviewRowSpan}
-                                                        className="border border-emerald-500 px-6 py-4 align-middle"
+                                                        className="border border-emerald-500 px-6 py-4 align-middle break-all"
                                                     >
                                                         {review.keterangan || "-"}
                                                     </td>
