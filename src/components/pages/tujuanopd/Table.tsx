@@ -428,7 +428,7 @@ const Table: React.FC<table> = ({
                             </th>
                         </tr>
                         <tr className="bg-emerald-500 text-white">
-                            {Periode.map((tahun, index) => (
+                            {tahun_list.map((tahun, index) => (
                                 <React.Fragment key={tahun}>
                                     <th className="border-l border-b px-6 py-1 min-w-[50px]">
                                         {9 + index * 2}
@@ -443,7 +443,7 @@ const Table: React.FC<table> = ({
                     <tbody>
                         {DataNull ? (
                             <tr>
-                                <td className="px-6 py-3" colSpan={Periode.length}>
+                                <td className="px-6 py-3" colSpan={10 + tahun_list.length * 2}>
                                     Data Kosong / Belum Ditambahkan
                                 </td>
                             </tr>
