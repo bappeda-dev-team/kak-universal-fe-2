@@ -5,8 +5,9 @@ import { Controller, SubmitHandler, useForm, useFieldArray } from "react-hook-fo
 import { ButtonSky, ButtonRed, ButtonSkyBorder, ButtonRedBorder } from '@/components/global/Button';
 import { getToken } from "@/components/lib/Cookie";
 import { LoadingButtonClip } from "@/components/global/Loading";
-import Select from 'react-select';
-import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
+/// import Select from 'react-select';
+import { AlertNotification } from "@/components/global/Alert";
+import { LoadingClip as LoadingAnim } from "@/components/global/Loading";
 
 interface OptionType {
     value: number;
@@ -57,17 +58,24 @@ export const ModalPeriode: React.FC<modal> = ({ isOpen, onClose, id, metode, onS
                 });
                 const result = await response.json();
                 const hasil = result.data;
-                if(hasil.tahun_awal){
+                if (hasil.tahun_awal) {
                     setTahunAwal(hasil.tahun_awal);
                 }
-                if(hasil.tahun_akhir){
+                if (hasil.tahun_akhir) {
                     setTahunAkhir(hasil.tahun_akhir);
                 }
-                if(hasil.jenis_periode){
+                if (hasil.jenis_periode) {
                     setJenisPeriode(hasil.jenis_periode);
                 }
             } catch (err) {
-                console.log(err);
+                AlertNotification(
+                    "Gagal",
+                    err instanceof Error
+                        ? err.message
+                        : "Cek koneksi internet atau terdapat kesalahan pada server",
+                    "error",
+                    2000
+                );
             }
         };
         if (isOpen && metode === 'lama') {
@@ -97,6 +105,9 @@ export const ModalPeriode: React.FC<modal> = ({ isOpen, onClose, id, metode, onS
         };
         // metode === 'baru' && console.log("baru :", formDataNew);
         // metode === 'lama' && console.log("lama :", formDataEdit);
+        // debug loading animation
+        // const delay = (ms: number) =>
+        //     new Promise((resolve) => setTimeout(resolve, ms));
         try {
             let url = "";
             if (metode === "lama") {
@@ -106,7 +117,10 @@ export const ModalPeriode: React.FC<modal> = ({ isOpen, onClose, id, metode, onS
             } else {
                 url = '';
             }
+            setLoading(true)
+            //await delay(5000); // debug loading animation
             setProses(true);
+
             const response = await fetch(`${API_URL}/${url}`, {
                 method: metode === 'lama' ? "PUT" : "POST",
                 headers: {
@@ -115,17 +129,35 @@ export const ModalPeriode: React.FC<modal> = ({ isOpen, onClose, id, metode, onS
                 },
                 body: JSON.stringify(getBody()),
             });
-            if (response.ok) {
-                AlertNotification("Berhasil", `Berhasil ${metode === 'baru' ? "Menambahkan" : "Mengubah"} Periode`, "success", 1000);
-                onClose();
-                onSuccess();
-            } else {
-                AlertNotification("Gagal", "terdapat kesalahan pada backend / database server dengan response !ok", "error", 2000);
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.data || "Terjadi kesalahan pada server"
+                );
             }
+
+            AlertNotification(
+                "Berhasil",
+                `Berhasil ${metode === "baru" ? "Menambahkan" : "Mengubah"} Periode`,
+                "success",
+                1000
+            );
+
+            onClose();
+            onSuccess();
         } catch (err) {
-            AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
+            AlertNotification(
+                "Gagal",
+                err instanceof Error
+                    ? err.message
+                    : "Cek koneksi internet atau terdapat kesalahan pada server",
+                "error",
+                2000
+            );
         } finally {
             setProses(false);
+            setLoading(false);
         }
     };
 
@@ -147,102 +179,104 @@ export const ModalPeriode: React.FC<modal> = ({ isOpen, onClose, id, metode, onS
                     <div className="w-max-[500px] py-2 border-b">
                         <h1 className="text-xl uppercase text-center">{metode === 'baru' ? "Tambah" : "Edit"} Periode</h1>
                     </div>
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        className="flex flex-col mx-5 py-5"
-                    >
-                        <div className="flex flex-col py-3">
-                            <label
-                                className="uppercase text-xs font-bold text-gray-700 my-2"
-                                htmlFor="tahun_awal"
-                            >
-                                Tahun Awal:
-                            </label>
-                            <Controller
-                                name="tahun_awal"
-                                control={control}
-                                render={({ field }) => (
-                                    <input
-                                        {...field}
-                                        className="border px-4 py-2 rounded-lg"
-                                        id="tahun_awal"
-                                        type="text"
-                                        placeholder="masukkan Tahun Awal"
-                                        value={TahunAwal}
-                                        onChange={(e) => {
-                                            field.onChange(e);
-                                            setTahunAwal(e.target.value);
-                                        }}
-                                    />
-                                )}
-                            />
-                        </div>
-                        <div className="flex flex-col py-3">
-                            <label
-                                className="uppercase text-xs font-bold text-gray-700 my-2"
-                                htmlFor="tahun_akhir"
-                            >
-                                Tahun Akhir:
-                            </label>
-                            <Controller
-                                name="tahun_akhir"
-                                control={control}
-                                render={({ field }) => (
-                                    <input
-                                        {...field}
-                                        className="border px-4 py-2 rounded-lg"
-                                        id="tahun_akhir"
-                                        type="text"
-                                        placeholder="masukkan Tahun Akhir"
-                                        value={TahunAkhir}
-                                        onChange={(e) => {
-                                            field.onChange(e);
-                                            setTahunAkhir(e.target.value);
-                                        }}
-                                    />
-                                )}
-                            />
-                        </div>
-                        <div className="flex flex-col py-3">
-                            <label
-                                className="uppercase text-xs font-bold text-gray-700 my-2"
-                                htmlFor="jenis_periode"
-                            >
-                                Jenis Periode:
-                            </label>
-                            <Controller
-                                name="jenis_periode"
-                                control={control}
-                                render={({ field }) => (
-                                    <input
-                                        {...field}
-                                        className="border px-4 py-2 rounded-lg"
-                                        id="jenis_periode"
-                                        type="text"
-                                        placeholder="masukkan Jenis Periode"
-                                        value={JenisPeriode || "RPJMD"}
-                                        onChange={(e) => {
-                                            field.onChange(e);
-                                            setJenisPeriode(e.target.value);
-                                        }}
-                                    />
-                                )}
-                            />
-                        </div>
-                        <ButtonSky className="w-full mt-3" type="submit">
-                            {Proses ?
-                                <span className="flex">
-                                    <LoadingButtonClip />
-                                    Menyimpan...
-                                </span>
-                                :
-                                "Simpan"
-                            }
-                        </ButtonSky>
-                        <ButtonRed className="w-full my-2" onClick={handleClose}>
-                            Batal
-                        </ButtonRed>
-                    </form>
+                    {Loading ? <LoadingAnim /> :
+                        <form
+                            onSubmit={handleSubmit(onSubmit)}
+                            className="flex flex-col mx-5 py-5"
+                        >
+                            <div className="flex flex-col py-3">
+                                <label
+                                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                                    htmlFor="tahun_awal"
+                                >
+                                    Tahun Awal:
+                                </label>
+                                <Controller
+                                    name="tahun_awal"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <input
+                                            {...field}
+                                            className="border px-4 py-2 rounded-lg"
+                                            id="tahun_awal"
+                                            type="text"
+                                            placeholder="masukkan Tahun Awal"
+                                            value={TahunAwal}
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                setTahunAwal(e.target.value);
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div className="flex flex-col py-3">
+                                <label
+                                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                                    htmlFor="tahun_akhir"
+                                >
+                                    Tahun Akhir:
+                                </label>
+                                <Controller
+                                    name="tahun_akhir"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <input
+                                            {...field}
+                                            className="border px-4 py-2 rounded-lg"
+                                            id="tahun_akhir"
+                                            type="text"
+                                            placeholder="masukkan Tahun Akhir"
+                                            value={TahunAkhir}
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                setTahunAkhir(e.target.value);
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div className="flex flex-col py-3">
+                                <label
+                                    className="uppercase text-xs font-bold text-gray-700 my-2"
+                                    htmlFor="jenis_periode"
+                                >
+                                    Jenis Periode:
+                                </label>
+                                <Controller
+                                    name="jenis_periode"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <input
+                                            {...field}
+                                            className="border px-4 py-2 rounded-lg"
+                                            id="jenis_periode"
+                                            type="text"
+                                            placeholder="masukkan Jenis Periode"
+                                            value={JenisPeriode || "RPJMD"}
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                setJenisPeriode(e.target.value);
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <ButtonSky className="w-full mt-3" type="submit">
+                                {Proses ?
+                                    <span className="flex">
+                                        <LoadingButtonClip />
+                                        Menyimpan...
+                                    </span>
+                                    :
+                                    "Simpan"
+                                }
+                            </ButtonSky>
+                            <ButtonRed className="w-full my-2" onClick={handleClose}>
+                                Batal
+                            </ButtonRed>
+                        </form>
+                    }
                 </div>
             </div>
         )

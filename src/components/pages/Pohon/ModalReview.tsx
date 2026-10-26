@@ -42,7 +42,7 @@ interface FormValue {
 
 export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, idPohon, onSuccess, pokin, Data }) => {
     const { branding } = useBrandingContext();
-    const { control, handleSubmit, reset } = useForm<FormValue>({
+    const { control, handleSubmit, reset, formState: { errors } } = useForm<FormValue>({
         defaultValues: {
             id: id ?? Data?.id ?? 0,
             id_pohon_kinerja: idPohon ?? Data?.id_pohon_kinerja ?? 0,
@@ -123,29 +123,35 @@ export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, 
                     <Controller
                         name="review"
                         control={control}
+                        rules={{ required: "Wajib Dipilih" }}
                         render={({ field }) => {
                             const ya = "Lengkap";
                             const tidak = "Tidak Lengkap";
                             return (
-                                <div className="flex items-center gap-1">
-                                    <button
-                                        type="button"
-                                        onClick={() => field.onChange(ya)}
-                                        className={`min-w-[200px] flex items-center justify-center gap-1 p-1 rounded-lg border-2 border-green-500 ${field.value === ya ? "bg-green-500 text-white" : "text-green-500 hover:bg-green-100"}`}
-                                    >
-                                        <TbCheck />
-                                        {ya}
-                                    </button>
+                                <>
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            type="button"
+                                            onClick={() => field.onChange(ya)}
+                                            className={`min-w-[200px] flex items-center justify-center gap-1 p-1 rounded-lg border-2 border-green-500 ${field.value === ya ? "bg-green-500 text-white" : "text-green-500 hover:bg-green-100"}`}
+                                        >
+                                            <TbCheck />
+                                            {ya}
+                                        </button>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => field.onChange(tidak)}
-                                        className={`min-w-[200px] flex items-center justify-center gap-1 p-1 rounded-lg border-2 border-red-500 ${field.value === tidak ? "bg-red-500 text-white" : "text-red-500 hover:bg-red-100"}`}
-                                    >
-                                        <TbX />
-                                        {tidak}
-                                    </button>
-                                </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => field.onChange(tidak)}
+                                            className={`min-w-[200px] flex items-center justify-center gap-1 p-1 rounded-lg border-2 border-red-500 ${field.value === tidak ? "bg-red-500 text-white" : "text-red-500 hover:bg-red-100"}`}
+                                        >
+                                            <TbX />
+                                            {tidak}
+                                        </button>
+                                    </div>
+                                    {errors.review &&
+                                        <p className="text-sm italic text-red-400">{errors.review.message}</p>
+                                    }
+                                </>
                             );
                         }}
                     />

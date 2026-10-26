@@ -19,7 +19,7 @@ interface Periode {
 const Table = () => {
 
     const [Periode, setPeriode] = useState<Periode[]>([]);
-    
+
     const [isOpenNewPeriode, setIsOpenNewPeriode] = useState<boolean>(false);
     const [isOpenEditPeriode, setIsOpenEditPeriode] = useState<boolean>(false);
     const [IdPeriode, setIdPeriode] = useState<number>(0);
@@ -148,8 +148,9 @@ const Table = () => {
                                     <td className="border-x border-b border-gray-500 px-6 py-4 text-center">{item.tahun_awal || "-"}</td>
                                     <td className="border-r border-b border-gray-500 px-6 py-4 text-center">{item.tahun_akhir || "-"}</td>
                                     <td className="border-r border-b border-gray-500 px-6 py-4 text-center">{item.jenis_periode || "-"}</td>
-                                    <td className="border-r border-b border-gray-500 px-6 py-4 flex flex-col gap-1 justify-center">
-                                        <ButtonGreen
+                                    <td className="border-x border-b border-gray-500 px-6 py-4">
+                                        <div className="flex flex-col gap-1 justify-center">
+                                            {/*<ButtonGreen
                                             onClick={() => handleModalEditPeriode(item.id)}
                                         >
                                             <TbPencil className="mr-1" />
@@ -167,6 +168,8 @@ const Table = () => {
                                             <TbTrash className="mr-1" />
                                             Hapus
                                         </ButtonRed>
+                                      */}
+                                        </div>
                                     </td>
                                 </tr>
                             ))
