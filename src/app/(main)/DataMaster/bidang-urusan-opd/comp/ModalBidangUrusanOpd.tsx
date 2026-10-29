@@ -132,7 +132,7 @@ export const ModalBidangUrusanOpd: React.FC<ModalProps> = ({ isOpen, onClose, ko
                                         isSearchable
                                         isClearable
                                         onMenuOpen={() => {
-                                            fetchOptionBidangUrusan(`${branding?.api_perencanaan}/bidang_urusan/findall`);
+                                            fetchOptionBidangUrusan(`${branding?.api_perencanaan}/bidang_urusans`);
                                         }}
                                         styles={{
                                             control: (baseStyles) => ({

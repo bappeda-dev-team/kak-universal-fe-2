@@ -25,7 +25,7 @@ const Table = () => {
         const fetchOpd = async() => {
             setLoading(true)
             try{
-                const response = await fetch(`${API_URL}/bidang_urusan/findall`, {
+                const response = await fetch(`${API_URL}/bidang_urusans`, {
                     headers: {
                       Authorization: `${token}`,
                       'Content-Type': 'application/json',
