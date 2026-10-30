@@ -2255,6 +2255,18 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </span>
               </li>
             </Link>
+            <Link href="/laporancrosscutting">
+              <li
+                className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/crosscutting" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
+              >
+                <TbBulb className="text-xl" />
+                <span
+                  className={`${!isOpen && "hidden"} origin-left duration-200`}
+                >
+                  Crosscutting
+                </span>
+              </li>
+            </Link>
           </div>
 
           {/* LOGOUT */}
