@@ -1,23 +1,17 @@
 "use client";
 
 import React from "react";
-import { InovasiLaporan } from "../type";
+import { Laporan } from "../type";
 
 interface Table {
-//   Data: InovasiLaporan[] | null;
-//   kode_opd: string;
-//   tahun: number;
-//   onSuccess: () => void;
+  Data: Laporan | null;
+  kode_opd: string;
+  tahun: number;
+  onSuccess: () => void;
 }
 
-function formatRupiah(angka: number) {
-  if (typeof angka !== "number") {
-    return String(angka); // Jika bukan angka, kembalikan sebagai string
-  }
-  return angka.toLocaleString("id-ID"); // 'id-ID' untuk format Indonesia
-}
 
-const Table: React.FC<Table> = ({ }) => {
+const Table: React.FC<Table> = ({ Data }) => {
   return (
     <>
       <div className="overflow-auto m-2 rounded-t-xl border">
@@ -91,9 +85,200 @@ const Table: React.FC<Table> = ({ }) => {
               <th className="border-r border-b px-2 py-1 text-center">16</th>
             </tr>
           </thead>
-
           <tbody>
-            
+              {!Data?.pohon_kinerja || Data.pohon_kinerja.length === 0 ? (
+                  <tr>
+                      <td colSpan={16} className="border px-4 py-3 text-center">
+                          Data Kosong / Belum Ditambahkan
+                      </td>
+                  </tr>
+              ) : (
+                  Data.pohon_kinerja.map((item: any, index: number) => {
+                      const pohon = item.pohon_kinerja;
+                      const crosscutting = item.crosscutting ?? [];
+                      const crosscuttingDikirim = item.crosscutting_dikirim ?? [];
+                      const indikator = item.indikator ?? [];
+                      const pelaksana = item.pelaksana ?? [];
+
+                      // Kolom 2 dan 10 menggunakan crosscutting yang dikirim.
+                      // Kolom 3 menggunakan OPD asal dari crosscutting masuk.
+                      const keteranganList = crosscuttingDikirim.length > 0
+                          ? crosscuttingDikirim
+                          : crosscutting;
+
+                      const opdAsalList = crosscutting.length > 0
+                          ? crosscutting
+                          : crosscuttingDikirim;
+
+                      const opdTujuanList = crosscuttingDikirim;
+
+                      const indikatorText = indikator.length > 0
+                          ? indikator
+                              .map((ind: any) => ind.nama_indikator || "-")
+                              .join("\n")
+                          : "-";
+
+                      const targetText = indikator.length > 0
+                          ? indikator
+                              .map((ind: any) => {
+                                  const targets = ind.targets ?? [];
+
+                                  if (targets.length === 0) return "-";
+
+                                  return targets
+                                      .map((target: any) =>
+                                          `${target.target || "-"} ${target.satuan || ""}`.trim()
+                                      )
+                                      .join(", ");
+                              })
+                              .join("\n")
+                          : "-";
+
+                      const indikatorDikirim = crosscuttingDikirim.flatMap(
+                          (c: any) => c.indikator_dikirim ?? []
+                      );
+
+                      const pelaksanaDikirim = crosscuttingDikirim.flatMap(
+                          (c: any) => c.pelaksana_dikirim ?? []
+                      );
+
+                      const indikatorAnggotaText = indikatorDikirim.length > 0
+                        ? indikatorDikirim
+                            .map((ind: any) => ind.nama_indikator || "-")
+                            .join("\n")
+                        : "-";
+
+                      const targetAnggotaText = indikatorDikirim.length > 0
+                          ? indikatorDikirim
+                              .map((ind: any) => {
+                                  const targets = ind.targets ?? [];
+
+                                  if (targets.length === 0) return "-";
+
+                                  return targets
+                                      .map((target: any) =>
+                                          `${target.target || "-"} ${target.satuan || ""}`.trim()
+                                      )
+                                      .join(", ");
+                              })
+                              .join("\n")
+                          : "-";
+                      const pelaksanaText = pelaksana.length > 0
+                          ? pelaksana
+                              .map((p: any) =>
+                                  `${p.nama_pegawai || "-"}${p.nip ? ` / ${p.nip}` : ""}`
+                              )
+                              .join("\n")
+                          : "-";
+
+                      const pelaksanaDikirimText = pelaksana.length > 0
+                          ? pelaksanaDikirim
+                              .map((p: any) =>
+                                  `${p.nama_pegawai || "-"}${p.nip ? ` / ${p.nip}` : ""}`
+                              )
+                              .join("\n")
+                          : "-";
+                          
+
+                      return (
+                          <tr key={pohon.Id}>
+                              {/* 1. No */}
+                              <td className="border px-3 py-2 text-center">
+                                  {index + 1}
+                              </td>
+
+                              {/* 2. Keterangan Crosscutting */}
+                              <td className="border px-3 py-2 whitespace-pre-line">
+                                  {keteranganList.length > 0
+                                      ? keteranganList
+                                          .map((c: any) => c.keterangan_crosscutting || "-")
+                                          .join("\n")
+                                      : "-"}
+                              </td>
+
+                              {/* 3. OPD Koordinator: nama_opd_asal */}
+                              <td className="border px-3 py-2 whitespace-pre-line">
+                                  {pohon.NamaOpd || "-"}
+                              </td>
+
+                              {/* 4. Pohon Kinerja */}
+                              <td className="border px-3 py-2">
+                                  {pohon.NamaPohon || "-"}
+                              </td>
+
+                              {/* 5. Indikator */}
+                              <td className="border px-3 py-2 whitespace-pre-line">
+                                  {indikatorText}
+                              </td>
+
+                              {/* 6. Target / Satuan */}
+                              <td className="border px-3 py-2 whitespace-pre-line">
+                                  {targetText}
+                              </td>
+
+                              {/* 7. Nama Pelaksana / NIP */}
+                              <td className="border px-3 py-2 whitespace-pre-line">
+                                  {pelaksanaText}
+                              </td>
+
+                              {/* 8. Sub Kegiatan */}
+                              <td className="border px-3 py-2">
+                                  {pohon.NamaSubkegiatan?.Valid
+                                      ? pohon.NamaSubkegiatan.String
+                                      : "-"}
+                              </td>
+
+                              {/* 9. Pagu Anggaran */}
+                              <td className="border px-3 py-2 text-right">
+                                  -
+                              </td>
+
+                              {/* 10. OPD Anggota: nama_opd_tujuan */}
+                              <td className="border px-3 py-2 whitespace-pre-line">
+                                  {opdTujuanList.length > 0
+                                      ? opdTujuanList
+                                          .map((c: any) => c.nama_opd_tujuan || "-")
+                                          .join("\n")
+                                      : "-"}
+                              </td>
+
+                              {/* 11. Pohon Kinerja OPD Anggota */}
+                              <td className="border px-3 py-2">
+                                  {opdTujuanList.length > 0
+                                      ? opdTujuanList
+                                          .map((c: any) => c.nama_pohon_tujuan || "-")
+                                          .join("\n")
+                                      : "-"}
+                              </td>
+
+                              {/* 12. Indikator OPD Anggota */}
+                              <td className="border px-3 py-2">
+                                  {indikatorAnggotaText}
+                              </td>
+
+                              {/* 13. Target / Satuan OPD Anggota */}
+                              <td className="border px-3 py-2">
+                                  {targetAnggotaText}
+                              </td>
+
+                              {/* 14. Nama Pelaksana / NIP OPD Anggota */}
+                              <td className="border px-3 py-2">
+                                  {pelaksanaDikirimText}
+                              </td>
+
+                              {/* 15. Sub Kegiatan OPD Anggota */}
+                              <td className="border px-3 py-2">
+                                  -
+                              </td>
+
+                              {/* 16. Pagu Anggaran OPD Anggota */}
+                              <td className="border px-3 py-2">
+                                  -
+                              </td>
+                          </tr>
+                      );
+                  })
+              )}
           </tbody>
         </table>
       </div>

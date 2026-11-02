@@ -6,9 +6,11 @@ import { useEffect, useState } from "react";
 import Table from "./comp/Table";
 import { LoadingClip } from "@/components/global/Loading";
 import { getUser, getToken } from "@/components/lib/Cookie";
-import { InovasiLaporan } from "./type";
+import { Laporan } from "./type";
 import { AlertNotification } from "@/components/global/Alert";
 import { useRouter } from "next/navigation";
+import { ButtonBlackBorder } from "@/components/global/Button";
+import { TbPrinter } from "react-icons/tb";
 
 const LaporanInovasiPage = () => {
   const { branding } = useBrandingContext();
@@ -17,7 +19,7 @@ const LaporanInovasiPage = () => {
   const router = useRouter();
   const token = getToken();
 
-  const [Data, setData] = useState<InovasiLaporan[] | null>(null);
+  const [Data, setData] = useState<Laporan | null>(null);
   const [Loading, setLoading] = useState<boolean>(false);
   const [Error, setError] = useState<boolean>(false);
   const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
@@ -44,7 +46,7 @@ const LaporanInovasiPage = () => {
         setError(false);
 
         const response = await fetch(
-          `${branding.api_perencanaan}/laporan-inovasi/findall/${kode_opd}/${tahun}`,
+          `${branding.api_perencanaan}/laporan/crosscutting/findall/${kode_opd}/${tahun}`,
           {
             headers: {
               Authorization: `${token}`,
@@ -107,14 +109,20 @@ const LaporanInovasiPage = () => {
             <h1 className="uppercase font-bold ml-1">{tahun}</h1>
           </div>
           <h2 className="text-sm max-w-[500px]">{nama_opd || ""}</h2>
-          {/* <ButtonGreen onClick={ExportExcel}>Export Excel</ButtonGreen> */}
+          <ButtonBlackBorder
+                                    //   onClick={handleCetakPDF}
+            className="flex items-center gap-1"
+            >
+            <TbPrinter />
+            Cetak PDF
+          </ButtonBlackBorder>
         </div>
         <div className="mx-3 mb-3">
           <Table
-            // Data={Data}
-            // kode_opd={kode_opd}
-            // tahun={tahun}
-            // onSuccess={() => setFetchTrigger((prev) => !prev)}
+            Data={Data}
+            kode_opd={kode_opd}
+            tahun={tahun}
+            onSuccess={() => setFetchTrigger((prev) => !prev)}
           />
         </div>
       </div>
