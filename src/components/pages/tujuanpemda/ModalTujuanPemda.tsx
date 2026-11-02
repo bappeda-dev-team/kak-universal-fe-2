@@ -77,7 +77,11 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
     });
 
     const handleTambahIndikator = () => {
-        const defaultTarget = Array(5).fill({ target: '', satuan: '' }); // Buat array 5 target kosong
+        const defaultTarget = tahun_list.map((tahun) => ({
+            target: '',
+            satuan: '',
+            tahun,
+        }));
         append({ indikator: '', definisi_operasional: "", rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
     };
 

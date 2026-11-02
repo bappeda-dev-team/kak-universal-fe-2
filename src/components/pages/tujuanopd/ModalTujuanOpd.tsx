@@ -85,7 +85,15 @@ export const ModalTujuanOpd: React.FC<modal> = ({ isOpen, onClose, id, kode_opd,
     });
 
     const handleTambahIndikator = () => {
-        const defaultTarget = Array(special === true ? Periode?.tahun_list.length : (tahun_list && tahun_list.length)).fill({ target: '', satuan: '' }); // Buat array (jumlahnya sesuai dengan tahun_list length) dengan target kosong
+        const tahunList = special === true
+            ? Periode?.tahun_list ?? []
+            : tahun_list ?? [];
+
+        const defaultTarget = tahunList.map((tahun) => ({
+            target: '',
+            satuan: '',
+            tahun,
+        }));
         append({ indikator: '', definisi_operasional: "", rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
     };
 

@@ -77,7 +77,11 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
     });
 
     const handleTambahIndikator = () => {
-        const defaultTarget = Array(6).fill({ target: '', satuan: '' }); // Buat array 5 target kosong
+        const defaultTarget = tahun_list.map((tahun) => ({
+            target: '',
+            satuan: '',
+            tahun,
+        }));
         append({ indikator: '', definisi_operasional: "", rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
     };
 
@@ -252,6 +256,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                     },
                     body: JSON.stringify(getBody()),
                 });
+                console.log(getBody())
                 const result = await response.json();
                 if (result.code === 200 || result.code === 201) {
                     AlertNotification("Berhasil", `Berhasil ${metode === 'baru' ? "Menambahkan" : "Mengubah"} Sasaran Pemda`, "success", 1000);

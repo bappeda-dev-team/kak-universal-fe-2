@@ -90,7 +90,11 @@ export const ModalSasaranOpd: React.FC<modal> = ({ isOpen, onClose, id, id_pohon
     });
 
     const handleTambahIndikator = () => {
-        const defaultTarget = Array((tahun_list && tahun_list.length)).fill({ target: '', satuan: '' }); // Buat array 5 target kosong
+        const defaultTarget = (tahun_list ?? []).map((tahun) => ({
+            target: '',
+            satuan: '',
+            tahun,
+        }));
         append({ indikator: '', definisi_operasional: "", rumus_perhitungan: '', sumber_data: '', target: defaultTarget });
     };
 
