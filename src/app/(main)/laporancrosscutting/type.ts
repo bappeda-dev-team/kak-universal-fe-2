@@ -11,6 +11,7 @@ interface pohonkinerja {
   NamaOpd: string;
   indikator: indikator[];
   pelaksana: pelaksana[];
+  rencana_kinerja: rekin[];
   crosscutting_dikirim: crosscuttingDikirim[];
 }
 
@@ -34,6 +35,12 @@ interface pelaksana {
   nama_pegawai: string;
 }
 
+interface rekin {
+  nama_pegawai: string;
+  nama_sub_kegiatan: string;
+  pagu: number;
+}
+
 interface crosscuttingDikirim {
   id_crosscutting: string;
   keterangan_crosscutting: string;
@@ -43,4 +50,5 @@ interface crosscuttingDikirim {
  status: string;
  indikator_dikirim: indikator[];
  pelaksana_dikirim: pelaksana[];
+ rencana_kinerja_dikirim: rekin[];
 }

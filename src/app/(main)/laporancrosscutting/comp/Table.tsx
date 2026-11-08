@@ -99,6 +99,7 @@ const Table: React.FC<Table> = ({ Data }) => {
                       const crosscuttingDikirim = item.crosscutting_dikirim ?? [];
                       const indikator = item.indikator ?? [];
                       const pelaksana = item.pelaksana ?? [];
+                      const rekin = item.rencana_kinerja ?? [];
 
                       // Kolom 2 dan 10 menggunakan crosscutting yang dikirim.
                       // Kolom 3 menggunakan OPD asal dari crosscutting masuk.
@@ -142,6 +143,10 @@ const Table: React.FC<Table> = ({ Data }) => {
                           (c: any) => c.pelaksana_dikirim ?? []
                       );
 
+                      const rekinDikirim = crosscuttingDikirim.flatMap(
+                          (c: any) => c.rencana_kinerja_dikirim ?? []
+                      );
+
                       const indikatorAnggotaText = indikatorDikirim.length > 0
                         ? indikatorDikirim
                             .map((ind: any) => ind.nama_indikator || "-")
@@ -175,6 +180,52 @@ const Table: React.FC<Table> = ({ Data }) => {
                           ? pelaksanaDikirim
                               .map((p: any) =>
                                   `${p.nama_pegawai || "-"}${p.nip ? ` / ${p.nip}` : ""}`
+                              )
+                              .join("\n")
+                          : "-";
+                          
+                      const PegawaiText = rekin.length > 0
+                          ? rekin
+                              .map((p: any) =>
+                                  `${p.nama_pegawai || "-"}`
+                              )
+                              .join("\n")
+                          : "-";
+
+                      const SubKegiatanText = rekin.length > 0
+                          ? rekin
+                              .map((p: any) =>
+                                  `${p.nama_sub_kegiatan || "-"}`
+                              )
+                              .join("\n")
+                          : "-";
+
+                      const AnggaranText = rekin.length > 0
+                          ? rekin
+                              .map((p: any) =>
+                                  `${p.pagu || "-"}`
+                              )
+                              .join("\n")
+                          : "-";
+
+                      const PegawaiDikirimText = rekinDikirim.length > 0
+                          ? rekinDikirim
+                              .map((p: any) =>
+                                  `${p.nama_pegawai || "-"}`
+                              )
+                              .join("\n")
+                          : "-";
+                      const SubKegiatanDikirimText = rekinDikirim.length > 0
+                          ? rekinDikirim
+                              .map((p: any) =>
+                                  `${p.nama_sub_kegiatan || "-"}`
+                              )
+                              .join("\n")
+                          : "-";
+                      const AnggaranDikirimText = rekinDikirim.length > 0
+                          ? rekinDikirim
+                              .map((p: any) =>
+                                  `${p.pagu || "-"}`
                               )
                               .join("\n")
                           : "-";
@@ -218,19 +269,17 @@ const Table: React.FC<Table> = ({ Data }) => {
 
                               {/* 7. Nama Pelaksana / NIP */}
                               <td className="border px-3 py-2 whitespace-pre-line">
-                                  {pelaksanaText}
+                                  {PegawaiText}
                               </td>
 
                               {/* 8. Sub Kegiatan */}
                               <td className="border px-3 py-2">
-                                  {pohon.NamaSubkegiatan?.Valid
-                                      ? pohon.NamaSubkegiatan.String
-                                      : "-"}
+                                  {SubKegiatanText}
                               </td>
 
                               {/* 9. Pagu Anggaran */}
                               <td className="border px-3 py-2 text-right">
-                                  -
+                                  {AnggaranText}
                               </td>
 
                               {/* 10. OPD Anggota: nama_opd_tujuan */}
@@ -263,17 +312,17 @@ const Table: React.FC<Table> = ({ Data }) => {
 
                               {/* 14. Nama Pelaksana / NIP OPD Anggota */}
                               <td className="border px-3 py-2">
-                                  {pelaksanaDikirimText}
+                                  {PegawaiDikirimText}
                               </td>
 
                               {/* 15. Sub Kegiatan OPD Anggota */}
                               <td className="border px-3 py-2">
-                                  -
+                                  {SubKegiatanDikirimText}
                               </td>
 
                               {/* 16. Pagu Anggaran OPD Anggota */}
                               <td className="border px-3 py-2">
-                                  -
+                                  {AnggaranDikirimText}
                               </td>
                           </tr>
                       );
