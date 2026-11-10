@@ -1,338 +1,242 @@
 "use client";
 
 import React from "react";
-import { Laporan } from "../type";
+import { Laporan, pohonkinerjaKoordinator, indikator, target } from "../type";
+import { formatRupiah } from "@/components/utils/format-rupiah";
 
 interface Table {
-  Data: Laporan | null;
-  kode_opd: string;
-  tahun: number;
-  onSuccess: () => void;
+    Data: Laporan | null;
+    kode_opd: string;
+    tahun: number;
+    onSuccess: () => void;
 }
 
 
 const Table: React.FC<Table> = ({ Data }) => {
-  return (
-    <>
-      <div className="overflow-auto m-2 rounded-t-xl border">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-emerald-500 text-white">
-              <th className="border-r border-b px-6 py-3 text-center">No</th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Keterangan Crosscutting
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                OPD Koordinator
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Pohon Kinerja
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Indikator
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[100px]">
-                Target/Satuan
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Nama Pelaksana/NIP
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Sub Kegiatan
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Pagu Anggaran
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                OPD Anggota
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Pohon Kinerja
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Indikator
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[100px]">
-                Target/Satuan
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Nama Pelaksana/NIP
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Sub Kegiatan
-              </th>
-              <th className="border-r border-b px-6 py-3 min-w-[300px]">
-                Pagu Anggaran
-              </th>
-            </tr>
+    return (
+        <>
+            <div className="overflow-auto m-2 rounded-t-xl border">
+                <table className="w-full">
+                    <thead>
+                        <tr className="bg-emerald-500 text-white">
+                            <th className="border-r border-b px-6 py-3 text-center">No</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Keterangan Crosscutting
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                OPD Koordinator
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Pohon Kinerja
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Indikator
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[100px]">
+                                Target/Satuan
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Nama Pelaksana/NIP
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Sub Kegiatan
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Pagu Anggaran
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                OPD Anggota
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Pohon Kinerja
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Indikator
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[100px]">
+                                Target/Satuan
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Nama Pelaksana/NIP
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Sub Kegiatan
+                            </th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">
+                                Pagu Anggaran
+                            </th>
+                        </tr>
 
-            <tr className="bg-emerald-700 text-white">
-              <th className="border-r border-b px-2 py-1 text-center">1</th>
-              <th className="border-r border-b px-2 py-1 text-center">2</th>
-              <th className="border-r border-b px-2 py-1 text-center">3</th>
-              <th className="border-r border-b px-2 py-1 text-center">4</th>
-              <th className="border-r border-b px-2 py-1 text-center">5</th>
-              <th className="border-r border-b px-2 py-1 text-center">6</th>
-              <th className="border-r border-b px-2 py-1 text-center">7</th>
-              <th className="border-r border-b px-2 py-1 text-center">8</th>
-              <th className="border-r border-b px-2 py-1 text-center">9</th>
-              <th className="border-r border-b px-2 py-1 text-center">10</th>
-              <th className="border-r border-b px-2 py-1 text-center">11</th>
-              <th className="border-r border-b px-2 py-1 text-center">12</th>
-              <th className="border-r border-b px-2 py-1 text-center">13</th>
-              <th className="border-r border-b px-2 py-1 text-center">14</th>
-              <th className="border-r border-b px-2 py-1 text-center">15</th>
-              <th className="border-r border-b px-2 py-1 text-center">16</th>
-            </tr>
-          </thead>
-          <tbody>
-              {!Data?.pohon_kinerja || Data.pohon_kinerja.length === 0 ? (
-                  <tr>
-                      <td colSpan={16} className="border px-4 py-3 text-center">
-                          Data Kosong / Belum Ditambahkan
-                      </td>
-                  </tr>
-              ) : (
-                  Data.pohon_kinerja.map((item: any, index: number) => {
-                      const pohon = item.pohon_kinerja;
-                      const crosscutting = item.crosscutting ?? [];
-                      const crosscuttingDikirim = item.crosscutting_dikirim ?? [];
-                      const indikator = item.indikator ?? [];
-                      const pelaksana = item.pelaksana ?? [];
-                      const rekin = item.rencana_kinerja ?? [];
+                        <tr className="bg-emerald-700 text-white">
+                            <th className="border-r border-b px-2 py-1 text-center">1</th>
+                            <th className="border-r border-b px-2 py-1 text-center">2</th>
+                            <th className="border-r border-b px-2 py-1 text-center">3</th>
+                            <th className="border-r border-b px-2 py-1 text-center">4</th>
+                            <th className="border-r border-b px-2 py-1 text-center">5</th>
+                            <th className="border-r border-b px-2 py-1 text-center">6</th>
+                            <th className="border-r border-b px-2 py-1 text-center">7</th>
+                            <th className="border-r border-b px-2 py-1 text-center">8</th>
+                            <th className="border-r border-b px-2 py-1 text-center">9</th>
+                            <th className="border-r border-b px-2 py-1 text-center">10</th>
+                            <th className="border-r border-b px-2 py-1 text-center">11</th>
+                            <th className="border-r border-b px-2 py-1 text-center">12</th>
+                            <th className="border-r border-b px-2 py-1 text-center">13</th>
+                            <th className="border-r border-b px-2 py-1 text-center">14</th>
+                            <th className="border-r border-b px-2 py-1 text-center">15</th>
+                            <th className="border-r border-b px-2 py-1 text-center">16</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {!Data?.pohon_kinerja || Data.pohon_kinerja.length === 0 ? (
+                            <tr>
+                                <td colSpan={16} className="border px-4 py-3 text-center">
+                                    Data Kosong / Belum Ditambahkan
+                                </td>
+                            </tr>
+                        ) : (
 
-                      // Kolom 2 dan 10 menggunakan crosscutting yang dikirim.
-                      // Kolom 3 menggunakan OPD asal dari crosscutting masuk.
-                      const keteranganList = crosscuttingDikirim.length > 0
-                          ? crosscuttingDikirim
-                          : crosscutting;
+                            (Data?.pohon_kinerja ?? []).map(
+                                (p: pohonkinerjaKoordinator, index: number) => {
 
-                      const opdAsalList = crosscutting.length > 0
-                          ? crosscutting
-                          : crosscuttingDikirim;
+                                    const indikatorRows = (p.indikator ?? []).flatMap(
+                                        (ind: indikator) => {
+                                            const targets = ind.targets?.length
+                                                ? ind.targets
+                                                : [null];
 
-                      const opdTujuanList = crosscuttingDikirim;
+                                            return targets.map(
+                                                (tg: target | null, tgIndex: number) => ({
+                                                    ind,
+                                                    tg,
+                                                    first: tgIndex === 0
+                                                })
+                                            );
+                                        }
+                                    );
 
-                      const indikatorText = indikator.length > 0
-                          ? indikator
-                              .map((ind: any) => ind.nama_indikator || "-")
-                              .join("\n")
-                          : "-";
+                                    const rekins = p.rencana_kinerja ?? [];
 
-                      const targetText = indikator.length > 0
-                          ? indikator
-                              .map((ind: any) => {
-                                  const targets = ind.targets ?? [];
+                                    const totalRowspanIndikator = indikatorRows.length;
+                                    const totalRowspanRekin = rekins.length;
 
-                                  if (targets.length === 0) return "-";
+                                    const totalRows = Math.max(
+                                        totalRowspanIndikator,
+                                        totalRowspanRekin,
+                                        1
+                                    );
 
-                                  return targets
-                                      .map((target: any) =>
-                                          `${target.target || "-"} ${target.satuan || ""}`.trim()
-                                      )
-                                      .join(", ");
-                              })
-                              .join("\n")
-                          : "-";
+                                    return Array.from(
+                                        { length: totalRows },
+                                        (_, rowIndex) => {
 
-                      const indikatorDikirim = crosscuttingDikirim.flatMap(
-                          (c: any) => c.indikator_dikirim ?? []
-                      );
+                                            const indRow = indikatorRows[rowIndex];
+                                            const rekin = rekins[rowIndex];
 
-                      const pelaksanaDikirim = crosscuttingDikirim.flatMap(
-                          (c: any) => c.pelaksana_dikirim ?? []
-                      );
+                                            return (
+                                                <tr key={`${p.pohon_kinerja.Id}-${rowIndex}`}>
 
-                      const rekinDikirim = crosscuttingDikirim.flatMap(
-                          (c: any) => c.rencana_kinerja_dikirim ?? []
-                      );
+                                                    {/* 1. No */}
+                                                    {rowIndex === 0 && (
+                                                        <td
+                                                            rowSpan={totalRows}
+                                                            className="border px-3 py-2 text-center"
+                                                        >
+                                                            {index + 1}
+                                                        </td>
+                                                    )}
 
-                      const indikatorAnggotaText = indikatorDikirim.length > 0
-                        ? indikatorDikirim
-                            .map((ind: any) => ind.nama_indikator || "-")
-                            .join("\n")
-                        : "-";
+                                                    {/* 2. Keterangan Crosscutting */}
+                                                    {rowIndex === 0 && (
+                                                        <td
+                                                            rowSpan={totalRows}
+                                                            className="border px-3 py-2 whitespace-pre-line"
+                                                        >
+                                                            {p.pohon_kinerja.KeteranganCrosscutting ?? "-"}
+                                                        </td>
+                                                    )}
 
-                      const targetAnggotaText = indikatorDikirim.length > 0
-                          ? indikatorDikirim
-                              .map((ind: any) => {
-                                  const targets = ind.targets ?? [];
+                                                    {/* 3. OPD Koordinator */}
+                                                    {rowIndex === 0 && (
+                                                        <td
+                                                            rowSpan={totalRows}
+                                                            className="border px-3 py-2 whitespace-pre-line"
+                                                        >
+                                                            {p.pohon_kinerja.NamaOpd ?? "-"}
+                                                        </td>
+                                                    )}
 
-                                  if (targets.length === 0) return "-";
+                                                    {/* 4. Pohon Kinerja */}
+                                                    {rowIndex === 0 && (
+                                                        <td
+                                                            rowSpan={totalRows}
+                                                            className="border px-3 py-2"
+                                                        >
+                                                            {p.pohon_kinerja.NamaPohon ?? "-"}
+                                                        </td>
+                                                    )}
 
-                                  return targets
-                                      .map((target: any) =>
-                                          `${target.target || "-"} ${target.satuan || ""}`.trim()
-                                      )
-                                      .join(", ");
-                              })
-                              .join("\n")
-                          : "-";
-                      const pelaksanaText = pelaksana.length > 0
-                          ? pelaksana
-                              .map((p: any) =>
-                                  `${p.nama_pegawai || "-"}${p.nip ? ` / ${p.nip}` : ""}`
-                              )
-                              .join("\n")
-                          : "-";
+                                                    {/* 5. Indikator */}
+                                                    {indRow ? (
+                                                        indRow.first && (
+                                                            <td
+                                                                rowSpan={indRow.ind.targets?.length || 1}
+                                                                className="border px-3 py-2 whitespace-pre-line"
+                                                            >
+                                                                {indRow.ind.nama_indikator ?? "-"}
+                                                            </td>
+                                                        )
+                                                    ) : (
+                                                        <td className="border px-3 py-2">-</td>
+                                                    )}
 
-                      const pelaksanaDikirimText = pelaksana.length > 0
-                          ? pelaksanaDikirim
-                              .map((p: any) =>
-                                  `${p.nama_pegawai || "-"}${p.nip ? ` / ${p.nip}` : ""}`
-                              )
-                              .join("\n")
-                          : "-";
-                          
-                      const PegawaiText = rekin.length > 0
-                          ? rekin
-                              .map((p: any) =>
-                                  `${p.nama_pegawai || "-"}`
-                              )
-                              .join("\n")
-                          : "-";
+                                                    {/* 6. Target / Satuan */}
+                                                    <td className="border px-3 py-2 whitespace-pre-line">
+                                                        {indRow?.tg
+                                                            ? `${indRow.tg.target ?? "-"} ${indRow.tg.satuan ?? ""}`
+                                                            : "-"}
+                                                    </td>
 
-                      const SubKegiatanText = rekin.length > 0
-                          ? rekin
-                              .map((p: any) =>
-                                  `${p.nama_sub_kegiatan || "-"}`
-                              )
-                              .join("\n")
-                          : "-";
+                                                    {/* 7. Nama Pelaksana / NIP */}
+                                                    <td className="border px-3 py-2 whitespace-pre-line">
+                                                        {rekin?.nama_pegawai ?? "-"}
+                                                    </td>
 
-                      const AnggaranText = rekin.length > 0
-                          ? rekin
-                              .map((p: any) =>
-                                  `${p.pagu || "-"}`
-                              )
-                              .join("\n")
-                          : "-";
+                                                    {/* 8. Sub Kegiatan */}
+                                                    <td className="border px-3 py-2 whitespace-pre-line">
+                                                        {rekin?.nama_sub_kegiatan ?? "-"}
+                                                    </td>
 
-                      const PegawaiDikirimText = rekinDikirim.length > 0
-                          ? rekinDikirim
-                              .map((p: any) =>
-                                  `${p.nama_pegawai || "-"}`
-                              )
-                              .join("\n")
-                          : "-";
-                      const SubKegiatanDikirimText = rekinDikirim.length > 0
-                          ? rekinDikirim
-                              .map((p: any) =>
-                                  `${p.nama_sub_kegiatan || "-"}`
-                              )
-                              .join("\n")
-                          : "-";
-                      const AnggaranDikirimText = rekinDikirim.length > 0
-                          ? rekinDikirim
-                              .map((p: any) =>
-                                  `${p.pagu || "-"}`
-                              )
-                              .join("\n")
-                          : "-";
-                          
+                                                    {/* 9. Pagu Anggaran */}
+                                                    <td className="border px-3 py-2 whitespace-pre-line">
+                                                        Rp. {formatRupiah(rekin?.pagu ?? 0)}
+                                                    </td>
 
-                      return (
-                          <tr key={pohon.Id}>
-                              {/* 1. No */}
-                              <td className="border px-3 py-2 text-center">
-                                  {index + 1}
-                              </td>
-
-                              {/* 2. Keterangan Crosscutting */}
-                              <td className="border px-3 py-2 whitespace-pre-line">
-                                  {keteranganList.length > 0
-                                      ? keteranganList
-                                          .map((c: any) => c.keterangan_crosscutting || "-")
-                                          .join("\n")
-                                      : "-"}
-                              </td>
-
-                              {/* 3. OPD Koordinator: nama_opd_asal */}
-                              <td className="border px-3 py-2 whitespace-pre-line">
-                                  {pohon.NamaOpd || "-"}
-                              </td>
-
-                              {/* 4. Pohon Kinerja */}
-                              <td className="border px-3 py-2">
-                                  {pohon.NamaPohon || "-"}
-                              </td>
-
-                              {/* 5. Indikator */}
-                              <td className="border px-3 py-2 whitespace-pre-line">
-                                  {indikatorText}
-                              </td>
-
-                              {/* 6. Target / Satuan */}
-                              <td className="border px-3 py-2 whitespace-pre-line">
-                                  {targetText}
-                              </td>
-
-                              {/* 7. Nama Pelaksana / NIP */}
-                              <td className="border px-3 py-2 whitespace-pre-line">
-                                  {PegawaiText}
-                              </td>
-
-                              {/* 8. Sub Kegiatan */}
-                              <td className="border px-3 py-2">
-                                  {SubKegiatanText}
-                              </td>
-
-                              {/* 9. Pagu Anggaran */}
-                              <td className="border px-3 py-2 text-right">
-                                  {AnggaranText}
-                              </td>
-
-                              {/* 10. OPD Anggota: nama_opd_tujuan */}
-                              <td className="border px-3 py-2 whitespace-pre-line">
-                                  {opdTujuanList.length > 0
-                                      ? opdTujuanList
-                                          .map((c: any) => c.nama_opd_tujuan || "-")
-                                          .join("\n")
-                                      : "-"}
-                              </td>
-
-                              {/* 11. Pohon Kinerja OPD Anggota */}
-                              <td className="border px-3 py-2">
-                                  {opdTujuanList.length > 0
-                                      ? opdTujuanList
-                                          .map((c: any) => c.nama_pohon_tujuan || "-")
-                                          .join("\n")
-                                      : "-"}
-                              </td>
-
-                              {/* 12. Indikator OPD Anggota */}
-                              <td className="border px-3 py-2">
-                                  {indikatorAnggotaText}
-                              </td>
-
-                              {/* 13. Target / Satuan OPD Anggota */}
-                              <td className="border px-3 py-2">
-                                  {targetAnggotaText}
-                              </td>
-
-                              {/* 14. Nama Pelaksana / NIP OPD Anggota */}
-                              <td className="border px-3 py-2">
-                                  {PegawaiDikirimText}
-                              </td>
-
-                              {/* 15. Sub Kegiatan OPD Anggota */}
-                              <td className="border px-3 py-2">
-                                  {SubKegiatanDikirimText}
-                              </td>
-
-                              {/* 16. Pagu Anggaran OPD Anggota */}
-                              <td className="border px-3 py-2">
-                                  {AnggaranDikirimText}
-                              </td>
-                          </tr>
-                      );
-                  })
-              )}
-          </tbody>
-        </table>
-      </div>
-    </>
-  );
+                                                </tr>
+                                            );
+                                        }
+                                    );
+                                }
+                            )
+                        )})
+                    </tbody>
+                </table>
+            </div>
+        </>
+    );
 };
 
 export default Table;
+
+const getRowspanIndikator = (indikator: indikator): number => {
+    return Math.max(indikator.targets.length, 1);
+}
+
+const getRowspanRekin = (pohon: pohonkinerjaKoordinator): number => {
+    return Math.max(pohon.rencana_kinerja.length, 1);
+}
+
+const getRowspanPohon = (pohon: pohonkinerjaKoordinator): number => {
+    return pohon.indikator.reduce(
+        (total, ind) => total + getRowspanIndikator(ind), 0
+    ) || 1
+}
