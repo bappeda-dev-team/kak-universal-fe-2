@@ -44,13 +44,14 @@ interface pelaksana {
     nama_pegawai: string;
 }
 
-interface rekin {
+export interface rekin {
     nama_pegawai: string;
     nama_sub_kegiatan: string;
+    kode_sub_kegiatan: string;
     pagu: number;
 }
 
-interface crosscuttingDikirim {
+export interface crosscuttingDikirim {
     id_crosscutting: string;
     keterangan_crosscutting: string;
     nama_pohon_tujuan: string;
