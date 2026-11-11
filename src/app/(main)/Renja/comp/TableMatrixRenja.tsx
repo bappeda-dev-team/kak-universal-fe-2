@@ -15,10 +15,12 @@ interface Renja {
     kode: string;
     jenis: string;
     indikator: Indikator[];
+    indikator_ranwal: Indikator[];
     indikator_rankhir: Indikator[];
     indikator_penetapan: Indikator[];
-    anggaran: Anggaran[];
+    pagu_ranwal: number;
     pagu_rankhir: number;
+    pagu_penetapan: number;
     bidang_urusan?: Renja[];
     program?: Renja[]
     kegiatan?: Renja[]
@@ -32,13 +34,6 @@ interface matrix {
     pagu_total_rankhir: number;
     pagu_total_penetapan: number;
     urusan: Renja[];
-}
-type combinedData = Anggaran & Partial<Indikator>;
-
-interface Anggaran {
-    tahun: string;
-    pagu_indikatif: number;
-    jenis_pagu: string;
 }
 interface Indikator {
     kode_indikator: string;
@@ -66,15 +61,15 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
     const [DataNull, setDataNull] = useState<boolean>(false);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const token = getToken();
+    const {branding} = useBrandingContext();
 
     const [Lock, setLock] = useState<boolean>(false);
 
     useEffect(() => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchMatrix = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/matrix_renja/${menu}/${kode_opd}/${tahun}`, {
+                const response = await fetch(`${branding?.api_perencanaan}/matrix_renja/${menu}/${kode_opd}/${tahun}`, {
                     headers: {
                         Authorization: `${token}`,
                         'Content-Type': 'application/json',
@@ -98,12 +93,11 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
             }
         }
         fetchMatrix();
-    }, [kode_opd, tahun, token, FetchTrigger, menu]);
+    }, [branding, kode_opd, tahun, token, FetchTrigger, menu]);
 
     if (DataNull) {
-        return (
-            <h1 className="p-5 text-red-500 font-semibold">Sub Kegiatan OPD belum di pilih pada tahun {tahun || 0}</h1>
-        )
+        return <h1 className="p-5 text-red-500 font-semibold">Sub Kegiatan OPD belum di pilih pada tahun {tahun || 0}</h1>
+        
     }
     if (Loading) {
         return <LoadingClip />
@@ -162,7 +156,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                             pagu_total_penetapan={item.pagu_total_penetapan ?? 0}
                         />
                     </div>
-                    {/* <div className="overflow-auto m-2 rounded-t-xl border">
+                    <div className="overflow-auto m-2 rounded-t-xl border">
                         {item.urusan.length === 0 ?
                             <h1 className="p-5">Sub Kegiatan di tahun {tahun || 0} belum di gunakan di rencana kinerja</h1>
                             :
@@ -180,7 +174,12 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                 jenis="Urusan"
                                                 type={jenis}
                                                 indikator={u.indikator}
-                                                anggaran={u.anggaran}
+                                                indikator_ranwal={u.indikator_ranwal}
+                                                indikator_rankhir={u.indikator_rankhir}
+                                                indikator_penetapan={u.indikator_penetapan}
+                                                pagu_ranwal={u.pagu_ranwal || 0}
+                                                pagu_rankhir={u.pagu_rankhir || 0}
+                                                pagu_penetapan={u.pagu_penetapan || 0}
                                                 kode={u.kode}
                                                 nama={u.nama}
                                                 kode_opd={item.kode_opd}
@@ -204,7 +203,12 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                 jenis="Bidang Urusan"
                                                                 type={jenis}
                                                                 indikator={br.indikator}
-                                                                anggaran={br.anggaran}
+                                                                indikator_ranwal={br.indikator_ranwal}
+                                                                indikator_rankhir={br.indikator_rankhir}
+                                                                indikator_penetapan={br.indikator_penetapan}
+                                                                pagu_ranwal={br.pagu_ranwal || 0}
+                                                                pagu_rankhir={br.pagu_rankhir || 0}
+                                                                pagu_penetapan={br.pagu_penetapan || 0}
                                                                 kode={br.kode}
                                                                 nama={br.nama}
                                                                 kode_opd={kode_opd}
@@ -228,7 +232,12 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                                 jenis="Program"
                                                                                 type={jenis}
                                                                                 indikator={p.indikator}
-                                                                                anggaran={p.anggaran}
+                                                                                indikator_ranwal={p.indikator_ranwal}
+                                                                                indikator_rankhir={p.indikator_rankhir}
+                                                                                indikator_penetapan={p.indikator_penetapan}
+                                                                                pagu_ranwal={p.pagu_ranwal || 0}
+                                                                                pagu_rankhir={p.pagu_rankhir || 0}
+                                                                                pagu_penetapan={p.pagu_penetapan || 0}
                                                                                 kode={p.kode}
                                                                                 nama={p.nama}
                                                                                 kode_opd={kode_opd}
@@ -252,7 +261,12 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                                                 jenis="Kegiatan"
                                                                                                 type={jenis}
                                                                                                 indikator={k.indikator}
-                                                                                                anggaran={k.anggaran}
+                                                                                                indikator_ranwal={k.indikator_ranwal}
+                                                                                                indikator_rankhir={k.indikator_rankhir}
+                                                                                                indikator_penetapan={k.indikator_penetapan}
+                                                                                                pagu_ranwal={k.pagu_ranwal || 0}
+                                                                                                pagu_rankhir={k.pagu_rankhir || 0}
+                                                                                                pagu_penetapan={k.pagu_penetapan || 0}
                                                                                                 kode={k.kode}
                                                                                                 nama={k.nama}
                                                                                                 kode_opd={kode_opd}
@@ -276,7 +290,12 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                                                                                                 jenis="Sub Kegiatan"
                                                                                                                 type={jenis}
                                                                                                                 indikator={sk.indikator}
-                                                                                                                anggaran={sk.anggaran}
+                                                                                                                indikator_ranwal={sk.indikator_ranwal}
+                                                                                                                indikator_rankhir={sk.indikator_rankhir}
+                                                                                                                indikator_penetapan={sk.indikator_penetapan}
+                                                                                                                pagu_ranwal={sk.pagu_ranwal || 0}
+                                                                                                                pagu_rankhir={sk.pagu_rankhir || 0}
+                                                                                                                pagu_penetapan={sk.pagu_penetapan || 0}
                                                                                                                 kode={sk.kode}
                                                                                                                 nama={sk.nama}
                                                                                                                 kode_opd={kode_opd}
@@ -305,7 +324,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                 ))}
                             </table>
                         }
-                    </div> */}
+                    </div>
                 </React.Fragment>
             ))}
         </>
@@ -384,7 +403,12 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type, menu }) => {
 }
 interface Tr {
     indikator: Indikator[];
-    anggaran: Anggaran[];
+    indikator_ranwal: Indikator[];
+    indikator_rankhir: Indikator[];
+    indikator_penetapan: Indikator[];
+    pagu_ranwal?: number;
+    pagu_rankhir?: number;
+    pagu_penetapan?: number;
     nama: string;
     kode: string;
     kode_opd: string;
@@ -394,29 +418,13 @@ interface Tr {
     lock: boolean
     fetchTrigger(): void;
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama, anggaran, indikator, lock, fetchTrigger }) => {
+export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama, pagu_ranwal, pagu_rankhir, pagu_penetapan, indikator, indikator_ranwal, indikator_rankhir, indikator_penetapan, lock, fetchTrigger }) => {
 
     const { branding } = useBrandingContext();
     const [ModalPagu, setModalPagu] = useState<boolean>(false);
     const [Pagu, setPagu] = useState<number>(0);
     const [ModalIndikator, setModalIndikator] = useState<boolean>(false);
     const [DataModal, setDataModal] = useState<Indikator[]>([]);
-
-    const combinedData = anggaran.map((a) => {
-        // Ambil SEMUA indikator yang tahunnya sama
-        const matchingIndikators = indikator.filter((i) => i.tahun === a.tahun);
-        return {
-            ...a,
-            // Simpan sebagai array di dalam objek anggaran
-            list_indikator: matchingIndikators.length > 0 ? matchingIndikators
-                : [{
-                    id: "",
-                    indikator: "-",
-                    target: "-",
-                    satuan: "-"
-                }]
-        };
-    });
 
     const handleModalIndikator = (data: Indikator[]) => {
         if (ModalIndikator) {
@@ -449,7 +457,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                 <tr>
                     <td className={`border-r border-b px-6 py-4 font-semibold`}>{kode}</td>
                     <td className={`border-r border-b px-6 py-4 w-full`}>{nama}</td>
-                    {/* Kiri */}
+                    {/* KIRI */}
                     <React.Fragment>
                         <td className={`border-b px-6 py-4 w-full`}></td>
                         <td className={`border-b px-6 py-4 w-full`}></td>
@@ -470,21 +478,16 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                             <td className={`border-r border-b px-6 py-4 w-full`}></td>
                         }
                     </React.Fragment>
-                    {/* kanan */}
-                    {combinedData.map((i: combinedData, index: number) => (
+                    {/* KANAN */}
+                    {indikator.map((i: Indikator, index: number) => (
                         <React.Fragment key={index}>
                             <td className={`border-b px-6 py-4 w-full`}></td>
                             <td className={`border-b px-6 py-4 w-full`}></td>
                             <td className={`border-r border-b px-6 py-4 w-full`}></td>
                             <td className={`border-b px-6 py-4 w-full`}>
                                 <div className="flex flex-col items-center gap-1">
-                                    {menu === "penetapan" &&
-                                        <p className="p-1 px-2 text-sm rounded-lg bg-slate-300 text-slate-700">
-                                            {i.jenis_pagu || 'unknown'}
-                                        </p>
-                                    }
                                     <span className="font-semibold text-sm">
-                                        Rp.{formatRupiah(i.pagu_indikatif)}
+                                        Rp.{formatRupiah(0)}
                                     </span>
                                 </div>
                             </td>
@@ -530,88 +533,82 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                         </tr>
                     </React.Fragment>
                     {/* Kanan */}
-                    {combinedData.map((c, index: number) => {
-                        const totalRowsInYear = c.list_indikator.length;
+                    {indikator.map((c, index: number) => {
+                        const totalRowsInYear = indikator.length;
                         return (
                             <React.Fragment key={index}>
-                                {c.list_indikator.map((i, idx) => (
-                                    <tr key={idx} className="h-[300px]">
-                                        {/* KOLOM INDIKATOR */}
-                                        <td className="border-r border-b px-6 py-4 w-full">
-                                            <div className="flex items-center gap-2">
-                                                {i.indikator || "-"}
-                                            </div>
-                                        </td>
-                                        <td className="border-r border-b px-6 py-4 w-full">
-                                            {i.target}
-                                        </td>
+                                <tr className="h-[300px]">
+                                    {/* KOLOM INDIKATOR */}
+                                    <td className="border-r border-b px-6 py-4 w-full">
+                                        <div className="flex items-center gap-2">
+                                            {c.indikator || "-"}
+                                        </div>
+                                    </td>
+                                    <td className="border-r border-b px-6 py-4 w-full">
+                                        {c.target}
+                                    </td>
 
-                                        <td className="border-r border-b px-6 py-4 w-full">
-                                            {i.satuan}
-                                        </td>
+                                    <td className="border-r border-b px-6 py-4 w-full">
+                                        {c.satuan}
+                                    </td>
 
-                                        {/* KOLOM PAGU: Hanya muncul di baris pertama tiap tahun (idx === 0) */}
-                                        {idx === 0 && (
-                                            <>
-                                                <td
-                                                    rowSpan={totalRowsInYear}
-                                                    className="border-r border-b px-6 py-4 text-center align-middle"
-                                                >
-                                                    <div className="flex flex-col items-center gap-2">
-                                                        {menu === "penetapan" &&
-                                                            <p className="p-1 px-2 text-sm rounded-lg bg-slate-300 text-slate-700">
-                                                                {c.jenis_pagu || 'unknown'}
-                                                            </p>
-                                                        }
-                                                        <span className="font-semibold text-sm">
-                                                            Rp.{formatRupiah(c.pagu_indikatif || 0)}
-                                                        </span>
-                                                        {jenis === "Sub Kegiatan" ?
-                                                            menu === "penetapan" &&
-                                                                lock ?
-                                                                <div className="text-red-500 flex items-center justify-center">
-                                                                    <TbLockCancel size={20} />
-                                                                </div>
-                                                                :
-                                                                <button
-                                                                    type="button"
-                                                                    className="text-sky-400 border border-sky-300 hover:text-sky-600 p-1 rounded-full hover:bg-sky-100 transition-colors"
-                                                                    title="Edit Pagu Anggaran"
-                                                                    onClick={() => handleModalPagu(c.pagu_indikatif || 0)}
-                                                                >
-                                                                    <TbPencil size={14} />
-                                                                </button>
+                                    {/* KOLOM PAGU: Hanya muncul di baris pertama tiap tahun (idx === 0) */}
+                                    {index === 0 && (
+                                        <>
+                                            <td
+                                                rowSpan={totalRowsInYear}
+                                                className="border-r border-b px-6 py-4 text-center align-middle"
+                                            >
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <span className="font-semibold text-sm">
+                                                        Rp.{formatRupiah(0)}
+                                                    </span>
+                                                    {jenis === "Sub Kegiatan" ?
+                                                        menu === "penetapan" &&
+                                                            lock ?
+                                                            <div className="text-red-500 flex items-center justify-center">
+                                                                <TbLockCancel size={20} />
+                                                            </div>
                                                             :
-                                                            <></>
-                                                        }
-                                                    </div>
-                                                </td>
-                                                <td
-                                                    rowSpan={totalRowsInYear}
-                                                    className="border-r border-b px-6 py-4 text-center align-middle"
-                                                >
-                                                    {(type === "opd" && menu !== "ranwal") &&
-                                                        (menu === "penetapan" && lock) ?
-                                                        <div className="text-red-500 flex items-center justify-center">
-                                                            <TbLockCancel size={30} />
-                                                        </div>
+                                                            <button
+                                                                type="button"
+                                                                className="text-sky-400 border border-sky-300 hover:text-sky-600 p-1 rounded-full hover:bg-sky-100 transition-colors"
+                                                                title="Edit Pagu Anggaran"
+                                                                onClick={() => handleModalPagu(0)}
+                                                            >
+                                                                <TbPencil size={14} />
+                                                            </button>
                                                         :
-                                                        <ButtonSkyBorder
-                                                            className="flex items-center gap-1"
-                                                            onClick={() => handleModalIndikator(indikator)}
-                                                        >
-                                                            <TbCirclePlus />
-                                                            <p className="text-sm">Indikator</p>
-                                                        </ButtonSkyBorder>
+                                                        <></>
                                                     }
-                                                </td>
-                                            </>
-                                        )}
-                                    </tr>
-                                ))}
+                                                </div>
+                                            </td>
+                                            <td
+                                                rowSpan={totalRowsInYear}
+                                                className="border-r border-b px-6 py-4 text-center align-middle"
+                                            >
+                                                {(type === "opd" && menu !== "ranwal") &&
+                                                    (menu === "penetapan" && lock) ?
+                                                    <div className="text-red-500 flex items-center justify-center">
+                                                        <TbLockCancel size={30} />
+                                                    </div>
+                                                    :
+                                                    <ButtonSkyBorder
+                                                        className="flex items-center gap-1"
+                                                        onClick={() => handleModalIndikator(indikator)}
+                                                    >
+                                                        <TbCirclePlus />
+                                                        <p className="text-sm">Indikator</p>
+                                                    </ButtonSkyBorder>
+                                                }
+                                            </td>
+                                        </>
+                                    )}
+                                </tr>
                             </React.Fragment>
-                        );
-                    })}
+                        )
+                    })
+                    }
                 </>
             }
             {ModalIndikator &&
@@ -652,7 +649,7 @@ export const TableTotalPagu: React.FC<TablePagu> = ({ tahun, menu, pagu_total_ra
 
     const total_awal = menu === "ranwal" ? pagu_total_ranwal || 0 : pagu_total_rankhir || 0;
     const total_akhir = menu === "rankhir" ? pagu_total_rankhir || 0 : pagu_total_penetapan || 0;
-    
+
     return (
         <table className="w-full">
             <tbody>
