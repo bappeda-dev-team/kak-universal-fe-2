@@ -8,13 +8,17 @@ import { LoadingClip } from "@/components/global/Loading";
 import { ModalIndikatorMatrixRenja } from "./ModalIndikatorMatrixRenja";
 import { ModalAnggaranMatrixRenja } from "./ModalAnggaranMatrixRenja";
 import { useBrandingContext } from "@/context/BrandingContext";
+import { formatRupiah } from "@/components/utils/format-rupiah";
 
 interface Renja {
     nama: string;
     kode: string;
     jenis: string;
     indikator: Indikator[];
+    indikator_rankhir: Indikator[];
+    indikator_penetapan: Indikator[];
     anggaran: Anggaran[];
+    pagu_rankhir: number;
     bidang_urusan?: Renja[];
     program?: Renja[]
     kegiatan?: Renja[]
@@ -24,7 +28,9 @@ interface matrix {
     kode_opd: string
     tahun_awal: string;
     tahun_akhir: string;
-    pagu_total: pagu[];
+    pagu_total_ranwal: number;
+    pagu_total_rankhir: number;
+    pagu_total_penetapan: number;
     urusan: Renja[];
 }
 type combinedData = Anggaran & Partial<Indikator>;
@@ -35,26 +41,14 @@ interface Anggaran {
     jenis_pagu: string;
 }
 interface Indikator {
-    id: string;
     kode_indikator: string;
     kode: string;
     kode_opd: string;
     indikator: string;
     tahun: string;
+    target_id: number;
     target: string;
     satuan: string;
-    status_target_renja: boolean;
-}
-interface Target {
-    id: string;
-    indikator_id: string;
-    target: string;
-    satuan: string;
-}
-interface pagu {
-    tahun: string;
-    pagu_indikatif: number;
-    jenis_pagu: string;
 }
 interface table {
     jenis: "laporan" | "opd";
@@ -112,11 +106,7 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
         )
     }
     if (Loading) {
-        return (
-            <>
-                <LoadingClip />
-            </>
-        )
+        return <LoadingClip />
     }
 
     return (
@@ -166,10 +156,13 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                     <div className="overflow-auto m-2 rounded-xl border">
                         <TableTotalPagu
                             tahun={tahun}
-                            pagu_total={item.pagu_total[0]?.pagu_indikatif || 0}
+                            menu={menu}
+                            pagu_total_ranwal={item.pagu_total_ranwal ?? 0}
+                            pagu_total_rankhir={item.pagu_total_rankhir ?? 0}
+                            pagu_total_penetapan={item.pagu_total_penetapan ?? 0}
                         />
                     </div>
-                    <div className="overflow-auto m-2 rounded-t-xl border">
+                    {/* <div className="overflow-auto m-2 rounded-t-xl border">
                         {item.urusan.length === 0 ?
                             <h1 className="p-5">Sub Kegiatan di tahun {tahun || 0} belum di gunakan di rencana kinerja</h1>
                             :
@@ -312,10 +305,11 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
                                 ))}
                             </table>
                         }
-                    </div>
+                    </div> */}
                 </React.Fragment>
             ))}
         </>
+        // <>TEST</>
     )
 }
 
@@ -478,7 +472,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                     </React.Fragment>
                     {/* kanan */}
                     {combinedData.map((i: combinedData, index: number) => (
-                        <React.Fragment key={i.id || index}>
+                        <React.Fragment key={index}>
                             <td className={`border-b px-6 py-4 w-full`}></td>
                             <td className={`border-b px-6 py-4 w-full`}></td>
                             <td className={`border-r border-b px-6 py-4 w-full`}></td>
@@ -541,7 +535,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
                         return (
                             <React.Fragment key={index}>
                                 {c.list_indikator.map((i, idx) => (
-                                    <tr key={i.id || idx} className="h-[300px]">
+                                    <tr key={idx} className="h-[300px]">
                                         {/* KOLOM INDIKATOR */}
                                         <td className="border-r border-b px-6 py-4 w-full">
                                             <div className="flex items-center gap-2">
@@ -649,27 +643,46 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, kode_opd, kode, menu, nama
 
 interface TablePagu {
     tahun: string;
-    pagu_total: number;
+    pagu_total_ranwal?: number;
+    pagu_total_rankhir?: number;
+    pagu_total_penetapan?: number;
+    menu: "ranwal" | "rankhir" | "penetapan";
 }
+export const TableTotalPagu: React.FC<TablePagu> = ({ tahun, menu, pagu_total_ranwal, pagu_total_rankhir, pagu_total_penetapan }) => {
 
-export const TableTotalPagu: React.FC<TablePagu> = ({ tahun, pagu_total }) => {
-
-    function formatRupiah(angka: number) {
-        if (typeof angka !== 'number') {
-            return String(angka); // Jika bukan angka, kembalikan sebagai string
-        }
-        return angka.toLocaleString('id-ID'); // 'id-ID' untuk format Indonesia
-    }
-
+    const total_awal = menu === "ranwal" ? pagu_total_ranwal || 0 : pagu_total_rankhir || 0;
+    const total_akhir = menu === "rankhir" ? pagu_total_rankhir || 0 : pagu_total_penetapan || 0;
+    
     return (
         <table className="w-full">
             <tbody>
                 <tr>
-                    <td rowSpan={2} className={`border-r border-b px-6 py-4 font-semibold`}>Total Pagu OPD</td>
-                    <td className="border-r border-b px-6 py-4 font-semibold text-center">{tahun || "tahun"}</td>
+                    <td rowSpan={4} className={`border-r border-b px-6 py-4 font-semibold`}>Total Pagu OPD</td>
                 </tr>
                 <tr>
-                    <td className="border-r border-b px-6 py-4 font-semibold text-center">Rp.{formatRupiah(pagu_total)}</td>
+                    <td colSpan={2} className="border-r border-b px-6 py-4 font-semibold text-center">{tahun || "tahun"}</td>
+                </tr>
+                <tr>
+                    <td className={`
+                            ${menu === "ranwal" ? "bg-red-600" : menu === "rankhir" ? "bg-red-600" : "bg-yellow-600"} 
+                            border-r border-b px-6 py-4 font-semibold text-center text-white uppercase
+                        `}
+                    >
+                        {menu === "ranwal" ? menu : menu === "rankhir" ? "Ranwal" : "Rankhir"}
+                    </td>
+                    {menu != "ranwal" &&
+                        <td className={`
+                                ${menu === "rankhir" ? "bg-yellow-600" : "bg-blue-600"} 
+                                border-r border-b px-6 py-4 font-semibold text-center text-white uppercase
+                            `}
+                        >{menu}</td>
+                    }
+                </tr>
+                <tr>
+                    <td className="border-r border-b px-6 py-4 font-semibold text-center">Rp. {formatRupiah(total_awal)}</td>
+                    {menu != "ranwal" &&
+                        <td className="border-r border-b px-6 py-4 font-semibold text-center">Rp. {formatRupiah(total_akhir)}</td>
+                    }
                 </tr>
             </tbody>
         </table>
