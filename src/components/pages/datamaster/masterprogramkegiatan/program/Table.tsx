@@ -105,6 +105,7 @@ const Table = () => {
                             <th className="border-r border-b px-6 py-3 min-w-[50px]">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[500px]">Nama Program</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Kode Program</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Nama Perangkat Daerah</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Kode Perangkat Daerah</th>
                             {/* <th className="border-r border-b px-6 py-3 min-w-[200px]">Aksi</th> */}
@@ -123,6 +124,7 @@ const Table = () => {
                             <td className="border-r border-b px-6 py-4">{index +1}</td>
                             <td className="border-r border-b px-6 py-4">{data.nama_program ? data.nama_program : "-"}</td>
                             <td className="border-r border-b px-6 py-4">{data.kode_program ? data.kode_program : "-"}</td>
+                            <td className="border-r border-b px-6 py-4">-</td>
                             <td className="border-r border-b px-6 py-4">{data.kode_opd ? data.kode_opd.nama_opd : "-"}</td>
                             <td className="border-r border-b px-6 py-4">{data.kode_opd ? data.kode_opd.kode_opd : "-"}</td>
                             {/* <td className="border-r border-b px-6 py-4">
