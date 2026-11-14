@@ -100,7 +100,7 @@ const Table = () => {
                             <th className="border-r border-b px-6 py-3 min-w-[50px]">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[500px]">Nama Urusan</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Kode Urusan</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Aksi</th>
+                            {/* <th className="border-r border-b px-6 py-3 min-w-[200px]">Aksi</th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -116,7 +116,7 @@ const Table = () => {
                             <td className="border-r border-b px-6 py-4">{index + 1}</td>
                             <td className="border-r border-b px-6 py-4">{data.nama_urusan? data.nama_urusan : "-"}</td>
                             <td className="border-r border-b px-6 py-4 text-center">{data.kode_urusan ? data.kode_urusan : "-"}</td>
-                            <td className="border-r border-b px-6 py-4">
+                            {/* <td className="border-r border-b px-6 py-4">
                                 <div className="flex flex-col jutify-center items-center gap-2">
                                     <ButtonGreen className="w-full" halaman_url={`/DataMaster/masterprogramkegiatan/urusan/${data.id}`}>Edit</ButtonGreen>
                                     <ButtonRed 
@@ -132,7 +132,7 @@ const Table = () => {
                                         Hapus
                                     </ButtonRed>
                                 </div>
-                            </td>
+                            </td> */}
                         </tr>
                         ))
                     }

@@ -16,7 +16,7 @@ const urusan = () => {
                     <div className="flex flex-col items-end">
                         <h1 className="uppercase font-bold">Master Urusan</h1>
                     </div>
-                    <div className="flex flex-col">
+                    {/* <div className="flex flex-col">
                         <ButtonSky 
                             className="flex items-center justify-center"
                             halaman_url='/DataMaster/masterprogramkegiatan/urusan/tambah'
@@ -24,7 +24,7 @@ const urusan = () => {
                             <TbCirclePlus className="mr-1"/>
                             Tambah Urusan
                         </ButtonSky>
-                    </div>
+                    </div> */}
                 </div>
                 <Table />
             </div>

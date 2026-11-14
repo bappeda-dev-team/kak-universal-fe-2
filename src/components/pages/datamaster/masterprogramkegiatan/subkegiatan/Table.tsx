@@ -77,7 +77,8 @@ const Table: React.FC<Table> = ({ fetchTrigger, data, error }) => {
                             <th className="border-r border-b px-6 py-3 w-[50px]">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Kode</th>
                             <th className="border-r border-b px-6 py-3 min-w-[300px]">Nama Sub Kegiatan</th>
-                            <th className="border-r border-b px-6 py-3 w-[100px]">Aksi</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[300px]">Indikator</th>
+                            {/* <th className="border-r border-b px-6 py-3 w-[100px]">Aksi</th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -100,6 +101,9 @@ const Table: React.FC<Table> = ({ fetchTrigger, data, error }) => {
                                             {item.nama_sub_kegiatan || "-"}
                                         </td>
                                         <td className="border-r border-b px-6 py-4">
+                                            -
+                                        </td>
+                                        {/* <td className="border-r border-b px-6 py-4">
                                             <div className="flex flex-col justify-center items-center gap-2">
                                                 <ButtonGreen
                                                     className="flex items-center gap-1 w-full"
@@ -122,7 +126,7 @@ const Table: React.FC<Table> = ({ fetchTrigger, data, error }) => {
                                                     Hapus
                                                 </ButtonRed>
                                             </div>
-                                        </td>
+                                        </td> */}
                                     </tr>
                                 );
                             })

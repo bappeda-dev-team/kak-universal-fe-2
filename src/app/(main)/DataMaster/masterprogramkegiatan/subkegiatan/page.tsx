@@ -102,13 +102,13 @@ const SubKegiatan = () => {
                             </ButtonBlackBorder>
                         </div>
                     </div>
-                    <ButtonSky
-                        // onClick={() => setModalTambah(true)}
+                    {/* <ButtonSky
+                        onClick={() => setModalTambah(true)}
                         className="flex items-center gap-1 m-2"
                     >
                         <TbCirclePlus />
                         Tambah Sub Kegiatan
-                    </ButtonSky>
+                    </ButtonSky> */}
                 </div>
                 {Loading ?
                     <LoadingBeat />
