@@ -105,18 +105,18 @@ export const TableMatrixRenja: React.FC<table> = ({ jenis, tahun, menu, kode_opd
 
     return (
         <>
-            {menu === "penetapan" &&
+            {menu != "ranwal" &&
                 <div className="px-3 py-2">
                     <div className={`flex items-center justify-between p-2 text-white rounded-lg ${Lock ? "bg-red-500" : "bg-emerald-500"}`}>
                         {Lock ?
                             <div className="flex items-center gap-1">
                                 <TbLockFilled />
-                                <p>Data terkunci tidak bisa di ubah</p>
+                                <p>Data {menu} terkunci tidak bisa di ubah</p>
                             </div>
                             :
                             <div className="flex items-center gap-1">
                                 <TbLockOpen />
-                                <p>Data terbuka dan bisa di ubah</p>
+                                <p>Data {menu} terbuka dan bisa di ubah</p>
                             </div>
                         }
                         {Lock ?
@@ -355,7 +355,7 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type, menu }) => {
                 ${jenis === "Kegiatan" && "bg-green-700 text-white"}
                 ${jenis === "Sub Kegiatan" && "bg-emerald-500 text-white"}
             `}>
-                <td colSpan={(type === "opd" && menu != "ranwal") ? 4 : 3} className="border-l border-b px-6 py-3 min-w-[300px] text-center uppercase font-bold">
+                <td colSpan={(type === "opd" && menu != "ranwal") ? 4 : 4} className="border-l border-b px-6 py-3 min-w-[300px] text-center uppercase font-bold">
                     {menu === "penetapan" ? "rankir" : "ranwal"}
                 </td>
                 {menu != "ranwal" &&
@@ -373,7 +373,7 @@ export const TheadMatrix: React.FC<Thead> = ({ tahun, jenis, type, menu }) => {
             `}>
                 {(jenis === 'Urusan' || jenis === 'Bidang Urusan') ?
                     <>
-                        <td colSpan={(type === "opd" && menu != "ranwal") ? 4 : 3} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
+                        <td colSpan={(type === "opd" && menu != "ranwal") ? 4 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
                         {menu != "ranwal" &&
                             <td colSpan={(type === "opd") ? 5 : 4} className="border-l border-b px-6 py-3 min-w-[200px] text-center">Pagu</td>
                         }
