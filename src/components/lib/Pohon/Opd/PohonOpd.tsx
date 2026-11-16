@@ -392,7 +392,7 @@ export const PohonOpd: React.FC<pohon> = ({ nip, tema, deleteTrigger, fetchTrigg
                                                 AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
                                                     if (result.isConfirmed) {
                                                         if (tema.jenis_pohon === "Strategic Crosscutting" || tema.jenis_pohon === "Tactical Crosscutting" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohn === "Operational N Crosscutting") {
-                                                            hapusPohonCross(tema.id)
+                                                            hapusPohonOpd(tema.id)
                                                         } else {
                                                             hapusPohonOpd(tema.id);
                                                         }
@@ -444,7 +444,7 @@ export const PohonOpd: React.FC<pohon> = ({ nip, tema, deleteTrigger, fetchTrigg
                                                 AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
                                                     if (result.isConfirmed) {
                                                         if (tema.jenis_pohon === "Strategic Crosscutting" || tema.jenis_pohon === "Tactical Crosscutting" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohn === "Operational N Crosscutting") {
-                                                            hapusPohonCross(tema.id)
+                                                            hapusPohonOpd(tema.id)
                                                         } else {
                                                             hapusPohonOpd(tema.id);
                                                         }
@@ -497,7 +497,7 @@ export const PohonOpd: React.FC<pohon> = ({ nip, tema, deleteTrigger, fetchTrigg
                                                 AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
                                                     if (result.isConfirmed) {
                                                         if (tema.jenis_pohon === "Strategic Crosscutting" || tema.jenis_pohon === "Tactical Crosscutting" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohn === "Operational N Crosscutting") {
-                                                            hapusPohonCross(tema.id)
+                                                            hapusPohonOpd(tema.id)
                                                         } else {
                                                             hapusPohonOpd(tema.id);
                                                         }
@@ -534,7 +534,7 @@ export const PohonOpd: React.FC<pohon> = ({ nip, tema, deleteTrigger, fetchTrigg
                                                 AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
                                                     if (result.isConfirmed) {
                                                         if (tema.jenis_pohon === "Strategic Crosscutting" || tema.jenis_pohon === "Tactical Crosscutting" || tema.jenis_pohon === "Operational Crosscutting" || tema.jenis_pohn === "Operational N Crosscutting") {
-                                                            hapusPohonCross(tema.id)
+                                                            hapusPohonOpd(tema.id)
                                                         } else {
                                                             hapusPohonOpd(tema.id);
                                                         }
