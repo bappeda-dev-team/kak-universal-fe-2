@@ -400,7 +400,7 @@ export const FormUserOpd = () => {
                             "Simpan"
                         }
                     </ButtonGreen>
-                    <ButtonRed type="button" halaman_url="/useropd">
+                    <ButtonRed type="button" halaman_url="/DataMasterOpd/useropd">
                         Kembali
                     </ButtonRed>
                 </form>
@@ -722,7 +722,7 @@ export const FormEditUserOpd = () => {
                             "Simpan"
                         }
                     </ButtonGreen>
-                    <ButtonRed type="button" halaman_url="/useropd">
+                    <ButtonRed type="button" halaman_url="/DataMasterOpd/useropd">
                         Kembali
                     </ButtonRed>
                 </form>
