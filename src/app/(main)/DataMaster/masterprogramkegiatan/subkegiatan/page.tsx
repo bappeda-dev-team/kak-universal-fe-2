@@ -199,7 +199,7 @@ const SubKegiatan = () => {
                     >
                         <TbCirclePlus />
                         Tambah Sub Kegiatan
-                    </ButtonSky>
+                    </ButtonSky> */}
                 </div>
 
                 {/* Table */}

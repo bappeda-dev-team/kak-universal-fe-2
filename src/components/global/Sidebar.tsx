@@ -1,78 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  TbBook,
-  TbApps,
-  TbChecklist,
-  TbShoppingCartDollar,
-  TbLogout,
-  TbBook2,
-  TbBulb,
-  TbFileAlert,
-  TbTooltip,
-  TbBinaryTree,
-  TbBuildingFortress,
-  TbBuildingCommunity,
-  TbDatabaseCog,
-  TbHome,
-  TbFileDelta,
-  TbFile3D,
-  TbCircleArrowLeftFilled,
-  TbBadges,
-  TbBuilding,
-  TbChevronRight,
-  TbCircleCheck,
-  TbBuildingEstate,
-  TbFileChart,
-  TbFileDots,
-  TbFileCode,
-  TbFileCode2,
-  TbUsers,
-  TbUser,
-  TbHexagonLetterR,
-  TbBinaryTree2,
-  TbTarget,
-  TbMapPin,
-  TbChartBar,
-  TbCalendarShare,
-  TbCalendar,
-  TbHexagonLetterV,
-  TbHexagonLetterM,
-  TbClipboardText,
-  TbZoomExclamation,
-  TbListDetails,
-  TbAlertTriangle,
-  TbDatabasePlus,
-  TbCalendarPlus,
-  TbFocus2,
-  TbBuildingCottage,
-  TbCalendarStar,
-  TbChartPie,
-  TbListTree,
-  TbFileImport,
-  TbFileCheck,
-  TbRubberStamp,
-  TbAB2,
-  TbDice4Filled,
-  TbCircleFilled,
-  TbLockSquareRounded,
-  TbLockSquare,
-  TbUserSearch,
-  TbLockSquareRoundedFilled,
-  TbUserQuestion,
-  TbLayoutList,
-  TbShieldSearch,
-  TbWorldSearch,
-  TbFlag,
-  TbFlagPin,
-  TbPencilPlus,
-  TbClipboardCheck,
-  TbAppsFilled,
-  TbCurrencyDollar,
-  TbFiles,
-  TbCardsFilled,
-  TbChartDots3,
+import { TbBook, TbApps, TbChecklist, TbShoppingCartDollar, TbLogout, TbBook2, TbBulb, TbFileAlert, TbTooltip, TbBinaryTree, TbBuildingFortress, TbBuildingCommunity, TbDatabaseCog, TbHome,
+  TbFileDelta, TbFile3D, TbCircleArrowLeftFilled, TbBadges, TbBuilding, TbChevronRight, TbCircleCheck, TbBuildingEstate, TbFileChart, TbFileDots, TbFileCode, TbFileCode2, TbUsers, TbUser, TbHexagonLetterR,
+  TbBinaryTree2, TbTarget, TbMapPin, TbChartBar, TbCalendarShare, TbCalendar, TbHexagonLetterV, TbHexagonLetterM, TbClipboardText, TbZoomExclamation, TbListDetails, TbAlertTriangle, TbDatabasePlus, TbCalendarPlus,
+  TbFocus2, TbBuildingCottage, TbCalendarStar, TbChartPie, TbListTree, TbFileImport, TbFileCheck, TbRubberStamp, TbAB2, TbDice4Filled, TbCircleFilled, TbLockSquareRounded, TbLockSquare,
+  TbUserSearch, TbLockSquareRoundedFilled, TbUserQuestion, TbLayoutList, TbShieldSearch, TbWorldSearch, TbFlag, TbFlagPin, TbPencilPlus, TbClipboardCheck,
+  TbAppsFilled, TbCurrencyDollar, TbFiles, TbCardsFilled, TbChartDots3, TbAutomaticGearbox
 } from "react-icons/tb";
 import Image from "next/image";
 import { usePathname, useParams } from "next/navigation";
@@ -2259,7 +2193,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               <li
                 className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/crosscutting" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}
               >
-                <TbBulb className="text-xl" />
+                <TbAutomaticGearbox className="text-xl" />
                 <span
                   className={`${!isOpen && "hidden"} origin-left duration-200`}
                 >

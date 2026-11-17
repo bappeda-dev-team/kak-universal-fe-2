@@ -486,7 +486,7 @@ export const TablePohon = (props: any) => {
                                         ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                     `}
                                     >
-                                        {item.nama_pegawai}
+                                        {item.nama_pegawai || "unknown"} ({item.nip || "-"})
                                     </td>
                                 </tr>
                             ))
@@ -513,7 +513,7 @@ export const TablePohon = (props: any) => {
                                         ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"} 
                                     `}
                                     >
-                                        {data.nama_pegawai}
+                                        {data.nama_pegawai || "unknown"} ({item.nip || "-"})
                                     </td>
                                 </tr>
                             ))
@@ -635,7 +635,7 @@ export const TablePohonEdited = (props: any) => {
                                         ${jenis === "Operational Pemda" && "border-black"}    
                                     `}
                                     >
-                                        {item.nama_pegawai}
+                                        {item.nama_pegawai || "unknown"} ({item.nip || "-"})
                                     </td>
                                 </tr>
                             ))
@@ -664,7 +664,7 @@ export const TablePohonEdited = (props: any) => {
                                     ${jenis === "Operational Pemda" && "border-black"}    
                                 `}
                                     >
-                                        {data.nama_pegawai}
+                                        {data.nama_pegawai || "unknown"} ({item.nip || "-"})
                                     </td>
 
                                 </tr>

@@ -103,8 +103,9 @@ const Table = () => {
                             <th className="border-r border-b px-6 py-3 min-w-[50px]">No</th>
                             <th className="border-r border-b px-6 py-3 min-w-[500px]">Nama Kegiatan</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Kode Kegiatan</th>
+                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Perangkat Daerah</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Aksi</th>
+                            {/* <th className="border-r border-b px-6 py-3 min-w-[200px]">Aksi</th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -120,8 +121,9 @@ const Table = () => {
                             <td className="border-r border-b px-6 py-4">{index + 1}</td>
                             <td className="border-r border-b px-6 py-4">{data.nama_kegiatan ? data.nama_kegiatan : "-"}</td>
                             <td className="border-r border-b px-6 py-4">{data.kode_kegiatan ? data.kode_kegiatan : "-"}</td>
+                            <td className="border-r border-b px-6 py-4">-</td>
                             <td className="border-r border-b px-6 py-4">{data.kode_opd ? data.kode_opd.nama_opd : "-"}</td>
-                            <td className="border-r border-b px-6 py-4">
+                            {/* <td className="border-r border-b px-6 py-4">
                                 <div className="flex flex-col jutify-center items-center gap-2">
                                     <ButtonGreen className="w-full" halaman_url={`/DataMaster/masterprogramkegiatan/kegiatan/${data.id}`}>Edit</ButtonGreen>
                                     <ButtonRed 
@@ -137,7 +139,7 @@ const Table = () => {
                                         Hapus
                                     </ButtonRed>
                                 </div>
-                            </td>
+                            </td> */}
                         </tr>
                         ))
                     }

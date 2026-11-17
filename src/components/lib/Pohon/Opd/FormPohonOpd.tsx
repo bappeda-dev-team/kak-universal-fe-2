@@ -306,12 +306,11 @@ export const FormPohonOpd: React.FC<{
                 })),
             }),
             tagging: taggingData,
-            ikk: data.ikk ?
+            ...(data.ikk ?
                 data.ikk.map((ikk) => ({
-                    ikk_id: ikk.ikk_id?.value,
+                    ...(ikk.ikk_id?.value !== undefined && { ikk_id: ikk.ikk_id.value })
                 }))
-                :
-                []
+                : [])
         };
         // console.log(formData);
         try {
@@ -1060,12 +1059,11 @@ export const FormEditPohon: React.FC<{
                 })),
             }),
             tagging: taggingData,
-            ikk: data.ikk ?
+            ...(data.ikk ?
                 data.ikk.map((ikk) => ({
-                    ikk_id: ikk.ikk_id?.value,
+                    ...(ikk.ikk_id?.value !== undefined && { ikk_id: ikk.ikk_id.value })
                 }))
-                :
-                []
+                : [])
         };
         // console.log(formData);
         try {
