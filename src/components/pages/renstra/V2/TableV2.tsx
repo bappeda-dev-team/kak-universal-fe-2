@@ -57,6 +57,9 @@ export interface Target {
     tahun: string;
     target: string;
     satuan: string;
+    kode_opd?: string;
+    kode?: string;
+  indikator?: string;
 }
 interface CombinedData {
     pagu_indikatif: number;
@@ -507,6 +510,9 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                         tahun: tahun,
                         target: terbaru.target || "-",
                         satuan: terbaru.satuan || "-",
+                        kode_opd: kode_opd,
+                        indikator: i.indikator,
+                        kode: i.kode,
                     };
                 }
                 const trg = i.target?.find((t: Target) => t.tahun === tahun);
@@ -517,6 +523,9 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                     tahun: tahun,
                     target: hasTarget ? trg.target : "-",
                     satuan: hasTarget ? (trg.satuan || "-") : "-",
+                    kode_opd: kode_opd,
+                    indikator: i.indikator,
+                    kode: i.kode,
                 };
             }),
         };
@@ -577,6 +586,9 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                 tahun: t.tahun,
                 target: String(t.target ?? "-"),
                 satuan: t.satuan ?? "-",
+                kode_opd: kode_opd,
+                indikator: item.indikator,
+                kode: item.kode,
             })),
         }));
         if (baru.length === 0) {

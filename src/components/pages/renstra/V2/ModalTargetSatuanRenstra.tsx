@@ -16,6 +16,9 @@ interface FormValue {
     satuan: string;
     tahun: string;
     target: number;
+    kode_opd: string;
+    kode: string;
+    indikator: string;
 }
 
 interface modal {
@@ -34,7 +37,10 @@ export const ModalTargetSatuanRenstra: React.FC<modal> = ({ isOpen, indikator, t
             kode_indikator: indikator?.kode_indikator ?? "",
             satuan: target?.satuan ?? "",
             target: Number(target?.target) ?? 0,
-            tahun: target?.tahun ?? ""
+            tahun: target?.tahun ?? "",
+            kode_opd: target?.kode_opd,
+            kode: indikator?.kode,
+            indikator: indikator?.indikator
         }
     });
 
@@ -48,9 +54,12 @@ export const ModalTargetSatuanRenstra: React.FC<modal> = ({ isOpen, indikator, t
             kode_indikator: data.kode_indikator ?? "",
             satuan: data.satuan ?? "",
             target: String(data.target) ?? 0,
-            tahun: data.tahun ?? ""
+            tahun: data.tahun ?? "",
+            kode_opd: data.kode_opd,
+            kode: data.kode,
+            indikator: data.indikator
         }
-        // console.log(payload);
+        console.log(payload);
         try {
             let url = "matrix_renstra/target/upsert";
             setProses(true);
