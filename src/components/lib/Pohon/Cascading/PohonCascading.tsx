@@ -664,7 +664,7 @@ export const TablePohonEdited = (props: any) => {
                                     ${jenis === "Operational Pemda" && "border-black"}    
                                 `}
                                     >
-                                        {data.nama_pegawai || "unknown"} ({item.nip || "-"})
+                                        {data.nama_pegawai || "unknown"} ({data.nip || "-"})
                                     </td>
 
                                 </tr>
