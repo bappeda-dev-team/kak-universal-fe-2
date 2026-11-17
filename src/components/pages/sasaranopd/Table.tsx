@@ -24,6 +24,7 @@ import {
 } from "react-icons/tb";
 import { ModalSasaranOpd } from "./ModalSasaranOpd";
 import { useCetakSasaranOpd } from "@/app/(main)/Renstra/sasaranopd/useCetakSasaranOpd";
+import { useBrandingContext } from "@/context/BrandingContext";
 
 interface OptionTypeString {
     value: string;
@@ -142,6 +143,8 @@ const Table: React.FC<table> = ({
     const nama_opd =
         User?.roles == "super_admin" ? SelectedOpd?.label : User?.nama_opd;
 
+    const { branding } = useBrandingContext();
+
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         let url = "";
@@ -150,10 +153,12 @@ const Table: React.FC<table> = ({
         } else {
             url = `sasaran_opd/renstra/${User?.kode_opd}/${tahun_awal}/${tahun_akhir}/${jenis}`;
         }
+        const tahun_aktif = branding.tahun?.value
+
         const fetchSasaranOpd = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${API_URL}/${url}`, {
+                const response = await fetch(`${API_URL}/${url}?tahun_aktif=${tahun_aktif}`, {
                     headers: {
                         Authorization: `${token}`,
                         "Content-Type": "application/json",

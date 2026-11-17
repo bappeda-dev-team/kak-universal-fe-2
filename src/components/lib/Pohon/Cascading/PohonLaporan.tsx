@@ -27,6 +27,7 @@ interface rencana_kinerja {
     tahun: string; // Tahun dalam JSON adalah string
     indikator: indikator[]; // Array yang berisi objek IndikatorItem
     pegawai_id: string;
+    nip: string;
     nama_pegawai: string;
     kode_subkegiatan: string;
     nama_subkegiatan: string;
@@ -848,7 +849,7 @@ export const TablePelaksana: React.FC<TablePelaksana> = ({ jenis, pelaksana, tip
                                     ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"}
                                 `}
                             >
-                                {item.nama_pegawai}
+                                {item.nama_pegawai || "unknown"} ({item.nip || "-"})
                             </td>
                         </tr>
                     </tbody>
