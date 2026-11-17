@@ -396,13 +396,13 @@ const Table: React.FC<table> = ({
               </th>
               <th
                 rowSpan={2}
-                className="border-r border-b px-6 py-3 min-w-[200px]"
+                className="border-r border-b px-6 py-3 min-w-[300px]"
               >
                 Definisi Operasional
               </th>
               <th
                 rowSpan={2}
-                className="border-r border-b px-6 py-3 min-w-[200px]"
+                className="border-r border-b px-6 py-3 min-w-[300px]"
               >
                 Rumus Perhitungan
               </th>
