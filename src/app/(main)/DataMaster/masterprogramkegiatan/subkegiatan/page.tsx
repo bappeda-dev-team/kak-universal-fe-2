@@ -193,7 +193,7 @@ const SubKegiatan = () => {
                             )}
                         </div>
                     </div>
-
+                    {/*
                     <ButtonSky
                         className="flex items-center gap-1 m-2"
                     >
@@ -225,8 +225,8 @@ const SubKegiatan = () => {
                                 key={index}
                                 onClick={() => setPage(Number(item))}
                                 className={`py-1 px-3 rounded-full ${Page === Number(item)
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-200 hover:bg-blue-300 hover:text-white"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-200 hover:bg-blue-300 hover:text-white"
                                     }`}
                             >
                                 {item}
