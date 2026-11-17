@@ -513,7 +513,7 @@ export const TablePohon = (props: any) => {
                                         ${(jenis === "Strategic Crosscutting" || jenis === "Tactical Crosscutting" || jenis === "Operational Crosscutting" || jenis === "Operational N Crosscutting") && "border-yellow-700"} 
                                     `}
                                     >
-                                        {data.nama_pegawai || "unknown"} ({item.nip || "-"})
+                                        {data.nama_pegawai || "unknown"} ({data.nip || "-"})
                                     </td>
                                 </tr>
                             ))
