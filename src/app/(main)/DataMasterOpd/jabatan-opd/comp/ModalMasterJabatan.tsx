@@ -211,7 +211,7 @@ export const ModalMasterJabatan: React.FC<modal> = ({
                     {/* Orang Ke */}
                     <div className="flex flex-col py-3">
                         <label className="uppercase text-xs font-bold text-gray-700 my-2">
-                            Orang Ke
+                            Level Jabatan
                             {errors.orang_ke && (
                                 <span className="text-red-500"> : wajib diisi (minimal 1)</span>
                             )}
