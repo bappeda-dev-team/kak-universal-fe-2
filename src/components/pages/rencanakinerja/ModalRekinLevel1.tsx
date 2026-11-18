@@ -140,7 +140,7 @@ export const ModalRekinLevel1: React.FC<ModalProps> = ({ isOpen, onClose, tahun,
         const formDataNew = {
             //key : value
             id_pohon: Sasaran?.id_pohon,
-            sasaranopd_id: Number(Sasaran?.id_tujuan_opd),
+            sasaranopd_id: Number(Sasaran?.id_sasaran_opd),
             nama_rencana_kinerja: Sasaran?.nama_sasaran_opd || "",
             status_rencana_kinerja: "aktif",
             tahun: String(tahun),
