@@ -221,9 +221,9 @@ export const ModalMasterJabatan: React.FC<modal> = ({
                             name="orang_ke"
                             control={control}
                             rules={{
-                                required: "Orang ke wajib diisi",
+                                required: "Level Jabatan wajib diisi",
                                 validate: (value) =>
-                                    Number(value) >= 1 || "Minimal orang ke adalah 1",
+                                    Number(value) >= 1 || "Minimal level jabatan adalah 1",
                             }}
                             render={({ field }) => (
                                 <input
@@ -232,7 +232,7 @@ export const ModalMasterJabatan: React.FC<modal> = ({
                                     type="number"
                                     min={1}
                                     className="border px-4 py-2 rounded-lg"
-                                    placeholder="Urutan jabatan, dari kepala (1) ke staff (4)"
+                                    placeholder="Level jabatan, dari kepala (1) ke staff (4)"
                                 />
                             )}
                         />
@@ -260,7 +260,7 @@ export const ModalMasterJabatan: React.FC<modal> = ({
                                     type="number"
                                     min={1}
                                     className="border px-4 py-2 rounded-lg"
-                                    placeholder="Urutan jabatan"
+                                    placeholder="Urutan jabatan pada level yang sama (contoh: 1, 2, 3)"
                                 />
                             )}
                         />
