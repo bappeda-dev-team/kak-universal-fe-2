@@ -6,6 +6,7 @@ export interface GetResponseFindallJabatan {
     nama_jabatan: string;
     operasional_daerah: {
         kode_opd: string;
+        nama_opd: string;
     };
     kelas_jabatan: string;
     jenis_jabatan: string;

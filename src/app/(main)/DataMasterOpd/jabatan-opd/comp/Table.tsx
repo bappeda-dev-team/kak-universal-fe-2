@@ -142,9 +142,9 @@ const Table: React.FC<Table> = ({ nama_opd, kode_opd, tahun }) => {
                             <thead>
                                 <tr className="bg-orange-500 text-white">
                                     <th className="border-r border-b border-gray-200 px-6 py-3 w-[50px] text-center">No</th>
-                                    <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Nama Jabatan</th>
-                                    <th className="border-r border-b border-gray-200 px-6 py-3 w-[200px]">Kode Jabatan</th>
-                                    <th className="border-r border-b border-gray-200 px-6 py-3 w-[150px]">Perangkat Daerah</th>
+                                    <th className="border-r border-b border-gray-200 px-6 py-3 w-[250px]">Nama Jabatan</th>
+                                    <th className="border-r border-b border-gray-200 px-6 py-3 w-[50px]">Kode Jabatan</th>
+                                    <th className="border-r border-b border-gray-200 px-6 py-3 w-[250px]">Perangkat Daerah</th>
                                     <th className="border-l border-b border-gray-200 px-6 py-3 w-[100px]">Aksi</th>
                                 </tr>
                             </thead>
@@ -155,7 +155,7 @@ const Table: React.FC<Table> = ({ nama_opd, kode_opd, tahun }) => {
                                             <td className="border-x border-b border-orange-500 py-4 px-3 text-center">{index + 1}</td>
                                             <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.nama_jabatan || "-"}</td>
                                             <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.kode_jabatan || "-"}</td>
-                                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.operasional_daerah.kode_opd || "-"}</td>
+                                            <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.operasional_daerah.nama_opd || "-"}</td>
                                             <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
                                                 <div className="flex flex-col items-center gap-1">
                                                     <ButtonSkyBorder
