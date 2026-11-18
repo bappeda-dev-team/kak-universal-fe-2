@@ -20,4 +20,6 @@ export interface FormValue {
     kode_opd: OptionTypeString | null;
     nama_jabatan: string;
     kode_jabatan: string;
+    jabatan_ke: number | string;
+    orang_ke: number | string;
 }
