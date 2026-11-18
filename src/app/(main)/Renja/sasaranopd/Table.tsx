@@ -1,6 +1,5 @@
 'use client'
 
-import { ButtonRed, ButtonGreen } from "@/components/global/Button";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";

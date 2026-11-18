@@ -10,7 +10,6 @@ import { ButtonSkyBorder, ButtonRedBorder } from "@/components/global/Button";
 import { TbPencil, TbTrash, TbCirclePlus } from "react-icons/tb";
 import { ModalMasterJabatan } from "./ModalMasterJabatan";
 import { getToken } from "@/components/lib/Cookie";
-import { TahunNull, OpdTahunNull } from "@/components/global/OpdTahunNull";
 
 interface Table {
     nama_opd: string;
@@ -57,7 +56,7 @@ const Table: React.FC<Table> = ({ nama_opd, kode_opd, tahun }) => {
                 const result = await response.json();
                 const data = result.data;
                 if (result.code === 200) {
-                    if(data === null){
+                    if (data === null) {
                         setData([]);
                     } else {
                         setData(data);
