@@ -16,7 +16,7 @@ interface OptionTypeString {
 interface BrandingContextType {
     title: string;
     clientName: string;
-    refreshBranding: () => {};
+    refreshBranding: () => void;
     logo: string;
     LoadingBranding: boolean;
     branding: {
