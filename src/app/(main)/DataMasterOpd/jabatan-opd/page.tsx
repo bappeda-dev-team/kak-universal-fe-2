@@ -27,7 +27,7 @@ const JabatanOpd = () => {
             setNamaOpd(branding.user?.nama_opd);
         }
 
-        setTahun(Number(branding.tahun ?? 0));
+        setTahun(Number(branding.tahun?.value ?? 0));
     }, [LoadingBranding, branding]);
 
     if (LoadingBranding) {
