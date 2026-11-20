@@ -59,7 +59,7 @@ export interface Target {
     satuan: string;
     kode_opd?: string;
     kode?: string;
-  indikator?: string;
+    indikator?: string;
 }
 interface CombinedData {
     pagu_indikatif: number;
@@ -164,7 +164,6 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
                 if (result.code === 400) {
                     setDataNull(true);
                     setMatrix([]);
-                    console.log(data);
                 } else if (result.code === 200) {
                     setDataNull(false);
                     setMatrix(data);
@@ -387,7 +386,7 @@ export const TableMatrix: React.FC<table> = ({ jenis, tahun_awal, tahun_akhir, t
         </>
     )
 }
-export const TheadMatrix: React.FC<Thead> = ({ jenis, tahun_list }) => {
+export const TheadMatrix: React.FC<Thead> = ({ jenis, tahun_list, type }) => {
     return (
         <thead>
             <tr className={`font-semibold
@@ -401,7 +400,9 @@ export const TheadMatrix: React.FC<Thead> = ({ jenis, tahun_list }) => {
                 <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 min-w-[200px]">{jenis}</td>
                 <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 min-w-[200px]">Outcome</td>
                 <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 min-w-[300px]">Indikator</td>
-                <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 min-w-[150px] text-center">Aksi</td>
+                {type === "opd" &&
+                    <td rowSpan={2} className="font-semibold border-r border-b border-slate-400 px-6 py-4 min-w-[150px] text-center">Aksi</td>
+                }
                 {tahun_list.map((item: any) => (
                     <td key={item} colSpan={2} className="font-bold border-r border-b border-slate-400 px-6 py-3 min-w-[100px] text-center">{item}</td>
                 ))}
@@ -451,7 +452,7 @@ interface Tr {
     onUpdatePagu: (kode: string, tahun: string, pagu_indikatif: number) => void;
     fetchTrigger: () => void;
 }
-export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, indikator, anggaran, tahun_list, outcome, targetMap, onUpdateTarget, paguMap, onUpdatePagu, fetchTrigger }) => {
+export const TrMatrix: React.FC<Tr> = ({ jenis, type, tahun, nama, kode_opd, kode, indikator, anggaran, tahun_list, outcome, targetMap, onUpdateTarget, paguMap, onUpdatePagu, fetchTrigger }) => {
 
     // Modal Indikator
     const [ModalTambahIndikator, setModalTambahIndikator] = useState<boolean>(false);
@@ -652,7 +653,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
         <td rowSpan={rowSpan} className="border-r border-b border-slate-400 px-6 py-4 w-full">
             <div className="flex flex-col items-center gap-2">
                 Rp.{formatRupiah(getPaguByTahun(tahun))}
-                {jenis === "Sub Kegiatan" &&
+                {jenis === "Sub Kegiatan" && type === "opd" &&
                     <button
                         type="button"
                         onClick={() => handleModalPagu(getPaguByTahun(tahun), tahun)}
@@ -677,57 +678,7 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                             {outcomeLokal?.length > 0 &&
                                 <span>{outcomeLokal[0]?.outcome || "-"}</span>
                             }
-                            <div className="flex flex-col items-center gap-1">
-                                <button
-                                    type="button"
-                                    className="p-1 border border-green-500 text-green-700 rounded-full hover:bg-green-500 hover:text-white cursor-pointer shrink-0"
-                                    title="Edit Outcome"
-                                    onClick={() => {
-                                        if (outcomeLokal[0]?.id) {
-                                            handleModalOutcome("edit")
-                                        } else {
-                                            handleModalOutcome("tambah")
-                                        }
-                                    }}
-                                >
-                                    <TbPencil size={14} />
-                                </button>
-                                {outcomeLokal.length > 0 &&
-                                    <button
-                                        type="button"
-                                        className="p-1 border border-red-500 text-red-700 rounded-full hover:bg-red-500 hover:text-white cursor-pointer shrink-0"
-                                        title="Hapus Outcome"
-                                        onClick={() => AlertQuestion("Hapus?", `${outcomeLokal[0].outcome || ""}`, "question", "Hapus", "Batal").then((resp) => {
-                                            if (resp.isConfirmed) {
-                                                hapusOutcome(outcomeLokal[0].id)
-                                            }
-                                        })}
-                                    >
-                                        <TbTrash size={14} />
-                                    </button>
-                                }
-                            </div>
-                        </div>
-                    </td>
-                    <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}></td>
-                    <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}></td>
-                    {anggaran.map((d: Anggaran, index: number) => (
-                        <React.Fragment key={index}>
-                            <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}></td>
-                            <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}>Rp.{formatRupiah(d.pagu_indikatif || 0)}</td>
-                        </React.Fragment>
-                    ))}
-                </tr>
-                :
-                <>
-                    <tr>
-                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 font-semibold`}>{kode || ""}</td>
-                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>{nama || ""}</td>
-                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
-                            <div className="flex items-center justify-between gap-1">
-                                {outcomeLokal.length > 0 &&
-                                    <span>{outcomeLokal[0].outcome || "-"}</span>
-                                }
+                            {type === "opd" &&
                                 <div className="flex flex-col items-center gap-1">
                                     <button
                                         type="button"
@@ -758,6 +709,66 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                         </button>
                                     }
                                 </div>
+                            }
+                        </div>
+                    </td>
+                    <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}></td>
+                    {type === "opd" &&
+                        <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}></td>
+                    }
+                    {anggaran.map((d: Anggaran, index: number) => (
+                        <React.Fragment key={index}>
+                            <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}></td>
+                            <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-center`}>Rp.{formatRupiah(d.pagu_indikatif || 0)}</td>
+                        </React.Fragment>
+                    ))}
+                </tr>
+                :
+                <>
+                    <tr>
+                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 font-semibold`}>{kode || ""}</td>
+                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>{nama || ""}</td>
+                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
+                            <div className="flex items-center justify-between gap-1">
+                                {outcomeLokal.length > 0 &&
+                                    <span>{outcomeLokal[0].outcome || "-"}</span>
+                                }
+                                <div className="flex flex-col items-center gap-1">
+
+                                    {type === "opd" && (
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="p-1 border border-green-500 text-green-700 rounded-full hover:bg-green-500 hover:text-white cursor-pointer shrink-0"
+                                                title="Edit Outcome"
+                                                onClick={() => {
+                                                    if (outcomeLokal[0]?.id) {
+                                                        handleModalOutcome("edit")
+                                                    } else {
+                                                        handleModalOutcome("tambah")
+                                                    }
+                                                }}
+                                            >
+                                                <TbPencil size={14} />
+                                            </button>
+                                            {outcomeLokal.length > 0 &&
+                                                <button
+                                                    type="button"
+                                                    className="p-1 border border-red-500 text-red-700 rounded-full hover:bg-red-500 hover:text-white cursor-pointer shrink-0"
+                                                    title="Hapus Outcome"
+                                                    onClick={() => AlertQuestion("Hapus?", `${outcomeLokal[0].outcome || ""}`, "question", "Hapus", "Batal").then((resp) => {
+                                                        if (resp.isConfirmed) {
+                                                            hapusOutcome(outcomeLokal[0].id)
+                                                        }
+                                                    })}
+                                                >
+                                                    <TbTrash size={14} />
+                                                </button>
+                                            }
+                                        </>
+                                    )
+                                    }
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -766,14 +777,16 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                             <td className={`border-r border-b border-slate-400 px-6 py-4 w-full text-red-300 italic`}>indikator kosong</td>
                             <td className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
                                 <div className="flex flex-col items-center gap-1">
-                                    <ButtonGreenBorder
-                                        type="button"
-                                        className="flex items-center gap-1"
-                                        onClick={() => setModalTambahIndikator(true)}
-                                    >
-                                        <TbCirclePlus />
-                                        Indikator
-                                    </ButtonGreenBorder>
+                                    {type === "opd" &&
+                                        <ButtonGreenBorder
+                                            type="button"
+                                            className="flex items-center gap-1"
+                                            onClick={() => setModalTambahIndikator(true)}
+                                        >
+                                            <TbCirclePlus />
+                                            Indikator
+                                        </ButtonGreenBorder>
+                                    }
                                 </div>
                             </td>
                             {tahun_list.map((tahun: string) => (
@@ -814,19 +827,21 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                     </div>
                                 </td>
                                 {/* Aksi dilebur menjadi satu kotak menutupi semua baris indikator */}
-                                {index === 0 &&
-                                    <td rowSpan={combinedData.length} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
-                                        <div className="flex flex-col items-center gap-1">
-                                            <ButtonGreenBorder
-                                                type="button"
-                                                className="flex items-center gap-1"
-                                                onClick={() => setModalTambahIndikator(true)}
-                                            >
-                                                <TbCirclePlus />
-                                                Indikator
-                                            </ButtonGreenBorder>
-                                        </div>
-                                    </td>
+                                {index === 0 && type === "opd" &&
+                                    (
+                                        <td rowSpan={combinedData.length} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
+                                            <div className="flex flex-col items-center gap-1">
+                                                <ButtonGreenBorder
+                                                    type="button"
+                                                    className="flex items-center gap-1"
+                                                    onClick={() => setModalTambahIndikator(true)}
+                                                >
+                                                    <TbCirclePlus />
+                                                    Indikator
+                                                </ButtonGreenBorder>
+                                            </div>
+                                        </td>
+                                    )
                                 }
                                 {/* indikator untuk semua tahun, target & satuan per tahun dari combinedData */}
                                 {tahun_list.map((tahun: string) => {
@@ -839,15 +854,16 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, tahun, nama, kode_opd, kode, ind
                                                         ? `${target.target} ${target.satuan || ""}`
                                                         : ""
                                                     }
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleModalTarget(d, target || null)}
-                                                        className="text-sky-500 border border-sky-300 hover:text-sky-700 p-1 rounded-full hover:bg-sky-100 transition-colors shrink-0"
-                                                        title="Edit Target Satuan"
-                                                    >
-                                                        <TbPencil size={14} />
-                                                    </button>
-
+                                                    {type === "opd" &&
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleModalTarget(d, target || null)}
+                                                            className="text-sky-500 border border-sky-300 hover:text-sky-700 p-1 rounded-full hover:bg-sky-100 transition-colors shrink-0"
+                                                            title="Edit Target Satuan"
+                                                        >
+                                                            <TbPencil size={14} />
+                                                        </button>
+                                                    }
                                                 </div>
                                             </td>
                                             {/* Pagu dilebur menjadi satu kotak menutupi semua baris indikator */}

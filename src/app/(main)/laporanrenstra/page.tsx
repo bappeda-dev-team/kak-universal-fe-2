@@ -1,11 +1,11 @@
 'use client'
 
 import { FiHome } from "react-icons/fi";
-import { TableRenstra } from "@/components/pages/renstra/Table";
 import { getToken, getOpdTahun, getUser, getPeriode, setCookie } from "@/components/lib/Cookie";
 import { useEffect, useState } from "react";
 import Select from 'react-select';
 import { OpdNull } from "@/components/global/OpdTahunNull";
+import { TableMatrix } from "@/components/pages/renstra/V2/TableV2";
 
 interface Periode {
     value: number;
@@ -133,7 +133,7 @@ const LaporanRenstra = () => {
                     Periode ?
                         <div className="p-1">
                             {/* <Maintenance /> */}
-                            <TableRenstra
+                            <TableMatrix
                                 jenis="laporan"
                                 tahun_awal={Periode?.tahun_awal ? Periode?.tahun_awal : ""}
                                 tahun_akhir={Periode?.tahun_akhir ? Periode?.tahun_akhir : ""}

@@ -1,7 +1,6 @@
 'use client'
 
 import { FiHome } from "react-icons/fi";
-import { TableRenstra } from "@/components/pages/renstra/Table";
 import { getToken, getOpdTahun, getUser, getPeriode } from "@/components/lib/Cookie";
 import { useEffect, useState } from "react";
 import Select from 'react-select';
