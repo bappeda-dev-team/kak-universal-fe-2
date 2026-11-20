@@ -27,12 +27,16 @@ interface renstra {
     nama: string;
     kode: string;
     jenis: string;
+    outcome: OutcomeData[];
     indikator: Indikator[];
     anggaran: Anggaran[];
     bidang_urusan?: renstra[];
     program?: renstra[]
     kegiatan?: renstra[]
     subkegiatan?: renstra[]
+}
+interface OutcomeData {
+    outcome: string;
 }
 interface Anggaran {
     tahun: string;
@@ -185,6 +189,9 @@ export function TableUrusanWord(
             cell([textParagraph(jenis, 12, true, color)], jenisWidth, {
                 fill, color, alignment: AlignmentType.CENTER, verticalMerge: VerticalMergeType.RESTART,
             }),
+            cell([textParagraph("Outcome", 12, true, color)], kodeWidth, {
+                fill, color, alignment: AlignmentType.CENTER, verticalMerge: VerticalMergeType.RESTART,
+            }),
             cell([textParagraph("Indikator", 12, true, color)], indikatorWidth, {
                 fill, color, alignment: AlignmentType.CENTER, verticalMerge: VerticalMergeType.RESTART,
             }),
@@ -196,6 +203,7 @@ export function TableUrusanWord(
 
     const headerRow2Cells: TableCell[] = [
         cell([emptyParagraph()], kodeWidth, { fill, color, verticalMerge: VerticalMergeType.CONTINUE }),
+        cell([emptyParagraph()], jenisWidth, { fill, color, verticalMerge: VerticalMergeType.CONTINUE }),
         cell([emptyParagraph()], jenisWidth, { fill, color, verticalMerge: VerticalMergeType.CONTINUE }),
         cell([emptyParagraph()], indikatorWidth, { fill, color, verticalMerge: VerticalMergeType.CONTINUE }),
     ];
@@ -219,6 +227,15 @@ export function TableUrusanWord(
 
     const headerRow2: TableRow = new TableRow({ children: headerRow2Cells });
 
+    const formatOutcome = (outcomes?: OutcomeData[]): string => {
+        if (!outcomes?.length) return "-";
+
+        return outcomes
+            .map((item) => item.outcome?.trim())
+            .filter(Boolean)
+            .join("\n");
+    };
+
     const rows: TableRow[] = [];
 
     if (isUrusanLevel) {
@@ -226,6 +243,7 @@ export function TableUrusanWord(
             children: [
                 cell([textParagraph(`${data.kode || "-"}`, 12)], kodeWidth, { alignment: AlignmentType.CENTER, margins: bodyPadding }),
                 cell([new Paragraph({ children: [new TextRun({ text: `${data.nama || "-"}`, size: 12 })] })], jenisWidth, { margins: bodyPadding }),
+                cell([new Paragraph({ children: [new TextRun({ text: formatOutcome(data.outcome), size: 12 })] })], jenisWidth, { margins: bodyPadding }),
                 cell([emptyParagraph()], indikatorWidth, { margins: bodyPadding }),
                 ...tahun_list.flatMap((tahun, i) => [
                     cell([emptyParagraph()], widths[3 + 2 * i], { margins: bodyPadding }),
@@ -238,6 +256,7 @@ export function TableUrusanWord(
             children: [
                 cell([textParagraph(`${data.kode || "-"}`, 12)], kodeWidth, { alignment: AlignmentType.CENTER, margins: bodyPadding }),
                 cell([new Paragraph({ children: [new TextRun({ text: `${data.nama || "-"}`, size: 12 })] })], jenisWidth, { margins: bodyPadding }),
+                cell([new Paragraph({ children: [new TextRun({ text: formatOutcome(data.outcome), size: 12 })] })], jenisWidth, { margins: bodyPadding }),
                 cell([emptyParagraph()], indikatorWidth, { margins: bodyPadding }),
                 ...tahun_list.flatMap((tahun, i) => [
                     cell([emptyParagraph()], widths[3 + 2 * i], { margins: bodyPadding }),
@@ -254,9 +273,11 @@ export function TableUrusanWord(
                         ? [
                             cell([textParagraph(`${data.kode || "-"}`, 12)], kodeWidth, { alignment: AlignmentType.CENTER, margins: bodyPadding, verticalMerge: VerticalMergeType.RESTART }),
                             cell([new Paragraph({ children: [new TextRun({ text: `${data.nama || "-"}`, size: 12 })] })], jenisWidth, { margins: bodyPadding, verticalMerge: VerticalMergeType.RESTART }),
+                            cell([new Paragraph({ children: [new TextRun({ text: formatOutcome(data.outcome), size: 12 })] })], jenisWidth, { margins: bodyPadding, verticalMerge: VerticalMergeType.RESTART }),
                         ]
                         : [
                             cell([emptyParagraph()], kodeWidth, { margins: bodyPadding, verticalMerge: VerticalMergeType.CONTINUE }),
+                            cell([emptyParagraph()], jenisWidth, { margins: bodyPadding, verticalMerge: VerticalMergeType.CONTINUE }),
                             cell([emptyParagraph()], jenisWidth, { margins: bodyPadding, verticalMerge: VerticalMergeType.CONTINUE }),
                         ]),
                     cell([new Paragraph({ children: [new TextRun({ text: item.indikator || "-", size: 12 })] })], indikatorWidth, { margins: bodyPadding }),

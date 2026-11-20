@@ -25,6 +25,7 @@ interface renstra {
     nama: string;
     kode: string;
     jenis: string;
+    outcome: OutcomeData[];
     indikator: Indikator[];
     indikator_baseline?: Indikator[];
     anggaran: Anggaran[];
@@ -32,6 +33,12 @@ interface renstra {
     program?: renstra[]
     kegiatan?: renstra[]
     subkegiatan?: renstra[]
+}
+interface OutcomeData {
+    id: number;
+    nama: string;
+    kode: string;
+    outcome: string;
 }
 interface Indikator {
     kode_indikator: string;
@@ -172,7 +179,12 @@ export function useCetakMatrixRenstra(
         children.push(title("Matrix Renstra", 28, true));
         children.push(title(nama_opd, 24, false));
         children.push(title(`Periode ${tahun_awal} - ${tahun_akhir}`, 24, false));
-        children.push(new Paragraph({ spacing: { after: convertMillimetersToTwip(6) } }));
+
+        children.push(new Paragraph({ spacing: { after: convertMillimetersToTwip(3) } }));
+
+        children.push(TablePaguTotalMatrixRenstraWord(tahun_list, data.pagu_total));
+
+        children.push(new Paragraph({ spacing: { after: convertMillimetersToTwip(2) } }));
 
         data.urusan?.forEach((item) => {
             children.push(TableUrusanWord(tahun_list, kode_opd, "Urusan", item, (item.indikator_baseline ?? item.indikator), item.anggaran));
@@ -195,7 +207,6 @@ export function useCetakMatrixRenstra(
         });
 
         children.push(new Paragraph({ spacing: { before: convertMillimetersToTwip(6) } }));
-        children.push(TablePaguTotalMatrixRenstraWord(tahun_list, data.pagu_total));
 
         const doc = new Document({
             sections: [

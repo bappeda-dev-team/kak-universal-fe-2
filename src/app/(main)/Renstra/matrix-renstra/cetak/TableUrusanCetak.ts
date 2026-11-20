@@ -5,12 +5,16 @@ interface renstra {
     nama: string;
     kode: string;
     jenis: string;
+    outcome: OutcomeData[];
     indikator: Indikator[];
     anggaran: Anggaran[];
     bidang_urusan?: renstra[];
     program?: renstra[]
     kegiatan?: renstra[]
     subkegiatan?: renstra[]
+}
+interface OutcomeData {
+    outcome: string;
 }
 interface Anggaran {
     tahun: string;
@@ -129,13 +133,28 @@ export function TableUrusanCetak(
             { content: "Pagu", styles: { halign: "center" } },
         ]);
 
+    const formatOutcome = (outcomes?: OutcomeData[]): string => {
+        if (!outcomes?.length) return "-";
+
+        return outcomes
+            .map((item) => item.outcome?.trim())
+            .filter(Boolean)
+            .join("\n");
+    };
+
     const body: any[] = [];
 
     if (isUrusanLevel) {
         body.push([
             { content: `${data.kode || "-"}`, styles: { halign: "center", valign: "middle" } },
             { content: `${data.nama || "-"}`, styles: { valign: "middle" } },
-            { content: "-", styles: { halign: "center", valign: "middle" } },
+            {
+                content: formatOutcome(data.outcome),
+                styles: {
+                    valign: "middle",
+                    overflow: "linebreak",
+                },
+            },
             { content: "", styles: { valign: "middle" } },
             ...tahun_list.flatMap((tahun) => [
                 { content: "", styles: { valign: "middle" } },
@@ -149,7 +168,13 @@ export function TableUrusanCetak(
         body.push([
             { content: `${data.kode || "-"}`, styles: { halign: "center", valign: "middle" } },
             { content: `${data.nama || "-"}`, styles: { valign: "middle" } },
-            { content: "-", styles: { halign: "center", valign: "middle" } },
+            {
+                content: formatOutcome(data.outcome),
+                styles: {
+                    valign: "middle",
+                    overflow: "linebreak",
+                },
+            },
             { content: "", styles: { valign: "middle" } },
             ...tahun_list.flatMap((tahun) => [
                 { content: "", styles: { valign: "middle" } },
@@ -178,9 +203,12 @@ export function TableUrusanCetak(
                         styles: { valign: "middle" },
                     },
                     {
-                        content: "-",
+                        content: formatOutcome(data.outcome),
                         rowSpan,
-                        styles: { halign: "center", valign: "middle" },
+                        styles: {
+                            valign: "middle",
+                            overflow: "linebreak",
+                        },
                     }
                 );
             }
