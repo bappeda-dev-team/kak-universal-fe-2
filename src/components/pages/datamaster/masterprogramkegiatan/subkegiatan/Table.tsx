@@ -8,10 +8,18 @@ import { getToken } from "@/components/lib/Cookie";
 import { TbPencil, TbTrash, TbCirclePlus } from "react-icons/tb";
 import { ModalSubKegiatan } from "./ModalSubKegiatan";
 
+interface indikatorSubKegiatan {
+    id: number;
+    kode_indikator: string;
+    kode: string;
+    indikator: string;
+}
+
 interface SubKegiatan {
     id: string;
     kode_subkegiatan: string;
     nama_sub_kegiatan: string;
+    indikator: indikatorSubKegiatan[];
 }
 interface Table {
     data: any[];
@@ -23,14 +31,14 @@ const Table: React.FC<Table> = ({ fetchTrigger, data, error }) => {
 
     const [SubKegiatan, setSubKegiatan] = useState<any[]>(data);
     const token = getToken();
-    
+
     // MODAL
     const [ModalTambah, setModalTambah] = useState<boolean>(false);
     const [ModalEdit, setModalEdit] = useState<boolean>(false);
     const [IdSubKegiatan, setIdSubKegiatan] = useState<string>('');
 
     const handleEdit = (id: string) => {
-        if(ModalEdit){
+        if (ModalEdit) {
             setModalEdit(false);
             setIdSubKegiatan('');
         } else {
@@ -100,8 +108,23 @@ const Table: React.FC<Table> = ({ fetchTrigger, data, error }) => {
                                         <td className="border-r border-b px-6 py-4">
                                             {item.nama_sub_kegiatan || "-"}
                                         </td>
-                                        <td className="border-r border-b px-6 py-4">
-                                            -
+                                        <td className="border-r border-b px-6 py-4 min-w-[300px]">
+                                            {item.indikator?.length > 0 ? (
+                                                <div className="flex flex-col divide-y divide-slate-600">
+                                                    {item.indikator.map((ind, idx) => (
+                                                        <div
+                                                            key={ind.id}
+                                                            className="flex gap-2 py-3 first:pt-0 last:pb-0"
+                                                        >
+                                                            <span className="leading-relaxed">
+                                                                {ind.indikator || "-"}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                "-"
+                                            )}
                                         </td>
                                         {/* <td className="border-r border-b px-6 py-4">
                                             <div className="flex flex-col justify-center items-center gap-2">

@@ -6,11 +6,19 @@ import { useState, useEffect } from "react";
 import { LoadingClip } from "@/components/global/Loading";
 import { getToken } from "@/components/lib/Cookie";
 
+interface indikatorKegiatan {
+    id: number;
+    kode_indikator: string;
+    kode: string;
+    indikator: string;
+}
+
 interface kegiatan {
     id: string;
     nama_kegiatan: string;
     kode_kegiatan: string;
     kode_opd: opd;
+    indikator: indikatorKegiatan[];
 }
 
 interface opd {
@@ -28,21 +36,21 @@ const Table = () => {
 
     useEffect(() => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const fetchOpd = async() => {
+        const fetchOpd = async () => {
             setLoading(true)
-            try{
-                const response = await fetch(`${API_URL}/kegiatan/findall`, {
+            try {
+                const response = await fetch(`${API_URL}/kegiatan/findall/v2`, {
                     headers: {
-                      Authorization: `${token}`,
-                      'Content-Type': 'application/json',
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/json',
                     },
                 });
                 const result = await response.json();
                 const data = result.data;
-                if(data == null){
+                if (data == null) {
                     setDataNull(true);
                     setKegiatan([]);
-                } else if(result.code === 401){
+                } else if (result.code === 401) {
                     setError(true);
                 } else {
                     setError(false);
@@ -50,43 +58,43 @@ const Table = () => {
                     setKegiatan(data);
                 }
                 setKegiatan(data);
-            } catch(err){
+            } catch (err) {
                 setError(true);
                 console.error(err)
-            } finally{
+            } finally {
                 setLoading(false);
             }
         }
         fetchOpd();
     }, [token]);
 
-    const hapusKegiatan = async(id: any) => {
+    const hapusKegiatan = async (id: any) => {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        try{
+        try {
             const response = await fetch(`${API_URL}/kegiatan/delete/${id}`, {
                 method: "DELETE",
                 headers: {
-                  Authorization: `${token}`,
-                  'Content-Type': 'application/json',
+                    Authorization: `${token}`,
+                    'Content-Type': 'application/json',
                 },
             })
-            if(!response.ok){
+            if (!response.ok) {
                 alert("cant fetch data")
             }
             setKegiatan(Kegiatan.filter((data) => (data.id !== id)))
             AlertNotification("Berhasil", "Data kegiatan Berhasil Dihapus", "success", 1000);
-        } catch(err){
+        } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
         }
     };
 
-    if(Loading){
-        return (    
+    if (Loading) {
+        return (
             <div className="border p-5 rounded-xl shadow-xl">
-                <LoadingClip className="mx-5 py-5"/>
+                <LoadingClip className="mx-5 py-5" />
             </div>
         );
-    } else if(Error){
+    } else if (Error) {
         return (
             <div className="border p-5 rounded-xl shadow-xl">
                 <h1 className="text-red-500 mx-5 py-5">Periksa koneksi internet atau database server</h1>
@@ -94,7 +102,7 @@ const Table = () => {
         )
     }
 
-    return(
+    return (
         <>
             <div className="overflow-auto m-2 rounded-t-xl border">
                 <table className="w-full">
@@ -104,26 +112,41 @@ const Table = () => {
                             <th className="border-r border-b px-6 py-3 min-w-[500px]">Nama Kegiatan</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Kode Kegiatan</th>
                             <th className="border-r border-b px-6 py-3 min-w-[200px]">Indikator</th>
-                            <th className="border-r border-b px-6 py-3 min-w-[200px]">Perangkat Daerah</th>
                             {/* <th className="border-r border-b px-6 py-3 min-w-[200px]">Aksi</th> */}
                         </tr>
                     </thead>
                     <tbody>
-                    {DataNull ? 
-                        <tr>
-                            <td className="px-6 py-3 uppercase" colSpan={13}>
-                                Data Kosong / Belum Ditambahkan
-                            </td>
-                        </tr>
-                    :
-                        Kegiatan.map((data, index) => (
-                        <tr key={data.id}>
-                            <td className="border-r border-b px-6 py-4">{index + 1}</td>
-                            <td className="border-r border-b px-6 py-4">{data.nama_kegiatan ? data.nama_kegiatan : "-"}</td>
-                            <td className="border-r border-b px-6 py-4">{data.kode_kegiatan ? data.kode_kegiatan : "-"}</td>
-                            <td className="border-r border-b px-6 py-4">-</td>
-                            <td className="border-r border-b px-6 py-4">{data.kode_opd ? data.kode_opd.nama_opd : "-"}</td>
-                            {/* <td className="border-r border-b px-6 py-4">
+                        {DataNull ?
+                            <tr>
+                                <td className="px-6 py-3 uppercase" colSpan={13}>
+                                    Data Kosong / Belum Ditambahkan
+                                </td>
+                            </tr>
+                            :
+                            Kegiatan.map((data, index) => (
+                                <tr key={data.id}>
+                                    <td className="border-r border-b px-6 py-4">{index + 1}</td>
+                                    <td className="border-r border-b px-6 py-4">{data.nama_kegiatan ? data.nama_kegiatan : "-"}</td>
+                                    <td className="border-r border-b px-6 py-4">{data.kode_kegiatan ? data.kode_kegiatan : "-"}</td>
+                                    <td className="border-r border-b px-6 py-4">
+                                        {data.indikator?.length > 0 ? (
+                                            <div className="flex flex-col divide-y divide-slate-600">
+                                                {data.indikator.map((ind, idx) => (
+                                                    <div
+                                                        key={ind.id}
+                                                        className="flex gap-2 py-3 first:pt-0 last:pb-0"
+                                                    >
+                                                        <span className="leading-relaxed">
+                                                            {ind.indikator || "-"}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            "-"
+                                        )}
+                                    </td>
+                                    {/* <td className="border-r border-b px-6 py-4">
                                 <div className="flex flex-col jutify-center items-center gap-2">
                                     <ButtonGreen className="w-full" halaman_url={`/DataMaster/masterprogramkegiatan/kegiatan/${data.id}`}>Edit</ButtonGreen>
                                     <ButtonRed 
@@ -140,9 +163,9 @@ const Table = () => {
                                     </ButtonRed>
                                 </div>
                             </td> */}
-                        </tr>
-                        ))
-                    }
+                                </tr>
+                            ))
+                        }
                     </tbody>
                 </table>
             </div>
