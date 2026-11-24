@@ -13,6 +13,7 @@ import { ModalTargetSatuanRenstra } from "./ModalTargetSatuanRenstra";
 import { ModalCreateIndikatorRenstraV2, ModalEditIndikatorV2, IndikatorResponse } from "./ModalCreateIndikatorRenstraV2";
 import { AlertNotification, AlertQuestion } from "@/components/global/Alert";
 import { ModalOutcomeMatrix } from "./ModalOutcomeMatrix";
+import ButtonPengampuSubkegiatan from "./ButtonPengampuSubkegiatan";
 
 interface renstra {
     nama: string;
@@ -491,6 +492,8 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, tahun, nama, kode_opd, kod
         ...indikator.filter((i: Indikator) => !IndikatorTerhapus.includes(i.kode_indikator)),
         ...IndikatorTambahan.filter((t: Indikator) => !indikator.some((i: Indikator) => i.kode_indikator === t.kode_indikator)),
     ];
+    const tahun_awal = tahun_list[0];
+    const tahun_akhir = tahun_list[-1];
 
     const combinedData: CombinedData[] = daftarIndikator.map((i: Indikator) => {
         const anggaranTahun = anggaran.find((a: Anggaran) => a.tahun === i.tahun);
@@ -727,7 +730,30 @@ export const TrMatrix: React.FC<Tr> = ({ jenis, type, tahun, nama, kode_opd, kod
                 <>
                     <tr>
                         <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 font-semibold`}>{kode || ""}</td>
-                        <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>{nama || ""}</td>
+                        <td
+                            rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2}
+                            className="w-full border-r border-b border-slate-400 px-6 py-4"
+                        >
+                            <div className="flex flex-col gap-3">
+                                <span className="leading-relaxed">
+                                    {nama || ""}
+                                </span>
+
+                                {jenis === "Sub Kegiatan" && (
+                                    <div className="flex items-center border-t border-slate-600 pt-3">
+                                        <ButtonPengampuSubkegiatan
+                                            url={branding?.api_perencanaan}
+                                            token={token}
+                                            kodeSubkegiatan={kode}
+                                            namaSubkegiatan={nama}
+                                            kodeOpd={kode_opd}
+                                            tahunAwal={tahun_awal}
+                                            tahunAkhir={tahun_akhir}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </td>
                         <td rowSpan={combinedData.length > 0 ? combinedData.length + 1 : 2} className={`border-r border-b border-slate-400 px-6 py-4 w-full`}>
                             <div className="flex items-center justify-between gap-1">
                                 {outcomeLokal.length > 0 &&

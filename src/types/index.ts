@@ -143,3 +143,27 @@ export interface PermasalahanOpd {
   level_pohon: number;
   masalah: string;
 }
+
+export interface PengampuSubkegiatan {
+    nip: string;
+    nama_pegawai: string;
+    rencana_kinerja_id: string;
+    rencana_kinerja: string;
+    tahun: number;
+}
+
+export interface DetailSubkegiatan {
+    kode_subkegiatan: string;
+    nama_subkegiatan: string;
+    pengampu: PengampuSubkegiatan[];
+}
+
+export interface PengampuSubkegiatanProps {
+    url: string;
+    token: string | null;
+    kodeSubkegiatan: string;
+    namaSubkegiatan: string;
+    kodeOpd: string;
+    tahunAwal: string;
+    tahunAkhir: string;
+}
