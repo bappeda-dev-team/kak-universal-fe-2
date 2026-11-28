@@ -78,7 +78,7 @@ const PerjanjianKinerja = () => {
         const fetchData = async () => {
             setLoading(true)
             const res = await fetch(
-                `${apiPerencanaan}/pk_opd/${kodeOpd}/${tahun}`,
+              `${apiPerencanaan}/pk_opd/${kodeOpd}/${tahun}?mode=${encodeURIComponent("DIRECT_SUPERVISOR")}`,
                 {
                     headers: {
                         Authorization: `${token}`,
